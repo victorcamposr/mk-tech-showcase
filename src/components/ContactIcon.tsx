@@ -3,7 +3,7 @@ interface ContactIconProps {
   className?: string;
 }
 
-const ContactIcon = ({ type, className = "w-12 h-12" }: ContactIconProps) => {
+const ContactIcon = ({ type, className = "w-10 h-10" }: ContactIconProps) => {
   const icons = {
     whatsapp: (
       <svg viewBox="0 0 24 24" className={className}>
@@ -109,7 +109,7 @@ const ContactIcon = ({ type, className = "w-12 h-12" }: ContactIconProps) => {
   };
 
   return (
-    <div className="flex justify-center items-center p-4 bg-gradient-to-br from-brand-gold/10 to-brand-gold/20 rounded-xl group-hover:from-brand-gold/20 group-hover:to-brand-gold/30 transition-all duration-500">
+    <div className="flex justify-center items-center p-3 bg-gradient-to-br from-brand-gold/10 to-brand-gold/20 rounded-xl group-hover:from-brand-gold/20 group-hover:to-brand-gold/30 transition-all duration-500">
       {icons[type]}
     </div>
   );

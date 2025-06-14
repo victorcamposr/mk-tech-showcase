@@ -88,11 +88,11 @@ const Services = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-16">
             {services.map((service, index) => (
                 <Card key={index} className="border-brand-gold/20 hover:shadow-2xl hover:shadow-brand-gold/10 transition-all duration-500 hover:-translate-y-3 hover:scale-105 group bg-gradient-to-br from-white to-gray-50/50 backdrop-blur-sm">
-                 <CardHeader>
-                   <ServiceIcon type={service.iconType} className="mb-6 group-hover:animate-pulse" />
-                   <CardTitle className="text-xl text-brand-black group-hover:text-brand-gold transition-colors duration-300">{service.title}</CardTitle>
+                 <CardHeader className="p-6">
+                   <ServiceIcon type={service.iconType} className="mb-4 group-hover:animate-pulse" />
+                   <CardTitle className="text-lg text-brand-black group-hover:text-brand-gold transition-colors duration-300">{service.title}</CardTitle>
                  </CardHeader>
-                 <CardContent>
+                 <CardContent className="p-6 pt-0">
                   <p className="text-gray-600 mb-4 group-hover:text-gray-700 transition-colors duration-300">{service.description}</p>
                   <ul className="space-y-2">
                     {service.features.map((feature, featureIndex) => (

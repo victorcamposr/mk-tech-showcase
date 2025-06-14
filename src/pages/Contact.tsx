@@ -61,9 +61,9 @@ const Contact = () => {
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-8">
                 {contactInfo.map((contact, index) => (
                    <Card key={index} className="border-brand-gold/20 hover:shadow-2xl hover:shadow-brand-gold/10 transition-all duration-500 hover:-translate-y-2 hover:scale-105 group bg-gradient-to-br from-white to-gray-50/50 backdrop-blur-sm">
-                     <CardContent className="p-8 text-center">
-                       <ContactIcon type={contact.iconType} className="mb-6 group-hover:animate-pulse" />
-                       <h3 className="font-semibold text-brand-black mb-2 group-hover:text-brand-gold transition-colors duration-300">{contact.title}</h3>
+                     <CardContent className="p-6 text-center">
+                       <ContactIcon type={contact.iconType} className="mb-4 group-hover:animate-pulse" />
+                       <h3 className="text-sm font-semibold text-brand-black mb-2 group-hover:text-brand-gold transition-colors duration-300">{contact.title}</h3>
                       {contact.link ? (
                         <a 
                           href={contact.link} 
@@ -83,13 +83,13 @@ const Contact = () => {
 
               {/* Horário de Atendimento */}
               <Card className="border-brand-gold/20 hover:shadow-xl transition-all duration-300 bg-gradient-to-br from-white to-gray-50/50">
-                <CardHeader>
+                <CardHeader className="p-6">
                   <div className="flex items-center gap-3">
                     <ContactIcon type="clock" className="group-hover:animate-pulse" />
-                    <CardTitle className="text-brand-black">Horário de Atendimento</CardTitle>
+                    <CardTitle className="text-lg text-brand-black">Horário de Atendimento</CardTitle>
                   </div>
                 </CardHeader>
-                <CardContent>
+                <CardContent className="p-6 pt-0">
                   <div className="space-y-2 text-gray-600">
                     <div className="flex justify-between">
                       <span>Segunda a Sexta:</span>
@@ -116,10 +116,10 @@ const Contact = () => {
             {/* Formulário de Contato */}
             <div>
               <Card className="border-brand-gold/20 hover:shadow-xl transition-all duration-300 bg-gradient-to-br from-white to-gray-50/50 backdrop-blur-sm">
-                <CardHeader>
-                  <CardTitle className="text-brand-black">Envie sua Mensagem</CardTitle>
+                <CardHeader className="p-6">
+                  <CardTitle className="text-lg text-brand-black">Envie sua Mensagem</CardTitle>
                 </CardHeader>
-                <CardContent>
+                <CardContent className="p-6 pt-0">
                   <form className="space-y-6">
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       <div>
@@ -198,8 +198,8 @@ const Contact = () => {
               Nossa Localização
             </h2>
             <Card className="border-brand-gold/20 hover:shadow-xl transition-all duration-300 bg-gradient-to-br from-white to-gray-50/50">
-              <CardContent className="p-12 text-center">
-                <ContactIcon type="map" className="mb-6 mx-auto" />
+              <CardContent className="p-8 text-center">
+                <ContactIcon type="map" className="mb-4 mx-auto" />
                 <h3 className="text-xl font-semibold text-brand-black mb-2">
                   Av Marechal Rondon, 1512
                 </h3>
