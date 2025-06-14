@@ -3,7 +3,7 @@ interface ServiceIconProps {
   className?: string;
 }
 
-const ServiceIcon = ({ type, className = "w-12 h-12" }: ServiceIconProps) => {
+const ServiceIcon = ({ type, className = "w-8 h-8" }: ServiceIconProps) => {
   const icons = {
     automation: (
       <svg viewBox="0 0 64 64" className={className}>
@@ -125,7 +125,7 @@ const ServiceIcon = ({ type, className = "w-12 h-12" }: ServiceIconProps) => {
   };
 
   return (
-    <div className="flex justify-center items-center p-3 bg-gradient-to-br from-brand-gold/10 to-brand-gold/20 rounded-2xl group-hover:from-brand-gold/20 group-hover:to-brand-gold/30 transition-all duration-500 group-hover:scale-110">
+    <div className="flex justify-center items-center p-2 bg-gradient-to-br from-brand-gold/10 to-brand-gold/20 rounded-xl group-hover:from-brand-gold/20 group-hover:to-brand-gold/30 transition-all duration-500 group-hover:scale-110">
       {icons[type]}
     </div>
   );
