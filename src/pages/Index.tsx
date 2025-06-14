@@ -1,27 +1,29 @@
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import ModernIcon from "@/components/ModernIcon";
+import CountUpNumber from "@/components/CountUpNumber";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 
 const Index = () => {
   const services = [
     {
-      icon: "💻",
+      iconType: "automation" as const,
       title: "Automação Comercial",
       description: "Sistemas completos para gestão do seu negócio"
     },
     {
-      icon: "📊",
+      iconType: "inventory" as const,
       title: "Controle de Estoque",
       description: "Gestão inteligente com alertas automáticos"
     },
     {
-      icon: "🧾",
+      iconType: "fiscal" as const,
       title: "Emissão Fiscal",
       description: "NFe, NFCe e cupons fiscais automatizados"
     },
     {
-      icon: "💰",
+      iconType: "financial" as const,
       title: "Gestão Financeira",
       description: "Controle completo do fluxo de caixa"
     }
@@ -57,12 +59,15 @@ const Index = () => {
                 </Button>
               </div>
             </div>
-            <div className="text-center">
-              <img 
-                src="/lovable-uploads/a60d254c-a883-48c4-b073-85cb46bc5238.png" 
-                alt="MK Tecnologia" 
-                className="w-80 h-auto mx-auto"
-              />
+            <div className="text-center animate-fade-in">
+              <div className="relative">
+                <div className="absolute inset-0 bg-gradient-to-r from-brand-gold/20 to-transparent rounded-full blur-3xl animate-pulse"></div>
+                <img 
+                  src="/lovable-uploads/894786af-af73-492e-ae6a-d8a39e0ac4cb.png" 
+                  alt="MK Tecnologia" 
+                  className="w-80 h-auto mx-auto relative z-10 hover:scale-105 transition-transform duration-500"
+                />
+              </div>
             </div>
           </div>
         </div>
@@ -82,11 +87,11 @@ const Index = () => {
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
             {services.map((service, index) => (
-              <Card key={index} className="border-brand-gold/20 hover:shadow-xl transition-all duration-300 hover:-translate-y-2">
-                <CardContent className="p-6 text-center">
-                  <div className="text-5xl mb-4">{service.icon}</div>
-                  <h3 className="text-xl font-semibold text-brand-black mb-3">{service.title}</h3>
-                  <p className="text-gray-600">{service.description}</p>
+              <Card key={index} className="border-brand-gold/20 hover:shadow-2xl hover:shadow-brand-gold/10 transition-all duration-500 hover:-translate-y-3 hover:scale-105 group bg-gradient-to-br from-white to-gray-50/50 backdrop-blur-sm">
+                <CardContent className="p-8 text-center">
+                  <ModernIcon type={service.iconType} className="mb-6 group-hover:animate-pulse" />
+                  <h3 className="text-xl font-semibold text-brand-black mb-4 group-hover:text-brand-gold transition-colors duration-300">{service.title}</h3>
+                  <p className="text-gray-600 group-hover:text-gray-700 transition-colors duration-300">{service.description}</p>
                 </CardContent>
               </Card>
             ))}
@@ -128,21 +133,27 @@ const Index = () => {
               </Button>
             </div>
             <div className="grid grid-cols-2 gap-6">
-              <div className="text-center">
-                <div className="text-4xl font-bold text-brand-gold mb-2">100+</div>
-                <div className="text-gray-600">Empresas Atendidas</div>
+              <div className="text-center p-6 bg-white/50 backdrop-blur-sm rounded-2xl hover:bg-white/70 transition-all duration-300 hover:shadow-lg hover:scale-105">
+                <div className="text-4xl font-bold text-brand-gold mb-2">
+                  <CountUpNumber end={100} suffix="+" className="block" />
+                </div>
+                <div className="text-gray-600 font-medium">Empresas Atendidas</div>
               </div>
-              <div className="text-center">
-                <div className="text-4xl font-bold text-brand-gold mb-2">5+</div>
-                <div className="text-gray-600">Anos de Experiência</div>
+              <div className="text-center p-6 bg-white/50 backdrop-blur-sm rounded-2xl hover:bg-white/70 transition-all duration-300 hover:shadow-lg hover:scale-105">
+                <div className="text-4xl font-bold text-brand-gold mb-2">
+                  <CountUpNumber end={5} suffix="+" className="block" />
+                </div>
+                <div className="text-gray-600 font-medium">Anos de Experiência</div>
               </div>
-              <div className="text-center">
+              <div className="text-center p-6 bg-white/50 backdrop-blur-sm rounded-2xl hover:bg-white/70 transition-all duration-300 hover:shadow-lg hover:scale-105">
                 <div className="text-4xl font-bold text-brand-gold mb-2">24/7</div>
-                <div className="text-gray-600">Suporte Disponível</div>
+                <div className="text-gray-600 font-medium">Suporte Disponível</div>
               </div>
-              <div className="text-center">
-                <div className="text-4xl font-bold text-brand-gold mb-2">15+</div>
-                <div className="text-gray-600">Segmentos Atendidos</div>
+              <div className="text-center p-6 bg-white/50 backdrop-blur-sm rounded-2xl hover:bg-white/70 transition-all duration-300 hover:shadow-lg hover:scale-105">
+                <div className="text-4xl font-bold text-brand-gold mb-2">
+                  <CountUpNumber end={15} suffix="+" className="block" />
+                </div>
+                <div className="text-gray-600 font-medium">Segmentos Atendidos</div>
               </div>
             </div>
           </div>

@@ -6,9 +6,9 @@ const Footer = () => {
           {/* Logo e Descrição */}
           <div className="md:col-span-2">
             <img 
-              src="/lovable-uploads/a60d254c-a883-48c4-b073-85cb46bc5238.png" 
+              src="/lovable-uploads/894786af-af73-492e-ae6a-d8a39e0ac4cb.png" 
               alt="MK Tecnologia" 
-              className="h-16 w-auto mb-4"
+              className="h-16 w-auto mb-4 hover:scale-105 transition-transform duration-300"
             />
             <p className="text-gray-300 mb-4 max-w-md">
               Especialistas em automação comercial, oferecendo soluções completas para 

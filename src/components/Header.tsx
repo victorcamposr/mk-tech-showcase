@@ -38,7 +38,7 @@ const Header = () => {
           {/* Logo */}
           <Link to="/" className="flex items-center space-x-2 smooth-transition hover:scale-105">
             <img 
-              src="/lovable-uploads/a60d254c-a883-48c4-b073-85cb46bc5238.png" 
+              src="/lovable-uploads/894786af-af73-492e-ae6a-d8a39e0ac4cb.png" 
               alt="MK Tecnologia" 
               className="h-10 w-auto icon-modern"
             />
