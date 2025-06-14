@@ -112,12 +112,9 @@ const Solutions = () => {
               {solutions.map((solution, index) => (
                 <Card key={index} className="border-brand-gold/20 hover:shadow-2xl hover:shadow-brand-gold/10 transition-all duration-500 hover:-translate-y-3 hover:scale-105 group bg-gradient-to-br from-white to-gray-50/50 backdrop-blur-sm">
                   <CardHeader>
-                    <div className="flex items-center mb-4">
-                      <ServiceIcon type={solution.iconType} className="mr-4 group-hover:animate-pulse" />
-                      <CardTitle className="text-brand-black">
-                        <TitleWithIcon>{solution.title}</TitleWithIcon>
-                      </CardTitle>
-                    </div>
+                    <CardTitle className="text-brand-black mb-4">
+                      <TitleWithIcon>{solution.title}</TitleWithIcon>
+                    </CardTitle>
                     <p className="text-gray-600 group-hover:text-gray-700 transition-colors duration-300">{solution.description}</p>
                   </CardHeader>
                   <CardContent>
