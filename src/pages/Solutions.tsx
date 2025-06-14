@@ -2,6 +2,7 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import ServiceIcon from "@/components/ServiceIcon";
 import SimpleIcon from "@/components/SimpleIcon";
+import CheckBullet from "@/components/CheckBullet";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 
@@ -122,8 +123,8 @@ const Solutions = () => {
                       <ul className="space-y-1">
                         {solution.features.map((feature, featureIndex) => (
                           <li key={featureIndex} className="flex items-start text-sm text-gray-600">
-                            <div className="w-2 h-2 bg-brand-gold rounded-full mt-1.5 mr-3 flex-shrink-0 group-hover:scale-125 transition-transform"></div>
-                            {feature}
+                            <CheckBullet />
+                            <span className="group-hover:text-gray-700 transition-colors duration-300">{feature}</span>
                           </li>
                         ))}
                       </ul>
