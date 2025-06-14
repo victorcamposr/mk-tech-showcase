@@ -2,6 +2,7 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import ContactIcon from "@/components/ContactIcon";
 import SimpleIcon from "@/components/SimpleIcon";
+import MapboxMap from "@/components/MapboxMap";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -58,23 +59,23 @@ const Contact = () => {
                 Fale Conosco
               </h2>
               
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-8">
+              <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
                 {contactInfo.map((contact, index) => (
-                   <Card key={index} className="border-brand-gold/20 hover:shadow-2xl hover:shadow-brand-gold/10 transition-all duration-500 hover:-translate-y-2 hover:scale-105 group bg-gradient-to-br from-white to-gray-50/50 backdrop-blur-sm">
-                     <CardContent className="p-6 text-center">
-                       <ContactIcon type={contact.iconType} className="mb-4 group-hover:animate-pulse" />
-                       <h3 className="text-sm font-semibold text-brand-black mb-2 group-hover:text-brand-gold transition-colors duration-300">{contact.title}</h3>
+                   <Card key={index} className="border-brand-gold/20 hover:shadow-lg hover:shadow-brand-gold/5 transition-all duration-300 hover:-translate-y-1 group bg-gradient-to-br from-white to-gray-50/30">
+                     <CardContent className="p-4 text-center">
+                       <ContactIcon type={contact.iconType} className="mb-3 group-hover:animate-pulse" />
+                       <h3 className="text-xs font-semibold text-brand-black mb-1 group-hover:text-brand-gold transition-colors duration-300">{contact.title}</h3>
                       {contact.link ? (
                         <a 
                           href={contact.link} 
                           target="_blank" 
                           rel="noopener noreferrer"
-                          className="text-brand-gold hover:text-brand-gold-dark transition-colors font-medium"
+                          className="text-brand-gold hover:text-brand-gold-dark transition-colors text-xs font-medium block"
                         >
                           {contact.info}
                         </a>
                       ) : (
-                        <p className="text-gray-600 whitespace-pre-line">{contact.info}</p>
+                        <p className="text-gray-600 whitespace-pre-line text-xs">{contact.info}</p>
                       )}
                     </CardContent>
                   </Card>
@@ -82,15 +83,15 @@ const Contact = () => {
               </div>
 
               {/* Horário de Atendimento */}
-              <Card className="border-brand-gold/20 hover:shadow-xl transition-all duration-300 bg-gradient-to-br from-white to-gray-50/50">
-                <CardHeader className="p-6">
+              <Card className="border-brand-gold/20 hover:shadow-lg transition-all duration-300 bg-gradient-to-br from-white to-gray-50/30">
+                <CardHeader className="p-4">
                   <div className="flex items-center gap-3">
                     <ContactIcon type="clock" className="group-hover:animate-pulse" />
-                    <CardTitle className="text-lg text-brand-black">Horário de Atendimento</CardTitle>
+                    <CardTitle className="text-base text-brand-black">Horário de Atendimento</CardTitle>
                   </div>
                 </CardHeader>
-                <CardContent className="p-6 pt-0">
-                  <div className="space-y-2 text-gray-600">
+                <CardContent className="p-4 pt-0">
+                  <div className="space-y-2 text-gray-600 text-sm">
                     <div className="flex justify-between">
                       <span>Segunda a Sexta:</span>
                       <span className="font-medium">08:00 - 18:00</span>
@@ -104,8 +105,8 @@ const Contact = () => {
                       <span className="font-medium">Fechado</span>
                     </div>
                   </div>
-                  <div className="mt-4 p-4 bg-gradient-to-r from-brand-gold/10 to-brand-gold/20 rounded-xl backdrop-blur-sm">
-                    <p className="text-sm text-brand-black">
+                  <div className="mt-4 p-3 bg-gradient-to-r from-brand-gold/10 to-brand-gold/15 rounded-lg">
+                    <p className="text-xs text-brand-black">
                       <strong>Suporte de Emergência:</strong> Disponível 24/7 via WhatsApp para clientes com contratos de suporte.
                     </p>
                   </div>
@@ -115,11 +116,11 @@ const Contact = () => {
 
             {/* Formulário de Contato */}
             <div>
-              <Card className="border-brand-gold/20 hover:shadow-xl transition-all duration-300 bg-gradient-to-br from-white to-gray-50/50 backdrop-blur-sm">
-                <CardHeader className="p-6">
-                  <CardTitle className="text-lg text-brand-black">Envie sua Mensagem</CardTitle>
+              <Card className="border-brand-gold/20 hover:shadow-lg transition-all duration-300 bg-gradient-to-br from-white to-gray-50/30">
+                <CardHeader className="p-4">
+                  <CardTitle className="text-base text-brand-black">Envie sua Mensagem</CardTitle>
                 </CardHeader>
-                <CardContent className="p-6 pt-0">
+                <CardContent className="p-4 pt-0">
                   <form className="space-y-6">
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       <div>
@@ -197,29 +198,44 @@ const Contact = () => {
             <h2 className="text-3xl font-bold text-brand-black text-center mb-8">
               Nossa Localização
             </h2>
-            <Card className="border-brand-gold/20 hover:shadow-xl transition-all duration-300 bg-gradient-to-br from-white to-gray-50/50">
-              <CardContent className="p-8 text-center">
-                <ContactIcon type="map" className="mb-4 mx-auto" />
-                <h3 className="text-xl font-semibold text-brand-black mb-2">
-                  Av Marechal Rondon, 1512
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+              {/* Informações da Localização */}
+              <Card className="border-brand-gold/20 hover:shadow-lg transition-all duration-300 bg-gradient-to-br from-white to-gray-50/30">
+                <CardContent className="p-6 text-center">
+                  <ContactIcon type="map" className="mb-4 mx-auto" />
+                  <h3 className="text-xl font-semibold text-brand-black mb-2">
+                    Av Marechal Rondon, 1512
+                  </h3>
+                  <p className="text-gray-600 mb-4 font-medium">Pontes e Lacerda - MT</p>
+                  <p className="text-gray-600 mb-6">
+                    Estamos localizados no centro da cidade, facilitando o acesso de nossos clientes 
+                    e parceiros. Nossa sede conta com estacionamento e está próxima aos principais 
+                    pontos comerciais da cidade.
+                  </p>
+                  <Button asChild className="bg-brand-gold hover:bg-brand-gold-dark text-brand-black transition-all duration-300 hover:scale-105">
+                    <a 
+                      href="https://maps.google.com/?q=Av+Marechal+Rondon+1512+Pontes+e+Lacerda+MT" 
+                      target="_blank" 
+                      rel="noopener noreferrer"
+                    >
+                      Ver no Google Maps
+                    </a>
+                  </Button>
+                </CardContent>
+              </Card>
+              
+              {/* Mapa Interativo */}
+              <div className="flex flex-col">
+                <h3 className="text-lg font-semibold text-brand-black mb-4 text-center lg:text-left">
+                  Mapa Interativo
                 </h3>
-                <p className="text-gray-600 mb-4 font-medium">Pontes e Lacerda - MT</p>
-                <p className="text-gray-600 mb-6 max-w-2xl mx-auto">
-                  Estamos localizados no centro da cidade, facilitando o acesso de nossos clientes 
-                  e parceiros. Nossa sede conta com estacionamento e está próxima aos principais 
-                  pontos comerciais da cidade.
-                </p>
-                <Button asChild className="bg-brand-gold hover:bg-brand-gold-dark text-brand-black transition-all duration-300 hover:scale-105">
-                  <a 
-                    href="https://maps.google.com/?q=Av+Marechal+Rondon+1512+Pontes+e+Lacerda+MT" 
-                    target="_blank" 
-                    rel="noopener noreferrer"
-                  >
-                    Ver no Google Maps
-                  </a>
-                </Button>
-              </CardContent>
-            </Card>
+                <MapboxMap 
+                  latitude={-15.2293} 
+                  longitude={-59.3559} 
+                  className="w-full h-80 lg:h-full"
+                />
+              </div>
+            </div>
           </div>
         </div>
       </main>
