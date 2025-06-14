@@ -179,9 +179,9 @@ const Index = () => {
                  Falar no WhatsApp
                </a>
              </Button>
-             <Button asChild size="lg" variant="outline" className="border-white text-white hover:bg-white hover:text-brand-black group">
+             <Button asChild size="lg" variant="outline" className="border-white text-white hover:bg-white hover:text-brand-black">
                <a href="/contato" className="flex items-center gap-2">
-                 <SimpleIcon type="email-black" className="w-4 h-4 transition-transform group-hover:scale-110" />
+                 <SimpleIcon type="email-black" className="w-4 h-4 group-hover:scale-110 transition-transform" />
                  Solicitar Orçamento
                </a>
              </Button>

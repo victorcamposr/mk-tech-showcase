@@ -60,9 +60,9 @@ const Contact = () => {
               
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-8">
                 {contactInfo.map((contact, index) => (
-                  <Card key={index} className="border-brand-gold/20 hover:shadow-xl transition-all duration-300 hover:scale-105 group bg-gradient-to-br from-white to-gray-50/50 backdrop-blur-sm">
-                    <CardContent className="p-6 text-center">
-                      <ContactIcon type={contact.iconType} className="mb-3 group-hover:animate-pulse" />
+                  <Card key={index} className="border-brand-gold/20 hover:shadow-2xl hover:shadow-brand-gold/10 transition-all duration-500 hover:-translate-y-2 hover:scale-105 group bg-gradient-to-br from-white to-gray-50/50 backdrop-blur-sm">
+                    <CardContent className="p-8 text-center">
+                      <ContactIcon type={contact.iconType} className="mb-4 group-hover:animate-pulse" />
                       <h3 className="font-semibold text-brand-black mb-2 group-hover:text-brand-gold transition-colors duration-300">{contact.title}</h3>
                       {contact.link ? (
                         <a 

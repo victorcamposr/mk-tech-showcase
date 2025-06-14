@@ -1,7 +1,6 @@
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import ServiceIcon from "@/components/ServiceIcon";
-import ServicesIcon from "@/components/ServicesIcon";
 import SimpleIcon from "@/components/SimpleIcon";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -50,26 +49,22 @@ const Services = () => {
     {
       step: "1",
       title: "Análise",
-      description: "Entendemos suas necessidades e processos atuais para propor a melhor solução.",
-      iconType: "analysis" as const
+      description: "Entendemos suas necessidades e processos atuais para propor a melhor solução."
     },
     {
       step: "2", 
       title: "Personalização",
-      description: "Adaptamos nossos sistemas às especificidades do seu negócio.",
-      iconType: "implementation" as const
+      description: "Adaptamos nossos sistemas às especificidades do seu negócio."
     },
     {
       step: "3",
       title: "Implementação", 
-      description: "Instalação e configuração completa com treinamento da equipe.",
-      iconType: "implementation" as const
+      description: "Instalação e configuração completa com treinamento da equipe."
     },
     {
       step: "4",
       title: "Suporte",
-      description: "Acompanhamento contínuo e suporte técnico especializado.",
-      iconType: "maintenance" as const
+      description: "Acompanhamento contínuo e suporte técnico especializado."
     }
   ];
 
@@ -120,7 +115,9 @@ const Services = () => {
             <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
               {workProcess.map((process, index) => (
                 <div key={index} className="text-center group">
-                  <ServicesIcon type={process.iconType} className="mx-auto mb-4 group-hover:animate-pulse" />
+                  <div className="w-16 h-16 bg-gradient-to-br from-brand-gold to-brand-gold-dark rounded-full flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform duration-300 shadow-lg">
+                    <span className="text-2xl font-bold text-brand-black">{process.step}</span>
+                  </div>
                   <h3 className="text-lg font-semibold text-brand-black mb-2 group-hover:text-brand-gold transition-colors">{process.title}</h3>
                   <p className="text-gray-600 text-sm group-hover:text-gray-700 transition-colors">
                     {process.description}

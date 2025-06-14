@@ -1,6 +1,6 @@
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-import AboutIcon from "@/components/AboutIcon";
+import ServiceIcon from "@/components/ServiceIcon";
 import SimpleIcon from "@/components/SimpleIcon";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -8,12 +8,12 @@ import { Button } from "@/components/ui/button";
 const About = () => {
   const differentials = [
     {
-      iconType: "speed" as const,
+      iconType: "automation" as const,
       title: "Agilidade",
       description: "Implementação rápida e eficiente de nossas soluções, minimizando o tempo de adaptação do seu negócio."
     },
     {
-      iconType: "customize" as const,
+      iconType: "fiscal" as const,
       title: "Personalização",
       description: "Soluções adaptadas às necessidades específicas de cada cliente, garantindo máxima eficiência operacional."
     },
@@ -89,10 +89,10 @@ const About = () => {
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
               {differentials.map((differential, index) => (
-                <Card key={index} className="border-brand-gold/20 hover:shadow-xl transition-all duration-300 hover:scale-105 group bg-gradient-to-br from-white to-gray-50/50 backdrop-blur-sm">
-                  <CardContent className="p-6 text-center">
-                    <AboutIcon type={differential.iconType} className="mb-4 group-hover:animate-pulse" />
-                    <h3 className="text-lg font-semibold text-brand-black mb-3 group-hover:text-brand-gold transition-colors duration-300">{differential.title}</h3>
+                <Card key={index} className="border-brand-gold/20 hover:shadow-2xl hover:shadow-brand-gold/10 transition-all duration-500 hover:-translate-y-3 hover:scale-105 group bg-gradient-to-br from-white to-gray-50/50 backdrop-blur-sm">
+                  <CardContent className="p-8 text-center">
+                    <ServiceIcon type={differential.iconType} className="mb-6 group-hover:animate-pulse" />
+                    <h3 className="text-xl font-semibold text-brand-black mb-4 group-hover:text-brand-gold transition-colors duration-300">{differential.title}</h3>
                     <p className="text-gray-600 group-hover:text-gray-700 transition-colors duration-300">
                       {differential.description}
                     </p>
