@@ -3,7 +3,7 @@ interface ServiceIconProps {
   className?: string;
 }
 
-const ServiceIcon = ({ type, className = "w-12 h-12" }: ServiceIconProps) => {
+const ServiceIcon = ({ type, className = "w-8 h-8" }: ServiceIconProps) => {
   const icons = {
     automation: (
       <svg viewBox="0 0 64 64" className={className}>

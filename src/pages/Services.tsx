@@ -87,12 +87,12 @@ const Services = () => {
           {/* Services Grid */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-16">
             {services.map((service, index) => (
-              <Card key={index} className="border-brand-gold/20 hover:shadow-2xl hover:shadow-brand-gold/10 transition-all duration-500 hover:-translate-y-3 hover:scale-105 group bg-gradient-to-br from-white to-gray-50/50 backdrop-blur-sm">
-                <CardHeader>
-                  <ServiceIcon type={service.iconType} className="mb-4 group-hover:animate-pulse" />
-                  <CardTitle className="text-brand-black group-hover:text-brand-gold transition-colors duration-300">{service.title}</CardTitle>
-                </CardHeader>
-                <CardContent>
+                <Card key={index} className="border-brand-gold/20 hover:shadow-2xl hover:shadow-brand-gold/10 transition-all duration-500 hover:-translate-y-3 hover:scale-105 group bg-gradient-to-br from-white to-gray-50/50 backdrop-blur-sm">
+                 <CardHeader className="pb-4">
+                   <ServiceIcon type={service.iconType} className="mb-3 group-hover:animate-pulse" />
+                   <CardTitle className="text-lg text-brand-black group-hover:text-brand-gold transition-colors duration-300">{service.title}</CardTitle>
+                 </CardHeader>
+                 <CardContent className="pt-0">
                   <p className="text-gray-600 mb-4 group-hover:text-gray-700 transition-colors duration-300">{service.description}</p>
                   <ul className="space-y-2">
                     {service.features.map((feature, featureIndex) => (
@@ -137,7 +137,7 @@ const Services = () => {
             </p>
             <Button asChild className="bg-brand-gold hover:bg-brand-gold-dark text-brand-black font-semibold group">
               <a href="https://wa.me/5565993535079" target="_blank" rel="noopener noreferrer" className="flex items-center gap-2">
-                <SimpleIcon type="whatsapp-black" className="w-5 h-5 group-hover:scale-110 transition-transform" />
+                <SimpleIcon type="document-black" className="w-5 h-5 group-hover:scale-110 transition-transform" />
                 Solicitar Orçamento
               </a>
             </Button>

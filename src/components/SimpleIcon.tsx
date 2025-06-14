@@ -1,5 +1,5 @@
 interface SimpleIconProps {
-  type: 'whatsapp-black' | 'email-black';
+  type: 'whatsapp-black' | 'email-black' | 'document-black';
   className?: string;
 }
 
@@ -13,6 +13,11 @@ const SimpleIcon = ({ type, className = "w-5 h-5" }: SimpleIconProps) => {
     'email-black': (
       <svg viewBox="0 0 24 24" className={className} fill="currentColor">
         <path d="M3 3h18a1 1 0 0 1 1 1v16a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1z m17 4.238l-7.928 7.1L4 7.216V19h16V7.238z M4.511 5l7.55 6.662L19.502 5H4.511z"/>
+      </svg>
+    ),
+    'document-black': (
+      <svg viewBox="0 0 24 24" className={className} fill="currentColor">
+        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8l-6-6z M6 4h7v5h5v10H6V4z M8 12h8v2H8v-2z M8 16h8v2H8v-2z M8 8h4v2H8V8z"/>
       </svg>
     )
   };

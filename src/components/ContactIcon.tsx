@@ -3,7 +3,7 @@ interface ContactIconProps {
   className?: string;
 }
 
-const ContactIcon = ({ type, className = "w-8 h-8" }: ContactIconProps) => {
+const ContactIcon = ({ type, className = "w-6 h-6" }: ContactIconProps) => {
   const icons = {
     whatsapp: (
       <svg viewBox="0 0 24 24" className={className}>
