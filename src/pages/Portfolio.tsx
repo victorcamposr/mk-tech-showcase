@@ -1,7 +1,7 @@
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import CountUpNumber from "@/components/CountUpNumber";
-import WhatsAppIcon from "@/components/WhatsAppIcon";
+import SimpleIcon from "@/components/SimpleIcon";
 import { Card, CardContent } from "@/components/ui/card";
 
 const Portfolio = () => {
@@ -178,7 +178,7 @@ const Portfolio = () => {
             </p>
             <div className="bg-brand-gold hover:bg-brand-gold-dark text-brand-black font-semibold px-8 py-3 rounded-lg transition-colors group inline-flex items-center gap-2">
               <a href="https://wa.me/5565993535079" target="_blank" rel="noopener noreferrer" className="flex items-center gap-2">
-                <WhatsAppIcon className="w-5 h-5 group-hover:scale-110 transition-transform" />
+                <SimpleIcon type="whatsapp-black" className="w-5 h-5 group-hover:scale-110 transition-transform" />
                 Quero Meu Projeto
               </a>
             </div>

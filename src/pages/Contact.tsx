@@ -1,7 +1,7 @@
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import ContactIcon from "@/components/ContactIcon";
-import WhatsAppIcon from "@/components/WhatsAppIcon";
+import SimpleIcon from "@/components/SimpleIcon";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -182,7 +182,7 @@ const Contact = () => {
                     </p>
                     <Button asChild className="bg-green-600 hover:bg-green-700 text-white group">
                       <a href="https://wa.me/5565993535079" target="_blank" rel="noopener noreferrer" className="flex items-center gap-2">
-                        <WhatsAppIcon className="w-5 h-5 group-hover:scale-110 transition-transform" />
+                        <SimpleIcon type="whatsapp-black" className="w-5 h-5 group-hover:scale-110 transition-transform" />
                         Abrir WhatsApp
                       </a>
                     </Button>
