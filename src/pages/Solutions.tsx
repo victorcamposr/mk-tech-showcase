@@ -122,7 +122,7 @@ const Solutions = () => {
                       <ul className="space-y-1">
                         {solution.features.map((feature, featureIndex) => (
                           <li key={featureIndex} className="flex items-start text-sm text-gray-600">
-                            <div className="w-1.5 h-1.5 bg-brand-gold rounded-full mt-2 mr-3 flex-shrink-0 group-hover:scale-125 transition-transform"></div>
+                            <div className="w-2 h-2 bg-brand-gold rounded-full mt-1.5 mr-3 flex-shrink-0 group-hover:scale-125 transition-transform"></div>
                             {feature}
                           </li>
                         ))}
