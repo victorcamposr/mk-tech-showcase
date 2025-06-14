@@ -2,6 +2,7 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import ModernIcon from "@/components/ModernIcon";
 import CountUpNumber from "@/components/CountUpNumber";
+import WhatsAppIcon from "@/components/WhatsAppIcon";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 
@@ -46,18 +47,19 @@ const Index = () => {
                 Soluções completas em tecnologia para controle de estoque, emissão fiscal 
                 e gestão empresarial. Especialistas em automação comercial em Pontes e Lacerda/MT.
               </p>
-              <div className="flex flex-col sm:flex-row gap-4">
-                <Button asChild size="lg" className="bg-brand-gold hover:bg-brand-gold-dark text-brand-black font-semibold">
-                  <a href="https://wa.me/5565993535079" target="_blank" rel="noopener noreferrer">
-                    💬 Falar no WhatsApp
-                  </a>
-                </Button>
-                <Button asChild size="lg" variant="outline" className="border-white text-white hover:bg-white hover:text-brand-black">
-                  <a href="/servicos">
-                    Ver Serviços
-                  </a>
-                </Button>
-              </div>
+               <div className="flex flex-col sm:flex-row gap-4">
+                 <Button asChild size="lg" className="bg-brand-gold hover:bg-brand-gold-dark text-brand-black font-semibold group">
+                   <a href="https://wa.me/5565993535079" target="_blank" rel="noopener noreferrer" className="flex items-center gap-2">
+                     <WhatsAppIcon className="w-5 h-5 group-hover:scale-110 transition-transform" />
+                     Falar no WhatsApp
+                   </a>
+                 </Button>
+                 <Button asChild size="lg" variant="outline" className="border-brand-gold text-brand-gold hover:bg-brand-gold hover:text-brand-black transition-all duration-300">
+                   <a href="/servicos">
+                     Ver Serviços
+                   </a>
+                 </Button>
+               </div>
             </div>
             <div className="text-center animate-fade-in">
               <div className="relative">
@@ -170,18 +172,19 @@ const Index = () => {
             Entre em contato conosco e descubra como a MK Tecnologia pode transformar 
             sua empresa com soluções personalizadas e suporte especializado.
           </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Button asChild size="lg" className="bg-brand-gold hover:bg-brand-gold-dark text-brand-black font-semibold">
-              <a href="https://wa.me/5565993535079" target="_blank" rel="noopener noreferrer">
-                💬 Falar no WhatsApp
-              </a>
-            </Button>
-            <Button asChild size="lg" variant="outline" className="border-white text-white hover:bg-white hover:text-brand-black">
-              <a href="/contato">
-                📧 Solicitar Orçamento
-              </a>
-            </Button>
-          </div>
+           <div className="flex flex-col sm:flex-row gap-4 justify-center">
+             <Button asChild size="lg" className="bg-brand-gold hover:bg-brand-gold-dark text-brand-black font-semibold group">
+               <a href="https://wa.me/5565993535079" target="_blank" rel="noopener noreferrer" className="flex items-center gap-2">
+                 <WhatsAppIcon className="w-5 h-5 group-hover:scale-110 transition-transform" />
+                 Falar no WhatsApp
+               </a>
+             </Button>
+             <Button asChild size="lg" variant="outline" className="border-white text-white hover:bg-white hover:text-brand-black">
+               <a href="/contato">
+                 📧 Solicitar Orçamento
+               </a>
+             </Button>
+           </div>
         </div>
       </section>
 
