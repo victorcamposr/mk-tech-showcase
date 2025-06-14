@@ -101,3 +101,13 @@
     @apply bg-background text-foreground;
   }
 }
+
+@layer components {
+  .smooth-transition {
+    @apply transition-all duration-300 ease-in-out;
+  }
+  
+  .icon-modern {
+    @apply filter drop-shadow-sm hover:drop-shadow-md transition-all duration-300;
+  }
+}

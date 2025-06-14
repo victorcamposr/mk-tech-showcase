@@ -1,10 +1,20 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
+import { Menu, X, MessageCircle } from "lucide-react";
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isScrolled, setIsScrolled] = useState(false);
   const location = useLocation();
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 20);
+    };
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   const isActive = (path: string) => location.pathname === path;
 
@@ -18,31 +28,36 @@ const Header = () => {
   ];
 
   return (
-    <header className="bg-brand-black border-b border-brand-gold/20 sticky top-0 z-50">
+    <header className={`sticky top-0 z-50 transition-all duration-300 ${
+      isScrolled 
+        ? 'bg-brand-black/95 backdrop-blur-md border-b border-brand-gold/20 shadow-lg' 
+        : 'bg-brand-black border-b border-brand-gold/20'
+    }`}>
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
-          <Link to="/" className="flex items-center space-x-2">
+          <Link to="/" className="flex items-center space-x-2 smooth-transition hover:scale-105">
             <img 
               src="/lovable-uploads/a60d254c-a883-48c4-b073-85cb46bc5238.png" 
               alt="MK Tecnologia" 
-              className="h-12 w-auto"
+              className="h-10 w-auto icon-modern"
             />
           </Link>
 
           {/* Desktop Navigation */}
-          <nav className="hidden md:flex items-center space-x-8">
+          <nav className="hidden md:flex items-center space-x-1">
             {menuItems.map((item) => (
               <Link
                 key={item.path}
                 to={item.path}
-                className={`text-sm font-medium transition-colors hover:text-brand-gold ${
+                className={`px-4 py-2 rounded-lg text-sm font-medium smooth-transition relative overflow-hidden group ${
                   isActive(item.path) 
-                    ? "text-brand-gold" 
-                    : "text-white"
+                    ? "text-brand-gold bg-brand-gold/10" 
+                    : "text-white hover:text-brand-gold hover:bg-white/5"
                 }`}
               >
-                {item.label}
+                <span className="relative z-10">{item.label}</span>
+                <div className="absolute inset-0 bg-gradient-to-r from-brand-gold/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
               </Link>
             ))}
           </nav>
@@ -51,13 +66,15 @@ const Header = () => {
           <div className="hidden md:block">
             <Button 
               asChild
-              className="bg-brand-gold hover:bg-brand-gold-dark text-brand-black font-semibold"
+              className="bg-gradient-to-r from-brand-gold to-brand-gold-light hover:from-brand-gold-dark hover:to-brand-gold text-brand-black font-semibold smooth-transition hover:scale-105 shadow-lg hover:shadow-xl"
             >
               <a 
                 href="https://wa.me/5565993535079" 
                 target="_blank" 
                 rel="noopener noreferrer"
+                className="flex items-center gap-2"
               >
+                <MessageCircle className="h-4 w-4" />
                 WhatsApp
               </a>
             </Button>
@@ -65,31 +82,28 @@ const Header = () => {
 
           {/* Mobile menu button */}
           <button
-            className="md:hidden text-white hover:text-brand-gold"
+            className="md:hidden text-white hover:text-brand-gold smooth-transition p-2 rounded-lg hover:bg-white/5"
             onClick={() => setIsMenuOpen(!isMenuOpen)}
           >
-            <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path 
-                strokeLinecap="round" 
-                strokeLinejoin="round" 
-                strokeWidth={2} 
-                d={isMenuOpen ? "M6 18L18 6M6 6l12 12" : "M4 6h16M4 12h16M4 18h16"} 
-              />
-            </svg>
+            {isMenuOpen ? (
+              <X className="h-6 w-6" />
+            ) : (
+              <Menu className="h-6 w-6" />
+            )}
           </button>
         </div>
 
         {/* Mobile Navigation */}
         {isMenuOpen && (
-          <div className="md:hidden py-4 border-t border-brand-gold/20">
-            <div className="flex flex-col space-y-4">
+          <div className="md:hidden py-4 border-t border-brand-gold/20 bg-gradient-to-b from-transparent to-brand-black-light/20">
+            <div className="flex flex-col space-y-2">
               {menuItems.map((item) => (
                 <Link
                   key={item.path}
                   to={item.path}
-                  className={`text-sm font-medium transition-colors hover:text-brand-gold ${
+                  className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors hover:text-brand-gold hover:bg-white/5 ${
                     isActive(item.path) 
-                      ? "text-brand-gold" 
+                      ? "text-brand-gold bg-brand-gold/10" 
                       : "text-white"
                   }`}
                   onClick={() => setIsMenuOpen(false)}
@@ -97,18 +111,22 @@ const Header = () => {
                   {item.label}
                 </Link>
               ))}
-              <Button 
-                asChild
-                className="bg-brand-gold hover:bg-brand-gold-dark text-brand-black font-semibold w-fit"
-              >
-                <a 
-                  href="https://wa.me/5565993535079" 
-                  target="_blank" 
-                  rel="noopener noreferrer"
+              <div className="px-4 pt-2">
+                <Button 
+                  asChild
+                  className="bg-brand-gold hover:bg-brand-gold-dark text-brand-black font-semibold w-full"
                 >
-                  WhatsApp
-                </a>
-              </Button>
+                  <a 
+                    href="https://wa.me/5565993535079" 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-2 justify-center"
+                  >
+                    <MessageCircle className="h-4 w-4" />
+                    WhatsApp
+                  </a>
+                </Button>
+              </div>
             </div>
           </div>
         )}
