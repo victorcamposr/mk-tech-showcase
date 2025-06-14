@@ -3,6 +3,7 @@ import Footer from "@/components/Footer";
 import ServiceIcon from "@/components/ServiceIcon";
 import SimpleIcon from "@/components/SimpleIcon";
 import CheckBullet from "@/components/CheckBullet";
+import TitleWithIcon from "@/components/TitleWithIcon";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 
@@ -113,7 +114,9 @@ const Solutions = () => {
                   <CardHeader>
                     <div className="flex items-center mb-4">
                       <ServiceIcon type={solution.iconType} className="mr-4 group-hover:animate-pulse" />
-                      <CardTitle className="text-brand-black group-hover:text-brand-gold transition-colors duration-300">{solution.title}</CardTitle>
+                      <CardTitle className="text-brand-black">
+                        <TitleWithIcon>{solution.title}</TitleWithIcon>
+                      </CardTitle>
                     </div>
                     <p className="text-gray-600 group-hover:text-gray-700 transition-colors duration-300">{solution.description}</p>
                   </CardHeader>
