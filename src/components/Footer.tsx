@@ -23,7 +23,7 @@ const Footer = () => {
                 rel="noopener noreferrer"
                 className="flex items-center gap-3 text-brand-gold hover:text-brand-gold-light transition-colors group"
               >
-                <ContactIcon type="whatsapp" className="w-8 h-8" />
+                <ContactIcon type="whatsapp" className="w-5 h-5" />
                 WhatsApp
               </a>
               <a 
@@ -32,7 +32,7 @@ const Footer = () => {
                 rel="noopener noreferrer"
                 className="flex items-center gap-3 text-brand-gold hover:text-brand-gold-light transition-colors group"
               >
-                <ContactIcon type="instagram" className="w-8 h-8" />
+                <ContactIcon type="instagram" className="w-5 h-5" />
                 Instagram
               </a>
             </div>
