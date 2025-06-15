@@ -6,38 +6,44 @@ interface Testimonial {
   content: string;
   author: string;
   company: string;
+  rating: number;
 }
 
 const testimonials: Testimonial[] = [
   {
     id: 1,
-    content: "A MK Tecnologia revolucionou nosso controle de estoque. Agora temos relatórios em tempo real e nunca mais perdemos vendas por falta de produtos. O suporte é excepcional!",
-    author: "Maria Silva",
-    company: "Farmácia São José"
+    content: "A MK Tecnologia transformou nosso negócio. O sistema é intuitivo e o suporte excepcional.",
+    author: "João Silva",
+    company: "Supermercado Central",
+    rating: 5
   },
   {
     id: 2,
-    content: "O sistema de emissão fiscal automatizada nos poupou horas de trabalho diário. Agora focamos no que realmente importa: nossos clientes.",
-    author: "João Santos",
-    company: "Supermercado Central"
+    content: "Excelente solução para farmácia. O controle de medicamentos controlados facilitou muito nosso trabalho.",
+    author: "Maria Santos",
+    company: "Farmácia Vida & Saúde",
+    rating: 5
   },
   {
     id: 3,
-    content: "Profissionais competentes e solução completa. Nossa gestão financeira ficou muito mais organizada e conseguimos reduzir custos operacionais significativamente.",
-    author: "Ana Costa",
-    company: "Loja de Roupas Elegante"
+    content: "Sistema perfeito para moda. O controle de grades e relatórios são fantásticos.",
+    author: "Carlos Oliveira",
+    company: "Loja Fashion Style",
+    rating: 5
   },
   {
     id: 4,
     content: "Implementaram nosso sistema de autopeças com catálogo completo. A busca por compatibilidade de peças ficou automática e nossos vendedores são muito mais produtivos.",
-    author: "Carlos Oliveira",
-    company: "Auto Peças Rondon"
+    author: "Roberto Lima",
+    company: "Auto Peças Rondon",
+    rating: 5
   },
   {
     id: 5,
     content: "O sistema para nossa clínica médica é perfeito. Agendamento online, prontuário digital e controle de convênios tudo integrado. Recomendo para qualquer clínica.",
-    author: "Dr. Roberto Lima",
-    company: "Clínica Médica Bem Estar"
+    author: "Dr. Ana Costa",
+    company: "Clínica Médica Bem Estar",
+    rating: 5
   }
 ];
 
@@ -80,7 +86,7 @@ const TestimonialCarousel = () => {
   };
 
   return (
-    <div id="testimonials-section" className="relative max-w-4xl mx-auto">
+    <div id="testimonials-section" className="relative max-w-6xl mx-auto">
       <div className="overflow-hidden">
         <div 
           className="flex transition-transform duration-500 ease-in-out"
@@ -88,17 +94,17 @@ const TestimonialCarousel = () => {
         >
           {testimonials.map((testimonial) => (
             <div key={testimonial.id} className="w-full flex-shrink-0 px-4">
-              <Card className="border-brand-gold/20 hover:shadow-xl transition-all duration-300 bg-white/80 backdrop-blur-sm">
-                <CardContent className="p-8 text-center">
-                  <div className="text-4xl text-brand-gold mb-4">"</div>
-                  <p className="text-lg text-gray-700 mb-6 italic">
-                    "{testimonial.content}"
-                  </p>
-                  <div className="flex items-center justify-center gap-4">
-                    <div>
-                      <h4 className="font-semibold text-brand-black">{testimonial.author}</h4>
-                      <p className="text-sm text-gray-600">{testimonial.company}</p>
-                    </div>
+              <Card className="border-brand-gold/20 hover:shadow-xl transition-all duration-300 hover:scale-105 group bg-gradient-to-br from-white to-gray-50/50">
+                <CardContent className="p-8">
+                  <div className="flex mb-4">
+                    {[...Array(testimonial.rating)].map((_, i) => (
+                      <span key={i} className="text-brand-gold text-xl group-hover:animate-pulse">⭐</span>
+                    ))}
+                  </div>
+                  <p className="text-gray-600 mb-4 italic group-hover:text-gray-700 transition-colors">"{testimonial.content}"</p>
+                  <div>
+                    <div className="font-semibold text-brand-black group-hover:text-brand-gold transition-colors">{testimonial.author}</div>
+                    <div className="text-sm text-gray-500">{testimonial.company}</div>
                   </div>
                 </CardContent>
               </Card>
