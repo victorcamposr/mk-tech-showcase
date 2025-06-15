@@ -9,8 +9,17 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
+import { useState } from "react";
 
 const Contact = () => {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsModalOpen(true);
+  };
+
   const contactInfo = [
     {
       iconType: "whatsapp" as const,
@@ -134,19 +143,19 @@ const Contact = () => {
                   <CardTitle className="text-base text-brand-black">Envie sua Mensagem</CardTitle>
                 </CardHeader>
                 <CardContent className="p-4 pt-0">
-                  <form className="space-y-6">
+                  <form className="space-y-6" onSubmit={handleSubmit}>
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       <div>
                         <label className="block text-sm font-medium text-brand-black mb-2">
                           Nome *
                         </label>
-                        <Input placeholder="Seu nome completo" className="border-brand-gold/20 focus:border-brand-gold transition-colors" />
+                        <Input placeholder="Seu nome completo" className="border-brand-gold/20 focus:border-brand-gold focus:ring-1 focus:ring-brand-gold/30 transition-all duration-200" />
                       </div>
                       <div>
                         <label className="block text-sm font-medium text-brand-black mb-2">
                           Empresa
                         </label>
-                        <Input placeholder="Nome da sua empresa" className="border-brand-gold/20 focus:border-brand-gold transition-colors" />
+                        <Input placeholder="Nome da sua empresa" className="border-brand-gold/20 focus:border-brand-gold focus:ring-1 focus:ring-brand-gold/30 transition-all duration-200" />
                       </div>
                     </div>
                     
@@ -155,13 +164,13 @@ const Contact = () => {
                         <label className="block text-sm font-medium text-brand-black mb-2">
                           E-mail *
                         </label>
-                        <Input type="email" placeholder="seu@email.com" className="border-brand-gold/20 focus:border-brand-gold transition-colors" />
+                        <Input type="email" placeholder="seu@email.com" className="border-brand-gold/20 focus:border-brand-gold focus:ring-1 focus:ring-brand-gold/30 transition-all duration-200" />
                       </div>
                       <div>
                         <label className="block text-sm font-medium text-brand-black mb-2">
                           Telefone *
                         </label>
-                        <Input placeholder="(65) 99999-9999" className="border-brand-gold/20 focus:border-brand-gold transition-colors" />
+                        <Input placeholder="(65) 99999-9999" className="border-brand-gold/20 focus:border-brand-gold focus:ring-1 focus:ring-brand-gold/30 transition-all duration-200" />
                       </div>
                     </div>
 
@@ -169,7 +178,7 @@ const Contact = () => {
                       <label className="block text-sm font-medium text-brand-black mb-2">
                         Assunto *
                       </label>
-                      <Input placeholder="Como podemos ajudar?" className="border-brand-gold/20 focus:border-brand-gold transition-colors" />
+                      <Input placeholder="Como podemos ajudar?" className="border-brand-gold/20 focus:border-brand-gold focus:ring-1 focus:ring-brand-gold/30 transition-all duration-200" />
                     </div>
 
                     <div>
@@ -178,7 +187,7 @@ const Contact = () => {
                       </label>
                       <Textarea 
                         placeholder="Descreva suas necessidades ou dúvidas..."
-                        className="border-brand-gold/20 focus:border-brand-gold transition-colors min-h-[120px]"
+                        className="border-brand-gold/20 focus:border-brand-gold focus:ring-1 focus:ring-brand-gold/30 transition-all duration-200 min-h-[120px]"
                       />
                     </div>
 
@@ -261,6 +270,43 @@ const Contact = () => {
       </main>
 
       <Footer />
+
+      {/* Modal de Confirmação */}
+      <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
+        <DialogContent className="max-w-md mx-auto bg-white border-brand-gold/20 shadow-2xl">
+          <DialogHeader className="text-center">
+            <div className="mx-auto mb-4 w-16 h-16 bg-gradient-to-br from-brand-gold/20 to-brand-gold/30 rounded-full flex items-center justify-center">
+              <svg className="w-8 h-8 text-brand-gold" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+              </svg>
+            </div>
+            <DialogTitle className="text-xl font-semibold text-brand-black">
+              Mensagem Enviada!
+            </DialogTitle>
+            <DialogDescription className="text-gray-600 mt-2">
+              Recebemos sua mensagem e entraremos em contato em breve. Você também pode nos chamar diretamente no WhatsApp para um atendimento mais rápido.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="flex flex-col gap-3 mt-6">
+            <Button 
+              onClick={() => setIsModalOpen(false)}
+              className="w-full bg-brand-gold hover:bg-brand-gold-dark text-brand-black font-semibold transition-all duration-300"
+            >
+              Entendi
+            </Button>
+            <Button 
+              asChild
+              variant="outline"
+              className="w-full border-brand-gold/20 hover:bg-brand-gold/5 text-brand-black transition-all duration-300"
+            >
+              <a href="https://wa.me/5565993535079" target="_blank" rel="noopener noreferrer" className="flex items-center gap-2">
+                <SimpleIcon type="whatsapp-black" className="w-4 h-4" />
+                Abrir WhatsApp
+              </a>
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
