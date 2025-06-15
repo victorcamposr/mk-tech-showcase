@@ -16,24 +16,28 @@ const Footer = () => {
               Especialistas em automação comercial, oferecendo soluções completas para 
               controle de estoque, emissão fiscal e gestão empresarial.
             </p>
-            <div className="flex space-x-4">
+            <div className="flex space-x-6">
               <a 
                 href="https://wa.me/5565993535079" 
                 target="_blank" 
                 rel="noopener noreferrer"
-                className="flex items-center gap-3 text-brand-gold hover:text-brand-gold-light transition-colors group"
+                className="flex items-center gap-2 text-brand-gold hover:text-brand-gold-light transition-colors group"
               >
-                <ContactIcon type="whatsapp" className="w-4 h-4" />
-                WhatsApp
+                <div className="w-4 h-4 flex-shrink-0">
+                  <ContactIcon type="whatsapp" />
+                </div>
+                <span>WhatsApp</span>
               </a>
               <a 
                 href="https://instagram.com/mktecnologiaoficial" 
                 target="_blank" 
                 rel="noopener noreferrer"
-                className="flex items-center gap-3 text-brand-gold hover:text-brand-gold-light transition-colors group"
+                className="flex items-center gap-2 text-brand-gold hover:text-brand-gold-light transition-colors group"
               >
-                <ContactIcon type="instagram" className="w-4 h-4" />
-                Instagram
+                <div className="w-4 h-4 flex-shrink-0">
+                  <ContactIcon type="instagram" />
+                </div>
+                <span>Instagram</span>
               </a>
             </div>
           </div>
@@ -58,10 +62,7 @@ const Footer = () => {
                 <div className="w-6 h-6 flex-shrink-0">
                   <ContactIcon type="location" />
                 </div>
-                <div className="leading-tight">
-                  <p>Av Marechal Rondon, 1512</p>
-                  <p>Pontes e Lacerda/MT</p>
-                </div>
+                <span>Av Marechal Rondon, 1512 - Pontes e Lacerda/MT</span>
               </div>
             </div>
           </div>
