@@ -3,6 +3,7 @@ import Footer from "@/components/Footer";
 import ModernIcon from "@/components/ModernIcon";
 import CountUpNumber from "@/components/CountUpNumber";
 import SimpleIcon from "@/components/SimpleIcon";
+import TypewriterText from "@/components/TypewriterText";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 
@@ -41,7 +42,13 @@ const Index = () => {
             <div>
               <h1 className="text-4xl md:text-6xl font-bold mb-6">
                 Transforme seu Negócio com 
-                <span className="text-brand-gold block">Automação Comercial</span>
+                <span className="text-brand-gold block">
+                  <TypewriterText 
+                    texts={["Automação Comercial"]}
+                    speed={120}
+                    pauseDuration={3000}
+                  />
+                </span>
               </h1>
               <p className="text-xl text-gray-300 mb-8 max-w-lg">
                 Soluções completas em tecnologia para controle de estoque, emissão fiscal 
