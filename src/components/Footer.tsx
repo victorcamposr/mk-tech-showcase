@@ -54,8 +54,8 @@ const Footer = () => {
                 </div>
                 <span>mktecnologiaoficial@gmail.com</span>
               </div>
-              <div className="flex items-start gap-8">
-                <div className="w-6 h-6 flex-shrink-0 mt-1">
+              <div className="flex items-center gap-8">
+                <div className="w-6 h-6 flex-shrink-0">
                   <ContactIcon type="location" />
                 </div>
                 <div>
