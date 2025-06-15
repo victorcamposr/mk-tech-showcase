@@ -144,16 +144,16 @@ const Contact = () => {
                   </div>
                 </CardHeader>
                 <CardContent className="p-4 pt-0">
-                  <div className="space-y-2 text-gray-600 text-sm">
-                    <div className="flex justify-between">
+                  <div className="space-y-3 text-gray-600 text-sm">
+                    <div className="flex justify-between items-center">
                       <span>Segunda a Sexta:</span>
                       <span className="font-medium">08:00 - 18:00</span>
                     </div>
-                    <div className="flex justify-between">
+                    <div className="flex justify-between items-center">
                       <span>Sábado:</span>
                       <span className="font-medium">08:00 - 12:00</span>
                     </div>
-                    <div className="flex justify-between">
+                    <div className="flex justify-between items-center">
                       <span>Domingo:</span>
                       <span className="font-medium">Fechado</span>
                     </div>
@@ -326,7 +326,7 @@ const Contact = () => {
 
       {/* Modal de Confirmação */}
       <Dialog open={isModalOpen} onOpenChange={handleModalClose}>
-        <DialogContent className="sm:max-w-md bg-white border-brand-gold/20 shadow-2xl fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+        <DialogContent className="sm:max-w-md bg-white border-brand-gold/20 shadow-2xl">
           <DialogHeader className="text-center">
             <div className="mx-auto mb-4 w-16 h-16 bg-gradient-to-br from-brand-gold/20 to-brand-gold/30 rounded-full flex items-center justify-center">
               <svg className="w-8 h-8 text-brand-gold" fill="none" stroke="currentColor" viewBox="0 0 24 24">
