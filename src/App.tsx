@@ -23,7 +23,7 @@ const App = () => (
         <PerformanceOptimizer />
         <Toaster />
         <Sonner />
-        <BrowserRouter>
+        <BrowserRouter future={{ v7_startTransition: true }}>
           <ScrollToTop />
           <Routes>
           <Route path="/" element={<Index />} />
