@@ -89,9 +89,11 @@ const About = () => {
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
               {differentials.map((differential, index) => (
-                <Card key={index} className="border-brand-gold/20 hover:shadow-2xl hover:shadow-brand-gold/10 transition-all duration-500 hover:-translate-y-3 hover:scale-105 group bg-gradient-to-br from-white to-gray-50/50 backdrop-blur-sm">
+                 <Card key={index} className="border-brand-gold/20 hover:shadow-2xl hover:shadow-brand-gold/10 transition-all duration-500 hover:-translate-y-3 hover:scale-105 group bg-gradient-to-br from-white to-gray-50/50 backdrop-blur-sm">
                    <CardContent className="p-6 text-center">
-                     <ServiceIcon type={differential.iconType} className="mb-4 group-hover:animate-pulse" />
+                     <div className="flex justify-center mb-4">
+                       <ServiceIcon type={differential.iconType} className="group-hover:animate-pulse" />
+                     </div>
                      <h3 className="text-lg font-semibold text-brand-black mb-3 group-hover:text-brand-gold transition-colors duration-300">{differential.title}</h3>
                     <p className="text-gray-600 group-hover:text-gray-700 transition-colors duration-300">
                       {differential.description}
