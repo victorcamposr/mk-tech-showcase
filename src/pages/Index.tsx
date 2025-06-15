@@ -4,6 +4,9 @@ import ModernIcon from "@/components/ModernIcon";
 import CountUpNumber from "@/components/CountUpNumber";
 import SimpleIcon from "@/components/SimpleIcon";
 import TypewriterText from "@/components/TypewriterText";
+import SEO from "@/components/SEO";
+import StructuredData from "@/components/StructuredData";
+import LazyImage from "@/components/LazyImage";
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -34,6 +37,13 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-background">
+      <SEO 
+        title="Automação Comercial em Pontes e Lacerda"
+        description="Especialistas em automação comercial, sistemas PDV, controle de estoque e emissão fiscal em Pontes e Lacerda, MT. Soluções tecnológicas completas para empresas de todos os segmentos com suporte 24/7."
+        keywords="automação comercial, sistema PDV, controle estoque, emissão fiscal, NFe, NFCe, Pontes e Lacerda, Mato Grosso, tecnologia empresarial, gestão comercial, software empresarial"
+      />
+      <StructuredData type="localBusiness" />
+      <StructuredData type="organization" />
       <Header />
       
       {/* Hero Section */}
@@ -72,10 +82,13 @@ const Index = () => {
             <div className="text-center animate-fade-in">
               <div className="relative">
                 <div className="absolute inset-0 bg-gradient-to-r from-brand-gold/20 to-transparent rounded-full blur-3xl animate-pulse"></div>
-                <img 
+                <LazyImage 
                   src="/lovable-uploads/894786af-af73-492e-ae6a-d8a39e0ac4cb.png" 
-                  alt="MK Tecnologia" 
+                  alt="MK Tecnologia - Especialistas em Automação Comercial em Pontes e Lacerda, MT"
                   className="w-80 h-auto mx-auto relative z-10 hover:scale-105 transition-transform duration-500"
+                  width={320}
+                  height={320}
+                  loading="eager"
                 />
               </div>
             </div>

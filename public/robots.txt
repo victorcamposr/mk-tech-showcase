@@ -1,3 +1,11 @@
+User-agent: *
+Allow: /
+
+# Disallow admin or private areas (if any)
+Disallow: /admin/
+Disallow: /private/
+
+# Allow important crawlers
 User-agent: Googlebot
 Allow: /
 
@@ -10,5 +18,8 @@ Allow: /
 User-agent: facebookexternalhit
 Allow: /
 
-User-agent: *
-Allow: /
+# Sitemap location
+Sitemap: https://mktecnologia.lovable.app/sitemap.xml
+
+# Crawl-delay for general bots
+Crawl-delay: 1

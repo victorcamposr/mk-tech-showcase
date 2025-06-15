@@ -2,6 +2,8 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import ServiceIcon from "@/components/ServiceIcon";
 import SimpleIcon from "@/components/SimpleIcon";
+import SEO from "@/components/SEO";
+import StructuredData from "@/components/StructuredData";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 
@@ -70,6 +72,20 @@ const Services = () => {
 
   return (
     <div className="min-h-screen bg-background">
+      <SEO 
+        title="Serviços de Automação Comercial"
+        description="Descubra nossos serviços completos de automação comercial: PDV, controle de estoque, emissão fiscal, gestão financeira e suporte técnico especializado em Pontes e Lacerda, MT."
+        keywords="serviços automação comercial, PDV, controle estoque, emissão fiscal, NFe, NFCe, gestão financeira, suporte técnico, Pontes e Lacerda"
+      />
+      <StructuredData 
+        type="breadcrumb" 
+        data={{
+          items: [
+            { name: "Início", url: "/" },
+            { name: "Serviços", url: "/servicos" }
+          ]
+        }}
+      />
       <Header />
       
       <main className="py-20">

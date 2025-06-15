@@ -2,6 +2,8 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import ServiceIcon from "@/components/ServiceIcon";
 import SimpleIcon from "@/components/SimpleIcon";
+import SEO from "@/components/SEO";
+import StructuredData from "@/components/StructuredData";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 
@@ -26,6 +28,20 @@ const About = () => {
 
   return (
     <div className="min-h-screen bg-background">
+      <SEO 
+        title="Sobre a MK Tecnologia"
+        description="Conheça a história da MK Tecnologia, empresa especializada em automação comercial em Pontes e Lacerda, MT. Nossos valores, missão e diferenciais que fazem de nós referência em tecnologia empresarial."
+        keywords="sobre MK Tecnologia, empresa automação comercial, história empresa, valores, missão, Pontes e Lacerda, tecnologia empresarial MT"
+      />
+      <StructuredData 
+        type="breadcrumb" 
+        data={{
+          items: [
+            { name: "Início", url: "/" },
+            { name: "Sobre", url: "/sobre" }
+          ]
+        }}
+      />
       <Header />
       
       <main className="py-20">

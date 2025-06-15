@@ -4,6 +4,8 @@ import ServiceIcon from "@/components/ServiceIcon";
 import SimpleIcon from "@/components/SimpleIcon";
 import CheckBullet from "@/components/CheckBullet";
 import TitleWithIcon from "@/components/TitleWithIcon";
+import SEO from "@/components/SEO";
+import StructuredData from "@/components/StructuredData";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 
@@ -76,6 +78,20 @@ const Solutions = () => {
 
   return (
     <div className="min-h-screen bg-background">
+      <SEO 
+        title="Soluções em Automação Comercial"
+        description="Conheça nossas soluções completas: PDV, gestão de estoque inteligente, emissão fiscal e gestão financeira. Tecnologia de ponta para todos os segmentos empresariais em Pontes e Lacerda, MT."
+        keywords="soluções automação comercial, PDV completo, gestão estoque inteligente, emissão fiscal, gestão financeira, tecnologia empresarial, Pontes e Lacerda"
+      />
+      <StructuredData 
+        type="breadcrumb" 
+        data={{
+          items: [
+            { name: "Início", url: "/" },
+            { name: "Soluções", url: "/solucoes" }
+          ]
+        }}
+      />
       <Header />
       
       <main className="py-20">

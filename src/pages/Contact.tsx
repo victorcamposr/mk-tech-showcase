@@ -2,6 +2,8 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import ContactIcon from "@/components/ContactIcon";
 import SimpleIcon from "@/components/SimpleIcon";
+import SEO from "@/components/SEO";
+import StructuredData from "@/components/StructuredData";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -31,6 +33,20 @@ const Contact = () => {
 
   return (
     <div className="min-h-screen bg-background">
+      <SEO 
+        title="Entre em Contato"
+        description="Fale conosco para solicitar orçamento ou tirar dúvidas sobre automação comercial. WhatsApp: (65) 99353-5079. Atendemos Pontes e Lacerda e região com suporte especializado."
+        keywords="contato MK Tecnologia, orçamento automação comercial, WhatsApp, telefone, endereço Pontes e Lacerda, atendimento"
+      />
+      <StructuredData 
+        type="breadcrumb" 
+        data={{
+          items: [
+            { name: "Início", url: "/" },
+            { name: "Contato", url: "/contato" }
+          ]
+        }}
+      />
       <Header />
       
       <main className="py-20">

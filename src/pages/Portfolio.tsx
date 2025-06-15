@@ -3,6 +3,8 @@ import Footer from "@/components/Footer";
 import CountUpNumber from "@/components/CountUpNumber";
 import SimpleIcon from "@/components/SimpleIcon";
 import TestimonialCarousel from "@/components/TestimonialCarousel";
+import SEO from "@/components/SEO";
+import StructuredData from "@/components/StructuredData";
 import { Card, CardContent } from "@/components/ui/card";
 
 const Portfolio = () => {
@@ -54,6 +56,20 @@ const Portfolio = () => {
 
   return (
     <div className="min-h-screen bg-background">
+      <SEO 
+        title="Portfólio de Projetos"
+        description="Conheça nossos projetos de automação comercial em Pontes e Lacerda. Mais de 100 empresas atendidas em 15+ segmentos com soluções personalizadas e resultados comprovados."
+        keywords="projetos automação comercial, cases de sucesso, clientes MK Tecnologia, portfólio tecnologia empresarial, Pontes e Lacerda"
+      />
+      <StructuredData 
+        type="breadcrumb" 
+        data={{
+          items: [
+            { name: "Início", url: "/" },
+            { name: "Portfólio", url: "/portfolio" }
+          ]
+        }}
+      />
       <Header />
       
       <main className="py-20">
