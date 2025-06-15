@@ -1,3 +1,5 @@
+import ContactIcon from "@/components/ContactIcon";
+
 const Footer = () => {
   return (
     <footer className="bg-brand-black text-white">
@@ -37,11 +39,22 @@ const Footer = () => {
           {/* Contato */}
           <div>
             <h3 className="text-brand-gold font-semibold mb-4">Contato</h3>
-            <div className="space-y-2 text-gray-300">
-              <p>📱 (65) 99353-5079</p>
-              <p>✉️ mktecnologiaoficial@gmail.com</p>
-              <p>📍 Av Marechal Rondon, 1512</p>
-              <p>Pontes e Lacerda/MT</p>
+            <div className="space-y-3 text-gray-300">
+              <div className="flex items-center gap-3">
+                <ContactIcon type="phone" className="w-6 h-6" />
+                <span>(65) 99353-5079</span>
+              </div>
+              <div className="flex items-center gap-3">
+                <ContactIcon type="email" className="w-6 h-6" />
+                <span>mktecnologiaoficial@gmail.com</span>
+              </div>
+              <div className="flex items-start gap-3">
+                <ContactIcon type="location" className="w-6 h-6 mt-1" />
+                <div>
+                  <p>Av Marechal Rondon, 1512</p>
+                  <p>Pontes e Lacerda/MT</p>
+                </div>
+              </div>
             </div>
           </div>
 
