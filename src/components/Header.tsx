@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Menu, X, MessageCircle } from "lucide-react";
-import LazyImage from "@/components/LazyImage";
+import CriticalImage from "@/components/CriticalImage";
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -38,12 +38,10 @@ const Header = () => {
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
           <Link to="/" className="flex items-center space-x-2 smooth-transition hover:scale-105">
-            <LazyImage 
+            <CriticalImage 
               src="/lovable-uploads/894786af-af73-492e-ae6a-d8a39e0ac4cb.png" 
               alt="MK Tecnologia" 
               className="h-10 w-auto icon-modern"
-              loading="eager"
-              placeholder="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA0MCA0MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjQwIiBoZWlnaHQ9IjQwIiBmaWxsPSIjRjU5RTBCIiByeD0iNCIvPgo8L3N2Zz4K"
               width={40}
               height={40}
             />

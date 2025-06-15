@@ -5,6 +5,7 @@ import SimpleIcon from "@/components/SimpleIcon";
 import TestimonialCarousel from "@/components/TestimonialCarousel";
 import SEO from "@/components/SEO";
 import StructuredData from "@/components/StructuredData";
+import { ScrollReveal } from "@/components/ScrollReveal";
 import { Card, CardContent } from "@/components/ui/card";
 
 const Portfolio = () => {
@@ -75,7 +76,8 @@ const Portfolio = () => {
       <main className="py-20">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           {/* Hero Section */}
-          <div className="text-center mb-16 animate-fade-in">
+          <ScrollReveal animation="fade-in">
+            <div className="text-center mb-16">
             <h1 className="text-4xl md:text-6xl font-bold text-brand-black mb-6">
               Nosso <span className="text-brand-gold">Portfólio</span>
             </h1>
@@ -83,9 +85,11 @@ const Portfolio = () => {
               Conheça alguns dos projetos que transformaram negócios em Pontes e Lacerda e região
             </p>
           </div>
+        </ScrollReveal>
 
           {/* Estatísticas com efeito crescente */}
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-16">
+          <ScrollReveal animation="fade-up" delay={100}>
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-16">
             <div className="text-center p-6 bg-gradient-to-br from-brand-gold/10 to-brand-gold/20 rounded-2xl hover:shadow-xl transition-all duration-300 hover:scale-105">
               <div className="text-4xl font-bold text-brand-gold mb-2">
                 <CountUpNumber end={100} suffix="+" className="block" />
@@ -108,10 +112,12 @@ const Portfolio = () => {
               <div className="text-4xl font-bold text-brand-gold mb-2">24/7</div>
               <div className="text-gray-600 font-medium">Suporte Disponível</div>
             </div>
-          </div>
+            </div>
+          </ScrollReveal>
 
           {/* Projetos */}
-          <div className="mb-16">
+          <ScrollReveal animation="fade-up" delay={200}>
+            <div className="mb-16">
             <h2 className="text-3xl font-bold text-brand-black text-center mb-12">
               Projetos em Destaque
             </h2>
@@ -136,33 +142,38 @@ const Portfolio = () => {
                     </div>
                   </CardContent>
                 </Card>
-              ))}
+                ))}
             </div>
-          </div>
+            </div>
+          </ScrollReveal>
 
           {/* Depoimentos */}
-          <div className="mb-16">
+          <ScrollReveal animation="fade-up" delay={300}>
+            <div className="mb-16">
             <h2 className="text-3xl font-bold text-brand-black text-center mb-12">
               O que Nossos Clientes Dizem
             </h2>
             <TestimonialCarousel />
-          </div>
+            </div>
+          </ScrollReveal>
 
           {/* CTA */}
-          <div className="text-center bg-gradient-to-r from-brand-black to-brand-black-light rounded-2xl p-12 backdrop-blur-sm">
-            <h2 className="text-3xl font-bold text-white mb-4">
-              Seu Negócio Pode Ser o Próximo Sucesso
-            </h2>
-            <p className="text-gray-300 mb-8 max-w-2xl mx-auto">
-              Entre em contato conosco e vamos criar uma solução personalizada para transformar sua empresa.
-            </p>
-            <div className="bg-brand-gold hover:bg-brand-gold-dark text-brand-black font-semibold px-8 py-3 rounded-lg transition-colors group inline-flex items-center gap-2">
-              <a href="https://wa.me/5565993535079" target="_blank" rel="noopener noreferrer" className="flex items-center gap-2">
-                <SimpleIcon type="whatsapp-black" className="w-5 h-5 group-hover:scale-110 transition-transform" />
-                Quero Meu Projeto
-              </a>
+          <ScrollReveal animation="fade-up" delay={400}>
+            <div className="text-center bg-gradient-to-r from-brand-black to-brand-black-light rounded-2xl p-12 backdrop-blur-sm">
+              <h2 className="text-3xl font-bold text-white mb-4">
+                Seu Negócio Pode Ser o Próximo Sucesso
+              </h2>
+              <p className="text-gray-300 mb-8 max-w-2xl mx-auto">
+                Entre em contato conosco e vamos criar uma solução personalizada para transformar sua empresa.
+              </p>
+              <div className="bg-brand-gold hover:bg-brand-gold-dark text-brand-black font-semibold px-8 py-3 rounded-lg transition-colors group inline-flex items-center gap-2">
+                <a href="https://wa.me/5565993535079" target="_blank" rel="noopener noreferrer" className="flex items-center gap-2">
+                  <SimpleIcon type="whatsapp-black" className="w-5 h-5 group-hover:scale-110 transition-transform" />
+                  Quero Meu Projeto
+                </a>
+              </div>
             </div>
-          </div>
+          </ScrollReveal>
         </div>
       </main>
 

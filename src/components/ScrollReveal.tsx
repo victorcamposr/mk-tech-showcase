@@ -15,7 +15,7 @@ export const ScrollReveal = ({
   children,
   animation = 'fade-up',
   delay = 0,
-  duration = 600,
+  duration = 300,
   className = '',
   once = true,
   threshold = 0.1,
@@ -26,13 +26,13 @@ export const ScrollReveal = ({
     if (!isVisible) {
       switch (animation) {
         case 'fade-up':
-          return 'opacity-0 translate-y-8';
+          return 'opacity-0 translate-y-4';
         case 'fade-down':
-          return 'opacity-0 -translate-y-8';
+          return 'opacity-0 -translate-y-4';
         case 'fade-left':
-          return 'opacity-0 translate-x-8';
+          return 'opacity-0 translate-x-4';
         case 'fade-right':
-          return 'opacity-0 -translate-x-8';
+          return 'opacity-0 -translate-x-4';
         case 'scale-up':
           return 'opacity-0 scale-95';
         case 'fade-in':

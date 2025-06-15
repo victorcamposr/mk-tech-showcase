@@ -4,6 +4,7 @@ import ContactIcon from "@/components/ContactIcon";
 import SimpleIcon from "@/components/SimpleIcon";
 import SEO from "@/components/SEO";
 import StructuredData from "@/components/StructuredData";
+import { ScrollReveal } from "@/components/ScrollReveal";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -52,7 +53,8 @@ const Contact = () => {
       <main className="py-20">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           {/* Hero Section */}
-          <div className="text-center mb-16 animate-fade-in">
+          <ScrollReveal animation="fade-in">
+            <div className="text-center mb-16">
             <h1 className="text-4xl md:text-6xl font-bold text-brand-black mb-6">
               Entre em <span className="text-brand-gold">Contato</span>
             </h1>
@@ -60,10 +62,12 @@ const Contact = () => {
               Estamos prontos para atender você e transformar seu negócio
             </p>
           </div>
+        </ScrollReveal>
 
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
-            {/* Informações de Contato */}
-            <div>
+          <ScrollReveal animation="fade-up" delay={100}>
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
+              {/* Informações de Contato */}
+              <div>
               <h2 className="text-3xl font-bold text-brand-black mb-8">
                 Fale Conosco
               </h2>
@@ -200,10 +204,12 @@ const Contact = () => {
                 </CardContent>
               </Card>
             </div>
-          </div>
+            </div>
+          </ScrollReveal>
 
           {/* Localização */}
-          <div className="mt-16">
+          <ScrollReveal animation="fade-up" delay={200}>
+            <div className="mt-16">
             <h2 className="text-3xl font-bold text-brand-black text-center mb-8">
               Nossa Localização
             </h2>
@@ -249,7 +255,8 @@ const Contact = () => {
                 </div>
               </div>
             </div>
-          </div>
+            </div>
+          </ScrollReveal>
         </div>
       </main>
 

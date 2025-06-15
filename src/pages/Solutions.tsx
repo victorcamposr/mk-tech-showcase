@@ -6,6 +6,7 @@ import CheckBullet from "@/components/CheckBullet";
 import TitleWithIcon from "@/components/TitleWithIcon";
 import SEO from "@/components/SEO";
 import StructuredData from "@/components/StructuredData";
+import { ScrollReveal } from "@/components/ScrollReveal";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 
@@ -97,7 +98,8 @@ const Solutions = () => {
       <main className="py-20">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           {/* Hero Section */}
-          <div className="text-center mb-16 animate-fade-in">
+          <ScrollReveal animation="fade-in">
+            <div className="text-center mb-16">
             <h1 className="text-4xl md:text-6xl font-bold text-brand-black mb-6">
               Nossas <span className="text-brand-gold">Soluções</span>
             </h1>
@@ -105,9 +107,11 @@ const Solutions = () => {
               Tecnologia de ponta para transformar e automatizar seu negócio
             </p>
           </div>
+        </ScrollReveal>
 
           {/* Benefícios */}
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-16">
+          <ScrollReveal animation="fade-up" delay={100}>
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-16">
             {benefits.map((benefit, index) => (
               <Card key={index} className="border-brand-gold/20 hover:shadow-2xl hover:shadow-brand-gold/10 transition-all duration-500 hover:-translate-y-3 hover:scale-105 group bg-gradient-to-br from-white to-gray-50/50 backdrop-blur-sm text-center">
                 <CardContent className="p-8">
@@ -119,10 +123,12 @@ const Solutions = () => {
                 </CardContent>
               </Card>
             ))}
-          </div>
+            </div>
+          </ScrollReveal>
 
           {/* Soluções */}
-          <div className="mb-16">
+          <ScrollReveal animation="fade-up" delay={200}>
+            <div className="mb-16">
             <h2 className="text-3xl font-bold text-brand-black text-center mb-12">
               Soluções Completas por Segmento
             </h2>
@@ -158,12 +164,14 @@ const Solutions = () => {
                     </div>
                   </CardContent>
                 </Card>
-              ))}
+                ))}
             </div>
-          </div>
+            </div>
+          </ScrollReveal>
 
           {/* CTA */}
-          <div className="text-center bg-gradient-to-r from-brand-black to-brand-black-light rounded-2xl p-12 backdrop-blur-sm">
+          <ScrollReveal animation="fade-up" delay={300}>
+            <div className="text-center bg-gradient-to-r from-brand-black to-brand-black-light rounded-2xl p-12 backdrop-blur-sm">
             <h2 className="text-3xl font-bold text-white mb-4">
               Pronto para Automatizar seu Negócio?
             </h2>
@@ -176,7 +184,8 @@ const Solutions = () => {
                 Falar no WhatsApp
               </a>
             </Button>
-          </div>
+            </div>
+          </ScrollReveal>
         </div>
       </main>
 

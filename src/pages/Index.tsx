@@ -7,6 +7,7 @@ import TypewriterText from "@/components/TypewriterText";
 import SEO from "@/components/SEO";
 import StructuredData from "@/components/StructuredData";
 import LazyImage from "@/components/LazyImage";
+import CriticalImage from "@/components/CriticalImage";
 import { ScrollReveal } from "@/components/ScrollReveal";
 
 import { Button } from "@/components/ui/button";
@@ -84,13 +85,12 @@ const Index = () => {
               <div className="text-center animate-fade-in">
                 <div className="relative">
                   <div className="absolute inset-0 bg-gradient-to-r from-brand-gold/20 to-transparent rounded-full blur-3xl animate-pulse"></div>
-                  <LazyImage 
+                  <CriticalImage 
                     src="/lovable-uploads/894786af-af73-492e-ae6a-d8a39e0ac4cb.png" 
                     alt="MK Tecnologia - Especialistas em Automação Comercial em Pontes e Lacerda, MT"
                     className="w-80 h-auto mx-auto relative z-10 hover:scale-105 transition-transform duration-500"
                     width={320}
                     height={320}
-                    loading="eager"
                   />
                 </div>
               </div>
@@ -100,7 +100,7 @@ const Index = () => {
       </ScrollReveal>
 
       {/* Services Section */}
-      <ScrollReveal animation="fade-up" delay={200}>
+      <ScrollReveal animation="fade-up" delay={100}>
         <section className="py-20">
           <div className="container mx-auto px-4 sm:px-6 lg:px-8">
             <div className="text-center mb-16">
@@ -128,7 +128,7 @@ const Index = () => {
       </ScrollReveal>
 
       {/* About Section */}
-      <ScrollReveal animation="fade-up" delay={400}>
+      <ScrollReveal animation="fade-up" delay={200}>
         <section className="py-20 bg-gray-50">
           <div className="container mx-auto px-4 sm:px-6 lg:px-8">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
@@ -191,7 +191,7 @@ const Index = () => {
       </ScrollReveal>
 
       {/* CTA Section */}
-      <ScrollReveal animation="fade-up" delay={600}>
+      <ScrollReveal animation="fade-up" delay={300}>
         <section className="py-20 bg-gradient-to-r from-brand-black to-brand-black-light">
           <div className="container mx-auto px-4 sm:px-6 lg:px-8 text-center">
             <h2 className="text-3xl md:text-5xl font-bold text-white mb-6">

@@ -4,6 +4,7 @@ import ServiceIcon from "@/components/ServiceIcon";
 import SimpleIcon from "@/components/SimpleIcon";
 import SEO from "@/components/SEO";
 import StructuredData from "@/components/StructuredData";
+import { ScrollReveal } from "@/components/ScrollReveal";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 
@@ -47,7 +48,8 @@ const About = () => {
       <main className="py-20">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           {/* Hero Section */}
-          <div className="text-center mb-16 animate-fade-in">
+          <ScrollReveal animation="fade-in">
+            <div className="text-center mb-16">
             <h1 className="text-4xl md:text-6xl font-bold text-brand-black mb-6">
               Sobre a <span className="text-brand-gold">MK Tecnologia</span>
             </h1>
@@ -55,10 +57,12 @@ const About = () => {
               Inovação e excelência em automação comercial desde nossa fundação
             </p>
           </div>
+        </ScrollReveal>
 
           {/* História */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 mb-16">
-            <div className="animate-fade-in">
+          <ScrollReveal animation="fade-up" delay={100}>
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 mb-16">
+              <div>
               <h2 className="text-3xl font-bold text-brand-black mb-6">Nossa História</h2>
               <p className="text-gray-600 mb-4">
                 A MK Tecnologia nasceu da visão de transformar a gestão empresarial através 
@@ -75,7 +79,7 @@ const About = () => {
                 da tecnologia, proporcionando eficiência, controle e crescimento sustentável.
               </p>
             </div>
-            <div className="bg-gradient-to-br from-brand-gold/10 to-brand-black/5 rounded-2xl p-8 backdrop-blur-sm animate-fade-in hover:shadow-xl transition-all duration-500">
+            <div className="bg-gradient-to-br from-brand-gold/10 to-brand-black/5 rounded-2xl p-8 backdrop-blur-sm hover:shadow-xl transition-all duration-500">
               <h3 className="text-2xl font-bold text-brand-black mb-4">Nossos Valores</h3>
               <ul className="space-y-3">
                 <li className="flex items-start group">
@@ -96,10 +100,12 @@ const About = () => {
                 </li>
               </ul>
             </div>
-          </div>
+            </div>
+          </ScrollReveal>
 
           {/* Diferenciais */}
-          <div className="mb-16">
+          <ScrollReveal animation="fade-up" delay={200}>
+            <div className="mb-16">
             <h2 className="text-3xl font-bold text-brand-black text-center mb-12">
               Nossos Diferenciais
             </h2>
@@ -116,12 +122,14 @@ const About = () => {
                     </p>
                   </CardContent>
                 </Card>
-              ))}
+                ))}
             </div>
-          </div>
+            </div>
+          </ScrollReveal>
 
           {/* CTA */}
-          <div className="text-center bg-gradient-to-r from-brand-black to-brand-black-light rounded-2xl p-12 backdrop-blur-sm">
+          <ScrollReveal animation="fade-up" delay={300}>
+            <div className="text-center bg-gradient-to-r from-brand-black to-brand-black-light rounded-2xl p-12 backdrop-blur-sm">
             <h2 className="text-3xl font-bold text-white mb-4">
               Pronto para Transformar seu Negócio?
             </h2>
@@ -135,7 +143,8 @@ const About = () => {
                 Fale Conosco
               </a>
             </Button>
-          </div>
+            </div>
+          </ScrollReveal>
         </div>
       </main>
 
