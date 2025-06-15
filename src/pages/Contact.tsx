@@ -59,23 +59,23 @@ const Contact = () => {
                 Fale Conosco
               </h2>
               
-              <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
                 {contactInfo.map((contact, index) => (
                    <Card key={index} className="border-brand-gold/20 hover:shadow-lg hover:shadow-brand-gold/5 transition-all duration-300 hover:-translate-y-1 group bg-gradient-to-br from-white to-gray-50/30">
-                     <CardContent className="p-4 text-center">
-                       <ContactIcon type={contact.iconType} className="mb-3 group-hover:animate-pulse" />
-                       <h3 className="text-xs font-semibold text-brand-black mb-1 group-hover:text-brand-gold transition-colors duration-300">{contact.title}</h3>
+                     <CardContent className="p-6 text-center">
+                       <ContactIcon type={contact.iconType} className="mb-4 group-hover:animate-pulse" />
+                       <h3 className="text-sm font-semibold text-brand-black mb-2 group-hover:text-brand-gold transition-colors duration-300">{contact.title}</h3>
                       {contact.link ? (
                         <a 
                           href={contact.link} 
                           target="_blank" 
                           rel="noopener noreferrer"
-                          className="text-brand-gold hover:text-brand-gold-dark transition-colors text-xs font-medium block"
+                          className="text-brand-gold hover:text-brand-gold-dark transition-colors text-sm font-medium block break-words"
                         >
                           {contact.info}
                         </a>
                       ) : (
-                        <p className="text-gray-600 whitespace-pre-line text-xs">{contact.info}</p>
+                        <p className="text-gray-600 whitespace-pre-line text-sm break-words">{contact.info}</p>
                       )}
                     </CardContent>
                   </Card>
