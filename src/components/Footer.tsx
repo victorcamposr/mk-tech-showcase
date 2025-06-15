@@ -21,16 +21,18 @@ const Footer = () => {
                 href="https://wa.me/5565993535079" 
                 target="_blank" 
                 rel="noopener noreferrer"
-                className="text-brand-gold hover:text-brand-gold-light transition-colors"
+                className="flex items-center gap-3 text-brand-gold hover:text-brand-gold-light transition-colors group"
               >
+                <ContactIcon type="whatsapp" className="w-8 h-8" />
                 WhatsApp
               </a>
               <a 
                 href="https://instagram.com/mktecnologiaoficial" 
                 target="_blank" 
                 rel="noopener noreferrer"
-                className="text-brand-gold hover:text-brand-gold-light transition-colors"
+                className="flex items-center gap-3 text-brand-gold hover:text-brand-gold-light transition-colors group"
               >
+                <ContactIcon type="instagram" className="w-8 h-8" />
                 Instagram
               </a>
             </div>
@@ -72,7 +74,7 @@ const Footer = () => {
         </div>
 
         <div className="border-t border-brand-gold/20 mt-8 pt-8 text-center text-gray-400">
-          <p>&copy; 2024 MK Tecnologia. Todos os direitos reservados.</p>
+          <p>&copy; 2025 MK Tecnologia. Todos os direitos reservados.</p>
         </div>
       </div>
     </footer>
