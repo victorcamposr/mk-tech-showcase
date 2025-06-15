@@ -137,7 +137,9 @@ const Contact = () => {
               <Card className="border-brand-gold/20 hover:shadow-lg transition-all duration-300 bg-gradient-to-br from-white to-gray-50/30">
                 <CardHeader className="p-4">
                   <div className="flex items-center gap-3">
-                    <ContactIcon type="clock" />
+                    <div className="w-6 h-6 flex-shrink-0">
+                      <ContactIcon type="clock" />
+                    </div>
                     <CardTitle className="text-base text-brand-black">Horário de Atendimento</CardTitle>
                   </div>
                 </CardHeader>
@@ -324,7 +326,7 @@ const Contact = () => {
 
       {/* Modal de Confirmação */}
       <Dialog open={isModalOpen} onOpenChange={handleModalClose}>
-        <DialogContent className="sm:max-w-md bg-white border-brand-gold/20 shadow-2xl">
+        <DialogContent className="sm:max-w-md bg-white border-brand-gold/20 shadow-2xl fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
           <DialogHeader className="text-center">
             <div className="mx-auto mb-4 w-16 h-16 bg-gradient-to-br from-brand-gold/20 to-brand-gold/30 rounded-full flex items-center justify-center">
               <svg className="w-8 h-8 text-brand-gold" fill="none" stroke="currentColor" viewBox="0 0 24 24">
