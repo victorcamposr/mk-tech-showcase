@@ -5,7 +5,7 @@ interface ServiceIconProps {
   className?: string;
 }
 
-const ServiceIcon = ({ type, className = "w-10 h-10" }: ServiceIconProps) => {
+const ServiceIcon = ({ type, className = "w-12 h-12" }: ServiceIconProps) => {
   const iconMap = {
     automation: Settings,
     inventory: Package,

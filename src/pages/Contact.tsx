@@ -23,12 +23,6 @@ const Contact = () => {
       link: "mailto:mktecnologiaoficial@gmail.com"
     },
     {
-      iconType: "location" as const,
-      title: "Endereço",
-      info: "Av Marechal Rondon, 1512\nPontes e Lacerda/MT",
-      link: null
-    },
-    {
       iconType: "instagram" as const,
       title: "Instagram",
       info: "@mktecnologiaoficial",
@@ -59,7 +53,7 @@ const Contact = () => {
                 Fale Conosco
               </h2>
               
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-12">
                 {contactInfo.map((contact, index) => (
                    <Card key={index} className="border-brand-gold/20 hover:shadow-lg hover:shadow-brand-gold/5 transition-all duration-300 hover:-translate-y-1 group bg-gradient-to-br from-white to-gray-50/30">
                      <CardContent className="p-6 text-center">

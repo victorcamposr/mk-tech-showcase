@@ -6,7 +6,7 @@ interface ModernIconProps {
 const ModernIcon = ({ type, className = "" }: ModernIconProps) => {
   const icons = {
     automation: (
-      <svg viewBox="0 0 64 64" className={`w-16 h-16 ${className}`}>
+      <svg viewBox="0 0 64 64" className={`w-18 h-18 ${className}`}>
         <defs>
           <linearGradient id="automation-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
             <stop offset="0%" stopColor="hsl(var(--brand-gold))" />
@@ -24,7 +24,7 @@ const ModernIcon = ({ type, className = "" }: ModernIconProps) => {
       </svg>
     ),
     inventory: (
-      <svg viewBox="0 0 64 64" className={`w-16 h-16 ${className}`}>
+      <svg viewBox="0 0 64 64" className={`w-18 h-18 ${className}`}>
         <defs>
           <linearGradient id="inventory-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
             <stop offset="0%" stopColor="hsl(var(--brand-gold))" />
@@ -42,7 +42,7 @@ const ModernIcon = ({ type, className = "" }: ModernIconProps) => {
       </svg>
     ),
     fiscal: (
-      <svg viewBox="0 0 64 64" className={`w-16 h-16 ${className}`}>
+      <svg viewBox="0 0 64 64" className={`w-18 h-18 ${className}`}>
         <defs>
           <linearGradient id="fiscal-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
             <stop offset="0%" stopColor="hsl(var(--brand-gold))" />
@@ -60,7 +60,7 @@ const ModernIcon = ({ type, className = "" }: ModernIconProps) => {
       </svg>
     ),
     financial: (
-      <svg viewBox="0 0 64 64" className={`w-16 h-16 ${className}`}>
+      <svg viewBox="0 0 64 64" className={`w-18 h-18 ${className}`}>
         <defs>
           <linearGradient id="financial-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
             <stop offset="0%" stopColor="hsl(var(--brand-gold))" />

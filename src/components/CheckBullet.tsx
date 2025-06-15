@@ -16,7 +16,7 @@ const CheckBullet = ({ className }: CheckBulletProps) => {
       "group-hover:bg-gradient-to-br group-hover:from-amber-200 group-hover:to-amber-300",
       className
     )}>
-      <Check className="w-3 h-3 text-amber-700 group-hover:text-amber-800 transition-colors duration-300" strokeWidth={2.5} />
+      <Check className="w-4 h-4 text-amber-700 group-hover:text-amber-800 transition-colors duration-300" strokeWidth={2.5} />
     </div>
   );
 };

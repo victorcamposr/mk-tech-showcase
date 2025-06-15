@@ -3,7 +3,7 @@ interface SimpleIconProps {
   className?: string;
 }
 
-const SimpleIcon = ({ type, className = "w-5 h-5" }: SimpleIconProps) => {
+const SimpleIcon = ({ type, className = "w-6 h-6" }: SimpleIconProps) => {
   const icons = {
     'whatsapp-black': (
       <svg viewBox="0 0 24 24" className={className} fill="currentColor">

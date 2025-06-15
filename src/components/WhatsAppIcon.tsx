@@ -2,7 +2,7 @@ interface WhatsAppIconProps {
   className?: string;
 }
 
-const WhatsAppIcon = ({ className = "w-6 h-6" }: WhatsAppIconProps) => {
+const WhatsAppIcon = ({ className = "w-7 h-7" }: WhatsAppIconProps) => {
   return (
     <svg viewBox="0 0 24 24" className={className}>
       <defs>

@@ -17,7 +17,7 @@ const TitleWithIcon = ({ children, className }: TitleWithIconProps) => {
         "transition-all duration-300 ease-out",
         "group-hover:bg-gradient-to-br group-hover:from-amber-200 group-hover:to-amber-300"
       )}>
-        <Check className="w-3.5 h-3.5 text-amber-700 group-hover:text-amber-800 transition-colors duration-300" strokeWidth={2.5} />
+        <Check className="w-4 h-4 text-amber-700 group-hover:text-amber-800 transition-colors duration-300" strokeWidth={2.5} />
       </div>
       <span className="group-hover:text-brand-gold transition-colors duration-300">
         {children}
