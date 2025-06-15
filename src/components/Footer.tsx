@@ -43,15 +43,21 @@ const Footer = () => {
             <h3 className="text-brand-gold font-semibold mb-4">Contato</h3>
             <div className="space-y-3 text-gray-300">
               <div className="flex items-center gap-3">
-                <ContactIcon type="phone" className="w-6 h-6" />
+                <div className="w-6 h-6 flex-shrink-0">
+                  <ContactIcon type="phone" />
+                </div>
                 <span>(65) 99353-5079</span>
               </div>
               <div className="flex items-center gap-3">
-                <ContactIcon type="email" className="w-6 h-6" />
+                <div className="w-6 h-6 flex-shrink-0">
+                  <ContactIcon type="email" />
+                </div>
                 <span>mktecnologiaoficial@gmail.com</span>
               </div>
               <div className="flex items-start gap-3">
-                <ContactIcon type="location" className="w-6 h-6 mt-1" />
+                <div className="w-6 h-6 flex-shrink-0 mt-1">
+                  <ContactIcon type="location" />
+                </div>
                 <div>
                   <p>Av Marechal Rondon, 1512</p>
                   <p>Pontes e Lacerda/MT</p>

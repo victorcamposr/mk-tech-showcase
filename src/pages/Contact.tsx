@@ -11,16 +11,42 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { useState } from "react";
+import { useForm } from "react-hook-form";
+import { useToast } from "@/hooks/use-toast";
+import { Toaster } from "@/components/ui/toaster";
+
+interface FormData {
+  name: string;
+  company?: string;
+  email: string;
+  phone: string;
+  subject: string;
+  message: string;
+}
 
 const Contact = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const { toast } = useToast();
+  const { register, handleSubmit, formState: { errors }, reset } = useForm<FormData>();
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
+  const onSubmit = (data: FormData) => {
     setIsModalOpen(true);
-    // Limpar formulário
-    const form = e.target as HTMLFormElement;
-    form.reset();
+  };
+
+  const handleFormSubmit = handleSubmit(
+    onSubmit,
+    () => {
+      toast({
+        title: "Campos obrigatórios",
+        description: "Por favor, preencha todos os campos obrigatórios antes de enviar.",
+        variant: "destructive",
+      });
+    }
+  );
+
+  const handleModalClose = () => {
+    setIsModalOpen(false);
+    reset(); // Limpa o formulário apenas quando o modal é fechado
   };
 
   const contactInfo = [
@@ -146,19 +172,27 @@ const Contact = () => {
                   <CardTitle className="text-base text-brand-black">Envie sua Mensagem</CardTitle>
                 </CardHeader>
                 <CardContent className="p-4 pt-0">
-                  <form className="space-y-6" onSubmit={handleSubmit}>
+                  <form className="space-y-6" onSubmit={handleFormSubmit}>
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       <div>
                         <label className="block text-sm font-medium text-brand-black mb-2">
                           Nome *
                         </label>
-                        <Input placeholder="Seu nome completo" className="border-brand-gold/20 focus:border-brand-gold focus:ring-1 focus:ring-brand-gold/30 transition-all duration-200" />
+                        <Input 
+                          placeholder="Seu nome completo" 
+                          className="border-gray-300 focus:border-brand-black focus:ring-0 transition-all duration-200" 
+                          {...register("name", { required: "Nome é obrigatório" })}
+                        />
                       </div>
                       <div>
                         <label className="block text-sm font-medium text-brand-black mb-2">
                           Empresa
                         </label>
-                        <Input placeholder="Nome da sua empresa" className="border-brand-gold/20 focus:border-brand-gold focus:ring-1 focus:ring-brand-gold/30 transition-all duration-200" />
+                        <Input 
+                          placeholder="Nome da sua empresa" 
+                          className="border-gray-300 focus:border-brand-black focus:ring-0 transition-all duration-200" 
+                          {...register("company")}
+                        />
                       </div>
                     </div>
                     
@@ -167,13 +201,22 @@ const Contact = () => {
                         <label className="block text-sm font-medium text-brand-black mb-2">
                           E-mail *
                         </label>
-                        <Input type="email" placeholder="seu@email.com" className="border-brand-gold/20 focus:border-brand-gold focus:ring-1 focus:ring-brand-gold/30 transition-all duration-200" />
+                        <Input 
+                          type="email" 
+                          placeholder="seu@email.com" 
+                          className="border-gray-300 focus:border-brand-black focus:ring-0 transition-all duration-200" 
+                          {...register("email", { required: "E-mail é obrigatório" })}
+                        />
                       </div>
                       <div>
                         <label className="block text-sm font-medium text-brand-black mb-2">
                           Telefone *
                         </label>
-                        <Input placeholder="(65) 99999-9999" className="border-brand-gold/20 focus:border-brand-gold focus:ring-1 focus:ring-brand-gold/30 transition-all duration-200" />
+                        <Input 
+                          placeholder="(65) 99999-9999" 
+                          className="border-gray-300 focus:border-brand-black focus:ring-0 transition-all duration-200" 
+                          {...register("phone", { required: "Telefone é obrigatório" })}
+                        />
                       </div>
                     </div>
 
@@ -181,7 +224,11 @@ const Contact = () => {
                       <label className="block text-sm font-medium text-brand-black mb-2">
                         Assunto *
                       </label>
-                      <Input placeholder="Como podemos ajudar?" className="border-brand-gold/20 focus:border-brand-gold focus:ring-1 focus:ring-brand-gold/30 transition-all duration-200" />
+                      <Input 
+                        placeholder="Como podemos ajudar?" 
+                        className="border-gray-300 focus:border-brand-black focus:ring-0 transition-all duration-200" 
+                        {...register("subject", { required: "Assunto é obrigatório" })}
+                      />
                     </div>
 
                     <div>
@@ -190,7 +237,8 @@ const Contact = () => {
                       </label>
                       <Textarea 
                         placeholder="Descreva suas necessidades ou dúvidas..."
-                        className="border-brand-gold/20 focus:border-brand-gold focus:ring-1 focus:ring-brand-gold/30 transition-all duration-200 min-h-[120px]"
+                        className="border-gray-300 focus:border-brand-black focus:ring-0 transition-all duration-200 min-h-[120px]"
+                        {...register("message", { required: "Mensagem é obrigatória" })}
                       />
                     </div>
 
@@ -275,8 +323,8 @@ const Contact = () => {
       <Footer />
 
       {/* Modal de Confirmação */}
-      <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
-        <DialogContent className="max-w-md mx-auto bg-white border-brand-gold/20 shadow-2xl">
+      <Dialog open={isModalOpen} onOpenChange={handleModalClose}>
+        <DialogContent className="sm:max-w-md bg-white border-brand-gold/20 shadow-2xl">
           <DialogHeader className="text-center">
             <div className="mx-auto mb-4 w-16 h-16 bg-gradient-to-br from-brand-gold/20 to-brand-gold/30 rounded-full flex items-center justify-center">
               <svg className="w-8 h-8 text-brand-gold" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -292,7 +340,7 @@ const Contact = () => {
           </DialogHeader>
           <div className="flex flex-col gap-3 mt-6">
             <Button 
-              onClick={() => setIsModalOpen(false)}
+              onClick={handleModalClose}
               className="w-full bg-brand-gold hover:bg-brand-gold-dark text-brand-black font-semibold transition-all duration-300"
             >
               Entendi
@@ -310,6 +358,7 @@ const Contact = () => {
           </div>
         </DialogContent>
       </Dialog>
+      <Toaster />
     </div>
   );
 };
