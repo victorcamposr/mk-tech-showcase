@@ -2,6 +2,7 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import CountUpNumber from "@/components/CountUpNumber";
 import SimpleIcon from "@/components/SimpleIcon";
+import TestimonialCarousel from "@/components/TestimonialCarousel";
 import { Card, CardContent } from "@/components/ui/card";
 
 const Portfolio = () => {
@@ -50,26 +51,6 @@ const Portfolio = () => {
     }
   ];
 
-  const testimonials = [
-    {
-      name: "João Silva",
-      company: "Supermercado Central",
-      text: "A MK Tecnologia transformou nosso negócio. O sistema é intuitivo e o suporte excepcional.",
-      rating: 5
-    },
-    {
-      name: "Maria Santos",
-      company: "Farmácia Vida & Saúde",
-      text: "Excelente solução para farmácia. O controle de medicamentos controlados facilitou muito nosso trabalho.",
-      rating: 5
-    },
-    {
-      name: "Carlos Oliveira",
-      company: "Loja Fashion Style",
-      text: "Sistema perfeito para moda. O controle de grades e relatórios são fantásticos.",
-      rating: 5
-    }
-  ];
 
   return (
     <div className="min-h-screen bg-background">
@@ -148,24 +129,7 @@ const Portfolio = () => {
             <h2 className="text-3xl font-bold text-brand-black text-center mb-12">
               O que Nossos Clientes Dizem
             </h2>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-              {testimonials.map((testimonial, index) => (
-                <Card key={index} className="border-brand-gold/20 hover:shadow-xl transition-all duration-300 hover:scale-105 group bg-gradient-to-br from-white to-gray-50/50">
-                  <CardContent className="p-8">
-                    <div className="flex mb-4">
-                      {[...Array(testimonial.rating)].map((_, i) => (
-                        <span key={i} className="text-brand-gold text-xl group-hover:animate-pulse">⭐</span>
-                      ))}
-                    </div>
-                    <p className="text-gray-600 mb-4 italic group-hover:text-gray-700 transition-colors">"{testimonial.text}"</p>
-                    <div>
-                      <div className="font-semibold text-brand-black group-hover:text-brand-gold transition-colors">{testimonial.name}</div>
-                      <div className="text-sm text-gray-500">{testimonial.company}</div>
-                    </div>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
+            <TestimonialCarousel />
           </div>
 
           {/* CTA */}

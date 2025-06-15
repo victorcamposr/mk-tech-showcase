@@ -4,7 +4,7 @@ import ModernIcon from "@/components/ModernIcon";
 import CountUpNumber from "@/components/CountUpNumber";
 import SimpleIcon from "@/components/SimpleIcon";
 import TypewriterText from "@/components/TypewriterText";
-import TestimonialCarousel from "@/components/TestimonialCarousel";
+
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 
@@ -197,21 +197,6 @@ const Index = () => {
         </div>
       </section>
 
-      {/* Testimonials Section */}
-      <section className="py-20 bg-gradient-to-br from-gray-50 to-white">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16">
-            <h2 className="text-3xl md:text-5xl font-bold text-brand-black mb-6">
-              O que Nossos <span className="text-brand-gold">Clientes Dizem</span>
-            </h2>
-            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-              Conheça as experiências de empresas que transformaram seus negócios conosco
-            </p>
-          </div>
-
-          <TestimonialCarousel />
-        </div>
-      </section>
 
       <Footer />
     </div>

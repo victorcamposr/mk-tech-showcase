@@ -26,6 +26,18 @@ const testimonials: Testimonial[] = [
     content: "Profissionais competentes e solução completa. Nossa gestão financeira ficou muito mais organizada e conseguimos reduzir custos operacionais significativamente.",
     author: "Ana Costa",
     company: "Loja de Roupas Elegante"
+  },
+  {
+    id: 4,
+    content: "Implementaram nosso sistema de autopeças com catálogo completo. A busca por compatibilidade de peças ficou automática e nossos vendedores são muito mais produtivos.",
+    author: "Carlos Oliveira",
+    company: "Auto Peças Rondon"
+  },
+  {
+    id: 5,
+    content: "O sistema para nossa clínica médica é perfeito. Agendamento online, prontuário digital e controle de convênios tudo integrado. Recomendo para qualquer clínica.",
+    author: "Dr. Roberto Lima",
+    company: "Clínica Médica Bem Estar"
   }
 ];
 
