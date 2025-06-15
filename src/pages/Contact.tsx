@@ -18,6 +18,9 @@ const Contact = () => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setIsModalOpen(true);
+    // Limpar formulário
+    const form = e.target as HTMLFormElement;
+    form.reset();
   };
 
   const contactInfo = [
@@ -85,7 +88,7 @@ const Contact = () => {
                 {contactInfo.map((contact, index) => (
                    <Card key={index} className="border-brand-gold/20 hover:shadow-lg hover:shadow-brand-gold/5 transition-all duration-300 hover:-translate-y-1 group bg-gradient-to-br from-white to-gray-50/30">
                      <CardContent className="p-6 text-center">
-                       <ContactIcon type={contact.iconType} className="mb-4 group-hover:animate-pulse" />
+                       <ContactIcon type={contact.iconType} />
                        <h3 className="text-sm font-semibold text-brand-black mb-2 group-hover:text-brand-gold transition-colors duration-300">{contact.title}</h3>
                       {contact.link ? (
                         <a 
@@ -108,7 +111,7 @@ const Contact = () => {
               <Card className="border-brand-gold/20 hover:shadow-lg transition-all duration-300 bg-gradient-to-br from-white to-gray-50/30">
                 <CardHeader className="p-4">
                   <div className="flex items-center gap-3">
-                    <ContactIcon type="clock" className="group-hover:animate-pulse" />
+                    <ContactIcon type="clock" />
                     <CardTitle className="text-base text-brand-black">Horário de Atendimento</CardTitle>
                   </div>
                 </CardHeader>
@@ -226,7 +229,7 @@ const Contact = () => {
               {/* Informações da Localização */}
               <Card className="border-brand-gold/20 hover:shadow-lg transition-all duration-300 bg-gradient-to-br from-white to-gray-50/30">
                 <CardContent className="p-6 text-center">
-                  <ContactIcon type="map" className="mb-4 mx-auto" />
+                  <ContactIcon type="map" />
                   <h3 className="text-xl font-semibold text-brand-black mb-2">
                     Av Marechal Rondon, 1512
                   </h3>
