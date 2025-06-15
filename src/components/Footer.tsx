@@ -58,7 +58,7 @@ const Footer = () => {
                 <div className="w-6 h-6 flex-shrink-0">
                   <ContactIcon type="location" />
                 </div>
-                <div>
+                <div className="leading-tight">
                   <p>Av Marechal Rondon, 1512</p>
                   <p>Pontes e Lacerda/MT</p>
                 </div>
