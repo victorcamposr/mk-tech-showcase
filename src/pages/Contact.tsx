@@ -143,7 +143,7 @@ const Contact = () => {
                     <CardTitle className="text-base text-brand-black">Horário de Atendimento</CardTitle>
                   </div>
                 </CardHeader>
-                <CardContent className="p-4 pt-0">
+                <CardContent className="p-4 pt-4">
                   <div className="space-y-3 text-gray-600 text-sm">
                     <div className="flex justify-between items-center">
                       <span>Segunda a Sexta:</span>
