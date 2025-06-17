@@ -29,6 +29,7 @@ const Contact = () => {
   const { register, handleSubmit, formState: { errors }, reset } = useForm<FormData>();
 
   const onSubmit = async (data: FormData) => {
+    console.log('Iniciando envio do formulário:', data);
     try {
       const response = await fetch('https://api.web3forms.com/submit', {
         method: 'POST',
@@ -46,12 +47,17 @@ const Contact = () => {
         })
       });
 
+      console.log('Response status:', response.status);
+      const result = await response.json();
+      console.log('Response data:', result);
+
       if (response.ok) {
         setIsModalOpen(true);
         toast({
           title: "Mensagem enviada!",
           description: "Recebemos sua mensagem e entraremos em contato em breve.",
         });
+        reset(); // Limpa o formulário após sucesso
       } else {
         throw new Error('Erro no envio');
       }
@@ -216,7 +222,7 @@ const Contact = () => {
                         <Input 
                           name="name"
                           placeholder="Seu nome completo" 
-                          className="border-gray-300 focus:border-brand-black focus:ring-brand-black focus:ring-opacity-0 focus:outline-none transition-all duration-200" 
+                          className="border-gray-300 focus:border-brand-black focus:ring-1 focus:ring-brand-black focus-visible:ring-brand-black focus:ring-offset-0 transition-all duration-200" 
                           {...register("name", { required: "Nome é obrigatório" })}
                         />
                       </div>
@@ -227,7 +233,7 @@ const Contact = () => {
                         <Input 
                           name="company"
                           placeholder="Nome da sua empresa" 
-                          className="border-gray-300 focus:border-brand-black focus:ring-brand-black focus:ring-opacity-0 focus:outline-none transition-all duration-200" 
+                          className="border-gray-300 focus:border-brand-black focus:ring-1 focus:ring-brand-black focus-visible:ring-brand-black focus:ring-offset-0 transition-all duration-200" 
                           {...register("company")}
                         />
                       </div>
@@ -242,7 +248,7 @@ const Contact = () => {
                           type="email" 
                           name="email"
                           placeholder="seu@email.com" 
-                          className="border-gray-300 focus:border-brand-black focus:ring-brand-black focus:ring-opacity-0 focus:outline-none transition-all duration-200" 
+                          className="border-gray-300 focus:border-brand-black focus:ring-1 focus:ring-brand-black focus-visible:ring-brand-black focus:ring-offset-0 transition-all duration-200" 
                           {...register("email", { required: "E-mail é obrigatório" })}
                         />
                       </div>
@@ -253,7 +259,7 @@ const Contact = () => {
                         <Input 
                           name="phone"
                           placeholder="(65) 99999-9999" 
-                          className="border-gray-300 focus:border-brand-black focus:ring-brand-black focus:ring-opacity-0 focus:outline-none transition-all duration-200" 
+                          className="border-gray-300 focus:border-brand-black focus:ring-1 focus:ring-brand-black focus-visible:ring-brand-black focus:ring-offset-0 transition-all duration-200" 
                           {...register("phone", { required: "Telefone é obrigatório" })}
                         />
                       </div>
@@ -266,7 +272,7 @@ const Contact = () => {
                       <Input 
                         name="subject"
                         placeholder="Como podemos ajudar?" 
-                        className="border-gray-300 focus:border-brand-black focus:ring-brand-black focus:ring-opacity-0 focus:outline-none transition-all duration-200" 
+                        className="border-gray-300 focus:border-brand-black focus:ring-1 focus:ring-brand-black focus-visible:ring-brand-black focus:ring-offset-0 transition-all duration-200" 
                         {...register("subject", { required: "Assunto é obrigatório" })}
                       />
                     </div>
@@ -278,7 +284,7 @@ const Contact = () => {
                       <Textarea 
                         name="message"
                         placeholder="Descreva suas necessidades ou dúvidas..."
-                        className="border-gray-300 focus:border-brand-black focus:ring-brand-black focus:ring-opacity-0 focus:outline-none transition-all duration-200 min-h-[120px]"
+                        className="border-gray-300 focus:border-brand-black focus:ring-1 focus:ring-brand-black focus-visible:ring-brand-black focus:ring-offset-0 transition-all duration-200 min-h-[120px]"
                         {...register("message", { required: "Mensagem é obrigatória" })}
                       />
                     </div>
