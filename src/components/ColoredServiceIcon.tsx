@@ -298,25 +298,23 @@ const ColoredServiceIcon = ({ type, className = "" }: ColoredServiceIconProps) =
             <stop offset="100%" stopColor="#4F46E5" />
           </linearGradient>
         </defs>
-        {/* Headband */}
-        <path d="M20 28 Q32 16 44 28" stroke="url(#headset-indigo)" strokeWidth="3" fill="none" strokeLinecap="round"/>
+        {/* Wrench tool */}
+        <path d="M18 36 L28 26 L32 30 L30 32 L38 40 L42 36 L46 40 L42 44 L38 40 L30 32" stroke="url(#headset-indigo)" strokeWidth="2.5" fill="url(#headset-indigo)" opacity="0.2" strokeLinecap="round" strokeLinejoin="round"/>
         
-        {/* Left earpiece */}
-        <circle cx="20" cy="32" r="7" fill="url(#headset-indigo)" opacity="0.2"/>
-        <circle cx="20" cy="32" r="7" fill="none" stroke="url(#headset-indigo)" strokeWidth="2"/>
-        <circle cx="20" cy="32" r="4" fill="url(#headset-indigo)" opacity="0.4"/>
+        {/* Wrench head */}
+        <circle cx="30" cy="28" r="3" fill="none" stroke="url(#headset-indigo)" strokeWidth="2"/>
         
-        {/* Right earpiece */}
-        <circle cx="44" cy="32" r="7" fill="url(#headset-indigo)" opacity="0.2"/>
-        <circle cx="44" cy="32" r="7" fill="none" stroke="url(#headset-indigo)" strokeWidth="2"/>
-        <circle cx="44" cy="32" r="4" fill="url(#headset-indigo)" opacity="0.4"/>
+        {/* Gear/Settings icon */}
+        <circle cx="44" cy="22" r="6" fill="none" stroke="url(#headset-indigo)" strokeWidth="2"/>
+        <circle cx="44" cy="22" r="3" fill="url(#headset-indigo)" opacity="0.3"/>
         
-        {/* Microphone boom */}
-        <path d="M20 38 L16 42" stroke="url(#headset-indigo)" strokeWidth="2" strokeLinecap="round"/>
+        {/* Gear teeth */}
+        <path d="M44 16 L44 18 M50 22 L48 22 M44 28 L44 26 M38 22 L40 22" stroke="url(#headset-indigo)" strokeWidth="1.5" strokeLinecap="round"/>
+        <path d="M48.2 18.8 L46.8 20.2 M48.2 25.2 L46.8 23.8 M39.8 25.2 L41.2 23.8 M39.8 18.8 L41.2 20.2" stroke="url(#headset-indigo)" strokeWidth="1.5" strokeLinecap="round"/>
         
-        {/* Microphone */}
-        <circle cx="14" cy="44" r="2" fill="url(#headset-indigo)" opacity="0.8"/>
-        <circle cx="14" cy="44" r="2" fill="none" stroke="url(#headset-indigo)" strokeWidth="1"/>
+        {/* Support indicators */}
+        <circle cx="22" cy="48" r="2" fill="url(#headset-indigo)" opacity="0.6"/>
+        <circle cx="50" cy="48" r="1.5" fill="url(#headset-indigo)" opacity="0.6"/>
       </svg>
     ),
     efficiency: (
