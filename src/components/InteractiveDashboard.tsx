@@ -7,41 +7,108 @@ import CountUpNumber from "@/components/CountUpNumber";
 const InteractiveDashboard = () => {
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [currentMetric, setCurrentMetric] = useState(0);
+  const [currentChart, setCurrentChart] = useState(0);
   const [showAlert, setShowAlert] = useState(false);
   const [typedText, setTypedText] = useState("");
   
-  const metrics = [
-    { label: "Vendas Hoje", value: 12, suffix: "%", color: "text-green-500", icon: "📈" },
-    { label: "Estoque Crítico", value: 3, suffix: " itens", color: "text-orange-500", icon: "⚠️" },
-    { label: "Eficiência", value: 89, suffix: "%", color: "text-blue-500", icon: "⚡" },
-    { label: "Lucro", value: 24, suffix: "%", color: "text-brand-gold", icon: "💰" }
+  const metricsGroups = [
+    [
+      { label: "Vendas Hoje", value: 12, suffix: "%", color: "text-green-500", icon: "📈" },
+      { label: "Estoque Crítico", value: 3, suffix: " itens", color: "text-orange-500", icon: "⚠️" },
+      { label: "Eficiência", value: 89, suffix: "%", color: "text-blue-500", icon: "⚡" },
+      { label: "Lucro", value: 24, suffix: "%", color: "text-brand-gold", icon: "💰" }
+    ],
+    [
+      { label: "Satisfação Cliente", value: 96, suffix: "%", color: "text-green-600", icon: "😊" },
+      { label: "Tempo Resposta", value: 15, suffix: "s", color: "text-blue-600", icon: "⏱️" },
+      { label: "Conversão", value: 8.7, suffix: "%", color: "text-purple-500", icon: "🎯" },
+      { label: "ROI", value: 34, suffix: "%", color: "text-emerald-500", icon: "💎" }
+    ],
+    [
+      { label: "Produtividade", value: 127, suffix: "%", color: "text-indigo-500", icon: "🚀" },
+      { label: "Custos Reduzidos", value: 28, suffix: "%", color: "text-red-500", icon: "💸" },
+      { label: "Automação", value: 85, suffix: "%", color: "text-cyan-500", icon: "🤖" },
+      { label: "Uptime", value: 99.9, suffix: "%", color: "text-green-700", icon: "🟢" }
+    ]
   ];
 
-  const aiInsights = [
-    "Analisando padrões de vendas...",
-    "Detectado aumento de 12% no fluxo de vendas hoje",
-    "Identificados 3 itens próximos de esgotar no estoque",
-    "Recomendação: Reabastecer produtos categoria 'Eletrônicos'",
-    "Previsão para amanhã: +8% nas vendas"
+  const chartTypes = [
+    {
+      title: "Previsão de Vendas - Próximos 7 Dias",
+      data: [65, 78, 82, 70, 88, 95, 72],
+      labels: ["D1", "D2", "D3", "D4", "D5", "D6", "D7"]
+    },
+    {
+      title: "Análise de Comportamento do Cliente",
+      data: [45, 67, 89, 76, 92, 85, 79],
+      labels: ["Seg", "Ter", "Qua", "Qui", "Sex", "Sáb", "Dom"]
+    },
+    {
+      title: "Otimização de Estoque por Categoria",
+      data: [80, 65, 90, 45, 88, 95, 70],
+      labels: ["Cat1", "Cat2", "Cat3", "Cat4", "Cat5", "Cat6", "Cat7"]
+    },
+    {
+      title: "Performance de Funcionários",
+      data: [88, 92, 78, 95, 87, 91, 89],
+      labels: ["F1", "F2", "F3", "F4", "F5", "F6", "F7"]
+    }
   ];
+
+  const aiInsightsGroups = [
+    [
+      "Analisando padrões de vendas em tempo real...",
+      "Detectado aumento de 12% no fluxo de vendas hoje",
+      "Identificados 3 itens próximos de esgotar no estoque",
+      "Recomendação: Reabastecer produtos categoria 'Eletrônicos'",
+      "Previsão para amanhã: +8% nas vendas"
+    ],
+    [
+      "Processando comportamento de clientes...",
+      "Detectado padrão: 67% dos clientes retornam em 30 dias",
+      "Hora de pico identificada: 14h às 16h",
+      "Produto mais procurado: Smartphones categoria Premium",
+      "Recomendação: Aumentar estoque para horário de pico"
+    ],
+    [
+      "Analisando eficiência operacional...",
+      "Sistema detectou otimização de 34% nos processos",
+      "Tempo médio de atendimento reduzido em 28%",
+      "Automação implementada em 85% das tarefas",
+      "Previsão: Economia de R$ 15.000 este mês"
+    ],
+    [
+      "Executando análise preditiva avançada...",
+      "IA identificou tendência de crescimento: +45% próximo trimestre",
+      "Padrão sazonal detectado: Alta demanda em dezembro",
+      "Recomendação: Preparar campanha promocional",
+      "Forecast de receita: R$ 280.000 próximos 90 dias"
+    ]
+  ];
+
+  const currentMetrics = metricsGroups[Math.floor(currentMetric / 4) % metricsGroups.length];
+  const currentInsights = aiInsightsGroups[Math.floor(currentMetric / 4) % aiInsightsGroups.length];
 
   useEffect(() => {
     if (isAnalyzing) {
       const interval = setInterval(() => {
-        setCurrentMetric((prev) => (prev + 1) % metrics.length);
-      }, 2000);
+        setCurrentMetric((prev) => prev + 1);
+        setCurrentChart((prev) => (prev + 1) % chartTypes.length);
+      }, 3000);
       
-      // Simular alert depois de 3 segundos
-      setTimeout(() => setShowAlert(true), 3000);
+      // Simular alert depois de 4 segundos
+      setTimeout(() => setShowAlert(true), 4000);
       
       return () => clearInterval(interval);
     }
-  }, [isAnalyzing, metrics.length]);
+  }, [isAnalyzing, chartTypes.length]);
 
   useEffect(() => {
     if (isAnalyzing) {
       let index = 0;
-      const text = aiInsights[Math.floor(Math.random() * aiInsights.length)];
+      const text = currentInsights[Math.floor(Math.random() * currentInsights.length)];
+      setTypedText("");
+      
       const typeInterval = setInterval(() => {
         if (index < text.length) {
           setTypedText(text.slice(0, index + 1));
@@ -49,17 +116,19 @@ const InteractiveDashboard = () => {
         } else {
           clearInterval(typeInterval);
         }
-      }, 50);
+      }, 60);
       
       return () => clearInterval(typeInterval);
     }
-  }, [isAnalyzing, aiInsights]);
+  }, [isAnalyzing, currentInsights, currentMetric]);
 
   const startAnalysis = () => {
     setIsAnalyzing(true);
     setShowAlert(false);
     setTypedText("");
-    setTimeout(() => setIsAnalyzing(false), 10000);
+    setCurrentMetric(0);
+    setCurrentChart(0);
+    setTimeout(() => setIsAnalyzing(false), 15000);
   };
 
   return (
@@ -114,17 +183,17 @@ const InteractiveDashboard = () => {
 
           {/* Metrics Grid */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-            {metrics.map((metric, index) => (
+            {currentMetrics.map((metric, index) => (
               <Card 
                 key={index} 
                 className={`bg-black/30 border-brand-gold/20 transition-all duration-500 hover:scale-105 ${
-                  isAnalyzing && currentMetric === index ? 'ring-2 ring-brand-gold shadow-lg shadow-brand-gold/20' : ''
+                  isAnalyzing && (currentMetric % 4) === index ? 'ring-2 ring-brand-gold shadow-lg shadow-brand-gold/20' : ''
                 }`}
               >
                 <CardContent className="p-6 text-center">
                   <div className="text-3xl mb-3">{metric.icon}</div>
                   <div className={`text-3xl font-bold ${metric.color} mb-2`}>
-                    {isAnalyzing && currentMetric === index ? (
+                    {isAnalyzing && (currentMetric % 4) === index ? (
                       <CountUpNumber end={metric.value} suffix={metric.suffix} className="block" />
                     ) : (
                       `${metric.value}${metric.suffix}`
@@ -138,7 +207,7 @@ const InteractiveDashboard = () => {
 
           {/* Alert System */}
           {showAlert && (
-            <Card className="bg-orange-500/20 border-orange-500/40 mb-8 animate-pulse">
+            <Card className="bg-orange-500/20 border-orange-500/40 mb-8 animate-pulse animate-fade-in">
               <CardContent className="p-4">
                 <div className="flex items-center gap-3">
                   <span className="text-2xl">🚨</span>
@@ -154,22 +223,22 @@ const InteractiveDashboard = () => {
           {/* Chart Simulation */}
           <Card className="bg-black/30 border-brand-gold/20 mb-8">
             <CardHeader>
-              <CardTitle className="text-white text-lg">Previsão de Vendas - Próximos 7 Dias</CardTitle>
+              <CardTitle className="text-white text-lg">{chartTypes[currentChart].title}</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="flex items-end justify-between h-32 px-4">
-                {[65, 78, 82, 70, 88, 95, 72].map((height, index) => (
+                {chartTypes[currentChart].data.map((height, index) => (
                   <div key={index} className="flex flex-col items-center gap-2">
                     <div 
                       className={`bg-gradient-to-t from-brand-gold to-brand-gold-light rounded-t transition-all duration-1000 w-8 ${
-                        isAnalyzing ? `opacity-100` : 'opacity-60'
+                        isAnalyzing ? `opacity-100 animate-pulse` : 'opacity-60'
                       }`}
                       style={{ 
                         height: `${height}%`,
-                        animationDelay: isAnalyzing ? `${index * 200}ms` : '0ms'
+                        animationDelay: isAnalyzing ? `${index * 150}ms` : '0ms'
                       }}
                     ></div>
-                    <span className="text-gray-400 text-xs">D{index + 1}</span>
+                    <span className="text-gray-400 text-xs">{chartTypes[currentChart].labels[index]}</span>
                   </div>
                 ))}
               </div>

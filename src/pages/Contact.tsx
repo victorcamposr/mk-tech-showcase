@@ -34,7 +34,8 @@ const Contact = () => {
 
   const handleFormSubmit = handleSubmit(
     onSubmit,
-    () => {
+    (errors) => {
+      console.log("Form errors:", errors);
       toast({
         title: "Campos obrigatórios",
         description: "Por favor, preencha todos os campos obrigatórios antes de enviar.",
