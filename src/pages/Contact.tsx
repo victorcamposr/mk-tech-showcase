@@ -176,7 +176,7 @@ const Contact = () => {
                 </CardHeader>
                 <CardContent className="p-4 pt-0">
                   <form 
-                    action="https://formsubmit.co/victorhugo1512@gmail.com" 
+                    action="https://api.web3forms.com/submit" 
                     method="POST" 
                     className="space-y-6"
                   >
@@ -188,7 +188,7 @@ const Contact = () => {
                         <Input 
                           name="name"
                           placeholder="Seu nome completo" 
-                          className="border-gray-300 focus:border-brand-black focus:ring-0 transition-all duration-200" 
+                          className="border-gray-300 focus:border-brand-black focus:ring-brand-black focus:ring-opacity-0 focus:outline-none transition-all duration-200" 
                           {...register("name", { required: "Nome é obrigatório" })}
                         />
                       </div>
@@ -199,7 +199,7 @@ const Contact = () => {
                         <Input 
                           name="company"
                           placeholder="Nome da sua empresa" 
-                          className="border-gray-300 focus:border-brand-black focus:ring-0 transition-all duration-200" 
+                          className="border-gray-300 focus:border-brand-black focus:ring-brand-black focus:ring-opacity-0 focus:outline-none transition-all duration-200" 
                           {...register("company")}
                         />
                       </div>
@@ -214,7 +214,7 @@ const Contact = () => {
                           type="email" 
                           name="email"
                           placeholder="seu@email.com" 
-                          className="border-gray-300 focus:border-brand-black focus:ring-0 transition-all duration-200" 
+                          className="border-gray-300 focus:border-brand-black focus:ring-brand-black focus:ring-opacity-0 focus:outline-none transition-all duration-200" 
                           {...register("email", { required: "E-mail é obrigatório" })}
                         />
                       </div>
@@ -225,7 +225,7 @@ const Contact = () => {
                         <Input 
                           name="phone"
                           placeholder="(65) 99999-9999" 
-                          className="border-gray-300 focus:border-brand-black focus:ring-0 transition-all duration-200" 
+                          className="border-gray-300 focus:border-brand-black focus:ring-brand-black focus:ring-opacity-0 focus:outline-none transition-all duration-200" 
                           {...register("phone", { required: "Telefone é obrigatório" })}
                         />
                       </div>
@@ -238,7 +238,7 @@ const Contact = () => {
                       <Input 
                         name="subject"
                         placeholder="Como podemos ajudar?" 
-                        className="border-gray-300 focus:border-brand-black focus:ring-0 transition-all duration-200" 
+                        className="border-gray-300 focus:border-brand-black focus:ring-brand-black focus:ring-opacity-0 focus:outline-none transition-all duration-200" 
                         {...register("subject", { required: "Assunto é obrigatório" })}
                       />
                     </div>
@@ -250,14 +250,14 @@ const Contact = () => {
                       <Textarea 
                         name="message"
                         placeholder="Descreva suas necessidades ou dúvidas..."
-                        className="border-gray-300 focus:border-brand-black focus:ring-0 transition-all duration-200 min-h-[120px]"
+                        className="border-gray-300 focus:border-brand-black focus:ring-brand-black focus:ring-opacity-0 focus:outline-none transition-all duration-200 min-h-[120px]"
                         {...register("message", { required: "Mensagem é obrigatória" })}
                       />
                       
-                      {/* Campos hidden para FormSubmit */}
-                      <input type="hidden" name="_next" value="https://763265a4-a05a-4caf-9a99-3a13e810d227.lovableproject.com/contato" />
-                      <input type="hidden" name="_subject" value="Nova mensagem do site MK Tecnologia" />
-                      <input type="hidden" name="_captcha" value="false" />
+                      {/* Campos hidden para Web3Forms */}
+                      <input type="hidden" name="access_key" value="4b611952-1cbf-41e2-92e0-94827feb419d" />
+                      <input type="hidden" name="subject" value="Nova mensagem do site MK Tecnologia" />
+                      <input type="hidden" name="from_name" value="Site MK Tecnologia" />
                     </div>
 
                     <Button 
