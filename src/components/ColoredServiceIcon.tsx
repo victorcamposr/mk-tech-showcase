@@ -109,17 +109,18 @@ const ColoredServiceIcon = ({ type, className = "" }: ColoredServiceIconProps) =
             <stop offset="100%" stopColor="#059669" />
           </linearGradient>
         </defs>
-        <rect x="14" y="20" width="36" height="28" rx="3" fill="none" stroke="url(#inventory-green)" strokeWidth="2"/>
-        <rect x="16" y="22" width="32" height="24" rx="2" fill="url(#inventory-green)" opacity="0.1"/>
-        <path d="M20 14 L44 14 L42 20 L22 20 Z" fill="url(#inventory-green)" opacity="0.4"/>
-        <rect x="18" y="16" width="4" height="4" rx="1" fill="url(#inventory-green)" opacity="0.8"/>
-        <rect x="42" y="16" width="4" height="4" rx="1" fill="url(#inventory-green)" opacity="0.8"/>
-        <circle cx="20" cy="50" r="3" fill="url(#inventory-green)" opacity="0.6"/>
-        <circle cx="44" cy="50" r="3" fill="url(#inventory-green)" opacity="0.6"/>
-        <rect x="24" y="26" width="16" height="2" rx="1" fill="url(#inventory-green)" opacity="0.6"/>
-        <rect x="24" y="30" width="12" height="2" rx="1" fill="url(#inventory-green)" opacity="0.6"/>
-        <rect x="24" y="34" width="20" height="2" rx="1" fill="url(#inventory-green)" opacity="0.6"/>
-        <rect x="24" y="38" width="14" height="2" rx="1" fill="url(#inventory-green)" opacity="0.6"/>
+        <rect x="18" y="38" width="28" height="18" rx="2" fill="none" stroke="url(#inventory-green)" strokeWidth="2"/>
+        <rect x="20" y="40" width="24" height="14" rx="1" fill="url(#inventory-green)" opacity="0.1"/>
+        <rect x="16" y="28" width="32" height="18" rx="2" fill="none" stroke="url(#inventory-green)" strokeWidth="2"/>
+        <rect x="18" y="30" width="28" height="14" rx="1" fill="url(#inventory-green)" opacity="0.2"/>
+        <rect x="14" y="18" width="36" height="18" rx="2" fill="none" stroke="url(#inventory-green)" strokeWidth="2"/>
+        <path d="M14 26 L20 26 L22 30 L48 30 L50 26 L50 18" stroke="url(#inventory-green)" strokeWidth="2" fill="none"/>
+        <rect x="16" y="20" width="32" height="14" rx="1" fill="url(#inventory-green)" opacity="0.15"/>
+        <rect x="22" y="22" width="6" height="2" rx="1" fill="url(#inventory-green)" opacity="0.6"/>
+        <rect x="30" y="22" width="8" height="2" rx="1" fill="url(#inventory-green)" opacity="0.6"/>
+        <rect x="22" y="25" width="10" height="2" rx="1" fill="url(#inventory-green)" opacity="0.6"/>
+        <circle cx="42" cy="24" r="2" fill="url(#inventory-green)" opacity="0.7"/>
+        <path d="M40.5 24 L41.5 25 L43.5 23" stroke="white" strokeWidth="1" fill="none" strokeLinecap="round"/>
       </svg>
     ),
     fiscal: (
@@ -148,17 +149,25 @@ const ColoredServiceIcon = ({ type, className = "" }: ColoredServiceIconProps) =
             <stop offset="100%" stopColor="#EA580C" />
           </linearGradient>
         </defs>
-        <circle cx="32" cy="32" r="18" fill="none" stroke="url(#financial-orange)" strokeWidth="2"/>
-        <rect x="28" y="20" width="8" height="24" rx="2" fill="url(#financial-orange)" opacity="0.3"/>
-        <path d="M28 25 Q32 21 36 25" stroke="url(#financial-orange)" strokeWidth="2" fill="none"/>
-        <path d="M28 39 Q32 43 36 39" stroke="url(#financial-orange)" strokeWidth="2" fill="none"/>
-        <circle cx="32" cy="32" r="3" fill="url(#financial-orange)"/>
-        <path d="M18 18 L22 22 L18 26" stroke="url(#financial-orange)" strokeWidth="2" fill="none" strokeLinecap="round"/>
-        <path d="M46 18 L42 22 L46 26" stroke="url(#financial-orange)" strokeWidth="2" fill="none" strokeLinecap="round"/>
-        <path d="M18 38 L22 42 L18 46" stroke="url(#financial-orange)" strokeWidth="2" fill="none" strokeLinecap="round"/>
-        <path d="M46 38 L42 42 L46 46" stroke="url(#financial-orange)" strokeWidth="2" fill="none" strokeLinecap="round"/>
-        <rect x="26" y="12" width="12" height="4" rx="2" fill="url(#financial-orange)" opacity="0.4"/>
-        <rect x="26" y="48" width="12" height="4" rx="2" fill="url(#financial-orange)" opacity="0.4"/>
+        <rect x="8" y="16" width="16" height="20" rx="2" fill="none" stroke="url(#financial-orange)" strokeWidth="2"/>
+        <rect x="10" y="18" width="12" height="4" rx="1" fill="url(#financial-orange)" opacity="0.6"/>
+        <rect x="10" y="24" width="5" height="2" rx="1" fill="url(#financial-orange)" opacity="0.5"/>
+        <rect x="17" y="24" width="5" height="2" rx="1" fill="url(#financial-orange)" opacity="0.5"/>
+        <rect x="10" y="28" width="5" height="2" rx="1" fill="url(#financial-orange)" opacity="0.5"/>
+        <rect x="17" y="28" width="5" height="2" rx="1" fill="url(#financial-orange)" opacity="0.5"/>
+        <rect x="10" y="32" width="5" height="2" rx="1" fill="url(#financial-orange)" opacity="0.5"/>
+        <rect x="17" y="32" width="5" height="2" rx="1" fill="url(#financial-orange)" opacity="0.5"/>
+        <rect x="28" y="32" width="6" height="12" rx="1" fill="url(#financial-orange)" opacity="0.3"/>
+        <rect x="36" y="28" width="6" height="16" rx="1" fill="url(#financial-orange)" opacity="0.3"/>
+        <rect x="44" y="24" width="6" height="20" rx="1" fill="url(#financial-orange)" opacity="0.3"/>
+        <circle cx="48" cy="16" r="8" fill="none" stroke="url(#financial-orange)" strokeWidth="2"/>
+        <path d="M44 12 L48 16 L52 12" stroke="url(#financial-orange)" strokeWidth="2" fill="none" strokeLinecap="round"/>
+        <rect x="8" y="40" width="20" height="12" rx="2" fill="url(#financial-orange)" opacity="0.2"/>
+        <rect x="12" y="44" width="12" height="4" rx="1" fill="url(#financial-orange)" opacity="0.6"/>
+        <circle cx="18" cy="46" r="1.5" fill="url(#financial-orange)"/>
+        <circle cx="52" cy="48" r="8" fill="url(#financial-orange)" opacity="0.2"/>
+        <path d="M49 45 Q52 42 55 45 Q52 48 49 45" fill="url(#financial-orange)" opacity="0.7"/>
+        <circle cx="52" cy="45" r="1.5" fill="url(#financial-orange)"/>
       </svg>
     ),
     support: (
@@ -246,15 +255,13 @@ const ColoredServiceIcon = ({ type, className = "" }: ColoredServiceIconProps) =
             <stop offset="100%" stopColor="#4F46E5" />
           </linearGradient>
         </defs>
-        <path d="M18 28 Q18 18 32 18 Q46 18 46 28 L46 34" stroke="url(#headset-indigo)" strokeWidth="2.5" fill="none"/>
-        <rect x="14" y="26" width="8" height="14" rx="4" fill="url(#headset-indigo)" opacity="0.7"/>
-        <rect x="42" y="26" width="8" height="14" rx="4" fill="url(#headset-indigo)" opacity="0.7"/>
-        <rect x="15" y="28" width="6" height="10" rx="3" fill="url(#headset-indigo)"/>
-        <rect x="43" y="28" width="6" height="10" rx="3" fill="url(#headset-indigo)"/>
-        <circle cx="18" cy="32" r="1.5" fill="white"/>
-        <circle cx="46" cy="32" r="1.5" fill="white"/>
-        <rect x="16" y="35" width="2" height="1" rx="0.5" fill="white" opacity="0.8"/>
-        <rect x="44" y="35" width="2" height="1" rx="0.5" fill="white" opacity="0.8"/>
+        <path d="M20 28 Q20 20 32 20 Q44 20 44 28 L44 32" stroke="url(#headset-indigo)" strokeWidth="3" fill="none"/>
+        <rect x="16" y="28" width="8" height="10" rx="2" fill="url(#headset-indigo)"/>
+        <rect x="40" y="28" width="8" height="10" rx="2" fill="url(#headset-indigo)"/>
+        <circle cx="20" cy="32" r="1" fill="white"/>
+        <circle cx="44" cy="32" r="1" fill="white"/>
+        <path d="M40 34 Q42 38 44 42" stroke="url(#headset-indigo)" strokeWidth="2" fill="none" strokeLinecap="round"/>
+        <circle cx="44" cy="42" r="1.5" fill="url(#headset-indigo)" opacity="0.8"/>
       </svg>
     ),
     efficiency: (

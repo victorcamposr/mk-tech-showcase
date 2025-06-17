@@ -140,20 +140,32 @@ const Services = () => {
               Como Trabalhamos
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-4 gap-8 relative">
-              {/* Connecting lines */}
-              <div className="hidden md:block absolute top-8 left-0 right-0 h-0.5">
-                <div className="flex justify-between items-center h-full mx-8">
-                  <div className="flex-1 h-px bg-gradient-to-r from-brand-gold/30 via-brand-gold/60 to-brand-gold/30"></div>
-                  <div className="w-4"></div>
-                  <div className="flex-1 h-px bg-gradient-to-r from-brand-gold/30 via-brand-gold/60 to-brand-gold/30"></div>
-                  <div className="w-4"></div>
-                  <div className="flex-1 h-px bg-gradient-to-r from-brand-gold/30 via-brand-gold/60 to-brand-gold/30"></div>
-                </div>
+              {/* Connecting path */}
+              <div className="hidden md:block absolute top-8 left-1/2 transform -translate-x-1/2 w-full max-w-3xl">
+                <svg viewBox="0 0 400 40" className="w-full h-10">
+                  <defs>
+                    <linearGradient id="pathGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                      <stop offset="0%" stopColor="#D97706" stopOpacity="0.6" />
+                      <stop offset="25%" stopColor="#F59E0B" stopOpacity="0.8" />
+                      <stop offset="50%" stopColor="#D97706" stopOpacity="0.6" />
+                      <stop offset="75%" stopColor="#F59E0B" stopOpacity="0.8" />
+                      <stop offset="100%" stopColor="#D97706" stopOpacity="0.6" />
+                    </linearGradient>
+                  </defs>
+                  <path 
+                    d="M 32 20 Q 100 10 133 20 Q 200 30 266 20 Q 333 10 368 20" 
+                    stroke="url(#pathGradient)" 
+                    strokeWidth="3" 
+                    fill="none" 
+                    strokeLinecap="round"
+                    strokeDasharray="5,3"
+                  />
+                </svg>
               </div>
               
               {workProcess.map((process, index) => (
                 <div key={index} className="text-center group relative z-10">
-                  <div className="w-16 h-16 bg-gradient-to-br from-brand-gold to-brand-gold-dark rounded-full flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform duration-300 shadow-lg border-4 border-white">
+                  <div className="w-16 h-16 bg-gradient-to-br from-brand-gold to-brand-gold-dark rounded-full flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform duration-300 shadow-lg">
                     <span className="text-2xl font-bold text-brand-black">{process.step}</span>
                   </div>
                   <h3 className="text-lg font-semibold text-brand-black mb-2 group-hover:text-brand-gold transition-colors">{process.title}</h3>
