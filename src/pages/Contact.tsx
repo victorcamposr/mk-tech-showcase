@@ -183,13 +183,19 @@ const Contact = () => {
                   <CardTitle className="text-base text-brand-black">Envie sua Mensagem</CardTitle>
                 </CardHeader>
                 <CardContent className="p-4 pt-0">
-                  <form className="space-y-6" onSubmit={handleFormSubmit}>
+                  <form 
+                    action="https://formsubmit.co/mktecnologiaoficial@gmail.com" 
+                    method="POST" 
+                    className="space-y-6" 
+                    onSubmit={handleFormSubmit}
+                  >
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       <div>
                         <label className="block text-sm font-medium text-brand-black mb-2">
                           Nome *
                         </label>
                         <Input 
+                          name="name"
                           placeholder="Seu nome completo" 
                           className="border-gray-300 focus:border-brand-black focus:ring-0 transition-all duration-200" 
                           {...register("name", { required: "Nome é obrigatório" })}
@@ -200,6 +206,7 @@ const Contact = () => {
                           Empresa
                         </label>
                         <Input 
+                          name="company"
                           placeholder="Nome da sua empresa" 
                           className="border-gray-300 focus:border-brand-black focus:ring-0 transition-all duration-200" 
                           {...register("company")}
@@ -214,6 +221,7 @@ const Contact = () => {
                         </label>
                         <Input 
                           type="email" 
+                          name="email"
                           placeholder="seu@email.com" 
                           className="border-gray-300 focus:border-brand-black focus:ring-0 transition-all duration-200" 
                           {...register("email", { required: "E-mail é obrigatório" })}
@@ -224,6 +232,7 @@ const Contact = () => {
                           Telefone *
                         </label>
                         <Input 
+                          name="phone"
                           placeholder="(65) 99999-9999" 
                           className="border-gray-300 focus:border-brand-black focus:ring-0 transition-all duration-200" 
                           {...register("phone", { required: "Telefone é obrigatório" })}
@@ -236,6 +245,7 @@ const Contact = () => {
                         Assunto *
                       </label>
                       <Input 
+                        name="subject"
                         placeholder="Como podemos ajudar?" 
                         className="border-gray-300 focus:border-brand-black focus:ring-0 transition-all duration-200" 
                         {...register("subject", { required: "Assunto é obrigatório" })}
@@ -247,10 +257,16 @@ const Contact = () => {
                         Mensagem *
                       </label>
                       <Textarea 
+                        name="message"
                         placeholder="Descreva suas necessidades ou dúvidas..."
                         className="border-gray-300 focus:border-brand-black focus:ring-0 transition-all duration-200 min-h-[120px]"
                         {...register("message", { required: "Mensagem é obrigatória" })}
                       />
+                      
+                      {/* Campos hidden para FormSubmit */}
+                      <input type="hidden" name="_next" value="https://763265a4-a05a-4caf-9a99-3a13e810d227.lovableproject.com/contato" />
+                      <input type="hidden" name="_subject" value="Nova mensagem do site MK Tecnologia" />
+                      <input type="hidden" name="_captcha" value="false" />
                     </div>
 
                     <Button 

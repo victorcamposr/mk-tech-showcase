@@ -99,11 +99,11 @@ const InteractiveDashboard = () => {
       "Impacto estimado: +18% em competitividade"
     ],
     [
-      "Analisando satisfação do cliente...",
-      "NPS atual: 87 (Excelente)",
-      "Principal motivo de satisfação: Atendimento rápido",
-      "Área de melhoria: Variedade de produtos",
-      "Meta: Atingir NPS 92 em 3 meses"
+      "Analisando fluxo de caixa em tempo real...",
+      "Entradas projetadas: R$ 85.600 (próximos 30 dias)",
+      "Saídas programadas: R$ 62.300 (próximos 30 dias)",
+      "Saldo líquido previsto: +R$ 23.300",
+      "Status: Fluxo de caixa saudável e controlado"
     ],
     [
       "Processando análise de sazonalidade...",
