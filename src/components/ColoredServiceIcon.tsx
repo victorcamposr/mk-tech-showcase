@@ -298,23 +298,19 @@ const ColoredServiceIcon = ({ type, className = "" }: ColoredServiceIconProps) =
             <stop offset="100%" stopColor="#4F46E5" />
           </linearGradient>
         </defs>
-        {/* Wrench tool */}
-        <path d="M18 36 L28 26 L32 30 L30 32 L38 40 L42 36 L46 40 L42 44 L38 40 L30 32" stroke="url(#headset-indigo)" strokeWidth="2.5" fill="url(#headset-indigo)" opacity="0.2" strokeLinecap="round" strokeLinejoin="round"/>
+        {/* Help/Support icon - question mark in circle */}
+        <circle cx="32" cy="32" r="20" fill="url(#headset-indigo)" opacity="0.2"/>
+        <circle cx="32" cy="32" r="20" fill="none" stroke="url(#headset-indigo)" strokeWidth="2"/>
         
-        {/* Wrench head */}
-        <circle cx="30" cy="28" r="3" fill="none" stroke="url(#headset-indigo)" strokeWidth="2"/>
+        {/* Question mark */}
+        <path d="M26 24 Q26 20 30 20 Q34 20 34 24 Q34 28 32 28 L32 32" stroke="url(#headset-indigo)" strokeWidth="3" fill="none" strokeLinecap="round"/>
+        <circle cx="32" cy="40" r="2" fill="url(#headset-indigo)"/>
         
-        {/* Gear/Settings icon */}
-        <circle cx="44" cy="22" r="6" fill="none" stroke="url(#headset-indigo)" strokeWidth="2"/>
-        <circle cx="44" cy="22" r="3" fill="url(#headset-indigo)" opacity="0.3"/>
-        
-        {/* Gear teeth */}
-        <path d="M44 16 L44 18 M50 22 L48 22 M44 28 L44 26 M38 22 L40 22" stroke="url(#headset-indigo)" strokeWidth="1.5" strokeLinecap="round"/>
-        <path d="M48.2 18.8 L46.8 20.2 M48.2 25.2 L46.8 23.8 M39.8 25.2 L41.2 23.8 M39.8 18.8 L41.2 20.2" stroke="url(#headset-indigo)" strokeWidth="1.5" strokeLinecap="round"/>
-        
-        {/* Support indicators */}
-        <circle cx="22" cy="48" r="2" fill="url(#headset-indigo)" opacity="0.6"/>
-        <circle cx="50" cy="48" r="1.5" fill="url(#headset-indigo)" opacity="0.6"/>
+        {/* Support indicators around */}
+        <circle cx="20" cy="20" r="1.5" fill="url(#headset-indigo)" opacity="0.6"/>
+        <circle cx="44" cy="20" r="1.5" fill="url(#headset-indigo)" opacity="0.6"/>
+        <circle cx="20" cy="44" r="1.5" fill="url(#headset-indigo)" opacity="0.6"/>
+        <circle cx="44" cy="44" r="1.5" fill="url(#headset-indigo)" opacity="0.6"/>
       </svg>
     ),
     efficiency: (
