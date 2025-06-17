@@ -85,7 +85,7 @@ const MapboxMap = ({
               placeholder="pk.eyJ1..."
               value={mapboxToken}
               onChange={(e) => setMapboxToken(e.target.value)}
-              className="border-brand-gold/20 focus:border-brand-gold"
+              className="border-brand-gold/20 focus:border-brand-black"
             />
             <Button 
               onClick={initializeMap}
