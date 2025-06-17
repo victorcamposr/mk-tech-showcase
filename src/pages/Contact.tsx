@@ -136,8 +136,8 @@ const Contact = () => {
               {/* Horário de Atendimento */}
               <Card className="border-brand-gold/20 hover:shadow-lg transition-all duration-300 bg-gradient-to-br from-white to-gray-50/30">
                 <CardHeader className="p-4">
-                  <div className="flex items-start gap-4">
-                    <div className="w-6 h-6 flex-shrink-0 mt-0.5">
+                  <div className="flex items-center gap-4">
+                    <div className="w-6 h-6 flex-shrink-0">
                       <ContactIcon type="clock" />
                     </div>
                     <CardTitle className="text-base text-brand-black ml-1">Horário de Atendimento</CardTitle>
