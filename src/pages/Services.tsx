@@ -139,10 +139,21 @@ const Services = () => {
             <h2 className="text-3xl font-bold text-brand-black text-center mb-12">
               Como Trabalhamos
             </h2>
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-8 relative">
+              {/* Connecting lines */}
+              <div className="hidden md:block absolute top-8 left-0 right-0 h-0.5">
+                <div className="flex justify-between items-center h-full mx-8">
+                  <div className="flex-1 h-px bg-gradient-to-r from-brand-gold/30 via-brand-gold/60 to-brand-gold/30"></div>
+                  <div className="w-4"></div>
+                  <div className="flex-1 h-px bg-gradient-to-r from-brand-gold/30 via-brand-gold/60 to-brand-gold/30"></div>
+                  <div className="w-4"></div>
+                  <div className="flex-1 h-px bg-gradient-to-r from-brand-gold/30 via-brand-gold/60 to-brand-gold/30"></div>
+                </div>
+              </div>
+              
               {workProcess.map((process, index) => (
-                <div key={index} className="text-center group">
-                  <div className="w-16 h-16 bg-gradient-to-br from-brand-gold to-brand-gold-dark rounded-full flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform duration-300 shadow-lg">
+                <div key={index} className="text-center group relative z-10">
+                  <div className="w-16 h-16 bg-gradient-to-br from-brand-gold to-brand-gold-dark rounded-full flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform duration-300 shadow-lg border-4 border-white">
                     <span className="text-2xl font-bold text-brand-black">{process.step}</span>
                   </div>
                   <h3 className="text-lg font-semibold text-brand-black mb-2 group-hover:text-brand-gold transition-colors">{process.title}</h3>
