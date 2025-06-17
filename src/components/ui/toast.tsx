@@ -22,8 +22,15 @@ const ToastViewport = React.forwardRef<
   return (
     <ToastPrimitives.Viewport
       ref={ref}
-      className={finalClassName}
-      style={{ position: 'fixed', top: '1rem', right: '1rem', zIndex: 999999 }}
+      className="!fixed !top-4 !right-4 !z-[999999] flex max-h-screen w-full flex-col max-w-[420px] p-4 pointer-events-none"
+      style={{ 
+        position: 'fixed', 
+        top: '1rem', 
+        right: '1rem', 
+        zIndex: 999999,
+        maxWidth: '420px',
+        width: 'auto'
+      }}
       {...props}
     />
   );
