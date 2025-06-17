@@ -148,15 +148,15 @@ const Contact = () => {
                   <div className="space-y-3 text-gray-600 text-sm">
                     <div className="flex justify-between items-center">
                       <span>Segunda a Sexta:</span>
-                      <span className="font-bold">08:00 - 18:00</span>
+                      <span className="text-brand-black font-medium">08:00 - 18:00</span>
                     </div>
                     <div className="flex justify-between items-center">
                       <span>Sábado:</span>
-                      <span className="font-bold">08:00 - 12:00</span>
+                      <span className="text-brand-black font-medium">08:00 - 12:00</span>
                     </div>
                     <div className="flex justify-between items-center">
                       <span>Domingo:</span>
-                      <span className="font-bold">Fechado</span>
+                      <span className="text-brand-black font-medium">Fechado</span>
                     </div>
                   </div>
                   <div className="mt-4 p-3 bg-gradient-to-r from-brand-gold/10 to-brand-gold/15 rounded-lg">

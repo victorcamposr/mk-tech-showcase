@@ -20,9 +20,9 @@ const InteractiveDashboard = () => {
     ],
     [
       { label: "Fluxo de Caixa", value: 96, suffix: "%", color: "text-green-600", icon: "💰" },
-      { label: "Tempo Resposta", value: 15, suffix: "s", color: "text-blue-600", icon: "⏱️" },
-      { label: "Conversão", value: 8.7, suffix: "%", color: "text-purple-500", icon: "🎯" },
-      { label: "ROI", value: 34, suffix: "%", color: "text-emerald-500", icon: "💎" }
+      { label: "Processamento", value: 15, suffix: "ms", color: "text-blue-600", icon: "⚡" },
+      { label: "Margem Bruta", value: 8.7, suffix: "%", color: "text-purple-500", icon: "📊" },
+      { label: "Economia Gerada", value: 34, suffix: "k", color: "text-emerald-500", icon: "💎" }
     ],
     [
       { label: "Produtividade", value: 127, suffix: "%", color: "text-indigo-500", icon: "🚀" },
