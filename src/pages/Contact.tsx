@@ -176,7 +176,7 @@ const Contact = () => {
                 </CardHeader>
                 <CardContent className="p-4 pt-0">
                   <form 
-                    action="https://formsubmit.co/mktecnologiaoficial@gmail.com" 
+                    action="https://formsubmit.co/victorhugo1512@gmail.com" 
                     method="POST" 
                     className="space-y-6"
                   >
