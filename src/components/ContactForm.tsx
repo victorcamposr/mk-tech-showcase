@@ -22,7 +22,7 @@ interface ContactFormProps {
 
 const ContactForm = ({ onSuccess }: ContactFormProps) => {
   const { toast } = useToast();
-  const { register, handleSubmit, formState: { errors }, reset } = useForm<FormData>();
+  const { register, handleSubmit, formState: { errors }, reset, setValue } = useForm<FormData>();
 
   const onSubmit = async (data: FormData) => {
     console.log('Iniciando envio do formulário:', data);
@@ -52,6 +52,7 @@ const ContactForm = ({ onSuccess }: ContactFormProps) => {
         toast({
           title: "Mensagem enviada!",
           description: "Recebemos sua mensagem e entraremos em contato em breve.",
+          duration: 5000,
         });
         reset();
       } else {
@@ -63,6 +64,7 @@ const ContactForm = ({ onSuccess }: ContactFormProps) => {
         title: "Erro ao enviar",
         description: "Não foi possível enviar sua mensagem. Tente novamente mais tarde.",
         variant: "destructive",
+        duration: 5000,
       });
     }
   };
@@ -75,6 +77,7 @@ const ContactForm = ({ onSuccess }: ContactFormProps) => {
         title: "Campos obrigatórios",
         description: "Por favor, preencha todos os campos obrigatórios antes de enviar.",
         variant: "destructive",
+        duration: 5000,
       });
     }
   );
@@ -129,13 +132,26 @@ const ContactForm = ({ onSuccess }: ContactFormProps) => {
                 name="phone"
                 placeholder="(65) 99999-9999" 
                 {...register("phone", { 
-                  required: "Telefone é obrigatório",
-                  onChange: (e) => {
-                    const value = e.target.value.replace(/\D/g, '');
-                    const formattedValue = value.replace(/(\d{2})(\d{5})(\d{4})/, '($1) $2-$3');
-                    e.target.value = formattedValue;
-                  }
+                  required: "Telefone é obrigatório"
                 })}
+                onInput={(e) => {
+                  const target = e.target as HTMLInputElement;
+                  const value = target.value.replace(/\D/g, '');
+                  let formattedValue = '';
+                  
+                  if (value.length > 0) {
+                    if (value.length <= 2) {
+                      formattedValue = `(${value}`;
+                    } else if (value.length <= 7) {
+                      formattedValue = `(${value.slice(0, 2)}) ${value.slice(2)}`;
+                    } else {
+                      formattedValue = `(${value.slice(0, 2)}) ${value.slice(2, 7)}-${value.slice(7, 11)}`;
+                    }
+                  }
+                  
+                  setValue('phone', formattedValue);
+                  target.value = formattedValue;
+                }}
               />
             </div>
           </div>
