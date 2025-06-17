@@ -28,9 +28,41 @@ const Contact = () => {
   const { toast } = useToast();
   const { register, handleSubmit, formState: { errors }, reset } = useForm<FormData>();
 
-  const onSubmit = (data: FormData) => {
-    console.log("Form data:", data);
-    setIsModalOpen(true);
+  const onSubmit = async (data: FormData) => {
+    try {
+      const response = await fetch('https://api.web3forms.com/submit', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          access_key: '4b611952-1cbf-41e2-92e0-94827feb419d',
+          name: data.name,
+          company: data.company || '',
+          email: data.email,
+          phone: data.phone,
+          subject: data.subject,
+          message: data.message
+        })
+      });
+
+      if (response.ok) {
+        setIsModalOpen(true);
+        toast({
+          title: "Mensagem enviada!",
+          description: "Recebemos sua mensagem e entraremos em contato em breve.",
+        });
+      } else {
+        throw new Error('Erro no envio');
+      }
+    } catch (error) {
+      console.error('Erro ao enviar formulário:', error);
+      toast({
+        title: "Erro ao enviar",
+        description: "Não foi possível enviar sua mensagem. Tente novamente mais tarde.",
+        variant: "destructive",
+      });
+    }
   };
 
   const handleFormSubmit = handleSubmit(
@@ -175,11 +207,7 @@ const Contact = () => {
                   <CardTitle className="text-base text-brand-black">Envie sua Mensagem</CardTitle>
                 </CardHeader>
                 <CardContent className="p-4 pt-0">
-                  <form 
-                    action="https://api.web3forms.com/submit" 
-                    method="POST" 
-                    className="space-y-6"
-                  >
+                  <form className="space-y-6">
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       <div>
                         <label className="block text-sm font-medium text-brand-black mb-2">
@@ -253,11 +281,6 @@ const Contact = () => {
                         className="border-gray-300 focus:border-brand-black focus:ring-brand-black focus:ring-opacity-0 focus:outline-none transition-all duration-200 min-h-[120px]"
                         {...register("message", { required: "Mensagem é obrigatória" })}
                       />
-                      
-                      {/* Campos hidden para Web3Forms */}
-                      <input type="hidden" name="access_key" value="4b611952-1cbf-41e2-92e0-94827feb419d" />
-                      <input type="hidden" name="subject" value="Nova mensagem do site MK Tecnologia" />
-                      <input type="hidden" name="from_name" value="Site MK Tecnologia" />
                     </div>
 
                     <Button 
