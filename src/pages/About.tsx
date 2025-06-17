@@ -11,17 +11,17 @@ import { Button } from "@/components/ui/button";
 const About = () => {
   const differentials = [
     {
-      iconType: "automation" as const,
+      iconType: "speed" as const,
       title: "Agilidade",
       description: "Implementação rápida e eficiente de nossas soluções, minimizando o tempo de adaptação do seu negócio."
     },
     {
-      iconType: "fiscal" as const,
+      iconType: "customization" as const,
       title: "Personalização",
       description: "Soluções adaptadas às necessidades específicas de cada cliente, garantindo máxima eficiência operacional."
     },
     {
-      iconType: "support" as const,
+      iconType: "headset" as const,
       title: "Suporte",
       description: "Suporte técnico especializado e acompanhamento contínuo para garantir o melhor desempenho dos sistemas."
     }

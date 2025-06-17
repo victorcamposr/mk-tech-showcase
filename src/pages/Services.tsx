@@ -26,7 +26,7 @@ const Services = () => {
       title: "Emissão de Cupom Fiscal",
       description: "Sistema completo para emissão de cupons fiscais conforme legislação vigente.",
       features: ["Certificado digital", "Contingência offline", "Validação automática", "Histórico completo"],
-      iconType: "fiscal" as const
+      iconType: "cupom-fiscal" as const
     },
     {
       title: "Nota Fiscal Eletrônica",
@@ -44,7 +44,7 @@ const Services = () => {
       title: "Suporte Técnico",
       description: "Suporte especializado para garantir o funcionamento perfeito de todos os sistemas.",
       features: ["Suporte remoto", "Atualizações automáticas", "Treinamento", "Consultoria técnica"],
-      iconType: "support" as const
+      iconType: "headset" as const
     }
   ];
 
