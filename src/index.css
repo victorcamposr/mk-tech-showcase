@@ -110,6 +110,10 @@
   .icon-modern {
     @apply filter drop-shadow-sm hover:drop-shadow-md transition-all duration-300;
   }
+  
+  .page-transition {
+    @apply animate-fade-in;
+  }
 }
 
 @layer utilities {

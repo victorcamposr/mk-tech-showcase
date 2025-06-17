@@ -53,14 +53,14 @@ const Header = () => {
               <Link
                 key={item.path}
                 to={item.path}
-                className={`px-4 py-2 rounded-lg text-sm font-medium smooth-transition relative overflow-hidden group ${
+                className={`px-4 py-2 rounded-lg text-sm font-medium smooth-transition relative overflow-hidden group transform hover:scale-105 ${
                   isActive(item.path) 
                     ? "text-brand-gold bg-brand-gold/10" 
                     : "text-white hover:text-brand-gold hover:bg-white/5"
                 }`}
               >
                 <span className="relative z-10">{item.label}</span>
-                <div className="absolute inset-0 bg-gradient-to-r from-brand-gold/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                <div className="absolute inset-0 bg-gradient-to-r from-brand-gold/20 to-transparent opacity-0 group-hover:opacity-100 transition-all duration-300 transform translate-x-[-100%] group-hover:translate-x-0"></div>
               </Link>
             ))}
           </nav>
