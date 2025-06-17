@@ -141,31 +141,25 @@ const Services = () => {
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-4 gap-8 relative">
               {/* Connecting lines */}
-              <div className="hidden md:block absolute top-1/2 left-0 right-0 transform -translate-y-1/2 z-0">
-                <div className="container mx-auto px-4 max-w-4xl">
-                  <div className="flex justify-between items-center">
-                    {/* Line 1 to 2 */}
-                    <div className="flex-1 h-0.5 bg-gradient-to-r from-brand-gold/80 to-brand-gold mx-4" 
-                         style={{
-                           background: 'repeating-linear-gradient(to right, #F59E0B 0, #F59E0B 8px, transparent 8px, transparent 16px)'
-                         }}>
-                    </div>
-                    {/* Space for circle 2 */}
-                    <div className="w-16"></div>
-                    {/* Line 2 to 3 */}
-                    <div className="flex-1 h-0.5 bg-gradient-to-r from-brand-gold/80 to-brand-gold mx-4"
-                         style={{
-                           background: 'repeating-linear-gradient(to right, #F59E0B 0, #F59E0B 8px, transparent 8px, transparent 16px)'
-                         }}>
-                    </div>
-                    {/* Space for circle 3 */}
-                    <div className="w-16"></div>
-                    {/* Line 3 to 4 */}
-                    <div className="flex-1 h-0.5 bg-gradient-to-r from-brand-gold/80 to-brand-gold mx-4"
-                         style={{
-                           background: 'repeating-linear-gradient(to right, #F59E0B 0, #F59E0B 8px, transparent 8px, transparent 16px)'
-                         }}>
-                    </div>
+              <div className="hidden md:flex absolute top-1/2 left-0 right-0 transform -translate-y-1/2 z-0 justify-center">
+                <div className="flex items-center justify-between w-full max-w-4xl px-8">
+                  {/* Line 1 to 2 */}
+                  <div className="flex-1 h-0.5 mx-8" 
+                       style={{
+                         background: 'repeating-linear-gradient(to right, #F59E0B 0, #F59E0B 8px, transparent 8px, transparent 16px)'
+                       }}>
+                  </div>
+                  {/* Line 2 to 3 */}
+                  <div className="flex-1 h-0.5 mx-8"
+                       style={{
+                         background: 'repeating-linear-gradient(to right, #F59E0B 0, #F59E0B 8px, transparent 8px, transparent 16px)'
+                       }}>
+                  </div>
+                  {/* Line 3 to 4 */}
+                  <div className="flex-1 h-0.5 mx-8"
+                       style={{
+                         background: 'repeating-linear-gradient(to right, #F59E0B 0, #F59E0B 8px, transparent 8px, transparent 16px)'
+                       }}>
                   </div>
                 </div>
               </div>
