@@ -298,42 +298,25 @@ const ColoredServiceIcon = ({ type, className = "" }: ColoredServiceIconProps) =
             <stop offset="100%" stopColor="#4F46E5" />
           </linearGradient>
         </defs>
-        {/* Support Headset */}
-        {/* Main headband */}
-        <path d="M20 32 Q32 18 44 32" stroke="url(#headset-indigo)" strokeWidth="3" fill="none" strokeLinecap="round"/>
+        {/* Headband */}
+        <path d="M20 28 Q32 16 44 28" stroke="url(#headset-indigo)" strokeWidth="3" fill="none" strokeLinecap="round"/>
         
         {/* Left earpiece */}
-        <circle cx="20" cy="32" r="6" fill="url(#headset-indigo)" opacity="0.2"/>
-        <circle cx="20" cy="32" r="6" fill="none" stroke="url(#headset-indigo)" strokeWidth="2"/>
-        <circle cx="20" cy="32" r="3" fill="url(#headset-indigo)" opacity="0.6"/>
+        <circle cx="20" cy="32" r="7" fill="url(#headset-indigo)" opacity="0.2"/>
+        <circle cx="20" cy="32" r="7" fill="none" stroke="url(#headset-indigo)" strokeWidth="2"/>
+        <circle cx="20" cy="32" r="4" fill="url(#headset-indigo)" opacity="0.4"/>
         
         {/* Right earpiece */}
-        <circle cx="44" cy="32" r="6" fill="url(#headset-indigo)" opacity="0.2"/>
-        <circle cx="44" cy="32" r="6" fill="none" stroke="url(#headset-indigo)" strokeWidth="2"/>
-        <circle cx="44" cy="32" r="3" fill="url(#headset-indigo)" opacity="0.6"/>
+        <circle cx="44" cy="32" r="7" fill="url(#headset-indigo)" opacity="0.2"/>
+        <circle cx="44" cy="32" r="7" fill="none" stroke="url(#headset-indigo)" strokeWidth="2"/>
+        <circle cx="44" cy="32" r="4" fill="url(#headset-indigo)" opacity="0.4"/>
         
-        {/* Microphone boom from left side */}
-        <path d="M14 32 L8 36" stroke="url(#headset-indigo)" strokeWidth="2" strokeLinecap="round"/>
+        {/* Microphone boom */}
+        <path d="M20 38 L16 42" stroke="url(#headset-indigo)" strokeWidth="2" strokeLinecap="round"/>
         
         {/* Microphone */}
-        <ellipse cx="6" cy="38" rx="2" ry="3" fill="url(#headset-indigo)" opacity="0.7"/>
-        <ellipse cx="6" cy="38" rx="2" ry="3" fill="none" stroke="url(#headset-indigo)" strokeWidth="1.5"/>
-        
-        {/* Sound waves from microphone */}
-        <path d="M10 36 Q12 38 10 40" stroke="url(#headset-indigo)" strokeWidth="1" fill="none" opacity="0.5"/>
-        <path d="M12 35 Q15 38 12 41" stroke="url(#headset-indigo)" strokeWidth="1" fill="none" opacity="0.3"/>
-        
-        {/* Audio cable */}
-        <path d="M32 42 Q32 48 28 52 Q24 56 20 56" stroke="url(#headset-indigo)" strokeWidth="2" fill="none" strokeLinecap="round" opacity="0.6"/>
-        
-        {/* Volume control on cable */}
-        <rect x="26" y="50" width="4" height="6" rx="2" fill="url(#headset-indigo)" opacity="0.8"/>
-        <circle cx="28" cy="52" r="0.5" fill="white"/>
-        <circle cx="28" cy="54" r="0.5" fill="white"/>
-        
-        {/* Support/communication icons */}
-        <circle cx="56" cy="16" r="6" fill="url(#headset-indigo)" opacity="0.15"/>
-        <path d="M53 14 L53 18 M55 16 L57 16 M59 14 L59 18" stroke="url(#headset-indigo)" strokeWidth="1.5" strokeLinecap="round" opacity="0.7"/>
+        <circle cx="14" cy="44" r="2" fill="url(#headset-indigo)" opacity="0.8"/>
+        <circle cx="14" cy="44" r="2" fill="none" stroke="url(#headset-indigo)" strokeWidth="1"/>
       </svg>
     ),
     efficiency: (

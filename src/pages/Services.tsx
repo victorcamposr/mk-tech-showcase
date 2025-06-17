@@ -139,33 +139,9 @@ const Services = () => {
             <h2 className="text-3xl font-bold text-brand-black text-center mb-12">
               Como Trabalhamos
             </h2>
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-8 relative">
-              {/* Connecting lines */}
-              <div className="hidden md:flex absolute top-1/2 left-0 right-0 transform -translate-y-1/2 z-0 justify-center">
-                <div className="flex items-center justify-between w-full max-w-4xl px-8">
-                  {/* Line 1 to 2 */}
-                  <div className="flex-1 h-0.5 mx-8" 
-                       style={{
-                         background: 'repeating-linear-gradient(to right, #F59E0B 0, #F59E0B 8px, transparent 8px, transparent 16px)'
-                       }}>
-                  </div>
-                  {/* Line 2 to 3 */}
-                  <div className="flex-1 h-0.5 mx-8"
-                       style={{
-                         background: 'repeating-linear-gradient(to right, #F59E0B 0, #F59E0B 8px, transparent 8px, transparent 16px)'
-                       }}>
-                  </div>
-                  {/* Line 3 to 4 */}
-                  <div className="flex-1 h-0.5 mx-8"
-                       style={{
-                         background: 'repeating-linear-gradient(to right, #F59E0B 0, #F59E0B 8px, transparent 8px, transparent 16px)'
-                       }}>
-                  </div>
-                </div>
-              </div>
-              
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
               {workProcess.map((process, index) => (
-                <div key={index} className="text-center group relative z-10">
+                <div key={index} className="text-center group">
                   <div className="w-16 h-16 bg-gradient-to-br from-brand-gold to-brand-gold-dark rounded-full flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform duration-300 shadow-lg">
                     <span className="text-2xl font-bold text-brand-black">{process.step}</span>
                   </div>
