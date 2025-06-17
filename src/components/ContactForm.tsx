@@ -73,12 +73,14 @@ const ContactForm = ({ onSuccess }: ContactFormProps) => {
     onSubmit,
     (errors) => {
       console.log("Form validation errors:", errors);
-      toast({
+      console.log("Chamando toast de campos obrigatórios...");
+      const toastResult = toast({
         title: "Campos obrigatórios",
         description: "Por favor, preencha todos os campos obrigatórios antes de enviar.",
         variant: "destructive",
         duration: 5000,
       });
+      console.log("Toast criado:", toastResult);
     }
   );
 

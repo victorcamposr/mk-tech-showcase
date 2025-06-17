@@ -10,6 +10,8 @@ import {
 
 export function Toaster() {
   const { toasts } = useToast()
+  
+  console.log("Toaster renderizado, toasts:", toasts);
 
   return (
     <ToastProvider>
