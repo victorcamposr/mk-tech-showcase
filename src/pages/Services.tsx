@@ -145,24 +145,25 @@ const Services = () => {
                 <svg viewBox="0 0 100 8" className="w-full h-8" preserveAspectRatio="none">
                   <defs>
                     <linearGradient id="pathGradient" x1="0%" y1="0%" x2="100%" y2="0%">
-                      <stop offset="0%" stopColor="#D97706" stopOpacity="0.7" />
-                      <stop offset="33%" stopColor="#F59E0B" stopOpacity="0.9" />
-                      <stop offset="66%" stopColor="#D97706" stopOpacity="0.7" />
-                      <stop offset="100%" stopColor="#F59E0B" stopOpacity="0.9" />
+                      <stop offset="0%" stopColor="#D97706" stopOpacity="0.4" />
+                      <stop offset="50%" stopColor="#F59E0B" stopOpacity="0.6" />
+                      <stop offset="100%" stopColor="#D97706" stopOpacity="0.4" />
                     </linearGradient>
                   </defs>
-                  <path 
-                    d="M 12.5 4 Q 29 2 37.5 4 Q 54 6 62.5 4 Q 79 2 87.5 4" 
+                  {/* Subtle dotted line connecting the steps */}
+                  <line 
+                    x1="12.5" y1="4" 
+                    x2="87.5" y2="4" 
                     stroke="url(#pathGradient)" 
-                    strokeWidth="2" 
-                    fill="none" 
+                    strokeWidth="1.5" 
+                    strokeDasharray="2,4"
                     strokeLinecap="round"
-                    strokeDasharray="4,2"
                   />
-                  <circle cx="12.5" cy="4" r="1.5" fill="#F59E0B" opacity="0.8"/>
-                  <circle cx="37.5" cy="4" r="1.5" fill="#F59E0B" opacity="0.8"/>
-                  <circle cx="62.5" cy="4" r="1.5" fill="#F59E0B" opacity="0.8"/>
-                  <circle cx="87.5" cy="4" r="1.5" fill="#F59E0B" opacity="0.8"/>
+                  {/* Small dots at each step position */}
+                  <circle cx="12.5" cy="4" r="1" fill="#F59E0B" opacity="0.7"/>
+                  <circle cx="37.5" cy="4" r="1" fill="#F59E0B" opacity="0.7"/>
+                  <circle cx="62.5" cy="4" r="1" fill="#F59E0B" opacity="0.7"/>
+                  <circle cx="87.5" cy="4" r="1" fill="#F59E0B" opacity="0.7"/>
                 </svg>
               </div>
               
