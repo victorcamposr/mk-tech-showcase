@@ -141,29 +141,29 @@ const Services = () => {
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-4 gap-8 relative">
               {/* Connecting path */}
-              <div className="hidden md:block absolute top-8 left-0 right-0">
-                <svg viewBox="0 0 100 8" className="w-full h-8" preserveAspectRatio="none">
+              <div className="hidden md:block absolute top-8 left-0 right-0 h-2">
+                <svg viewBox="0 0 300 6" className="w-full h-6" preserveAspectRatio="none">
                   <defs>
                     <linearGradient id="pathGradient" x1="0%" y1="0%" x2="100%" y2="0%">
-                      <stop offset="0%" stopColor="#D97706" stopOpacity="0.4" />
-                      <stop offset="50%" stopColor="#F59E0B" stopOpacity="0.6" />
-                      <stop offset="100%" stopColor="#D97706" stopOpacity="0.4" />
+                      <stop offset="0%" stopColor="#F59E0B" stopOpacity="0.5" />
+                      <stop offset="50%" stopColor="#F59E0B" stopOpacity="0.7" />
+                      <stop offset="100%" stopColor="#F59E0B" stopOpacity="0.5" />
                     </linearGradient>
                   </defs>
-                  {/* Subtle dotted line connecting the steps */}
+                  {/* Dotted line connecting all steps */}
                   <line 
-                    x1="12.5" y1="4" 
-                    x2="87.5" y2="4" 
+                    x1="37.5" y1="3" 
+                    x2="262.5" y2="3" 
                     stroke="url(#pathGradient)" 
-                    strokeWidth="1.5" 
-                    strokeDasharray="2,4"
+                    strokeWidth="1" 
+                    strokeDasharray="3,6"
                     strokeLinecap="round"
                   />
-                  {/* Small dots at each step position */}
-                  <circle cx="12.5" cy="4" r="1" fill="#F59E0B" opacity="0.7"/>
-                  <circle cx="37.5" cy="4" r="1" fill="#F59E0B" opacity="0.7"/>
-                  <circle cx="62.5" cy="4" r="1" fill="#F59E0B" opacity="0.7"/>
-                  <circle cx="87.5" cy="4" r="1" fill="#F59E0B" opacity="0.7"/>
+                  {/* Dots at each step position */}
+                  <circle cx="37.5" cy="3" r="1.5" fill="#F59E0B" opacity="0.8"/>
+                  <circle cx="112.5" cy="3" r="1.5" fill="#F59E0B" opacity="0.8"/>
+                  <circle cx="187.5" cy="3" r="1.5" fill="#F59E0B" opacity="0.8"/>
+                  <circle cx="262.5" cy="3" r="1.5" fill="#F59E0B" opacity="0.8"/>
                 </svg>
               </div>
               
