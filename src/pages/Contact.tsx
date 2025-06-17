@@ -140,7 +140,7 @@ const Contact = () => {
                     <div className="w-6 h-6 flex-shrink-0">
                       <ContactIcon type="clock" />
                     </div>
-                    <CardTitle className="text-base text-brand-black ml-1">Horário de Atendimento</CardTitle>
+                    <CardTitle className="text-base text-brand-black">Horário de Atendimento</CardTitle>
                   </div>
                 </CardHeader>
                 <CardContent className="p-4 pt-4">

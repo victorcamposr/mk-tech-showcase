@@ -1,6 +1,6 @@
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-import ColoredServiceIcon from "@/components/ColoredServiceIcon";
+import ColoredServiceIcon, { getServiceColors } from "@/components/ColoredServiceIcon";
 import CountUpNumber from "@/components/CountUpNumber";
 import SimpleIcon from "@/components/SimpleIcon";
 import TypewriterText from "@/components/TypewriterText";
@@ -113,17 +113,20 @@ const Index = () => {
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-              {services.map((service, index) => (
-                <Card key={index} className="border-brand-gold/20 hover:shadow-2xl hover:shadow-brand-gold/10 transition-all duration-500 hover:-translate-y-3 hover:scale-105 group bg-gradient-to-br from-white to-gray-50/50 backdrop-blur-sm">
-                  <CardContent className="p-8 text-center">
-                    <div className="mb-6">
-                      <ColoredServiceIcon type={service.iconType} className="group-hover:animate-pulse" />
-                    </div>
-                    <h3 className="text-xl font-semibold text-brand-black mb-4 group-hover:text-brand-gold transition-colors duration-300">{service.title}</h3>
-                    <p className="text-gray-600 group-hover:text-gray-700 transition-colors duration-300">{service.description}</p>
-                  </CardContent>
-                </Card>
-              ))}
+              {services.map((service, index) => {
+                const colors = getServiceColors(service.iconType);
+                return (
+                  <Card key={index} className={`${colors.border} hover:shadow-2xl hover:shadow-brand-gold/10 transition-all duration-500 hover:-translate-y-3 hover:scale-105 group bg-gradient-to-br from-white to-gray-50/50 backdrop-blur-sm`}>
+                    <CardContent className="p-8 text-center">
+                      <div className="mb-6">
+                        <ColoredServiceIcon type={service.iconType} className="group-hover:animate-pulse" />
+                      </div>
+                      <h3 className={`text-xl font-semibold text-brand-black mb-4 ${colors.hoverText} transition-colors duration-300`}>{service.title}</h3>
+                      <p className="text-gray-600 group-hover:text-gray-700 transition-colors duration-300">{service.description}</p>
+                    </CardContent>
+                  </Card>
+                );
+              })}
             </div>
           </div>
         </section>

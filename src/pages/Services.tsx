@@ -1,6 +1,6 @@
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-import ColoredServiceIcon from "@/components/ColoredServiceIcon";
+import ColoredServiceIcon, { getServiceColors } from "@/components/ColoredServiceIcon";
 import SimpleIcon from "@/components/SimpleIcon";
 import SEO from "@/components/SEO";
 import StructuredData from "@/components/StructuredData";
@@ -106,27 +106,30 @@ const Services = () => {
           {/* Services Grid */}
           <ScrollReveal animation="fade-up" delay={100}>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-16">
-            {services.map((service, index) => (
-                <Card key={index} className="border-brand-gold/20 hover:shadow-2xl hover:shadow-brand-gold/10 transition-all duration-500 hover:-translate-y-3 hover:scale-105 group bg-gradient-to-br from-white to-gray-50/50 backdrop-blur-sm">
+            {services.map((service, index) => {
+              const colors = getServiceColors(service.iconType);
+              return (
+                <Card key={index} className={`${colors.border} hover:shadow-2xl hover:shadow-brand-gold/10 transition-all duration-500 hover:-translate-y-3 hover:scale-105 group bg-gradient-to-br from-white to-gray-50/50 backdrop-blur-sm`}>
                  <CardHeader className="p-6 text-center">
                     <div className="flex justify-center mb-4">
                       <ColoredServiceIcon type={service.iconType} className="group-hover:animate-pulse" />
                     </div>
-                   <CardTitle className="text-lg text-brand-black group-hover:text-brand-gold transition-colors duration-300">{service.title}</CardTitle>
+                   <CardTitle className={`text-lg text-brand-black ${colors.hoverText} transition-colors duration-300`}>{service.title}</CardTitle>
                  </CardHeader>
                  <CardContent className="p-6 pt-0">
                   <p className="text-gray-600 mb-4 group-hover:text-gray-700 transition-colors duration-300">{service.description}</p>
                   <ul className="space-y-2">
                     {service.features.map((feature, featureIndex) => (
                       <li key={featureIndex} className="flex items-center text-sm text-gray-600">
-                        <div className="w-2 h-2 bg-brand-gold rounded-full mr-3 group-hover:scale-125 transition-transform"></div>
+                        <div className={`w-2 h-2 ${colors.bullet} rounded-full mr-3 group-hover:scale-125 transition-transform`}></div>
                         {feature}
                       </li>
                     ))}
                   </ul>
                 </CardContent>
               </Card>
-            ))}
+              );
+            })}
             </div>
           </ScrollReveal>
 

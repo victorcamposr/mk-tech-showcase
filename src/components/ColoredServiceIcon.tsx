@@ -3,6 +3,42 @@ interface ColoredServiceIconProps {
   className?: string;
 }
 
+export const getServiceColors = (type: 'automation' | 'inventory' | 'fiscal' | 'financial' | 'support' | 'nfe') => {
+  const colorMap = {
+    automation: {
+      border: 'border-blue-500/20 hover:border-blue-500/40',
+      hoverText: 'group-hover:text-blue-500',
+      bullet: 'bg-blue-500'
+    },
+    inventory: {
+      border: 'border-emerald-500/20 hover:border-emerald-500/40',
+      hoverText: 'group-hover:text-emerald-500',
+      bullet: 'bg-emerald-500'
+    },
+    fiscal: {
+      border: 'border-violet-500/20 hover:border-violet-500/40',
+      hoverText: 'group-hover:text-violet-500',
+      bullet: 'bg-violet-500'
+    },
+    financial: {
+      border: 'border-orange-500/20 hover:border-orange-500/40',
+      hoverText: 'group-hover:text-orange-500',
+      bullet: 'bg-orange-500'
+    },
+    support: {
+      border: 'border-red-500/20 hover:border-red-500/40',
+      hoverText: 'group-hover:text-red-500',
+      bullet: 'bg-red-500'
+    },
+    nfe: {
+      border: 'border-teal-500/20 hover:border-teal-500/40',
+      hoverText: 'group-hover:text-teal-500',
+      bullet: 'bg-teal-500'
+    }
+  };
+  return colorMap[type];
+};
+
 const ColoredServiceIcon = ({ type, className = "" }: ColoredServiceIconProps) => {
   const icons = {
     automation: (
