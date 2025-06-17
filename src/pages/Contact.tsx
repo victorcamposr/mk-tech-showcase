@@ -13,7 +13,6 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } f
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { useToast } from "@/hooks/use-toast";
-import { Toaster } from "@/components/ui/toaster";
 
 interface FormData {
   name: string;
@@ -360,7 +359,7 @@ const Contact = () => {
           </div>
         </DialogContent>
       </Dialog>
-      <Toaster />
+      
     </div>
   );
 };

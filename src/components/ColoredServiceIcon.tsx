@@ -298,19 +298,27 @@ const ColoredServiceIcon = ({ type, className = "" }: ColoredServiceIconProps) =
             <stop offset="100%" stopColor="#4F46E5" />
           </linearGradient>
         </defs>
-        {/* Help/Support icon - question mark in circle */}
-        <circle cx="32" cy="32" r="20" fill="url(#headset-indigo)" opacity="0.2"/>
-        <circle cx="32" cy="32" r="20" fill="none" stroke="url(#headset-indigo)" strokeWidth="2"/>
+        {/* Background circle */}
+        <circle cx="32" cy="32" r="20" fill="url(#headset-indigo)" opacity="0.1"/>
+        <circle cx="32" cy="32" r="20" fill="none" stroke="url(#headset-indigo)" strokeWidth="1" opacity="0.3"/>
         
-        {/* Question mark */}
-        <path d="M26 24 Q26 20 30 20 Q34 20 34 24 Q34 28 32 28 L32 32" stroke="url(#headset-indigo)" strokeWidth="3" fill="none" strokeLinecap="round"/>
-        <circle cx="32" cy="40" r="2" fill="url(#headset-indigo)"/>
+        {/* Headset band */}
+        <path d="M20 24 Q32 16 44 24" stroke="url(#headset-indigo)" strokeWidth="2.5" fill="none" strokeLinecap="round"/>
         
-        {/* Support indicators around */}
-        <circle cx="20" cy="20" r="1.5" fill="url(#headset-indigo)" opacity="0.6"/>
-        <circle cx="44" cy="20" r="1.5" fill="url(#headset-indigo)" opacity="0.6"/>
-        <circle cx="20" cy="44" r="1.5" fill="url(#headset-indigo)" opacity="0.6"/>
-        <circle cx="44" cy="44" r="1.5" fill="url(#headset-indigo)" opacity="0.6"/>
+        {/* Left earpiece */}
+        <ellipse cx="20" cy="28" rx="3" ry="5" fill="url(#headset-indigo)" opacity="0.6"/>
+        <ellipse cx="20" cy="28" rx="3" ry="5" fill="none" stroke="url(#headset-indigo)" strokeWidth="1.5"/>
+        
+        {/* Right earpiece */}
+        <ellipse cx="44" cy="28" rx="3" ry="5" fill="url(#headset-indigo)" opacity="0.6"/>
+        <ellipse cx="44" cy="28" rx="3" ry="5" fill="none" stroke="url(#headset-indigo)" strokeWidth="1.5"/>
+        
+        {/* Microphone boom */}
+        <path d="M20 32 Q24 38 28 40" stroke="url(#headset-indigo)" strokeWidth="2" fill="none" strokeLinecap="round"/>
+        
+        {/* Microphone */}
+        <ellipse cx="28" cy="40" rx="2" ry="3" fill="url(#headset-indigo)" opacity="0.8"/>
+        <ellipse cx="28" cy="40" rx="2" ry="3" fill="none" stroke="url(#headset-indigo)" strokeWidth="1"/>
       </svg>
     ),
     efficiency: (
