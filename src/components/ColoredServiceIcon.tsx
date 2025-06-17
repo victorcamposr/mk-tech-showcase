@@ -109,25 +109,13 @@ const ColoredServiceIcon = ({ type, className = "" }: ColoredServiceIconProps) =
             <stop offset="100%" stopColor="#059669" />
           </linearGradient>
         </defs>
-        {/* Main box base */}
-        <rect x="16" y="36" width="32" height="16" rx="2" fill="url(#inventory-green)" opacity="0.4"/>
+        {/* Simple 3D box */}
+        <rect x="20" y="32" width="24" height="16" rx="1" fill="url(#inventory-green)" opacity="0.3"/>
+        <rect x="20" y="28" width="24" height="16" rx="1" fill="none" stroke="url(#inventory-green)" strokeWidth="2"/>
         
-        {/* Box front face */}
-        <rect x="16" y="28" width="32" height="20" rx="2" fill="none" stroke="url(#inventory-green)" strokeWidth="2"/>
-        
-        {/* Box back/depth lines */}
-        <path d="M48 28 L52 24 L52 40 L48 44" stroke="url(#inventory-green)" strokeWidth="2" fill="none"/>
-        <path d="M16 28 L20 24 L52 24" stroke="url(#inventory-green)" strokeWidth="2" fill="none"/>
-        
-        {/* Open flaps */}
-        <path d="M16 28 L12 20 L26 20 L32 28" stroke="url(#inventory-green)" strokeWidth="2" fill="none" strokeLinecap="round"/>
-        <path d="M32 28 L38 20 L52 20 L48 28" stroke="url(#inventory-green)" strokeWidth="2" fill="none" strokeLinecap="round"/>
-        
-        {/* Contents inside */}
-        <rect x="20" y="32" width="4" height="8" rx="1" fill="url(#inventory-green)" opacity="0.6"/>
-        <rect x="26" y="34" width="4" height="6" rx="1" fill="url(#inventory-green)" opacity="0.6"/>
-        <rect x="32" y="30" width="4" height="10" rx="1" fill="url(#inventory-green)" opacity="0.6"/>
-        <rect x="38" y="33" width="4" height="7" rx="1" fill="url(#inventory-green)" opacity="0.6"/>
+        {/* 3D depth effect */}
+        <path d="M44 28 L48 24 L48 40 L44 44" stroke="url(#inventory-green)" strokeWidth="2" fill="url(#inventory-green)" opacity="0.2"/>
+        <path d="M20 28 L24 24 L48 24 L44 28" stroke="url(#inventory-green)" strokeWidth="2" fill="url(#inventory-green)" opacity="0.2"/>
       </svg>
     ),
     fiscal: (
@@ -272,21 +260,20 @@ const ColoredServiceIcon = ({ type, className = "" }: ColoredServiceIconProps) =
             <stop offset="100%" stopColor="#4F46E5" />
           </linearGradient>
         </defs>
-        {/* Headset main band */}
-        <path d="M20 32 Q32 12 44 32" stroke="url(#headset-indigo)" strokeWidth="3" fill="none" strokeLinecap="round"/>
+        {/* Simple headset band */}
+        <path d="M22 32 Q32 18 42 32" stroke="url(#headset-indigo)" strokeWidth="3" fill="none" strokeLinecap="round"/>
         
-        {/* Left ear cup */}
-        <rect x="16" y="28" width="8" height="12" rx="4" fill="none" stroke="url(#headset-indigo)" strokeWidth="2.5"/>
+        {/* Left earphone */}
+        <circle cx="22" cy="32" r="6" fill="none" stroke="url(#headset-indigo)" strokeWidth="2.5"/>
+        <circle cx="22" cy="32" r="3" fill="url(#headset-indigo)" opacity="0.6"/>
         
-        {/* Right ear cup */}
-        <rect x="40" y="28" width="8" height="12" rx="4" fill="none" stroke="url(#headset-indigo)" strokeWidth="2.5"/>
+        {/* Right earphone */}
+        <circle cx="42" cy="32" r="6" fill="none" stroke="url(#headset-indigo)" strokeWidth="2.5"/>
+        <circle cx="42" cy="32" r="3" fill="url(#headset-indigo)" opacity="0.6"/>
         
-        {/* Microphone arm */}
-        <path d="M24 36 Q20 42 16 46" stroke="url(#headset-indigo)" strokeWidth="2.5" fill="none" strokeLinecap="round"/>
-        
-        {/* Microphone */}
-        <circle cx="16" cy="46" r="3" fill="none" stroke="url(#headset-indigo)" strokeWidth="2.5"/>
-        <circle cx="16" cy="46" r="1.5" fill="url(#headset-indigo)"/>
+        {/* Simple microphone */}
+        <path d="M22 38 L18 42" stroke="url(#headset-indigo)" strokeWidth="2.5" strokeLinecap="round"/>
+        <circle cx="18" cy="42" r="2" fill="url(#headset-indigo)"/>
       </svg>
     ),
     efficiency: (
