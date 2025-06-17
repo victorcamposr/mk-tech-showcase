@@ -280,31 +280,28 @@ const ColoredServiceIcon = ({ type, className = "" }: ColoredServiceIconProps) =
             <stop offset="100%" stopColor="#4F46E5" />
           </linearGradient>
         </defs>
-        {/* Classic telephone handset */}
-        {/* Main handset body */}
-        <rect x="20" y="22" width="24" height="8" rx="4" fill="url(#headset-indigo)" opacity="0.8"/>
-        <rect x="20" y="22" width="24" height="8" rx="4" fill="none" stroke="url(#headset-indigo)" strokeWidth="2"/>
+        {/* Modern headset without microphone */}
+        {/* Headband arc */}
+        <path d="M16 32 Q32 16 48 32" stroke="url(#headset-indigo)" strokeWidth="3" fill="none" strokeLinecap="round"/>
+        <path d="M16 32 Q32 18 48 32" stroke="url(#headset-indigo)" strokeWidth="1" fill="none" strokeLinecap="round" opacity="0.5"/>
         
-        {/* Left earpiece (speaker) */}
-        <circle cx="24" cy="26" r="6" fill="none" stroke="url(#headset-indigo)" strokeWidth="2"/>
-        <circle cx="24" cy="26" r="3" fill="url(#headset-indigo)" opacity="0.6"/>
-        <circle cx="24" cy="26" r="1.5" fill="url(#headset-indigo)"/>
+        {/* Left earpiece */}
+        <ellipse cx="16" cy="32" rx="4" ry="8" fill="url(#headset-indigo)" opacity="0.3"/>
+        <ellipse cx="16" cy="32" rx="4" ry="8" fill="none" stroke="url(#headset-indigo)" strokeWidth="2"/>
+        <ellipse cx="16" cy="32" rx="2" ry="5" fill="url(#headset-indigo)" opacity="0.6"/>
+        <circle cx="16" cy="30" r="1" fill="url(#headset-indigo)"/>
+        <circle cx="16" cy="34" r="1" fill="url(#headset-indigo)"/>
         
-        {/* Right mouthpiece (microphone) */}
-        <circle cx="40" cy="26" r="6" fill="none" stroke="url(#headset-indigo)" strokeWidth="2"/>
-        <circle cx="40" cy="26" r="3" fill="url(#headset-indigo)" opacity="0.4"/>
-        {/* Microphone holes */}
-        <circle cx="38" cy="24" r="0.5" fill="url(#headset-indigo)"/>
-        <circle cx="40" cy="24" r="0.5" fill="url(#headset-indigo)"/>
-        <circle cx="42" cy="24" r="0.5" fill="url(#headset-indigo)"/>
-        <circle cx="38" cy="26" r="0.5" fill="url(#headset-indigo)"/>
-        <circle cx="42" cy="26" r="0.5" fill="url(#headset-indigo)"/>
-        <circle cx="38" cy="28" r="0.5" fill="url(#headset-indigo)"/>
-        <circle cx="40" cy="28" r="0.5" fill="url(#headset-indigo)"/>
-        <circle cx="42" cy="28" r="0.5" fill="url(#headset-indigo)"/>
+        {/* Right earpiece */}
+        <ellipse cx="48" cy="32" rx="4" ry="8" fill="url(#headset-indigo)" opacity="0.3"/>
+        <ellipse cx="48" cy="32" rx="4" ry="8" fill="none" stroke="url(#headset-indigo)" strokeWidth="2"/>
+        <ellipse cx="48" cy="32" rx="2" ry="5" fill="url(#headset-indigo)" opacity="0.6"/>
+        <circle cx="48" cy="30" r="1" fill="url(#headset-indigo)"/>
+        <circle cx="48" cy="34" r="1" fill="url(#headset-indigo)"/>
         
-        {/* Connecting cord/wire */}
-        <path d="M32 30 Q28 36 32 42 Q36 38 32 44 Q28 48 32 52" stroke="url(#headset-indigo)" strokeWidth="2" fill="none" strokeLinecap="round"/>
+        {/* Headband padding details */}
+        <rect x="28" y="18" width="8" height="2" rx="1" fill="url(#headset-indigo)" opacity="0.4"/>
+        <rect x="30" y="20" width="4" height="1" rx="0.5" fill="url(#headset-indigo)" opacity="0.3"/>
       </svg>
     ),
     efficiency: (
