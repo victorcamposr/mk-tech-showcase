@@ -2,6 +2,7 @@ import * as React from "react"
 import * as ToastPrimitives from "@radix-ui/react-toast"
 import { cva, type VariantProps } from "class-variance-authority"
 import { X } from "lucide-react"
+import { createPortal } from "react-dom"
 
 import { cn } from "@/lib/utils"
 
@@ -11,28 +12,46 @@ const ToastViewport = React.forwardRef<
   React.ElementRef<typeof ToastPrimitives.Viewport>,
   React.ComponentPropsWithoutRef<typeof ToastPrimitives.Viewport>
 >(({ className, ...props }, ref) => {
-  const finalClassName = cn(
-    "fixed top-4 right-4 z-[999999] flex max-h-screen w-full flex-col max-w-[420px] p-4 pointer-events-none",
-    className
-  );
+  console.log("ToastViewport renderizado");
   
-  console.log("ToastViewport renderizado com classes:", finalClassName);
-  console.log("ToastViewport props:", props);
+  // Criar um portal para renderizar diretamente no body
+  const [container, setContainer] = React.useState<HTMLElement | null>(null);
   
-  return (
+  React.useEffect(() => {
+    let toastContainer = document.getElementById('toast-container');
+    if (!toastContainer) {
+      toastContainer = document.createElement('div');
+      toastContainer.id = 'toast-container';
+      toastContainer.style.cssText = `
+        position: fixed !important;
+        top: 1rem !important;
+        right: 1rem !important;
+        z-index: 999999 !important;
+        max-width: 420px !important;
+        width: auto !important;
+        pointer-events: none !important;
+        display: flex !important;
+        flex-direction: column !important;
+        gap: 0.5rem !important;
+      `;
+      document.body.appendChild(toastContainer);
+    }
+    setContainer(toastContainer);
+    
+    return () => {
+      // Não remover o container aqui para evitar problemas de limpeza
+    };
+  }, []);
+  
+  if (!container) return null;
+  
+  return createPortal(
     <ToastPrimitives.Viewport
       ref={ref}
-      className="!fixed !top-4 !right-4 !z-[999999] flex max-h-screen w-full flex-col max-w-[420px] p-4 pointer-events-none"
-      style={{ 
-        position: 'fixed', 
-        top: '1rem', 
-        right: '1rem', 
-        zIndex: 999999,
-        maxWidth: '420px',
-        width: 'auto'
-      }}
+      className="flex flex-col gap-2 pointer-events-none"
       {...props}
-    />
+    />,
+    container
   );
 })
 ToastViewport.displayName = ToastPrimitives.Viewport.displayName
