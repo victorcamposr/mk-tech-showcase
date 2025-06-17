@@ -20,7 +20,6 @@ const App = () => (
     <TooltipProvider>
       <AccessibilityHelper>
         <PerformanceOptimizer />
-        <Toaster />
         <BrowserRouter future={{ v7_startTransition: true }}>
           <ScrollToTop />
           <Routes>
@@ -36,6 +35,7 @@ const App = () => (
       </BrowserRouter>
       </AccessibilityHelper>
     </TooltipProvider>
+    <Toaster />
   </QueryClientProvider>
 );
 

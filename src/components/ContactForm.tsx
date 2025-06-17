@@ -94,7 +94,6 @@ const ContactForm = ({ onSuccess }: ContactFormProps) => {
               <Input 
                 name="name"
                 placeholder="Seu nome completo" 
-                className="border-gray-300 focus:border-brand-black focus:ring-1 focus:ring-brand-black focus-visible:ring-brand-black focus:ring-offset-0 transition-all duration-200" 
                 {...register("name", { required: "Nome é obrigatório" })}
               />
             </div>
@@ -105,7 +104,6 @@ const ContactForm = ({ onSuccess }: ContactFormProps) => {
               <Input 
                 name="company"
                 placeholder="Nome da sua empresa" 
-                className="border-gray-300 focus:border-brand-black focus:ring-1 focus:ring-brand-black focus-visible:ring-brand-black focus:ring-offset-0 transition-all duration-200" 
                 {...register("company")}
               />
             </div>
@@ -120,7 +118,6 @@ const ContactForm = ({ onSuccess }: ContactFormProps) => {
                 type="email" 
                 name="email"
                 placeholder="seu@email.com" 
-                className="border-gray-300 focus:border-brand-black focus:ring-1 focus:ring-brand-black focus-visible:ring-brand-black focus:ring-offset-0 transition-all duration-200" 
                 {...register("email", { required: "E-mail é obrigatório" })}
               />
             </div>
@@ -131,8 +128,14 @@ const ContactForm = ({ onSuccess }: ContactFormProps) => {
               <Input 
                 name="phone"
                 placeholder="(65) 99999-9999" 
-                className="border-gray-300 focus:border-brand-black focus:ring-1 focus:ring-brand-black focus-visible:ring-brand-black focus:ring-offset-0 transition-all duration-200" 
-                {...register("phone", { required: "Telefone é obrigatório" })}
+                {...register("phone", { 
+                  required: "Telefone é obrigatório",
+                  onChange: (e) => {
+                    const value = e.target.value.replace(/\D/g, '');
+                    const formattedValue = value.replace(/(\d{2})(\d{5})(\d{4})/, '($1) $2-$3');
+                    e.target.value = formattedValue;
+                  }
+                })}
               />
             </div>
           </div>
@@ -144,7 +147,6 @@ const ContactForm = ({ onSuccess }: ContactFormProps) => {
             <Input 
               name="subject"
               placeholder="Como podemos ajudar?" 
-              className="border-gray-300 focus:border-brand-black focus:ring-1 focus:ring-brand-black focus-visible:ring-brand-black focus:ring-offset-0 transition-all duration-200" 
               {...register("subject", { required: "Assunto é obrigatório" })}
             />
           </div>
@@ -156,7 +158,7 @@ const ContactForm = ({ onSuccess }: ContactFormProps) => {
             <Textarea 
               name="message"
               placeholder="Descreva suas necessidades ou dúvidas..."
-              className="border-gray-300 focus:border-brand-black focus:ring-1 focus:ring-brand-black focus-visible:ring-brand-black focus:ring-offset-0 transition-all duration-200 min-h-[120px]"
+              className="min-h-[120px]"
               {...register("message", { required: "Mensagem é obrigatória" })}
             />
           </div>
