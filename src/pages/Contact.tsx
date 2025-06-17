@@ -29,22 +29,14 @@ const Contact = () => {
   const { register, handleSubmit, formState: { errors }, reset } = useForm<FormData>();
 
   const onSubmit = (data: FormData) => {
-    // Validação adicional para garantir que todos os campos obrigatórios estão preenchidos
-    if (!data.name || !data.email || !data.phone || !data.subject || !data.message) {
-      toast({
-        title: "Campos obrigatórios",
-        description: "Por favor, preencha todos os campos obrigatórios antes de enviar.",
-        variant: "destructive",
-      });
-      return;
-    }
+    console.log("Form data:", data);
     setIsModalOpen(true);
   };
 
   const handleFormSubmit = handleSubmit(
     onSubmit,
     (errors) => {
-      console.log("Form errors:", errors);
+      console.log("Form validation errors:", errors);
       toast({
         title: "Campos obrigatórios",
         description: "Por favor, preencha todos os campos obrigatórios antes de enviar.",
@@ -156,15 +148,15 @@ const Contact = () => {
                   <div className="space-y-3 text-gray-600 text-sm">
                     <div className="flex justify-between items-center">
                       <span>Segunda a Sexta:</span>
-                      <span className="font-medium">08:00 - 18:00</span>
+                      <span className="font-bold">08:00 - 18:00</span>
                     </div>
                     <div className="flex justify-between items-center">
                       <span>Sábado:</span>
-                      <span className="font-medium">08:00 - 12:00</span>
+                      <span className="font-bold">08:00 - 12:00</span>
                     </div>
                     <div className="flex justify-between items-center">
                       <span>Domingo:</span>
-                      <span className="font-medium">Fechado</span>
+                      <span className="font-bold">Fechado</span>
                     </div>
                   </div>
                   <div className="mt-4 p-3 bg-gradient-to-r from-brand-gold/10 to-brand-gold/15 rounded-lg">
@@ -186,8 +178,7 @@ const Contact = () => {
                   <form 
                     action="https://formsubmit.co/mktecnologiaoficial@gmail.com" 
                     method="POST" 
-                    className="space-y-6" 
-                    onSubmit={handleFormSubmit}
+                    className="space-y-6"
                   >
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       <div>
@@ -270,7 +261,8 @@ const Contact = () => {
                     </div>
 
                     <Button 
-                      type="submit" 
+                      type="button"
+                      onClick={handleFormSubmit}
                       className="w-full bg-brand-gold hover:bg-brand-gold-dark text-brand-black font-semibold transition-all duration-300 hover:scale-105"
                     >
                       Enviar Mensagem

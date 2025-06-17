@@ -19,7 +19,7 @@ const InteractiveDashboard = () => {
       { label: "Lucro", value: 24, suffix: "%", color: "text-brand-gold", icon: "💰" }
     ],
     [
-      { label: "Satisfação Cliente", value: 96, suffix: "%", color: "text-green-600", icon: "😊" },
+      { label: "Fluxo de Caixa", value: 96, suffix: "%", color: "text-green-600", icon: "💰" },
       { label: "Tempo Resposta", value: 15, suffix: "s", color: "text-blue-600", icon: "⏱️" },
       { label: "Conversão", value: 8.7, suffix: "%", color: "text-purple-500", icon: "🎯" },
       { label: "ROI", value: 34, suffix: "%", color: "text-emerald-500", icon: "💎" }
