@@ -141,37 +141,37 @@ const Services = () => {
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-4 gap-8 relative">
               {/* Connecting path */}
-              <div className="hidden md:block absolute top-8 left-0 right-0 h-16 z-0">
-                <svg viewBox="0 0 100 30" className="w-full h-full" preserveAspectRatio="xMidYMid meet">
+              <div className="hidden md:block absolute top-8 left-1/2 transform -translate-x-1/2 w-full max-w-4xl h-16 z-0">
+                <svg viewBox="0 0 400 30" className="w-full h-full">
                   <defs>
                     <linearGradient id="pathGradient" x1="0%" y1="0%" x2="100%" y2="0%">
-                      <stop offset="0%" stopColor="#F59E0B" stopOpacity="0.7" />
+                      <stop offset="0%" stopColor="#F59E0B" stopOpacity="0.8" />
                       <stop offset="50%" stopColor="#F59E0B" stopOpacity="1" />
-                      <stop offset="100%" stopColor="#F59E0B" stopOpacity="0.7" />
+                      <stop offset="100%" stopColor="#F59E0B" stopOpacity="0.8" />
                     </linearGradient>
                   </defs>
                   {/* Curved dotted paths connecting all 4 circles */}
                   <path 
-                    d="M 12.5 15 Q 25 8 37.5 15" 
+                    d="M 50 15 Q 100 5 150 15" 
                     stroke="url(#pathGradient)" 
-                    strokeWidth="2" 
-                    strokeDasharray="3,4"
+                    strokeWidth="3" 
+                    strokeDasharray="4,6"
                     strokeLinecap="round"
                     fill="none"
                   />
                   <path 
-                    d="M 37.5 15 Q 50 22 62.5 15" 
+                    d="M 150 15 Q 200 25 250 15" 
                     stroke="url(#pathGradient)" 
-                    strokeWidth="2" 
-                    strokeDasharray="3,4"
+                    strokeWidth="3" 
+                    strokeDasharray="4,6"
                     strokeLinecap="round"
                     fill="none"
                   />
                   <path 
-                    d="M 62.5 15 Q 75 8 87.5 15" 
+                    d="M 250 15 Q 300 5 350 15" 
                     stroke="url(#pathGradient)" 
-                    strokeWidth="2" 
-                    strokeDasharray="3,4"
+                    strokeWidth="3" 
+                    strokeDasharray="4,6"
                     strokeLinecap="round"
                     fill="none"
                   />

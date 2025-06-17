@@ -193,15 +193,33 @@ const ColoredServiceIcon = ({ type, className = "" }: ColoredServiceIconProps) =
             <stop offset="100%" stopColor="#DC2626" />
           </linearGradient>
         </defs>
-        <circle cx="32" cy="32" r="20" fill="none" stroke="url(#support-red)" strokeWidth="2"/>
-        <path d="M24 28 Q32 20 40 28" stroke="url(#support-red)" strokeWidth="2" fill="none"/>
-        <circle cx="28" cy="30" r="2" fill="url(#support-red)"/>
-        <circle cx="36" cy="30" r="2" fill="url(#support-red)"/>
-        <path d="M26 38 Q32 44 38 38" stroke="url(#support-red)" strokeWidth="2" fill="none"/>
-        <rect x="30" y="16" width="4" height="8" rx="2" fill="url(#support-red)" opacity="0.6"/>
-        <rect x="30" y="40" width="4" height="8" rx="2" fill="url(#support-red)" opacity="0.6"/>
-        <rect x="16" y="30" width="8" height="4" rx="2" fill="url(#support-red)" opacity="0.6"/>
-        <rect x="40" y="30" width="8" height="4" rx="2" fill="url(#support-red)" opacity="0.6"/>
+        {/* Person with headset */}
+        {/* Head */}
+        <circle cx="32" cy="24" r="8" fill="url(#support-red)" opacity="0.3"/>
+        <circle cx="32" cy="24" r="8" fill="none" stroke="url(#support-red)" strokeWidth="2"/>
+        
+        {/* Headset band */}
+        <path d="M24 20 Q32 14 40 20" stroke="url(#support-red)" strokeWidth="2" fill="none" strokeLinecap="round"/>
+        
+        {/* Left earpiece */}
+        <ellipse cx="24" cy="22" rx="2" ry="3" fill="url(#support-red)" opacity="0.6"/>
+        <ellipse cx="24" cy="22" rx="2" ry="3" fill="none" stroke="url(#support-red)" strokeWidth="1"/>
+        
+        {/* Right earpiece */}
+        <ellipse cx="40" cy="22" rx="2" ry="3" fill="url(#support-red)" opacity="0.6"/>
+        <ellipse cx="40" cy="22" rx="2" ry="3" fill="none" stroke="url(#support-red)" strokeWidth="1"/>
+        
+        {/* Microphone */}
+        <path d="M40 24 L44 26" stroke="url(#support-red)" strokeWidth="2" strokeLinecap="round"/>
+        <circle cx="44" cy="26" r="1.5" fill="url(#support-red)" opacity="0.8"/>
+        
+        {/* Body/shoulders */}
+        <path d="M20 32 Q32 36 44 32 L42 48 L22 48 Z" fill="url(#support-red)" opacity="0.2"/>
+        <path d="M20 32 Q32 36 44 32" stroke="url(#support-red)" strokeWidth="2" fill="none" strokeLinecap="round"/>
+        
+        {/* Arms */}
+        <path d="M22 40 L16 44" stroke="url(#support-red)" strokeWidth="2" strokeLinecap="round"/>
+        <path d="M42 40 L48 44" stroke="url(#support-red)" strokeWidth="2" strokeLinecap="round"/>
       </svg>
     ),
     nfe: (
