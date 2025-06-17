@@ -141,29 +141,40 @@ const Services = () => {
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-4 gap-8 relative">
               {/* Connecting path */}
-              <div className="hidden md:block absolute top-8 left-0 right-0 h-2">
-                <svg viewBox="0 0 100 6" className="w-full h-6" preserveAspectRatio="none">
+              <div className="hidden md:block absolute top-8 left-0 right-0 h-16">
+                <svg viewBox="0 0 300 30" className="w-full h-full" preserveAspectRatio="none">
                   <defs>
                     <linearGradient id="pathGradient" x1="0%" y1="0%" x2="100%" y2="0%">
-                      <stop offset="0%" stopColor="#F59E0B" stopOpacity="0.8" />
+                      <stop offset="0%" stopColor="#F59E0B" stopOpacity="0.7" />
                       <stop offset="50%" stopColor="#F59E0B" stopOpacity="1" />
-                      <stop offset="100%" stopColor="#F59E0B" stopOpacity="0.8" />
+                      <stop offset="100%" stopColor="#F59E0B" stopOpacity="0.7" />
                     </linearGradient>
                   </defs>
-                  {/* Dotted line connecting all steps */}
-                  <line 
-                    x1="12.5" y1="3" 
-                    x2="87.5" y2="3" 
+                  {/* Curved dotted paths connecting steps */}
+                  <path 
+                    d="M 75 15 Q 112.5 5 150 15" 
                     stroke="url(#pathGradient)" 
                     strokeWidth="2" 
-                    strokeDasharray="4,4"
+                    strokeDasharray="3,4"
                     strokeLinecap="round"
+                    fill="none"
                   />
-                  {/* Dots at each step position */}
-                  <circle cx="12.5" cy="3" r="2" fill="#F59E0B"/>
-                  <circle cx="37.5" cy="3" r="2" fill="#F59E0B"/>
-                  <circle cx="62.5" cy="3" r="2" fill="#F59E0B"/>
-                  <circle cx="87.5" cy="3" r="2" fill="#F59E0B"/>
+                  <path 
+                    d="M 150 15 Q 187.5 25 225 15" 
+                    stroke="url(#pathGradient)" 
+                    strokeWidth="2" 
+                    strokeDasharray="3,4"
+                    strokeLinecap="round"
+                    fill="none"
+                  />
+                  <path 
+                    d="M 225 15 Q 262.5 5 300 15" 
+                    stroke="url(#pathGradient)" 
+                    strokeWidth="2" 
+                    strokeDasharray="3,4"
+                    strokeLinecap="round"
+                    fill="none"
+                  />
                 </svg>
               </div>
               

@@ -109,13 +109,33 @@ const ColoredServiceIcon = ({ type, className = "" }: ColoredServiceIconProps) =
             <stop offset="100%" stopColor="#059669" />
           </linearGradient>
         </defs>
-        {/* Simple 3D box */}
-        <rect x="20" y="32" width="24" height="16" rx="1" fill="url(#inventory-green)" opacity="0.3"/>
-        <rect x="20" y="28" width="24" height="16" rx="1" fill="none" stroke="url(#inventory-green)" strokeWidth="2"/>
+        {/* Elaborate 3D box */}
+        {/* Base shadow */}
+        <ellipse cx="32" cy="50" rx="18" ry="4" fill="url(#inventory-green)" opacity="0.2"/>
         
-        {/* 3D depth effect */}
-        <path d="M44 28 L48 24 L48 40 L44 44" stroke="url(#inventory-green)" strokeWidth="2" fill="url(#inventory-green)" opacity="0.2"/>
-        <path d="M20 28 L24 24 L48 24 L44 28" stroke="url(#inventory-green)" strokeWidth="2" fill="url(#inventory-green)" opacity="0.2"/>
+        {/* Main box front face */}
+        <rect x="16" y="24" width="32" height="24" rx="2" fill="url(#inventory-green)" opacity="0.3"/>
+        <rect x="16" y="24" width="32" height="24" rx="2" fill="none" stroke="url(#inventory-green)" strokeWidth="2"/>
+        
+        {/* Box right side (3D effect) */}
+        <path d="M48 24 L54 18 L54 42 L48 48" stroke="url(#inventory-green)" strokeWidth="2" fill="url(#inventory-green)" opacity="0.2"/>
+        
+        {/* Box top (3D effect) */}
+        <path d="M16 24 L22 18 L54 18 L48 24" stroke="url(#inventory-green)" strokeWidth="2" fill="url(#inventory-green)" opacity="0.25"/>
+        
+        {/* Box details - front panel lines */}
+        <rect x="20" y="28" width="24" height="2" rx="1" fill="url(#inventory-green)" opacity="0.4"/>
+        <rect x="20" y="32" width="20" height="2" rx="1" fill="url(#inventory-green)" opacity="0.4"/>
+        <rect x="20" y="36" width="16" height="2" rx="1" fill="url(#inventory-green)" opacity="0.4"/>
+        
+        {/* Box handle */}
+        <rect x="28" y="40" width="8" height="4" rx="2" fill="none" stroke="url(#inventory-green)" strokeWidth="1.5"/>
+        
+        {/* Corner reinforcements */}
+        <circle cx="20" cy="28" r="1" fill="url(#inventory-green)" opacity="0.6"/>
+        <circle cx="44" cy="28" r="1" fill="url(#inventory-green)" opacity="0.6"/>
+        <circle cx="20" cy="44" r="1" fill="url(#inventory-green)" opacity="0.6"/>
+        <circle cx="44" cy="44" r="1" fill="url(#inventory-green)" opacity="0.6"/>
       </svg>
     ),
     fiscal: (
@@ -260,20 +280,31 @@ const ColoredServiceIcon = ({ type, className = "" }: ColoredServiceIconProps) =
             <stop offset="100%" stopColor="#4F46E5" />
           </linearGradient>
         </defs>
-        {/* Simple headset band */}
-        <path d="M22 32 Q32 18 42 32" stroke="url(#headset-indigo)" strokeWidth="3" fill="none" strokeLinecap="round"/>
+        {/* Classic telephone handset */}
+        {/* Main handset body */}
+        <rect x="20" y="22" width="24" height="8" rx="4" fill="url(#headset-indigo)" opacity="0.8"/>
+        <rect x="20" y="22" width="24" height="8" rx="4" fill="none" stroke="url(#headset-indigo)" strokeWidth="2"/>
         
-        {/* Left earphone */}
-        <circle cx="22" cy="32" r="6" fill="none" stroke="url(#headset-indigo)" strokeWidth="2.5"/>
-        <circle cx="22" cy="32" r="3" fill="url(#headset-indigo)" opacity="0.6"/>
+        {/* Left earpiece (speaker) */}
+        <circle cx="24" cy="26" r="6" fill="none" stroke="url(#headset-indigo)" strokeWidth="2"/>
+        <circle cx="24" cy="26" r="3" fill="url(#headset-indigo)" opacity="0.6"/>
+        <circle cx="24" cy="26" r="1.5" fill="url(#headset-indigo)"/>
         
-        {/* Right earphone */}
-        <circle cx="42" cy="32" r="6" fill="none" stroke="url(#headset-indigo)" strokeWidth="2.5"/>
-        <circle cx="42" cy="32" r="3" fill="url(#headset-indigo)" opacity="0.6"/>
+        {/* Right mouthpiece (microphone) */}
+        <circle cx="40" cy="26" r="6" fill="none" stroke="url(#headset-indigo)" strokeWidth="2"/>
+        <circle cx="40" cy="26" r="3" fill="url(#headset-indigo)" opacity="0.4"/>
+        {/* Microphone holes */}
+        <circle cx="38" cy="24" r="0.5" fill="url(#headset-indigo)"/>
+        <circle cx="40" cy="24" r="0.5" fill="url(#headset-indigo)"/>
+        <circle cx="42" cy="24" r="0.5" fill="url(#headset-indigo)"/>
+        <circle cx="38" cy="26" r="0.5" fill="url(#headset-indigo)"/>
+        <circle cx="42" cy="26" r="0.5" fill="url(#headset-indigo)"/>
+        <circle cx="38" cy="28" r="0.5" fill="url(#headset-indigo)"/>
+        <circle cx="40" cy="28" r="0.5" fill="url(#headset-indigo)"/>
+        <circle cx="42" cy="28" r="0.5" fill="url(#headset-indigo)"/>
         
-        {/* Simple microphone */}
-        <path d="M22 38 L18 42" stroke="url(#headset-indigo)" strokeWidth="2.5" strokeLinecap="round"/>
-        <circle cx="18" cy="42" r="2" fill="url(#headset-indigo)"/>
+        {/* Connecting cord/wire */}
+        <path d="M32 30 Q28 36 32 42 Q36 38 32 44 Q28 48 32 52" stroke="url(#headset-indigo)" strokeWidth="2" fill="none" strokeLinecap="round"/>
       </svg>
     ),
     efficiency: (
