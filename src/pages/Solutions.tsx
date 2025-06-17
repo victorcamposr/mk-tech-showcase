@@ -136,8 +136,33 @@ const Solutions = () => {
               Soluções Completas por Segmento
             </h2>
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-              {solutions.map((solution, index) => (
-                <Card key={index} className="border-brand-gold/20 hover:shadow-2xl hover:shadow-brand-gold/10 transition-all duration-500 hover:-translate-y-3 hover:scale-105 group bg-gradient-to-br from-white to-gray-50/50 backdrop-blur-sm">
+               {solutions.map((solution, index) => {
+                const getCardImage = (title: string) => {
+                  switch(title) {
+                    case "PDV Completo":
+                      return "https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=400&h=200&fit=crop";
+                    case "Gestão de Estoque Inteligente":
+                      return "https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?w=400&h=200&fit=crop";
+                    case "Emissão Fiscal Completa":
+                      return "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=400&h=200&fit=crop";
+                    case "Gestão Financeira":
+                      return "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=400&h=200&fit=crop";
+                    default:
+                      return null;
+                  }
+                };
+                
+                return (
+                <Card key={index} className="border-brand-gold/20 hover:shadow-2xl hover:shadow-brand-gold/10 transition-all duration-500 hover:-translate-y-3 hover:scale-105 group bg-gradient-to-br from-white to-gray-50/50 backdrop-blur-sm overflow-hidden">
+                  {getCardImage(solution.title) && (
+                    <div className="h-48 overflow-hidden">
+                      <img 
+                        src={getCardImage(solution.title)!} 
+                        alt={solution.title}
+                        className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                      />
+                    </div>
+                  )}
                   <CardHeader>
                     <CardTitle className="text-brand-black mb-4">
                       <TitleWithIcon>{solution.title}</TitleWithIcon>
@@ -167,7 +192,8 @@ const Solutions = () => {
                     </div>
                   </CardContent>
                 </Card>
-                ))}
+                );
+                })}
             </div>
             </div>
           </ScrollReveal>

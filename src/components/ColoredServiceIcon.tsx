@@ -109,18 +109,22 @@ const ColoredServiceIcon = ({ type, className = "" }: ColoredServiceIconProps) =
             <stop offset="100%" stopColor="#059669" />
           </linearGradient>
         </defs>
-        <rect x="18" y="38" width="28" height="18" rx="2" fill="none" stroke="url(#inventory-green)" strokeWidth="2"/>
-        <rect x="20" y="40" width="24" height="14" rx="1" fill="url(#inventory-green)" opacity="0.1"/>
-        <rect x="16" y="28" width="32" height="18" rx="2" fill="none" stroke="url(#inventory-green)" strokeWidth="2"/>
-        <rect x="18" y="30" width="28" height="14" rx="1" fill="url(#inventory-green)" opacity="0.2"/>
-        <rect x="14" y="18" width="36" height="18" rx="2" fill="none" stroke="url(#inventory-green)" strokeWidth="2"/>
-        <path d="M14 26 L20 26 L22 30 L48 30 L50 26 L50 18" stroke="url(#inventory-green)" strokeWidth="2" fill="none"/>
-        <rect x="16" y="20" width="32" height="14" rx="1" fill="url(#inventory-green)" opacity="0.15"/>
-        <rect x="22" y="22" width="6" height="2" rx="1" fill="url(#inventory-green)" opacity="0.6"/>
-        <rect x="30" y="22" width="8" height="2" rx="1" fill="url(#inventory-green)" opacity="0.6"/>
-        <rect x="22" y="25" width="10" height="2" rx="1" fill="url(#inventory-green)" opacity="0.6"/>
-        <circle cx="42" cy="24" r="2" fill="url(#inventory-green)" opacity="0.7"/>
-        <path d="M40.5 24 L41.5 25 L43.5 23" stroke="white" strokeWidth="1" fill="none" strokeLinecap="round"/>
+        {/* Single box */}
+        <rect x="20" y="24" width="24" height="24" rx="2" fill="none" stroke="url(#inventory-green)" strokeWidth="2"/>
+        {/* Box bottom */}
+        <rect x="22" y="40" width="20" height="6" fill="url(#inventory-green)" opacity="0.3"/>
+        {/* Box side panels */}
+        <rect x="22" y="26" width="20" height="14" fill="url(#inventory-green)" opacity="0.1"/>
+        {/* Open flaps */}
+        <path d="M20 24 L15 19 L35 19 L44 24" stroke="url(#inventory-green)" strokeWidth="2" fill="none" strokeLinecap="round"/>
+        <path d="M44 24 L49 19 L29 19 L20 24" stroke="url(#inventory-green)" strokeWidth="2" fill="none" strokeLinecap="round"/>
+        {/* Contents visible inside */}
+        <rect x="26" y="30" width="4" height="8" rx="1" fill="url(#inventory-green)" opacity="0.6"/>
+        <rect x="32" y="28" width="4" height="10" rx="1" fill="url(#inventory-green)" opacity="0.6"/>
+        <rect x="38" y="32" width="4" height="6" rx="1" fill="url(#inventory-green)" opacity="0.6"/>
+        {/* Check mark for organization */}
+        <circle cx="38" cy="34" r="2" fill="url(#inventory-green)" opacity="0.8"/>
+        <path d="M36.5 34 L37.5 35 L39.5 33" stroke="white" strokeWidth="1" fill="none" strokeLinecap="round"/>
       </svg>
     ),
     fiscal: (
@@ -255,13 +259,19 @@ const ColoredServiceIcon = ({ type, className = "" }: ColoredServiceIconProps) =
             <stop offset="100%" stopColor="#4F46E5" />
           </linearGradient>
         </defs>
-        <path d="M20 28 Q20 20 32 20 Q44 20 44 28 L44 32" stroke="url(#headset-indigo)" strokeWidth="3" fill="none"/>
-        <rect x="16" y="28" width="8" height="10" rx="2" fill="url(#headset-indigo)"/>
-        <rect x="40" y="28" width="8" height="10" rx="2" fill="url(#headset-indigo)"/>
-        <circle cx="20" cy="32" r="1" fill="white"/>
-        <circle cx="44" cy="32" r="1" fill="white"/>
-        <path d="M40 34 Q42 38 44 42" stroke="url(#headset-indigo)" strokeWidth="2" fill="none" strokeLinecap="round"/>
-        <circle cx="44" cy="42" r="1.5" fill="url(#headset-indigo)" opacity="0.8"/>
+        {/* Headband */}
+        <path d="M18 26 Q18 18 32 18 Q46 18 46 26" stroke="url(#headset-indigo)" strokeWidth="3" fill="none" strokeLinecap="round"/>
+        {/* Left speaker */}
+        <circle cx="18" cy="32" r="6" fill="none" stroke="url(#headset-indigo)" strokeWidth="2"/>
+        <circle cx="18" cy="32" r="4" fill="url(#headset-indigo)" opacity="0.3"/>
+        <circle cx="18" cy="32" r="2" fill="url(#headset-indigo)"/>
+        {/* Right speaker */}
+        <circle cx="46" cy="32" r="6" fill="none" stroke="url(#headset-indigo)" strokeWidth="2"/>
+        <circle cx="46" cy="32" r="4" fill="url(#headset-indigo)" opacity="0.3"/>
+        <circle cx="46" cy="32" r="2" fill="url(#headset-indigo)"/>
+        {/* Microphone */}
+        <path d="M18 38 Q20 42 22 46" stroke="url(#headset-indigo)" strokeWidth="2" fill="none" strokeLinecap="round"/>
+        <circle cx="22" cy="46" r="2" fill="url(#headset-indigo)" opacity="0.8"/>
       </svg>
     ),
     efficiency: (
