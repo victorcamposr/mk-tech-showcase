@@ -225,14 +225,24 @@ const ColoredServiceIcon = ({ type, className = "" }: ColoredServiceIconProps) =
             <stop offset="100%" stopColor="#16A34A" />
           </linearGradient>
         </defs>
-        <ellipse cx="32" cy="48" rx="14" ry="6" fill="url(#speed-green)" opacity="0.2"/>
-        <path d="M20 48 L32 28 L44 48 L40 52 L24 52 Z" fill="url(#speed-green)" opacity="0.4"/>
-        <path d="M24 48 L32 32 L40 48" stroke="url(#speed-green)" strokeWidth="2" fill="none"/>
-        <rect x="30" y="48" width="4" height="8" rx="2" fill="url(#speed-green)" opacity="0.8"/>
-        <path d="M12 32 L20 28 L16 24 M16 28 L20 32" stroke="url(#speed-green)" strokeWidth="2" fill="none" strokeLinecap="round"/>
-        <path d="M48 24 L52 20 L56 24 M52 20 L48 20" stroke="url(#speed-green)" strokeWidth="2" fill="none" strokeLinecap="round"/>
-        <path d="M44 16 L48 12 L52 16 M48 12 L44 12" stroke="url(#speed-green)" strokeWidth="2" fill="none" strokeLinecap="round"/>
-        <circle cx="32" cy="40" r="2" fill="url(#speed-green)"/>
+        {/* Speedometer circle */}
+        <circle cx="32" cy="38" r="18" fill="none" stroke="url(#speed-green)" strokeWidth="3"/>
+        
+        {/* Speed indicator marks */}
+        <path d="M20 26 L22 24" stroke="url(#speed-green)" strokeWidth="2" strokeLinecap="round"/>
+        <path d="M32 18 L32 20" stroke="url(#speed-green)" strokeWidth="2" strokeLinecap="round"/>
+        <path d="M44 26 L42 24" stroke="url(#speed-green)" strokeWidth="2" strokeLinecap="round"/>
+        <path d="M18 38 L20 38" stroke="url(#speed-green)" strokeWidth="2" strokeLinecap="round"/>
+        <path d="M46 38 L44 38" stroke="url(#speed-green)" strokeWidth="2" strokeLinecap="round"/>
+        
+        {/* Speed needle pointing to high speed */}
+        <path d="M32 38 L42 28" stroke="url(#speed-green)" strokeWidth="3" strokeLinecap="round"/>
+        <circle cx="32" cy="38" r="2" fill="url(#speed-green)"/>
+        
+        {/* Motion lines indicating speed */}
+        <path d="M8 48 L18 46" stroke="url(#speed-green)" strokeWidth="2" strokeLinecap="round" opacity="0.7"/>
+        <path d="M10 52 L16 51" stroke="url(#speed-green)" strokeWidth="2" strokeLinecap="round" opacity="0.5"/>
+        <path d="M12 56 L20 54" stroke="url(#speed-green)" strokeWidth="2" strokeLinecap="round" opacity="0.3"/>
       </svg>
     ),
     customization: (
@@ -262,22 +272,21 @@ const ColoredServiceIcon = ({ type, className = "" }: ColoredServiceIconProps) =
             <stop offset="100%" stopColor="#4F46E5" />
           </linearGradient>
         </defs>
-        {/* Headset band */}
-        <path d="M20 32 Q32 16 44 32" stroke="url(#headset-indigo)" strokeWidth="3" fill="none" strokeLinecap="round"/>
+        {/* Headset main band */}
+        <path d="M20 32 Q32 12 44 32" stroke="url(#headset-indigo)" strokeWidth="3" fill="none" strokeLinecap="round"/>
         
         {/* Left ear cup */}
-        <ellipse cx="20" cy="32" rx="4" ry="6" fill="url(#headset-indigo)" opacity="0.7"/>
-        <ellipse cx="20" cy="32" rx="2.5" ry="4" fill="url(#headset-indigo)" opacity="0.9"/>
+        <rect x="16" y="28" width="8" height="12" rx="4" fill="none" stroke="url(#headset-indigo)" strokeWidth="2.5"/>
         
         {/* Right ear cup */}
-        <ellipse cx="44" cy="32" rx="4" ry="6" fill="url(#headset-indigo)" opacity="0.7"/>
-        <ellipse cx="44" cy="32" rx="2.5" ry="4" fill="url(#headset-indigo)" opacity="0.9"/>
+        <rect x="40" y="28" width="8" height="12" rx="4" fill="none" stroke="url(#headset-indigo)" strokeWidth="2.5"/>
         
         {/* Microphone arm */}
-        <path d="M20 36 Q16 40 14 44" stroke="url(#headset-indigo)" strokeWidth="2" fill="none" strokeLinecap="round"/>
+        <path d="M24 36 Q20 42 16 46" stroke="url(#headset-indigo)" strokeWidth="2.5" fill="none" strokeLinecap="round"/>
         
         {/* Microphone */}
-        <ellipse cx="14" cy="44" rx="2" ry="3" fill="url(#headset-indigo)" opacity="0.8"/>
+        <circle cx="16" cy="46" r="3" fill="none" stroke="url(#headset-indigo)" strokeWidth="2.5"/>
+        <circle cx="16" cy="46" r="1.5" fill="url(#headset-indigo)"/>
       </svg>
     ),
     efficiency: (
