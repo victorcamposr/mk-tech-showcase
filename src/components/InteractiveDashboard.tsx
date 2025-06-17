@@ -83,6 +83,34 @@ const InteractiveDashboard = () => {
       "Padrão sazonal detectado: Alta demanda em dezembro",
       "Recomendação: Preparar campanha promocional",
       "Forecast de receita: R$ 280.000 próximos 90 dias"
+    ],
+    [
+      "Processando análise de margem de lucro...",
+      "Detectado aumento de 15% na margem bruta",
+      "Categoria com maior rentabilidade: Acessórios",
+      "Oportunidade identificada: Expandir linha premium",
+      "Projeção: +R$ 45.000 em lucro adicional"
+    ],
+    [
+      "Executando monitoramento de concorrência...",
+      "Análise de preços dos concorrentes em progresso",
+      "Identificadas 12 oportunidades de reposicionamento",
+      "Recomendação: Ajustar preços em 5 produtos chave",
+      "Impacto estimado: +18% em competitividade"
+    ],
+    [
+      "Analisando satisfação do cliente...",
+      "NPS atual: 87 (Excelente)",
+      "Principal motivo de satisfação: Atendimento rápido",
+      "Área de melhoria: Variedade de produtos",
+      "Meta: Atingir NPS 92 em 3 meses"
+    ],
+    [
+      "Processando análise de sazonalidade...",
+      "Detectado padrão: +35% vendas em datas comemorativas",
+      "Próximo evento: Dia das Mães (preparar estoque)",
+      "Produtos em alta: Perfumes e cosméticos",
+      "Estratégia: Aumentar estoque em 40% na categoria"
     ]
   ];
 
@@ -145,7 +173,7 @@ const InteractiveDashboard = () => {
             <h2 className="text-3xl font-bold text-white mb-4 flex items-center justify-center gap-3">
               <span className="text-2xl">🤖</span>
               Análise Inteligente em Tempo Real
-              <span className={`w-3 h-3 rounded-full ${isAnalyzing ? 'bg-green-400 animate-pulse' : 'bg-gray-400'}`}></span>
+              <span className={`w-3 h-3 rounded-full ${isAnalyzing ? 'bg-green-400 animate-ping shadow-lg shadow-green-400/50' : 'bg-gray-400'}`}></span>
             </h2>
             <p className="text-gray-300 max-w-2xl mx-auto">
               Nossa IA monitora e analisa seus dados 24/7, fornecendo insights instantâneos para maximizar seus resultados

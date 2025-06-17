@@ -29,6 +29,15 @@ const Contact = () => {
   const { register, handleSubmit, formState: { errors }, reset } = useForm<FormData>();
 
   const onSubmit = (data: FormData) => {
+    // Validação adicional para garantir que todos os campos obrigatórios estão preenchidos
+    if (!data.name || !data.email || !data.phone || !data.subject || !data.message) {
+      toast({
+        title: "Campos obrigatórios",
+        description: "Por favor, preencha todos os campos obrigatórios antes de enviar.",
+        variant: "destructive",
+      });
+      return;
+    }
     setIsModalOpen(true);
   };
 
@@ -137,10 +146,10 @@ const Contact = () => {
               <Card className="border-brand-gold/20 hover:shadow-lg hover:-translate-y-1 transition-all duration-300 bg-gradient-to-br from-white to-gray-50/30">
                 <CardHeader className="p-4">
                   <div className="flex items-center gap-4">
-                    <div className="w-6 h-6 flex-shrink-0">
+                    <div className="w-6 h-6 flex-shrink-0 flex items-center justify-center">
                       <ContactIcon type="clock" />
                     </div>
-                    <CardTitle className="text-base text-brand-black">Horário de Atendimento</CardTitle>
+                    <CardTitle className="text-base text-brand-black flex items-center">Horário de Atendimento</CardTitle>
                   </div>
                 </CardHeader>
                 <CardContent className="p-4 pt-4">
