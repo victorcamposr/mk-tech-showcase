@@ -50,7 +50,6 @@ export const getServiceColors = (type: 'automation' | 'inventory' | 'fiscal' | '
       hoverText: 'group-hover:text-indigo-500',
       bullet: 'bg-indigo-500'
     },
-    },
     efficiency: {
       border: 'border-cyan-500/20 hover:border-cyan-500/40',
       hoverText: 'group-hover:text-cyan-500',
