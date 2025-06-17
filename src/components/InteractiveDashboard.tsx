@@ -161,41 +161,41 @@ const InteractiveDashboard = () => {
 
   return (
     <ScrollReveal animation="fade-up" delay={250}>
-      <div className="relative bg-gradient-to-br from-brand-black via-brand-black-light to-brand-black rounded-3xl p-8 overflow-hidden">
+      <div className="relative bg-gradient-to-br from-brand-black via-brand-black-light to-brand-black rounded-2xl p-4 overflow-hidden">
         {/* Background Effects */}
         <div className="absolute inset-0 bg-gradient-to-r from-brand-gold/5 to-transparent"></div>
-        <div className="absolute top-0 right-0 w-32 h-32 bg-brand-gold/10 rounded-full blur-3xl"></div>
-        <div className="absolute bottom-0 left-0 w-24 h-24 bg-brand-gold/5 rounded-full blur-2xl"></div>
+        <div className="absolute top-0 right-0 w-20 h-20 bg-brand-gold/10 rounded-full blur-2xl"></div>
+        <div className="absolute bottom-0 left-0 w-16 h-16 bg-brand-gold/5 rounded-full blur-xl"></div>
         
         <div className="relative z-10">
           {/* Header */}
-          <div className="text-center mb-8">
-            <h2 className="text-3xl font-bold text-white mb-4 flex items-center justify-center gap-3">
-              <span className="text-2xl">🤖</span>
+          <div className="text-center mb-4">
+            <h2 className="text-xl font-bold text-white mb-2 flex items-center justify-center gap-2">
+              <span className="text-lg">🤖</span>
               Análise Inteligente em Tempo Real
-              <span className={`w-3 h-3 rounded-full ${isAnalyzing ? 'bg-green-400 animate-ping shadow-lg shadow-green-400/50' : 'bg-gray-400'}`}></span>
+              <span className={`w-2 h-2 rounded-full ${isAnalyzing ? 'bg-green-400 animate-ping shadow-lg shadow-green-400/50' : 'bg-gray-400'}`}></span>
             </h2>
-            <p className="text-gray-300 max-w-2xl mx-auto">
-              Nossa IA monitora e analisa seus dados 24/7, fornecendo insights instantâneos para maximizar seus resultados
+            <p className="text-gray-300 text-sm max-w-xl mx-auto">
+              Nossa IA monitora e analisa seus dados 24/7, fornecendo insights instantâneos
             </p>
           </div>
 
           {/* AI Console */}
-          <Card className="bg-black/40 border-brand-gold/20 backdrop-blur-sm mb-8">
-            <CardHeader className="pb-4">
-              <div className="flex items-center gap-3">
+          <Card className="bg-black/40 border-brand-gold/20 backdrop-blur-sm mb-4">
+            <CardHeader className="pb-2 pt-3">
+              <div className="flex items-center gap-2">
                 <div className="flex gap-1">
-                  <div className="w-3 h-3 bg-red-500 rounded-full"></div>
-                  <div className="w-3 h-3 bg-yellow-500 rounded-full"></div>
-                  <div className="w-3 h-3 bg-green-500 rounded-full"></div>
+                  <div className="w-2 h-2 bg-red-500 rounded-full"></div>
+                  <div className="w-2 h-2 bg-yellow-500 rounded-full"></div>
+                  <div className="w-2 h-2 bg-green-500 rounded-full"></div>
                 </div>
-                <CardTitle className="text-brand-gold text-sm font-mono">AI_ANALYZER v2.0</CardTitle>
+                <CardTitle className="text-brand-gold text-xs font-mono">AI_ANALYZER v2.0</CardTitle>
               </div>
             </CardHeader>
-            <CardContent>
-              <div className="bg-black/60 rounded-lg p-4 font-mono text-sm">
-                <div className="text-green-400 mb-2">$ ai --analyze --real-time</div>
-                <div className="text-white min-h-[60px] flex items-center">
+            <CardContent className="pt-0">
+              <div className="bg-black/60 rounded-lg p-3 font-mono text-xs">
+                <div className="text-green-400 mb-1">$ ai --analyze --real-time</div>
+                <div className="text-white min-h-[40px] flex items-center">
                   {isAnalyzing ? (
                     <span>
                       {typedText}
@@ -210,7 +210,7 @@ const InteractiveDashboard = () => {
           </Card>
 
           {/* Metrics Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3 mb-4">
             {currentMetrics.map((metric, index) => (
               <Card 
                 key={index} 
@@ -218,16 +218,16 @@ const InteractiveDashboard = () => {
                   isAnalyzing && (currentMetric % 4) === index ? 'ring-2 ring-brand-gold shadow-lg shadow-brand-gold/20' : ''
                 }`}
               >
-                <CardContent className="p-6 text-center">
-                  <div className="text-3xl mb-3">{metric.icon}</div>
-                  <div className={`text-3xl font-bold ${metric.color} mb-2`}>
+                <CardContent className="p-4 text-center">
+                  <div className="text-2xl mb-2">{metric.icon}</div>
+                  <div className={`text-2xl font-bold ${metric.color} mb-1`}>
                     {isAnalyzing && (currentMetric % 4) === index ? (
                       <CountUpNumber end={metric.value} suffix={metric.suffix} className="block" />
                     ) : (
                       `${metric.value}${metric.suffix}`
                     )}
                   </div>
-                  <div className="text-gray-300 text-sm font-medium">{metric.label}</div>
+                  <div className="text-gray-300 text-xs font-medium">{metric.label}</div>
                 </CardContent>
               </Card>
             ))}
@@ -235,13 +235,13 @@ const InteractiveDashboard = () => {
 
           {/* Alert System */}
           {showAlert && (
-            <Card className="bg-orange-500/20 border-orange-500/40 mb-8 animate-pulse animate-fade-in">
-              <CardContent className="p-4">
-                <div className="flex items-center gap-3">
-                  <span className="text-2xl">🚨</span>
+            <Card className="bg-orange-500/20 border-orange-500/40 mb-4 animate-pulse animate-fade-in">
+              <CardContent className="p-3">
+                <div className="flex items-center gap-2">
+                  <span className="text-lg">🚨</span>
                   <div>
-                    <div className="text-orange-300 font-semibold">Alerta Automático Detectado</div>
-                    <div className="text-orange-200 text-sm">3 produtos próximos do estoque mínimo - Ação recomendada: Reposição urgente</div>
+                    <div className="text-orange-300 font-semibold text-sm">Alerta Automático Detectado</div>
+                    <div className="text-orange-200 text-xs">3 produtos próximos do estoque mínimo - Ação recomendada: Reposição urgente</div>
                   </div>
                 </div>
               </CardContent>
@@ -249,16 +249,16 @@ const InteractiveDashboard = () => {
           )}
 
           {/* Chart Simulation */}
-          <Card className="bg-black/30 border-brand-gold/20 mb-8">
-            <CardHeader>
-              <CardTitle className="text-white text-lg">{chartTypes[currentChart].title}</CardTitle>
+          <Card className="bg-black/30 border-brand-gold/20 mb-4">
+            <CardHeader className="pb-2">
+              <CardTitle className="text-white text-sm">{chartTypes[currentChart].title}</CardTitle>
             </CardHeader>
-            <CardContent>
-              <div className="flex items-end justify-between h-32 px-4">
+            <CardContent className="pt-0">
+              <div className="flex items-end justify-between h-20 px-2">
                 {chartTypes[currentChart].data.map((height, index) => (
-                  <div key={index} className="flex flex-col items-center gap-2">
+                  <div key={index} className="flex flex-col items-center gap-1">
                     <div 
-                      className={`bg-gradient-to-t from-brand-gold to-brand-gold-light rounded-t transition-all duration-1000 w-8 ${
+                      className={`bg-gradient-to-t from-brand-gold to-brand-gold-light rounded-t transition-all duration-1000 w-6 ${
                         isAnalyzing ? `opacity-100 animate-pulse` : 'opacity-60'
                       }`}
                       style={{ 
@@ -266,7 +266,7 @@ const InteractiveDashboard = () => {
                         animationDelay: isAnalyzing ? `${index * 150}ms` : '0ms'
                       }}
                     ></div>
-                    <span className="text-gray-400 text-xs">{chartTypes[currentChart].labels[index]}</span>
+                    <span className="text-gray-400 text-[10px]">{chartTypes[currentChart].labels[index]}</span>
                   </div>
                 ))}
               </div>
@@ -278,7 +278,7 @@ const InteractiveDashboard = () => {
             <Button 
               onClick={startAnalysis}
               disabled={isAnalyzing}
-              className={`px-8 py-4 text-lg font-semibold transition-all duration-300 ${
+              className={`px-6 py-3 text-sm font-semibold transition-all duration-300 ${
                 isAnalyzing 
                   ? 'bg-gray-600 text-gray-300 cursor-not-allowed' 
                   : 'bg-brand-gold hover:bg-brand-gold-dark text-brand-black hover:scale-105'
@@ -296,7 +296,7 @@ const InteractiveDashboard = () => {
               )}
             </Button>
             
-            <p className="text-gray-400 text-sm mt-4">
+            <p className="text-gray-400 text-xs mt-3">
               * Demonstração interativa - Os dados são simulados para fins de apresentação
             </p>
           </div>
