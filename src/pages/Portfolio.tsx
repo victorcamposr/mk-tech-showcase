@@ -116,18 +116,6 @@ const Portfolio = () => {
             </div>
           </ScrollReveal>
 
-          {/* Dashboard Interativo */}
-          <div className="mb-16">
-            <div className="text-center mb-12">
-              <h2 className="text-3xl font-bold text-brand-black mb-4">
-                Tecnologia Preditiva em Ação
-              </h2>
-              <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-                Veja como nossa IA analisa dados em tempo real para impulsionar seu negócio
-              </p>
-            </div>
-            <InteractiveDashboard />
-          </div>
 
           {/* Projetos */}
           <ScrollReveal animation="fade-up" delay={200}>

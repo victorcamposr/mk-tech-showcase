@@ -4,6 +4,7 @@ import ColoredServiceIcon, { getServiceColors } from "@/components/ColoredServic
 import SimpleIcon from "@/components/SimpleIcon";
 import CheckBullet from "@/components/CheckBullet";
 import TitleWithIcon from "@/components/TitleWithIcon";
+import InteractiveDashboard from "@/components/InteractiveDashboard";
 import SEO from "@/components/SEO";
 import StructuredData from "@/components/StructuredData";
 import { ScrollReveal } from "@/components/ScrollReveal";
@@ -126,6 +127,21 @@ const Solutions = () => {
               </Card>
               );
             })}
+            </div>
+          </ScrollReveal>
+
+          {/* Dashboard Interativo */}
+          <ScrollReveal animation="fade-up" delay={150}>
+            <div className="mb-16">
+              <div className="text-center mb-12">
+                <h2 className="text-3xl font-bold text-brand-black mb-4">
+                  Tecnologia Preditiva em Ação
+                </h2>
+                <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+                  Veja como nossa IA analisa dados em tempo real para impulsionar seu negócio
+                </p>
+              </div>
+              <InteractiveDashboard />
             </div>
           </ScrollReveal>
 

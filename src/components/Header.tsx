@@ -1,16 +1,8 @@
 import { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Menu, X, MessageCircle, ChevronDown } from "lucide-react";
+import { Menu, X, MessageCircle, Sparkles, Zap } from "lucide-react";
 import CriticalImage from "@/components/CriticalImage";
-import {
-  NavigationMenu,
-  NavigationMenuContent,
-  NavigationMenuItem,
-  NavigationMenuLink,
-  NavigationMenuList,
-  NavigationMenuTrigger,
-} from "@/components/ui/navigation-menu";
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -37,40 +29,53 @@ const Header = () => {
   ];
 
   return (
-    <header className={`sticky top-0 z-50 transition-all duration-300 ease-out ${
+    <header className={`sticky top-0 z-50 transition-all duration-500 ease-out ${
       isScrolled 
-        ? 'bg-brand-black backdrop-blur-lg border-b border-brand-gold/30 shadow-2xl shadow-brand-gold/5' 
-        : 'bg-brand-black border-b border-brand-gold/20'
+        ? 'bg-gradient-to-r from-brand-black via-brand-black to-brand-black-light backdrop-blur-xl border-b border-brand-gold/40 shadow-2xl shadow-brand-gold/10' 
+        : 'bg-gradient-to-r from-brand-black to-brand-black-light border-b border-brand-gold/30'
     }`}>
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center h-16">
-          {/* Logo with simple hover effect */}
-          <Link to="/" className="flex items-center space-x-2 group">
-            <CriticalImage 
-              src="/lovable-uploads/894786af-af73-492e-ae6a-d8a39e0ac4cb.png" 
-              alt="MK Tecnologia" 
-              className="h-10 w-auto transition-all duration-300 group-hover:scale-105"
-              width={40}
-              height={40}
-            />
+        <div className="flex justify-between items-center h-18">
+          {/* Logo with advanced hover effect */}
+          <Link to="/" className="flex items-center space-x-3 group relative">
+            <div className="relative">
+              <CriticalImage 
+                src="/lovable-uploads/894786af-af73-492e-ae6a-d8a39e0ac4cb.png" 
+                alt="MK Tecnologia" 
+                className="h-12 w-auto transition-all duration-500 group-hover:scale-110 group-hover:rotate-3"
+                width={48}
+                height={48}
+              />
+              <div className="absolute -inset-1 bg-gradient-to-r from-brand-gold to-brand-gold-light rounded-full opacity-0 group-hover:opacity-20 transition-opacity duration-500 blur-sm"></div>
+            </div>
+            <div className="flex items-center space-x-1 opacity-0 group-hover:opacity-100 transition-all duration-300">
+              <Sparkles className="w-4 h-4 text-brand-gold animate-pulse" />
+              <span className="text-brand-gold text-sm font-semibold">Tech</span>
+            </div>
           </Link>
 
           {/* Desktop Navigation */}
-          <nav className="hidden md:flex items-center space-x-2">
-            {menuItems.map((item) => (
+          <nav className="hidden md:flex items-center space-x-1">
+            {menuItems.map((item, index) => (
               <Link
                 key={item.path}
                 to={item.path}
-                className={`relative px-5 py-2 rounded-lg text-sm font-medium transition-all duration-200 hover:scale-105 ${
+                className={`relative px-6 py-3 rounded-xl text-sm font-semibold transition-all duration-300 group overflow-hidden ${
                   isActive(item.path) 
-                    ? "text-brand-gold bg-brand-gold/15" 
-                    : "text-white hover:text-brand-gold hover:bg-white/10"
+                    ? "text-brand-black bg-gradient-to-r from-brand-gold to-brand-gold-light shadow-lg shadow-brand-gold/30" 
+                    : "text-white hover:text-brand-gold hover:bg-gradient-to-r hover:from-white/10 hover:to-brand-gold/10 hover:backdrop-blur-sm"
                 }`}
+                style={{ animationDelay: `${index * 0.1}s` }}
               >
-                {item.label}
-                {/* Simple active indicator */}
+                <span className="relative z-10 flex items-center gap-2">
+                  {item.label}
+                  {isActive(item.path) && <Zap className="w-3 h-3 animate-pulse" />}
+                </span>
+                {/* Advanced hover effect */}
+                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700 ease-out"></div>
+                {/* Active indicator */}
                 {isActive(item.path) && (
-                  <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-1 h-1 bg-brand-gold rounded-full" />
+                  <div className="absolute -bottom-1 left-1/2 transform -translate-x-1/2 w-2 h-2 bg-brand-gold rounded-full animate-pulse" />
                 )}
               </Link>
             ))}
@@ -80,16 +85,18 @@ const Header = () => {
           <div className="hidden md:block">
             <Button 
               asChild
-              className="bg-gradient-to-r from-brand-gold to-brand-gold-light hover:from-brand-gold-dark hover:to-brand-gold text-brand-black font-semibold transition-all duration-300 hover:scale-105 shadow-lg hover:shadow-xl"
+              className="bg-gradient-to-r from-brand-gold via-brand-gold-light to-brand-gold hover:from-brand-gold-dark hover:via-brand-gold hover:to-brand-gold-light text-brand-black font-bold transition-all duration-500 hover:scale-110 shadow-2xl hover:shadow-3xl shadow-brand-gold/30 hover:shadow-brand-gold/50 border border-brand-gold/20 relative overflow-hidden group"
             >
               <a 
                 href="https://wa.me/5565993535079" 
                 target="_blank" 
                 rel="noopener noreferrer"
-                className="flex items-center gap-2 px-4 py-2"
+                className="flex items-center gap-2 px-6 py-3 relative z-10"
               >
-                <MessageCircle className="h-4 w-4" />
-                WhatsApp
+                <MessageCircle className="h-5 w-5 group-hover:animate-bounce" />
+                <span className="font-bold">WhatsApp</span>
+                <Sparkles className="h-3 w-3 group-hover:animate-spin" />
+                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700 ease-out"></div>
               </a>
             </Button>
           </div>
