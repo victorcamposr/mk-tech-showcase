@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Menu, X, MessageCircle, Sparkles, Zap } from "lucide-react";
+import { Menu, X, MessageCircle, Sparkles, Zap, Home, User, Settings, Lightbulb, Grid3X3, Phone } from "lucide-react";
 import CriticalImage from "@/components/CriticalImage";
 
 const Header = () => {
@@ -20,12 +20,12 @@ const Header = () => {
   const isActive = (path: string) => location.pathname === path;
 
   const menuItems = [
-    { label: "Home", path: "/" },
-    { label: "Sobre", path: "/sobre" },
-    { label: "Serviços", path: "/servicos" },
-    { label: "Soluções", path: "/solucoes" },
-    { label: "Portfólio", path: "/portfolio" },
-    { label: "Contato", path: "/contato" },
+    { label: "Home", path: "/", icon: Home },
+    { label: "Sobre", path: "/sobre", icon: User },
+    { label: "Serviços", path: "/servicos", icon: Settings },
+    { label: "Soluções", path: "/solucoes", icon: Lightbulb },
+    { label: "Portfólio", path: "/portfolio", icon: Grid3X3 },
+    { label: "Contato", path: "/contato", icon: Phone },
   ];
 
   return (
@@ -56,29 +56,33 @@ const Header = () => {
 
           {/* Desktop Navigation */}
           <nav className="hidden md:flex items-center space-x-1">
-            {menuItems.map((item, index) => (
-              <Link
-                key={item.path}
-                to={item.path}
-                className={`relative px-6 py-3 rounded-xl text-sm font-semibold transition-all duration-300 group overflow-hidden ${
-                  isActive(item.path) 
-                    ? "text-brand-black bg-gradient-to-r from-brand-gold to-brand-gold-light shadow-lg shadow-brand-gold/30" 
-                    : "text-white hover:text-brand-gold hover:bg-gradient-to-r hover:from-white/10 hover:to-brand-gold/10 hover:backdrop-blur-sm"
-                }`}
-                style={{ animationDelay: `${index * 0.1}s` }}
-              >
-                <span className="relative z-10 flex items-center gap-2">
-                  {item.label}
-                  {isActive(item.path) && <Zap className="w-3 h-3 animate-pulse" />}
-                </span>
-                {/* Advanced hover effect */}
-                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700 ease-out"></div>
-                {/* Active indicator */}
-                {isActive(item.path) && (
-                  <div className="absolute -bottom-1 left-1/2 transform -translate-x-1/2 w-2 h-2 bg-brand-gold rounded-full animate-pulse" />
-                )}
-              </Link>
-            ))}
+            {menuItems.map((item, index) => {
+              const IconComponent = item.icon;
+              return (
+                <Link
+                  key={item.path}
+                  to={item.path}
+                  className={`relative px-6 py-3 rounded-xl text-sm font-semibold transition-all duration-300 group overflow-hidden ${
+                    isActive(item.path) 
+                      ? "text-brand-black bg-gradient-to-r from-brand-gold to-brand-gold-light shadow-lg shadow-brand-gold/30" 
+                      : "text-white hover:text-brand-gold hover:bg-gradient-to-r hover:from-white/10 hover:to-brand-gold/10 hover:backdrop-blur-sm"
+                  }`}
+                  style={{ animationDelay: `${index * 0.1}s` }}
+                >
+                  <span className="relative z-10 flex items-center gap-2">
+                    <IconComponent className="w-4 h-4" />
+                    {item.label}
+                    {isActive(item.path) && <Zap className="w-3 h-3 animate-pulse" />}
+                  </span>
+                  {/* Advanced hover effect */}
+                  <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700 ease-out"></div>
+                  {/* Active indicator */}
+                  {isActive(item.path) && (
+                    <div className="absolute -bottom-1 left-1/2 transform -translate-x-1/2 w-2 h-2 bg-brand-gold rounded-full animate-pulse" />
+                  )}
+                </Link>
+              );
+            })}
           </nav>
 
           {/* WhatsApp Button */}
@@ -120,25 +124,31 @@ const Header = () => {
         }`}>
           <div className="py-4 border-t border-brand-gold/20 bg-gradient-to-b from-transparent to-brand-black-light/20">
             <div className="flex flex-col space-y-2">
-              {menuItems.map((item) => (
-                <Link
-                  key={item.path}
-                  to={item.path}
-                  className={`px-4 py-3 rounded-lg text-sm font-medium transition-colors duration-200 ${
-                    isActive(item.path) 
-                      ? "text-brand-gold bg-brand-gold/15" 
-                      : "text-white hover:text-brand-gold hover:bg-white/10"
-                  }`}
-                  onClick={() => setIsMenuOpen(false)}
-                >
-                  <div className="flex items-center justify-between">
-                    <span>{item.label}</span>
-                    {isActive(item.path) && (
-                      <div className="w-2 h-2 bg-brand-gold rounded-full" />
-                    )}
-                  </div>
-                </Link>
-              ))}
+              {menuItems.map((item) => {
+                const IconComponent = item.icon;
+                return (
+                  <Link
+                    key={item.path}
+                    to={item.path}
+                    className={`px-4 py-3 rounded-lg text-sm font-medium transition-colors duration-200 ${
+                      isActive(item.path) 
+                        ? "text-brand-gold bg-brand-gold/15" 
+                        : "text-white hover:text-brand-gold hover:bg-white/10"
+                    }`}
+                    onClick={() => setIsMenuOpen(false)}
+                  >
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        <IconComponent className="w-4 h-4" />
+                        <span>{item.label}</span>
+                      </div>
+                      {isActive(item.path) && (
+                        <div className="w-2 h-2 bg-brand-gold rounded-full" />
+                      )}
+                    </div>
+                  </Link>
+                );
+              })}
               <div className="px-4 pt-2">
                 <Button 
                   asChild
