@@ -39,8 +39,8 @@ const Header = () => {
   return (
     <header className={`sticky top-0 z-50 transition-all duration-300 ease-out ${
       isScrolled 
-        ? 'bg-brand-black/90 backdrop-blur-lg border-b border-brand-gold/30 shadow-2xl shadow-brand-gold/5' 
-        : 'bg-brand-black/95 backdrop-blur-sm border-b border-brand-gold/20'
+        ? 'bg-brand-black backdrop-blur-lg border-b border-brand-gold/30 shadow-2xl shadow-brand-gold/5' 
+        : 'bg-brand-black border-b border-brand-gold/20'
     }`}>
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
