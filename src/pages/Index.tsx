@@ -75,7 +75,7 @@ const Index = () => {
                       Falar no WhatsApp
                     </a>
                   </Button>
-                  <Button asChild size="lg" variant="outline" className="border-brand-gold text-brand-gold hover:bg-brand-gold hover:text-brand-black transition-all duration-300">
+                  <Button asChild size="lg" className="bg-white text-brand-black hover:bg-gray-100 transition-all duration-300 border border-brand-gold/20">
                     <a href="/servicos">
                       Ver Serviços
                     </a>
@@ -213,12 +213,12 @@ const Index = () => {
                    Falar no WhatsApp
                  </a>
                </Button>
-                <Button asChild size="lg" variant="outline" className="border-brand-gold text-brand-gold hover:bg-brand-gold hover:text-brand-black">
-                  <a href="/contato" className="flex items-center gap-2">
-                    <SimpleIcon type="email-black" className="w-4 h-4 group-hover:scale-110 transition-transform" />
-                    Solicitar Orçamento
-                  </a>
-                </Button>
+                 <Button asChild size="lg" className="bg-white text-brand-black hover:bg-gray-100 transition-all duration-300 border border-brand-gold/20 group">
+                   <a href="/contato" className="flex items-center gap-2">
+                     <SimpleIcon type="email-black" className="w-4 h-4 group-hover:scale-110 transition-transform" />
+                     Solicitar Orçamento
+                   </a>
+                 </Button>
              </div>
           </div>
         </section>
