@@ -72,7 +72,6 @@ const Header = () => {
                   <span className="relative z-10 flex items-center gap-2">
                     <IconComponent className="w-4 h-4" />
                     {item.label}
-                    {isActive(item.path) && <div className="w-1 h-1 bg-brand-black/60 rounded-full animate-pulse" />}
                   </span>
                   {/* Advanced hover effect */}
                   <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700 ease-out"></div>
