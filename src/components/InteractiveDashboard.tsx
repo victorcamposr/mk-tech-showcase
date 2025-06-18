@@ -169,13 +169,13 @@ const InteractiveDashboard = () => {
         
         <div className="relative z-10">
           {/* Header */}
-          <div className="text-center mb-4">
-            <h2 className="text-3xl font-bold text-white mb-4 flex items-center justify-center gap-2">
-              <span className="text-2xl">🤖</span>
+          <div className="text-center mb-3">
+            <h2 className="text-2xl font-bold text-white mb-3 flex items-center justify-center gap-2">
+              <span className="text-xl">🤖</span>
               Análise Inteligente em Tempo Real
               <span className={`w-2 h-2 rounded-full ${isAnalyzing ? 'bg-green-400 animate-ping shadow-lg shadow-green-400/50' : 'bg-gray-400'}`}></span>
             </h2>
-            <p className="text-gray-300 text-xl max-w-3xl mx-auto">
+            <p className="text-gray-300 text-base max-w-2xl mx-auto">
               Nossa IA monitora e analisa seus dados 24/7, fornecendo insights instantâneos para maximizar seus resultados
             </p>
           </div>
