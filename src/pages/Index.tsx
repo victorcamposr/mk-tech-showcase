@@ -9,6 +9,7 @@ import StructuredData from "@/components/StructuredData";
 import LazyImage from "@/components/LazyImage";
 import CriticalImage from "@/components/CriticalImage";
 import { ScrollReveal } from "@/components/ScrollReveal";
+import { Settings } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -75,8 +76,9 @@ const Index = () => {
                       Falar no WhatsApp
                     </a>
                   </Button>
-                  <Button asChild size="lg" className="bg-white text-brand-black hover:bg-gray-100 transition-all duration-300 border border-brand-gold/20">
-                    <a href="/servicos">
+                  <Button asChild size="lg" className="bg-white text-brand-black hover:bg-gray-100 transition-all duration-300 border border-brand-gold/20 group">
+                    <a href="/servicos" className="flex items-center gap-2">
+                      <Settings className="w-5 h-5 group-hover:scale-110 transition-transform" />
                       Ver Serviços
                     </a>
                   </Button>
