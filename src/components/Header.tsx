@@ -72,7 +72,7 @@ const Header = () => {
                   <span className="relative z-10 flex items-center gap-2">
                     <IconComponent className="w-4 h-4" />
                     {item.label}
-                    {isActive(item.path) && <Zap className="w-3 h-3 animate-pulse" />}
+                    {isActive(item.path) && <div className="w-1.5 h-1.5 bg-brand-black rounded-full" />}
                   </span>
                   {/* Advanced hover effect */}
                   <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700 ease-out"></div>
@@ -99,7 +99,6 @@ const Header = () => {
               >
                 <MessageCircle className="h-5 w-5 group-hover:animate-bounce" />
                 <span className="font-bold">WhatsApp</span>
-                <Sparkles className="h-3 w-3 group-hover:animate-spin" />
                 <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700 ease-out"></div>
               </a>
             </Button>
