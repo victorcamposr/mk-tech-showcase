@@ -342,20 +342,20 @@ const Solutions = () => {
                   {/* Ícones flutuantes para maquininhas de cartão na página específica */}
                   {solutionKey === 'maquininhas-cartao' && (
                     <>
-                      <div className="absolute bottom-4 left-4 bg-white/80 backdrop-blur-sm p-2 rounded-lg shadow-md group/tooltip">
-                        <img src="/lovable-uploads/f5e4493d-da59-4760-af30-241ac2e7388b.png" alt="Stone" className="w-8 h-4 object-contain" />
+                      <div className="absolute bottom-4 left-4 p-1 rounded-lg group/tooltip">
+                        <img src="/lovable-uploads/a8ecfad8-8626-44ee-a7eb-afcfd88ca462.png" alt="Stone" className="w-8 h-8 object-contain" />
                         <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-2 py-1 bg-gray-900 text-white text-xs rounded opacity-0 group-hover/tooltip:opacity-100 transition-opacity whitespace-nowrap">
                           Integrado com Stone
                         </div>
                       </div>
-                      <div className="absolute bottom-4 left-20 bg-white/80 backdrop-blur-sm p-2 rounded-lg shadow-md group/tooltip">
-                        <img src="/lovable-uploads/ceb48626-fd6d-4f94-b07a-c3e10e396ff1.png" alt="Cielo" className="w-8 h-4 object-contain" />
+                      <div className="absolute bottom-4 left-16 p-1 rounded-lg group/tooltip">
+                        <img src="/lovable-uploads/f8914b9c-f621-4ddb-8f33-cb631782bb48.png" alt="Cielo" className="w-8 h-8 object-contain" />
                         <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-2 py-1 bg-gray-900 text-white text-xs rounded opacity-0 group-hover/tooltip:opacity-100 transition-opacity whitespace-nowrap">
                           Integrado com Cielo
                         </div>
                       </div>
-                      <div className="absolute bottom-4 left-36 bg-white/80 backdrop-blur-sm p-2 rounded-lg shadow-md group/tooltip">
-                        <img src="/lovable-uploads/18be87e5-d83f-446a-8fae-a9324ac77a8c.png" alt="PagBank" className="w-8 h-4 object-contain" />
+                      <div className="absolute bottom-4 left-28 p-1 rounded-lg group/tooltip">
+                        <img src="/lovable-uploads/2a8e6032-1804-4f62-aa10-ae0ad095cab8.png" alt="PagBank" className="w-8 h-8 object-contain" />
                         <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-2 py-1 bg-gray-900 text-white text-xs rounded opacity-0 group-hover/tooltip:opacity-100 transition-opacity whitespace-nowrap">
                           Integrado com PagBank
                         </div>
@@ -554,20 +554,20 @@ const Solutions = () => {
                            {/* Ícones flutuantes para maquininhas de cartão */}
                            {key === 'maquininhas-cartao' && (
                              <>
-                                <div className="absolute bottom-3 left-3 bg-white/75 backdrop-blur-sm p-1 rounded shadow-sm group/tooltip">
-                                  <img src="/lovable-uploads/f5e4493d-da59-4760-af30-241ac2e7388b.png" alt="Stone" className="w-6 h-3 object-contain" />
+                                <div className="absolute bottom-3 left-3 p-0.5 rounded group/tooltip">
+                                  <img src="/lovable-uploads/a8ecfad8-8626-44ee-a7eb-afcfd88ca462.png" alt="Stone" className="w-5 h-5 object-contain" />
                                   <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-1 px-1.5 py-0.5 bg-gray-900 text-white text-xs rounded opacity-0 group-hover/tooltip:opacity-100 transition-opacity whitespace-nowrap z-10">
                                     Integrado com Stone
                                   </div>
                                 </div>
-                                <div className="absolute bottom-3 left-16 bg-white/75 backdrop-blur-sm p-1 rounded shadow-sm group/tooltip">
-                                  <img src="/lovable-uploads/ceb48626-fd6d-4f94-b07a-c3e10e396ff1.png" alt="Cielo" className="w-6 h-3 object-contain" />
+                                <div className="absolute bottom-3 left-12 p-0.5 rounded group/tooltip">
+                                  <img src="/lovable-uploads/f8914b9c-f621-4ddb-8f33-cb631782bb48.png" alt="Cielo" className="w-5 h-5 object-contain" />
                                   <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-1 px-1.5 py-0.5 bg-gray-900 text-white text-xs rounded opacity-0 group-hover/tooltip:opacity-100 transition-opacity whitespace-nowrap z-10">
                                     Integrado com Cielo
                                   </div>
                                 </div>
-                                <div className="absolute bottom-3 left-28 bg-white/75 backdrop-blur-sm p-1 rounded shadow-sm group/tooltip">
-                                  <img src="/lovable-uploads/18be87e5-d83f-446a-8fae-a9324ac77a8c.png" alt="PagBank" className="w-6 h-3 object-contain" />
+                                <div className="absolute bottom-3 left-21 p-0.5 rounded group/tooltip">
+                                  <img src="/lovable-uploads/2a8e6032-1804-4f62-aa10-ae0ad095cab8.png" alt="PagBank" className="w-5 h-5 object-contain" />
                                   <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-1 px-1.5 py-0.5 bg-gray-900 text-white text-xs rounded opacity-0 group-hover/tooltip:opacity-100 transition-opacity whitespace-nowrap z-10">
                                     Integrado com PagBank
                                   </div>
