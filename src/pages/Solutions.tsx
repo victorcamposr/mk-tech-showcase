@@ -336,7 +336,7 @@ const Solutions = () => {
                   <img 
                     src={SOLUTION_IMAGES.cards[solutionKey] || SOLUTION_IMAGES.cards['pdv-frente-caixa']} 
                     alt={`Demonstração ${currentSolution.title}`}
-                    className="w-full h-64 md:h-80 object-cover rounded-xl shadow-2xl"
+                    className="w-full h-64 md:h-80 object-contain bg-gray-50 rounded-xl shadow-2xl"
                   />
                   
                   {/* Ícones flutuantes para maquininhas de cartão na página específica */}
@@ -541,11 +541,11 @@ const Solutions = () => {
                       <a href={`/solucoes/${key}`} className="block">
                          {/* Imagem demonstrativa */}
                          <div className="h-48 overflow-hidden relative">
-                           <img 
-                             src={getCardImage(key)} 
-                             alt={`Demonstração ${solution.title}`}
-                             className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-                           />
+                            <img 
+                              src={getCardImage(key)} 
+                              alt={`Demonstração ${solution.title}`}
+                              className="w-full h-full object-contain bg-gray-50 group-hover:scale-110 transition-transform duration-500"
+                            />
                            <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                            <div className="absolute top-4 right-4 bg-gradient-to-r from-brand-gold to-brand-gold-light p-2 rounded-full group-hover:scale-110 transition-transform duration-300">
                              <IconComponent className="w-5 h-5 text-brand-black" />
