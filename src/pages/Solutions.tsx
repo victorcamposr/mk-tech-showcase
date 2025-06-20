@@ -48,21 +48,26 @@ const Solutions = () => {
   // Dados específicos para cada solução
   const specificSolutions = {
     "pdv-frente-caixa": {
-      title: "PDV/Frente de Caixa Premium",
+      title: "Frente de Caixa/PDV Premium - Tudo em Um",
       icon: Calculator,
-      description: "Sistema completo de ponto de venda com tecnologia de ponta para otimizar suas vendas e controle de caixa.",
+      description: "Frente de Caixa web, rápido e prático. Automatize 100% seus pedidos com integração completa.",
       features: [
-        "Interface touchscreen otimizada",
-        "Vendas rápidas com código de barras",
-        "Múltiplas formas de pagamento (PIX, cartão, dinheiro)",
-        "Controle de vendedores e comissões",
-        "Relatórios de vendas em tempo real",
-        "Integração com balanças e gavetas",
-        "Backup automático na nuvem",
-        "Suporte a múltiplas lojas"
+        "Acesse de qualquer dispositivo: Windows, navegador ou APP Android",
+        "Todos pedidos num só lugar",
+        "Realize pedidos: Delivery, Balcão, Senha, Agendamentos, Mesas, Comandas",
+        "Integrações: Ifood, Aiqfome, Whatsapp",
+        "100% integrado ao Whatsapp",
+        "Aceite e impressão automática de pedidos",
+        "Repetição de pedidos e Histórico de Compras",
+        "Roteirização de pedidos e Gestão de Entregas",
+        "Integrado com TEF/Pin Pads, Leitor Código Barras, Balanças",
+        "Controle de crédito/fiado e histórico de clientes",
+        "Fluxo de caixa por usuário",
+        "Taxa de serviço, Mesas/Comandas",
+        "Organize pedidos por data, tipo ou agendamentos"
       ],
-      benefits: ["Aumento de 40% na velocidade de atendimento", "Redução de erros em 95%", "Controle total de vendas"],
-      industries: ["Varejo", "Supermercados", "Farmácias", "Lojas de conveniência"]
+      benefits: ["Automatização 100% dos pedidos", "Funciona em dispositivos antigos sem travamentos", "Gestão completa de entregas"],
+      industries: ["Restaurantes", "Delivery", "Varejo", "Todos os segmentos"]
     },
     "mesas-comandas": {
       title: "Mesas/Comandas - Garçons",
@@ -84,36 +89,39 @@ const Solutions = () => {
     "cardapio-digital": {
       title: "Cardápio Digital",
       icon: QrCode,
-      description: "Cardápio digital interativo com QR Code para melhorar a experiência do cliente.",
+      description: "Cardápio digital completo com domínio próprio e recursos avançados de venda online.",
       features: [
-        "QR Code personalizado por mesa",
-        "Cardápio responsivo e interativo",
-        "Fotos em alta qualidade dos pratos",
-        "Descrições detalhadas e ingredientes",
-        "Preços atualizados em tempo real",
-        "Promoções e ofertas especiais",
-        "Múltiplos idiomas",
-        "Analytics de preferências"
+        "Domínio Próprio (www.seurestaurante.com.br)",
+        "Compra rápida (cliente não precisa se cadastrar)",
+        "Pedido liberado somente após pagamento",
+        "Pagamentos Pix e Cartões",
+        "Programa de Fidelidade",
+        "Cupons de Desconto",
+        "Integrado com Whatsapp",
+        "Facebook Pixel e Google Analytics",
+        "Desconto p/ aniversariantes e primeira compra",
+        "Personalize botões, textos e cores",
+        "Banners para divulgar informações importantes"
       ],
-      benefits: ["Economia de 80% em impressões", "Atualização instantânea", "Experiência moderna"],
-      industries: ["Restaurantes", "Bares", "Cafeterias", "Food trucks"]
+      benefits: ["Vendas online 24h", "Programa de fidelidade integrado", "Analytics completo de vendas"],
+      industries: ["Restaurantes", "Bares", "Lanchonetes", "Delivery"]
     },
     "maquininhas-cartao": {
-      title: "Maquininhas de Cartão",
+      title: "Nosso PDV/Frente de Caixa dentro das Maquininhas de Cartão",
       icon: CreditCard,
-      description: "Soluções completas de pagamento com as melhores taxas do mercado.",
+      description: "Agilize o seu atendimento realizando pedidos, cobrança e emissão de notas fiscais rapidamente.",
       features: [
-        "Taxas competitivas do mercado",
-        "Recebimento em 1 dia útil",
-        "Máquinas modernas e seguras",
-        "Aceita todos os cartões",
-        "PIX integrado",
-        "Vendas por aproximação (NFC)",
-        "App para acompanhamento",
-        "Suporte técnico 24h"
+        "Realize pedidos, cobre e emita notas fiscais rapidamente",
+        "Controle de mesas e comandas eletrônicas",
+        "Pedidos balcão em segundos",
+        "Solução rápida e leve",
+        "Integrado com Stone, Cielo e outras bandeiras",
+        "PDV completo dentro da máquina",
+        "Agilidade no atendimento",
+        "Suporte técnico especializado"
       ],
-      benefits: ["Menores taxas do mercado", "Recebimento rápido", "Tecnologia de ponta"],
-      industries: ["Todos os segmentos", "Comércio em geral"]
+      benefits: ["Atendimento mais rápido", "Tudo integrado em um só equipamento", "Máxima praticidade operacional"],
+      industries: ["Restaurantes", "Varejo", "Comércio", "Todos os segmentos"]
     },
     "controle-motoboys": {
       title: "Controle e Aplicativo para Motoboys",
@@ -133,21 +141,21 @@ const Solutions = () => {
       industries: ["Delivery", "E-commerce", "Restaurantes", "Farmácias"]
     },
     "integracoes": {
-      title: "Integrações",
+      title: "Equipamentos e Integrações",
       icon: Link2,
-      description: "Conecte todos os seus sistemas com nossas soluções de integração avançada e APIs robustas.",
+      description: "Diversas integrações que auxiliam seu atendimento e tornam sua rotina mais prática.",
       features: [
-        "APIs REST modernas e seguras",
-        "Integração com ERPs populares",
-        "Sincronização automática de dados",
-        "Conectividade total entre sistemas",
-        "Webhooks para atualizações em tempo real",
-        "Documentação completa para desenvolvedores",
-        "Suporte técnico especializado",
-        "Monitoramento de integrações 24/7"
+        "Marketplaces: Ifood e Aiqfome",
+        "Pagamentos: TEF e Pin Pad",
+        "Dados e Analytics: Facebook Pixel e Google Analytics",
+        "Recursos que aumentam a produtividade",
+        "Balanças de peso e Etiquetas de peso",
+        "Impressoras térmicas",
+        "Leitor de Código de Barras",
+        "Equipamentos e periféricos completos"
       ],
-      benefits: ["Dados unificados em tempo real", "Processos 100% automatizados", "Máxima eficiência operacional"],
-      industries: ["Todos os segmentos", "E-commerce", "Varejo", "Indústria"]
+      benefits: ["Aumento significativo da produtividade", "Integração total com marketplaces", "Analytics avançado para decisões"],
+      industries: ["Restaurantes", "Varejo", "Supermercados", "Todos os segmentos"]
     },
     "gestao-analise": {
       title: "Gestão e Análise para Food Service",
@@ -254,18 +262,18 @@ const Solutions = () => {
     "franquias-filiais": {
       title: "Franquias e Filiais",
       icon: Building2,
-      description: "Gestão centralizada e inteligente para redes de franquias e múltiplas filiais.",
+      description: "Centralize e padronize toda suas operações num único sistema.",
       features: [
+        "Centralize e padronize todas suas operações",
+        "Veja o andamento de lojas em segundos",
+        "Todas soluções acessadas de qualquer lugar",
+        "Portal do franqueador e do franqueado",
+        "Veja e compare o faturamento em segundos",
         "Gestão centralizada total",
-        "Relatórios unificados em tempo real",
-        "Controle de estoque integrado",
-        "Padronização de todos os processos",
-        "Monitoramento de performance por unidade",
-        "Comunicação interna integrada",
-        "Compliance automático",
-        "Dashboard executivo completo"
+        "Controle unificado de todas as filiais",
+        "Relatórios comparativos instantâneos"
       ],
-      benefits: ["Controle total da rede", "Padronização operacional 100%", "Crescimento escalável garantido"],
+      benefits: ["Controle total centralizado", "Padronização de processos", "Comparação de performance instantânea"],
       industries: ["Franquias", "Redes de varejo", "Múltiplas filiais", "Grandes empresas"]
     },
     "autoatendimento-tablet": {
