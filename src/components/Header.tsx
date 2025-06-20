@@ -74,32 +74,24 @@ const Header = () => {
 
           {/* Desktop Navigation */}
           <nav className="hidden md:flex items-center space-x-1">
-            {menuItems.map((item, index) => {
-              const IconComponent = item.icon;
-              return (
-                <Link
-                  key={item.path}
-                  to={item.path}
-                  className={`relative px-6 py-3 rounded-xl text-sm font-semibold transition-all duration-300 group overflow-hidden ${
-                    isActive(item.path) 
-                      ? "text-brand-black bg-gradient-to-r from-brand-gold to-brand-gold-light shadow-lg shadow-brand-gold/30" 
-                      : "text-white hover:text-brand-gold hover:bg-gradient-to-r hover:from-white/10 hover:to-brand-gold/10 hover:backdrop-blur-sm"
-                  }`}
-                  style={{ animationDelay: `${index * 0.1}s` }}
-                >
-                  <span className="relative z-10 flex items-center gap-2">
-                    <IconComponent className="w-4 h-4" />
-                    {item.label}
-                  </span>
-                  {/* Advanced hover effect */}
-                  <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700 ease-out"></div>
-                  {/* Active indicator */}
-                  {isActive(item.path) && (
-                    <div className="absolute -bottom-1 left-1/2 transform -translate-x-1/2 w-2 h-2 bg-brand-gold rounded-full animate-pulse" />
-                  )}
-                </Link>
-              );
-            })}
+            {/* Home */}
+            <Link
+              to="/"
+              className={`relative px-6 py-3 rounded-xl text-sm font-semibold transition-all duration-300 group overflow-hidden ${
+                isActive("/") 
+                  ? "text-brand-black bg-gradient-to-r from-brand-gold to-brand-gold-light shadow-lg shadow-brand-gold/30" 
+                  : "text-white hover:text-brand-gold hover:bg-gradient-to-r hover:from-white/10 hover:to-brand-gold/10 hover:backdrop-blur-sm"
+              }`}
+            >
+              <span className="relative z-10 flex items-center gap-2">
+                <Home className="w-4 h-4" />
+                Home
+              </span>
+              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700 ease-out"></div>
+              {isActive("/") && (
+                <div className="absolute -bottom-1 left-1/2 transform -translate-x-1/2 w-2 h-2 bg-brand-gold rounded-full animate-pulse" />
+              )}
+            </Link>
             
             {/* Soluções with Hover Dropdown */}
             <div className="relative"
@@ -143,6 +135,34 @@ const Header = () => {
                 })}
               </div>
             </div>
+
+            {/* Outros itens do menu */}
+            {menuItems.slice(1).map((item, index) => {
+              const IconComponent = item.icon;
+              return (
+                <Link
+                  key={item.path}
+                  to={item.path}
+                  className={`relative px-6 py-3 rounded-xl text-sm font-semibold transition-all duration-300 group overflow-hidden ${
+                    isActive(item.path) 
+                      ? "text-brand-black bg-gradient-to-r from-brand-gold to-brand-gold-light shadow-lg shadow-brand-gold/30" 
+                      : "text-white hover:text-brand-gold hover:bg-gradient-to-r hover:from-white/10 hover:to-brand-gold/10 hover:backdrop-blur-sm"
+                  }`}
+                  style={{ animationDelay: `${(index + 2) * 0.1}s` }}
+                >
+                  <span className="relative z-10 flex items-center gap-2">
+                    <IconComponent className="w-4 h-4" />
+                    {item.label}
+                  </span>
+                  {/* Advanced hover effect */}
+                  <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700 ease-out"></div>
+                  {/* Active indicator */}
+                  {isActive(item.path) && (
+                    <div className="absolute -bottom-1 left-1/2 transform -translate-x-1/2 w-2 h-2 bg-brand-gold rounded-full animate-pulse" />
+                  )}
+                </Link>
+              );
+            })}
           </nav>
 
           {/* WhatsApp Button */}
