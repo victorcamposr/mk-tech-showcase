@@ -1,3 +1,4 @@
+import { useLocation } from "react-router-dom";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import ColoredServiceIcon, { getServiceColors } from "@/components/ColoredServiceIcon";
@@ -10,8 +11,198 @@ import StructuredData from "@/components/StructuredData";
 import { ScrollReveal } from "@/components/ScrollReveal";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { CreditCard, Coffee, QrCode, Truck, Link2, BarChart3, Bot, Receipt, Monitor, TrendingUp, Banknote, Building2, Tablet } from "lucide-react";
 
 const Solutions = () => {
+  const location = useLocation();
+  
+  // Dados específicos para cada solução
+  const specificSolutions = {
+    "pdv-frente-caixa": {
+      title: "PDV/Frente de Caixa Premium",
+      icon: CreditCard,
+      description: "Sistema completo de ponto de venda com tecnologia de ponta para otimizar suas vendas e controle de caixa.",
+      features: [
+        "Interface touchscreen otimizada",
+        "Vendas rápidas com código de barras",
+        "Múltiplas formas de pagamento (PIX, cartão, dinheiro)",
+        "Controle de vendedores e comissões",
+        "Relatórios de vendas em tempo real",
+        "Integração com balanças e gavetas",
+        "Backup automático na nuvem",
+        "Suporte a múltiplas lojas"
+      ],
+      benefits: ["Aumento de 40% na velocidade de atendimento", "Redução de erros em 95%", "Controle total de vendas"],
+      industries: ["Varejo", "Supermercados", "Farmácias", "Lojas de conveniência"]
+    },
+    "mesas-comandas": {
+      title: "Mesas/Comandas - Garçons",
+      icon: Coffee,
+      description: "Sistema completo para restaurantes, bares e lanchonetes com controle de mesas e comandas.",
+      features: [
+        "Controle de mesas em tempo real",
+        "Comandas digitais integradas",
+        "App para garçons com pedidos",
+        "Gestão de cardápio dinâmico",
+        "Divisão de contas automática",
+        "Controle de ocupação de mesas",
+        "Integração com delivery",
+        "Relatórios de performance"
+      ],
+      benefits: ["Redução de 60% no tempo de pedidos", "Aumento de 30% no faturamento", "Melhor experiência do cliente"],
+      industries: ["Restaurantes", "Bares", "Lanchonetes", "Pizzarias"]
+    },
+    "cardapio-digital": {
+      title: "Cardápio Digital",
+      icon: QrCode,
+      description: "Cardápio digital interativo com QR Code para melhorar a experiência do cliente.",
+      features: [
+        "QR Code personalizado por mesa",
+        "Cardápio responsivo e interativo",
+        "Fotos em alta qualidade dos pratos",
+        "Descrições detalhadas e ingredientes",
+        "Preços atualizados em tempo real",
+        "Promoções e ofertas especiais",
+        "Múltiplos idiomas",
+        "Analytics de preferências"
+      ],
+      benefits: ["Economia de 80% em impressões", "Atualização instantânea", "Experiência moderna"],
+      industries: ["Restaurantes", "Bares", "Cafeterias", "Food trucks"]
+    },
+    "maquininhas-cartao": {
+      title: "Maquininhas de Cartão",
+      icon: CreditCard,
+      description: "Soluções completas de pagamento com as melhores taxas do mercado.",
+      features: [
+        "Taxas competitivas do mercado",
+        "Recebimento em 1 dia útil",
+        "Máquinas modernas e seguras",
+        "Aceita todos os cartões",
+        "PIX integrado",
+        "Vendas por aproximação (NFC)",
+        "App para acompanhamento",
+        "Suporte técnico 24h"
+      ],
+      benefits: ["Menores taxas do mercado", "Recebimento rápido", "Tecnologia de ponta"],
+      industries: ["Todos os segmentos", "Comércio em geral"]
+    }
+    // ... mais soluções podem ser adicionadas aqui
+  };
+
+  // Detectar qual solução específica está sendo visualizada
+  const currentPath = location.pathname;
+  const isSpecificSolution = currentPath.includes('/solucoes/');
+  const solutionKey = currentPath.split('/solucoes/')[1] as keyof typeof specificSolutions;
+  const currentSolution = specificSolutions[solutionKey];
+
+  // Se for uma solução específica, renderizar conteúdo personalizado
+  if (isSpecificSolution && currentSolution) {
+    const IconComponent = currentSolution.icon;
+    
+    return (
+      <div className="min-h-screen bg-background">
+        <SEO 
+          title={currentSolution.title}
+          description={currentSolution.description}
+          keywords={`${currentSolution.title}, automação comercial, Pontes e Lacerda`}
+        />
+        <Header />
+        
+        <main className="py-20">
+          <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+            {/* Hero Section */}
+            <ScrollReveal animation="fade-in">
+              <div className="text-center mb-16">
+                <div className="flex justify-center mb-6">
+                  <div className="bg-gradient-to-r from-brand-gold to-brand-gold-light p-4 rounded-full">
+                    <IconComponent className="w-12 h-12 text-brand-black" />
+                  </div>
+                </div>
+                <h1 className="text-4xl md:text-6xl font-bold text-brand-black mb-6">
+                  {currentSolution.title}
+                </h1>
+                <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+                  {currentSolution.description}
+                </p>
+              </div>
+            </ScrollReveal>
+
+            {/* Recursos */}
+            <ScrollReveal animation="fade-up" delay={100}>
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 mb-16">
+                <Card className="border-brand-gold/20 bg-gradient-to-br from-white to-gray-50/50">
+                  <CardHeader>
+                    <CardTitle className="text-brand-black flex items-center gap-2">
+                      <IconComponent className="w-6 h-6 text-brand-gold" />
+                      Principais Recursos
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <ul className="space-y-3">
+                      {currentSolution.features.map((feature, index) => (
+                        <li key={index} className="flex items-start text-gray-600">
+                          <CheckBullet />
+                          <span>{feature}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </CardContent>
+                </Card>
+
+                <Card className="border-brand-gold/20 bg-gradient-to-br from-white to-gray-50/50">
+                  <CardHeader>
+                    <CardTitle className="text-brand-black">Benefícios Garantidos</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <ul className="space-y-3">
+                      {currentSolution.benefits.map((benefit, index) => (
+                        <li key={index} className="flex items-start text-gray-600">
+                          <CheckBullet />
+                          <span>{benefit}</span>
+                        </li>
+                      ))}
+                    </ul>
+                    <div className="mt-6">
+                      <h4 className="font-semibold text-brand-black mb-2">Ideal para:</h4>
+                      <div className="flex flex-wrap gap-2">
+                        {currentSolution.industries.map((industry, index) => (
+                          <span key={index} className="bg-brand-gold/10 text-brand-black text-sm px-3 py-1 rounded-full">
+                            {industry}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
+            </ScrollReveal>
+
+            {/* CTA */}
+            <ScrollReveal animation="fade-up" delay={200}>
+              <div className="text-center bg-gradient-to-r from-brand-black to-brand-black-light rounded-2xl p-12">
+                <h2 className="text-3xl font-bold text-white mb-4">
+                  Interessado em {currentSolution.title}?
+                </h2>
+                <p className="text-gray-300 mb-8 max-w-2xl mx-auto">
+                  Entre em contato conosco e receba uma demonstração gratuita personalizada para seu negócio.
+                </p>
+                <Button asChild className="bg-brand-gold hover:bg-brand-gold-dark text-brand-black font-semibold group">
+                  <a href="https://wa.me/5565993535079" target="_blank" rel="noopener noreferrer" className="flex items-center gap-2">
+                    <SimpleIcon type="whatsapp-black" className="w-5 h-5 group-hover:scale-110 transition-transform" />
+                    Solicitar Demonstração
+                  </a>
+                </Button>
+              </div>
+            </ScrollReveal>
+          </div>
+        </main>
+
+        <Footer />
+      </div>
+    );
+  }
+
+  // Página geral de soluções (código original)
   const solutions = [
     {
       title: "PDV Completo",
