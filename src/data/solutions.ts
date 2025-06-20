@@ -12,7 +12,7 @@ export const SOLUTION_IMAGES = {
     'cardapio-digital': 'https://media.discordapp.net/attachments/1383147272442744954/1385658129722769448/Screenshot_19.png?ex=6856de32&is=68558cb2&hm=b673c16367892300f41b9de26b7bbb583014971ccf24b8ef908100db2d978605&=&format=webp&quality=lossless&width=1872&height=769',
     'maquininhas-cartao': 'https://media.discordapp.net/attachments/1383147272442744954/1385726446844117083/ChatGPT_Image_20_de_jun._de_2025_18_02_02.png?ex=68571dd2&is=6855cc52&hm=573d77523cec2a384e9691e7268cb7800e944153c00713da84f0fc6c6905cabe&=&format=webp&quality=lossless&width=1376&height=917',
     'controle-motoboys': 'https://media.discordapp.net/attachments/1383147272442744954/1385729208592109820/SISFOOD-Gestao-Motoboys.jpg?ex=68572064&is=6855cee4&hm=b629d57f05372dc0a46333b991ba85b7b417dc7f2b47eda4099719eb867f319e&=&format=webp',
-    'integracoes': 'https://images.unsplash.com/photo-1487058792275-0ad4aaf24ca7?w=400&h=200&fit=crop',
+    'integracoes': 'https://plus.unsplash.com/premium_photo-1683492749168-ee69f4d90193?q=80&w=784&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
     'gestao-analise': 'https://images.unsplash.com/photo-1556155092-490a1ba16284?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
     'robo-whatsapp': 'https://media.discordapp.net/attachments/1383147272442744954/1385710369183629322/eyestetix-studio-Gj3OsJseh9c-unsplash.jpg?ex=68570ed9&is=6855bd59&hm=d0df4d057e151faae35e447f583d9de628a55d4e0e855e8e61308836d187796f&=&format=webp&width=960&height=960',
     'nota-fiscal': 'https://www.tagplus.com.br/assets/pages/nota_fiscal_eletronica/nfe-icn-c2461c11f3235898d3d43449c301e6250f88fd43d427e117c419136ec1fb63c9.png',
