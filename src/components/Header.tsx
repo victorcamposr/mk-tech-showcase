@@ -102,22 +102,27 @@ const Header = () => {
             
             {/* Soluções Dropdown */}
             <DropdownMenu>
-              <DropdownMenuTrigger className={`relative px-6 py-3 rounded-xl text-sm font-semibold transition-all duration-300 group overflow-hidden ${
-                location.pathname.startsWith('/solucoes')
-                  ? "text-brand-black bg-gradient-to-r from-brand-gold to-brand-gold-light shadow-lg shadow-brand-gold/30" 
-                  : "text-white hover:text-brand-gold hover:bg-gradient-to-r hover:from-white/10 hover:to-brand-gold/10 hover:backdrop-blur-sm"
-              }`}>
-                <span className="relative z-10 flex items-center gap-2">
-                  <Lightbulb className="w-4 h-4" />
-                  Soluções
-                  <ChevronDown className="w-4 h-4 transition-transform group-data-[state=open]:rotate-180" />
-                </span>
-                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700 ease-out"></div>
-                {location.pathname.startsWith('/solucoes') && (
-                  <div className="absolute -bottom-1 left-1/2 transform -translate-x-1/2 w-2 h-2 bg-brand-gold rounded-full animate-pulse" />
-                )}
+              <DropdownMenuTrigger asChild>
+                <Link
+                  to="/solucoes"
+                  className={`relative px-6 py-3 rounded-xl text-sm font-semibold transition-all duration-300 group overflow-hidden ${
+                    location.pathname.startsWith('/solucoes')
+                      ? "text-brand-black bg-gradient-to-r from-brand-gold to-brand-gold-light shadow-lg shadow-brand-gold/30" 
+                      : "text-white hover:text-brand-gold hover:bg-gradient-to-r hover:from-white/10 hover:to-brand-gold/10 hover:backdrop-blur-sm"
+                  }`}
+                >
+                  <span className="relative z-10 flex items-center gap-2">
+                    <Lightbulb className="w-4 h-4" />
+                    Soluções
+                    <ChevronDown className="w-4 h-4 transition-transform group-data-[state=open]:rotate-180" />
+                  </span>
+                  <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700 ease-out"></div>
+                  {location.pathname.startsWith('/solucoes') && (
+                    <div className="absolute -bottom-1 left-1/2 transform -translate-x-1/2 w-2 h-2 bg-brand-gold rounded-full animate-pulse" />
+                  )}
+                </Link>
               </DropdownMenuTrigger>
-              <DropdownMenuContent className="w-80 bg-brand-black border border-brand-gold/20 shadow-2xl shadow-brand-gold/10">
+              <DropdownMenuContent className="w-80 bg-brand-black border border-brand-gold/20 shadow-2xl shadow-brand-gold/10 z-50">
                 {solutionItems.map((solution) => {
                   const SolutionIcon = solution.icon;
                   return (
