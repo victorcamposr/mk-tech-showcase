@@ -7,7 +7,7 @@ export const SOLUTION_IMAGES = {
   
   // Imagens dos cards das soluções na página principal
   cards: {
-    'pdv-frente-caixa': 'https://media.discordapp.net/attachments/1383147272442744954/1385703039301849158/df8aa13f-f327-44cd-a2f7-dcb05da3ae90.png?ex=68570805&is=6855b685&hm=5d0b5aa92f60247f9695a224633991a2904da267aebce5179cf3d93b783c10e2&=&format=webp&quality=lossless&width=1376&height=917',
+    'pdv-frente-caixa': 'https://media.discordapp.net/attachments/1383147272442744954/1385708116183875665/imagem_distorcida_1500x1024.png?ex=68570cc0&is=6855bb40&hm=c4f4c345fa63951b6cd69835f3d5880598311a1166bfd2b1b63e863e9a33845b&=&format=webp&quality=lossless&width=1376&height=939',
     'mesas-comandas': 'https://media.discordapp.net/attachments/1383147272442744954/1385660144771141683/ChatGPT_Image_20_de_jun._de_2025_13_37_47.png?ex=6856e012&is=68558e92&hm=aa64526918f6004b6c6f93f9ce1c09c0a6a4c228b429e0f18bb78b2badc13252&=&format=webp&quality=lossless&width=1376&height=917',
     'cardapio-digital': 'https://media.discordapp.net/attachments/1383147272442744954/1385658129722769448/Screenshot_19.png?ex=6856de32&is=68558cb2&hm=b673c16367892300f41b9de26b7bbb583014971ccf24b8ef908100db2d978605&=&format=webp&quality=lossless&width=1872&height=769',
     'maquininhas-cartao': 'https://images.unsplash.com/photo-1488590528505-98d2b5aba04b?w=400&h=200&fit=crop',
