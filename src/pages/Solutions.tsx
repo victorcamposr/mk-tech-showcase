@@ -48,7 +48,7 @@ const Solutions = () => {
   // Dados específicos para cada solução
   const specificSolutions = {
     "pdv-frente-caixa": {
-      title: "Frente de Caixa/PDV Premium - Tudo em Um",
+      title: "Frente de Caixa/PDV Premium",
       icon: Calculator,
       description: "Frente de Caixa web, rápido e prático. Automatize 100% seus pedidos com integração completa.",
       features: [
@@ -107,7 +107,7 @@ const Solutions = () => {
       industries: ["Restaurantes", "Bares", "Lanchonetes", "Delivery"]
     },
     "maquininhas-cartao": {
-      title: "Nosso PDV/Frente de Caixa dentro das Maquininhas de Cartão",
+      title: "Maquininhas de Cartão",
       icon: CreditCard,
       description: "Agilize o seu atendimento realizando pedidos, cobrança e emissão de notas fiscais rapidamente.",
       features: [
@@ -342,17 +342,17 @@ const Solutions = () => {
                   {/* Ícones flutuantes para maquininhas de cartão na página específica */}
                   {solutionKey === 'maquininhas-cartao' && (
                     <>
-                      <div className="absolute bottom-6 left-6 bg-white/95 backdrop-blur-sm p-3 rounded-xl shadow-xl animate-bounce">
-                        <CreditCard className="w-6 h-6 text-blue-600 mb-1" />
-                        <span className="text-sm font-bold text-blue-600 block">Stone</span>
+                      <div className="absolute bottom-4 left-4 bg-white/80 backdrop-blur-sm p-2 rounded-lg shadow-md">
+                        <CreditCard className="w-4 h-4 text-blue-600 mb-1" />
+                        <span className="text-xs font-medium text-blue-600 block">Stone</span>
                       </div>
-                      <div className="absolute bottom-6 left-32 bg-white/95 backdrop-blur-sm p-3 rounded-xl shadow-xl animate-bounce" style={{ animationDelay: '0.3s' }}>
-                        <CreditCard className="w-6 h-6 text-orange-600 mb-1" />
-                        <span className="text-sm font-bold text-orange-600 block">Cielo</span>
+                      <div className="absolute bottom-4 left-20 bg-white/80 backdrop-blur-sm p-2 rounded-lg shadow-md">
+                        <CreditCard className="w-4 h-4 text-orange-600 mb-1" />
+                        <span className="text-xs font-medium text-orange-600 block">Cielo</span>
                       </div>
-                      <div className="absolute bottom-6 left-56 bg-white/95 backdrop-blur-sm p-3 rounded-xl shadow-xl animate-bounce" style={{ animationDelay: '0.6s' }}>
-                        <CreditCard className="w-6 h-6 text-purple-600 mb-1" />
-                        <span className="text-sm font-bold text-purple-600 block">PagBank</span>
+                      <div className="absolute bottom-4 left-36 bg-white/80 backdrop-blur-sm p-2 rounded-lg shadow-md">
+                        <CreditCard className="w-4 h-4 text-purple-600 mb-1" />
+                        <span className="text-xs font-medium text-purple-600 block">PagBank</span>
                       </div>
                     </>
                   )}
@@ -548,18 +548,18 @@ const Solutions = () => {
                            {/* Ícones flutuantes para maquininhas de cartão */}
                            {key === 'maquininhas-cartao' && (
                              <>
-                               <div className="absolute bottom-4 left-4 bg-white/90 backdrop-blur-sm p-1.5 rounded-lg shadow-lg animate-bounce">
-                                 <CreditCard className="w-4 h-4 text-blue-600" />
-                                 <span className="text-xs font-semibold text-blue-600 block leading-none">Stone</span>
-                               </div>
-                               <div className="absolute bottom-4 left-20 bg-white/90 backdrop-blur-sm p-1.5 rounded-lg shadow-lg animate-bounce" style={{ animationDelay: '0.2s' }}>
-                                 <CreditCard className="w-4 h-4 text-orange-600" />
-                                 <span className="text-xs font-semibold text-orange-600 block leading-none">Cielo</span>
-                               </div>
-                               <div className="absolute bottom-4 left-36 bg-white/90 backdrop-blur-sm p-1.5 rounded-lg shadow-lg animate-bounce" style={{ animationDelay: '0.4s' }}>
-                                 <CreditCard className="w-4 h-4 text-purple-600" />
-                                 <span className="text-xs font-semibold text-purple-600 block leading-none">PagBank</span>
-                               </div>
+                                <div className="absolute bottom-3 left-3 bg-white/75 backdrop-blur-sm p-1 rounded shadow-sm">
+                                  <CreditCard className="w-3 h-3 text-blue-600" />
+                                  <span className="text-xs font-medium text-blue-600 block leading-none">Stone</span>
+                                </div>
+                                <div className="absolute bottom-3 left-16 bg-white/75 backdrop-blur-sm p-1 rounded shadow-sm">
+                                  <CreditCard className="w-3 h-3 text-orange-600" />
+                                  <span className="text-xs font-medium text-orange-600 block leading-none">Cielo</span>
+                                </div>
+                                <div className="absolute bottom-3 left-28 bg-white/75 backdrop-blur-sm p-1 rounded shadow-sm">
+                                  <CreditCard className="w-3 h-3 text-purple-600" />
+                                  <span className="text-xs font-medium text-purple-600 block leading-none">PagBank</span>
+                                </div>
                              </>
                            )}
                          </div>
