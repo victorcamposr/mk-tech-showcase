@@ -250,8 +250,8 @@ const Header = () => {
                 </button>
                 
                 {/* Dropdown de soluções mobile */}
-                <div className={`overflow-hidden transition-all duration-300 ${
-                  isMobileSolutionsOpen ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'
+                <div className={`transition-all duration-300 ${
+                  isMobileSolutionsOpen ? 'max-h-64 opacity-100 overflow-y-auto scrollbar-thin scrollbar-thumb-brand-gold scrollbar-track-transparent' : 'max-h-0 opacity-0 overflow-hidden'
                 }`}>
                   <div className="pl-6 space-y-1 mt-2">
                     {/* Link para página principal de soluções */}
