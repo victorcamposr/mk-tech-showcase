@@ -41,22 +41,22 @@ const Footer = () => {
           {/* Contato */}
           <div>
             <h3 className="text-brand-gold font-semibold mb-4">Contato</h3>
-            <div className="space-y-6 text-gray-300">
+            <div className="space-y-4 text-gray-300">
               <div className="flex items-center gap-3">
-                <div className="w-6 h-6 flex-shrink-0 flex items-center justify-center">
-                  <ContactIcon type="phone" />
+                <div className="w-5 h-5 flex-shrink-0 flex items-center justify-center">
+                  <ContactIcon type="phone" className="w-5 h-5" />
                 </div>
                 <span>(65) 99353-5079</span>
               </div>
               <div className="flex items-center gap-3">
-                <div className="w-6 h-6 flex-shrink-0 flex items-center justify-center">
-                  <ContactIcon type="email" />
+                <div className="w-5 h-5 flex-shrink-0 flex items-center justify-center">
+                  <ContactIcon type="email" className="w-5 h-5" />
                 </div>
                 <span>mktecnologiaoficial@gmail.com</span>
               </div>
               <div className="flex items-center gap-3">
-                <div className="w-6 h-6 flex-shrink-0 flex items-center justify-center">
-                  <ContactIcon type="location" />
+                <div className="w-5 h-5 flex-shrink-0 flex items-center justify-center">
+                  <ContactIcon type="location" className="w-5 h-5" />
                 </div>
                 <div className="leading-tight">
                   <p>Av Marechal Rondon, 1512</p>
