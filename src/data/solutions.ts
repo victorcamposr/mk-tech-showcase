@@ -20,7 +20,7 @@ export const SOLUTION_IMAGES = {
     'marketing-vendas': 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?q=80&w=1115&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
     'pagamento-tef': 'https://images.unsplash.com/photo-1556740714-a8395b3bf30f?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
     'franquias-filiais': 'https://images.unsplash.com/photo-1605810230434-7631ac76ec81?w=400&h=200&fit=crop',
-    'autoatendimento-tablet': 'https://media.discordapp.net/attachments/1383147272442744954/1385703229165277304/ChatGPT_Image_20_de_jun._de_2025_16_17_31.png?ex=68570832&is=6855b6b2&hm=c8497efb45c5c1689ab321e242717f7e337e32a0fae419e7c74bc42caaeb95c9&=&format=webp&quality=lossless&width=640&height=960',
+    'autoatendimento-tablet': 'https://media.discordapp.net/attachments/1383147272442744954/1385727954843205844/ChatGPT_Image_20_de_jun._de_2025_18_08_00.png?ex=68571f3a&is=6855cdba&hm=2a4bcc2da747a04cbbec281a736c8034ae5ff34cfdb8b8ebc76319479e34e41f&=&format=webp&quality=lossless&width=1376&height=917',
   }
 };
 
