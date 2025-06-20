@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Menu, X, MessageCircle, Sparkles, Zap, Home, User, Settings, Lightbulb, Grid3X3, Phone, ChevronDown, Coffee, QrCode, Smartphone, Truck, Link2, BarChart3, Bot, Receipt, Monitor, TrendingUp, Banknote, Building2, Tablet, Calculator } from "lucide-react";
+import { Menu, X, MessageCircle, Sparkles, Zap, Home, User, Settings, Lightbulb, Grid3X3, Phone, ChevronDown, CreditCard, Coffee, QrCode, Smartphone, Truck, Link2, BarChart3, Bot, Receipt, Monitor, TrendingUp, Banknote, Building2, Tablet } from "lucide-react";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import CriticalImage from "@/components/CriticalImage";
 
@@ -22,17 +22,17 @@ const Header = () => {
 
   const menuItems = [
     { label: "Home", path: "/", icon: Home },
+    { label: "Sobre", path: "/sobre", icon: User },
     { label: "Serviços", path: "/servicos", icon: Settings },
     { label: "Portfólio", path: "/portfolio", icon: Grid3X3 },
-    { label: "Sobre", path: "/sobre", icon: User },
     { label: "Contato", path: "/contato", icon: Phone },
   ];
 
   const solutionItems = [
-    { label: "PDV/Frente de caixa premium", path: "/solucoes/pdv-frente-caixa", icon: Calculator },
+    { label: "PDV/Frente de caixa premium", path: "/solucoes/pdv-frente-caixa", icon: CreditCard },
     { label: "Mesas/Comandas - Garçons", path: "/solucoes/mesas-comandas", icon: Coffee },
     { label: "Cardápio Digital", path: "/solucoes/cardapio-digital", icon: QrCode },
-    { label: "Maquininhas de cartão", path: "/solucoes/maquininhas-cartao", icon: Smartphone },
+    { label: "Maquininhas de cartão", path: "/solucoes/maquininhas-cartao", icon: CreditCard },
     { label: "Controle e aplicativo p/ motoboys", path: "/solucoes/controle-motoboys", icon: Truck },
     { label: "Integrações", path: "/solucoes/integracoes", icon: Link2 },
     { label: "Gestão e análise p/ Food Service", path: "/solucoes/gestao-analise", icon: BarChart3 },
@@ -73,69 +73,7 @@ const Header = () => {
 
           {/* Desktop Navigation */}
           <nav className="hidden md:flex items-center space-x-1">
-            {/* Home */}
-            <Link
-              to="/"
-              className={`relative px-6 py-3 rounded-xl text-sm font-semibold transition-all duration-300 group overflow-hidden ${
-                isActive("/") 
-                  ? "text-brand-black bg-gradient-to-r from-brand-gold to-brand-gold-light shadow-lg shadow-brand-gold/30" 
-                  : "text-white hover:text-brand-gold hover:bg-gradient-to-r hover:from-white/10 hover:to-brand-gold/10 hover:backdrop-blur-sm"
-              }`}
-            >
-              <span className="relative z-10 flex items-center gap-2">
-                <Home className="w-4 h-4" />
-                Home
-              </span>
-              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700 ease-out"></div>
-              {isActive("/") && (
-                <div className="absolute -bottom-1 left-1/2 transform -translate-x-1/2 w-2 h-2 bg-brand-gold rounded-full animate-pulse" />
-              )}
-            </Link>
-
-            {/* Soluções com Dropdown */}
-            <div className="relative">
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Link
-                    to="/solucoes"
-                    className={`relative px-6 py-3 rounded-xl text-sm font-semibold transition-all duration-300 group overflow-hidden ${
-                      location.pathname.startsWith('/solucoes')
-                        ? "text-brand-black bg-gradient-to-r from-brand-gold to-brand-gold-light shadow-lg shadow-brand-gold/30" 
-                        : "text-white hover:text-brand-gold hover:bg-gradient-to-r hover:from-white/10 hover:to-brand-gold/10 hover:backdrop-blur-sm"
-                    }`}
-                  >
-                    <span className="relative z-10 flex items-center gap-2">
-                      <Lightbulb className="w-4 h-4" />
-                      Soluções
-                      <ChevronDown className="w-4 h-4 transition-transform group-data-[state=open]:rotate-180" />
-                    </span>
-                    <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700 ease-out"></div>
-                    {location.pathname.startsWith('/solucoes') && (
-                      <div className="absolute -bottom-1 left-1/2 transform -translate-x-1/2 w-2 h-2 bg-brand-gold rounded-full animate-pulse" />
-                    )}
-                  </Link>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent className="w-80 bg-brand-black border border-brand-gold/20 shadow-2xl shadow-brand-gold/10">
-                  {solutionItems.map((solution) => {
-                    const SolutionIcon = solution.icon;
-                    return (
-                      <DropdownMenuItem key={solution.path} asChild>
-                        <Link
-                          to={solution.path}
-                          className="flex items-center gap-3 px-4 py-3 text-white hover:text-brand-gold hover:bg-brand-gold/10 transition-colors duration-200 cursor-pointer"
-                        >
-                          <SolutionIcon className="w-5 h-5 text-brand-gold" />
-                          <span className="text-sm font-medium">{solution.label}</span>
-                        </Link>
-                      </DropdownMenuItem>
-                    );
-                  })}
-                </DropdownMenuContent>
-              </DropdownMenu>
-            </div>
-
-            {/* Outros itens do menu */}
-            {menuItems.slice(1).map((item, index) => {
+            {menuItems.map((item, index) => {
               const IconComponent = item.icon;
               return (
                 <Link
@@ -146,19 +84,56 @@ const Header = () => {
                       ? "text-brand-black bg-gradient-to-r from-brand-gold to-brand-gold-light shadow-lg shadow-brand-gold/30" 
                       : "text-white hover:text-brand-gold hover:bg-gradient-to-r hover:from-white/10 hover:to-brand-gold/10 hover:backdrop-blur-sm"
                   }`}
-                  style={{ animationDelay: `${(index + 2) * 0.1}s` }}
+                  style={{ animationDelay: `${index * 0.1}s` }}
                 >
                   <span className="relative z-10 flex items-center gap-2">
                     <IconComponent className="w-4 h-4" />
                     {item.label}
                   </span>
+                  {/* Advanced hover effect */}
                   <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700 ease-out"></div>
+                  {/* Active indicator */}
                   {isActive(item.path) && (
                     <div className="absolute -bottom-1 left-1/2 transform -translate-x-1/2 w-2 h-2 bg-brand-gold rounded-full animate-pulse" />
                   )}
                 </Link>
               );
             })}
+            
+            {/* Soluções Dropdown */}
+            <DropdownMenu>
+              <DropdownMenuTrigger className={`relative px-6 py-3 rounded-xl text-sm font-semibold transition-all duration-300 group overflow-hidden ${
+                location.pathname.startsWith('/solucoes')
+                  ? "text-brand-black bg-gradient-to-r from-brand-gold to-brand-gold-light shadow-lg shadow-brand-gold/30" 
+                  : "text-white hover:text-brand-gold hover:bg-gradient-to-r hover:from-white/10 hover:to-brand-gold/10 hover:backdrop-blur-sm"
+              }`}>
+                <span className="relative z-10 flex items-center gap-2">
+                  <Lightbulb className="w-4 h-4" />
+                  Soluções
+                  <ChevronDown className="w-4 h-4 transition-transform group-data-[state=open]:rotate-180" />
+                </span>
+                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700 ease-out"></div>
+                {location.pathname.startsWith('/solucoes') && (
+                  <div className="absolute -bottom-1 left-1/2 transform -translate-x-1/2 w-2 h-2 bg-brand-gold rounded-full animate-pulse" />
+                )}
+              </DropdownMenuTrigger>
+              <DropdownMenuContent className="w-80 bg-brand-black border border-brand-gold/20 shadow-2xl shadow-brand-gold/10">
+                {solutionItems.map((solution) => {
+                  const SolutionIcon = solution.icon;
+                  return (
+                    <DropdownMenuItem key={solution.path} asChild>
+                      <Link
+                        to={solution.path}
+                        className="flex items-center gap-3 px-4 py-3 text-white hover:text-brand-gold hover:bg-brand-gold/10 transition-colors duration-200 cursor-pointer"
+                      >
+                        <SolutionIcon className="w-5 h-5 text-brand-gold" />
+                        <span className="text-sm font-medium">{solution.label}</span>
+                      </Link>
+                    </DropdownMenuItem>
+                  );
+                })}
+              </DropdownMenuContent>
+            </DropdownMenu>
           </nav>
 
           {/* WhatsApp Button */}
@@ -199,50 +174,7 @@ const Header = () => {
         }`}>
           <div className="py-4 border-t border-brand-gold/20 bg-gradient-to-b from-transparent to-brand-black-light/20">
             <div className="flex flex-col space-y-2">
-              {/* Home */}
-              <Link
-                to="/"
-                className={`px-4 py-3 rounded-lg text-sm font-medium transition-colors duration-200 ${
-                  isActive("/") 
-                    ? "text-brand-gold bg-brand-gold/15" 
-                    : "text-white hover:text-brand-gold hover:bg-white/10"
-                }`}
-                onClick={() => setIsMenuOpen(false)}
-              >
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <Home className="w-4 h-4" />
-                    <span>Home</span>
-                  </div>
-                  {isActive("/") && (
-                    <div className="w-2 h-2 bg-brand-gold rounded-full" />
-                  )}
-                </div>
-              </Link>
-
-              {/* Soluções */}
-              <Link
-                to="/solucoes"
-                className={`px-4 py-3 rounded-lg text-sm font-medium transition-colors duration-200 ${
-                  location.pathname.startsWith('/solucoes') 
-                    ? "text-brand-gold bg-brand-gold/15" 
-                    : "text-white hover:text-brand-gold hover:bg-white/10"
-                }`}
-                onClick={() => setIsMenuOpen(false)}
-              >
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <Lightbulb className="w-4 h-4" />
-                    <span>Soluções</span>
-                  </div>
-                  {location.pathname.startsWith('/solucoes') && (
-                    <div className="w-2 h-2 bg-brand-gold rounded-full" />
-                  )}
-                </div>
-              </Link>
-
-              {/* Outros itens do menu */}
-              {menuItems.slice(1).map((item) => {
+              {menuItems.map((item) => {
                 const IconComponent = item.icon;
                 return (
                   <Link

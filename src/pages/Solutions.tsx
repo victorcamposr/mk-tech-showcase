@@ -11,7 +11,7 @@ import StructuredData from "@/components/StructuredData";
 import { ScrollReveal } from "@/components/ScrollReveal";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { CreditCard, Coffee, QrCode, Truck, Link2, BarChart3, Bot, Receipt, Monitor, TrendingUp, Banknote, Building2, Tablet, Calculator, Smartphone } from "lucide-react";
+import { CreditCard, Coffee, QrCode, Truck, Link2, BarChart3, Bot, Receipt, Monitor, TrendingUp, Banknote, Building2, Tablet } from "lucide-react";
 
 const Solutions = () => {
   const location = useLocation();
@@ -20,7 +20,7 @@ const Solutions = () => {
   const specificSolutions = {
     "pdv-frente-caixa": {
       title: "PDV/Frente de Caixa Premium",
-      icon: Calculator,
+      icon: CreditCard,
       description: "Sistema completo de ponto de venda com tecnologia de ponta para otimizar suas vendas e controle de caixa.",
       features: [
         "Interface touchscreen otimizada",
@@ -71,7 +71,7 @@ const Solutions = () => {
     },
     "maquininhas-cartao": {
       title: "Maquininhas de Cartão",
-      icon: Smartphone,
+      icon: CreditCard,
       description: "Soluções completas de pagamento com as melhores taxas do mercado.",
       features: [
         "Taxas competitivas do mercado",
