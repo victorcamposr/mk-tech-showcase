@@ -13,7 +13,7 @@ export const SOLUTION_IMAGES = {
     'maquininhas-cartao': 'https://media.discordapp.net/attachments/1383147272442744954/1385726446844117083/ChatGPT_Image_20_de_jun._de_2025_18_02_02.png?ex=68571dd2&is=6855cc52&hm=573d77523cec2a384e9691e7268cb7800e944153c00713da84f0fc6c6905cabe&=&format=webp&quality=lossless&width=1376&height=917',
     'controle-motoboys': 'https://images.unsplash.com/photo-1531297484001-80022131f5a1?w=400&h=200&fit=crop',
     'integracoes': 'https://images.unsplash.com/photo-1487058792275-0ad4aaf24ca7?w=400&h=200&fit=crop',
-    'gestao-analise': 'https://images.unsplash.com/photo-1605810230434-7631ac76ec81?w=400&h=200&fit=crop',
+    'gestao-analise': 'https://images.unsplash.com/photo-1556155092-490a1ba16284?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
     'robo-whatsapp': 'https://media.discordapp.net/attachments/1383147272442744954/1385710369183629322/eyestetix-studio-Gj3OsJseh9c-unsplash.jpg?ex=68570ed9&is=6855bd59&hm=d0df4d057e151faae35e447f583d9de628a55d4e0e855e8e61308836d187796f&=&format=webp&width=960&height=960',
     'nota-fiscal': 'https://www.tagplus.com.br/assets/pages/nota_fiscal_eletronica/nfe-icn-c2461c11f3235898d3d43449c301e6250f88fd43d427e117c419136ec1fb63c9.png',
     'auto-atendimento': 'https://media.discordapp.net/attachments/1383147272442744954/1385703229165277304/ChatGPT_Image_20_de_jun._de_2025_16_17_31.png?ex=68570832&is=6855b6b2&hm=c8497efb45c5c1689ab321e242717f7e337e32a0fae419e7c74bc42caaeb95c9&=&format=webp&quality=lossless&width=640&height=960',
