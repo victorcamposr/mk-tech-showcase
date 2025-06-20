@@ -466,19 +466,48 @@ const Solutions = () => {
                   const IconComponent = solution.icon;
                   const colors = getServiceColors('automation');
                   
+                  // Função para mapear imagens demonstrativas para cada solução
+                  const getCardImage = (solutionKey: string) => {
+                    const imageMap: { [key: string]: string } = {
+                      'pdv-frente-caixa': 'photo-1461749280684-dccba630e2f6', // monitor showing programming
+                      'mesas-comandas': 'photo-1605810230434-7631ac76ec81', // group with video screens
+                      'cardapio-digital': 'photo-1486312338219-ce68d2c6f44d', // person using MacBook Pro
+                      'maquininhas-cartao': 'photo-1488590528505-98d2b5aba04b', // turned on laptop
+                      'controle-motoboys': 'photo-1531297484001-80022131f5a1', // laptop on surface
+                      'integracoes': 'photo-1487058792275-0ad4aaf24ca7', // colorful code on monitor
+                      'gestao-analise': 'photo-1605810230434-7631ac76ec81', // group with displays
+                      'robo-whatsapp': 'photo-1486312338219-ce68d2c6f44d', // person using MacBook
+                      'nota-fiscal': 'photo-1461749280684-dccba630e2f6', // monitor programming
+                      'auto-atendimento': 'photo-1488590528505-98d2b5aba04b', // laptop computer
+                      'marketing-vendas': 'photo-1487058792275-0ad4aaf24ca7', // colorful code
+                      'pagamento-tef': 'photo-1531297484001-80022131f5a1', // laptop surface
+                      'franquias-filiais': 'photo-1605810230434-7631ac76ec81', // group displays
+                      'autoatendimento-tablet': 'photo-1486312338219-ce68d2c6f44d', // MacBook Pro
+                    };
+                    return `https://images.unsplash.com/${imageMap[solutionKey] || 'photo-1461749280684-dccba630e2f6'}?w=400&h=200&fit=crop`;
+                  };
+                  
                   return (
                     <Card key={key} className="border-brand-gold/20 hover:shadow-2xl hover:shadow-brand-gold/10 transition-all duration-500 hover:-translate-y-3 hover:scale-105 group bg-gradient-to-br from-white to-gray-50/50 backdrop-blur-sm overflow-hidden cursor-pointer">
                       <a href={`/solucoes/${key}`} className="block">
+                        {/* Imagem demonstrativa */}
+                        <div className="h-48 overflow-hidden relative">
+                          <img 
+                            src={getCardImage(key)} 
+                            alt={`Demonstração ${solution.title}`}
+                            className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                          />
+                          <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                          <div className="absolute top-4 right-4 bg-gradient-to-r from-brand-gold to-brand-gold-light p-2 rounded-full group-hover:scale-110 transition-transform duration-300">
+                            <IconComponent className="w-5 h-5 text-brand-black" />
+                          </div>
+                        </div>
+                        
                         <CardHeader className="pb-4">
-                          <div className="flex items-center gap-3 mb-3">
-                            <div className="bg-gradient-to-r from-brand-gold to-brand-gold-light p-3 rounded-full group-hover:scale-110 transition-transform duration-300">
-                              <IconComponent className="w-6 h-6 text-brand-black" />
-                            </div>
-                            <div className="flex-1">
-                              <CardTitle className="text-lg font-bold text-brand-black group-hover:text-brand-gold transition-colors duration-300">
-                                {solution.title}
-                              </CardTitle>
-                            </div>
+                          <div className="mb-3">
+                            <CardTitle className="text-lg font-bold text-brand-black group-hover:text-brand-gold transition-colors duration-300">
+                              {solution.title}
+                            </CardTitle>
                           </div>
                           <p className="text-gray-600 group-hover:text-gray-700 transition-colors duration-300 text-sm"
                              style={{
