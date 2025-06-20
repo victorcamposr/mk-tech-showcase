@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Menu, X, MessageCircle, Sparkles, Zap, Home, User, Settings, Lightbulb, Grid3X3, Phone, ChevronDown, CreditCard, Coffee, QrCode, Smartphone, Truck, Link2, BarChart3, Bot, Receipt, Monitor, TrendingUp, Banknote, Building2, Tablet } from "lucide-react";
+import { Menu, X, MessageCircle, Sparkles, Zap, Home, User, Settings, Lightbulb, Grid3X3, Phone, ChevronDown, CreditCard, Coffee, QrCode, Smartphone, Truck, Link2, BarChart3, Bot, Receipt, Monitor, TrendingUp, Banknote, Building2, Tablet, Calculator } from "lucide-react";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import CriticalImage from "@/components/CriticalImage";
 
@@ -30,7 +30,7 @@ const Header = () => {
   ];
 
   const solutionItems = [
-    { label: "PDV/Frente de caixa premium", path: "/solucoes/pdv-frente-caixa", icon: CreditCard },
+    { label: "PDV/Frente de caixa premium", path: "/solucoes/pdv-frente-caixa", icon: Calculator },
     { label: "Mesas/Comandas - Garçons", path: "/solucoes/mesas-comandas", icon: Coffee },
     { label: "Cardápio Digital", path: "/solucoes/cardapio-digital", icon: QrCode },
     { label: "Maquininhas de cartão", path: "/solucoes/maquininhas-cartao", icon: CreditCard },
