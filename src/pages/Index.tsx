@@ -134,6 +134,44 @@ const Index = () => {
         </section>
       </ScrollReveal>
 
+      {/* Tecnologia Multi-plataforma */}
+      <ScrollReveal animation="fade-up" delay={150}>
+        <section className="py-16 bg-gradient-to-br from-gray-50 to-white">
+          <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="text-center mb-12">
+              <h2 className="text-3xl md:text-4xl font-bold text-brand-black mb-4">
+                Tecnologia <span className="text-brand-gold">Multi-Plataforma</span>
+              </h2>
+              <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+                Nossos sistemas funcionam perfeitamente em tablets, smartphones, computadores e terminais dedicados, 
+                garantindo total flexibilidade para seu negócio.
+              </p>
+            </div>
+            
+            <div className="max-w-6xl mx-auto">
+              <div className="relative rounded-2xl overflow-hidden shadow-2xl">
+                <img 
+                  src="/lovable-uploads/dba53bd2-2bc2-4500-994b-0674463bf3db.png" 
+                  alt="Soluções MK Tecnologia - Sistemas multi-plataforma funcionando em tablets, smartphones e computadores"
+                  className="w-full h-auto object-cover"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-brand-black/30 via-transparent to-transparent"></div>
+                <div className="absolute bottom-6 left-6 right-6">
+                  <div className="bg-white/95 backdrop-blur-sm rounded-xl p-4 border border-brand-gold/20">
+                    <h3 className="text-lg font-semibold text-brand-black mb-2">
+                      Sistemas Integrados para Todos os Dispositivos
+                    </h3>
+                    <p className="text-gray-600 text-sm">
+                      PDV, Gestão de Estoque, Emissão Fiscal e Controle Financeiro em uma única plataforma
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+      </ScrollReveal>
+
       {/* About Section */}
       <ScrollReveal animation="fade-up" delay={200}>
         <section className="py-20 bg-gray-50">

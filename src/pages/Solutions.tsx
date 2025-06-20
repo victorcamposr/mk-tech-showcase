@@ -59,7 +59,7 @@ const Solutions = () => {
                   <img 
                     src={SOLUTION_IMAGES.cards[solutionKey] || SOLUTION_IMAGES.cards['pdv-frente-caixa']} 
                     alt={`Demonstração ${currentSolution.title}`}
-                    className="w-full h-64 md:h-80 object-contain bg-gray-50 rounded-xl shadow-2xl"
+                    className="w-full h-64 md:h-80 object-cover bg-gray-50 rounded-xl shadow-2xl"
                   />
                   
                   {/* Ícones flutuantes para maquininhas de cartão na página específica */}
