@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Menu, X, MessageCircle, Sparkles, Zap, Home, User, Settings, Lightbulb, Grid3X3, Phone, ChevronDown, CreditCard, Coffee, QrCode, Smartphone, Truck, Link2, BarChart3, Bot, Receipt, Monitor, TrendingUp, Banknote, Building2, Tablet } from "lucide-react";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
@@ -8,7 +8,9 @@ import CriticalImage from "@/components/CriticalImage";
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const location = useLocation();
+  const navigate = useNavigate();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -100,45 +102,48 @@ const Header = () => {
               );
             })}
             
-            {/* Soluções Dropdown */}
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Link
-                  to="/solucoes"
-                  className={`relative px-6 py-3 rounded-xl text-sm font-semibold transition-all duration-300 group overflow-hidden ${
-                    location.pathname.startsWith('/solucoes')
-                      ? "text-brand-black bg-gradient-to-r from-brand-gold to-brand-gold-light shadow-lg shadow-brand-gold/30" 
-                      : "text-white hover:text-brand-gold hover:bg-gradient-to-r hover:from-white/10 hover:to-brand-gold/10 hover:backdrop-blur-sm"
-                  }`}
-                >
-                  <span className="relative z-10 flex items-center gap-2">
-                    <Lightbulb className="w-4 h-4" />
-                    Soluções
-                    <ChevronDown className="w-4 h-4 transition-transform group-data-[state=open]:rotate-180" />
-                  </span>
-                  <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700 ease-out"></div>
-                  {location.pathname.startsWith('/solucoes') && (
-                    <div className="absolute -bottom-1 left-1/2 transform -translate-x-1/2 w-2 h-2 bg-brand-gold rounded-full animate-pulse" />
-                  )}
-                </Link>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent className="w-80 bg-brand-black border border-brand-gold/20 shadow-2xl shadow-brand-gold/10 z-50">
+            {/* Soluções with Hover Dropdown */}
+            <div className="relative"
+                 onMouseEnter={() => setIsDropdownOpen(true)}
+                 onMouseLeave={() => setIsDropdownOpen(false)}>
+              <button
+                onClick={() => navigate('/solucoes')}
+                className={`relative px-6 py-3 rounded-xl text-sm font-semibold transition-all duration-300 group overflow-hidden ${
+                  location.pathname.startsWith('/solucoes')
+                    ? "text-brand-black bg-gradient-to-r from-brand-gold to-brand-gold-light shadow-lg shadow-brand-gold/30" 
+                    : "text-white hover:text-brand-gold hover:bg-gradient-to-r hover:from-white/10 hover:to-brand-gold/10 hover:backdrop-blur-sm"
+                }`}
+              >
+                <span className="relative z-10 flex items-center gap-2">
+                  <Lightbulb className="w-4 h-4" />
+                  Soluções
+                  <ChevronDown className={`w-4 h-4 transition-transform duration-200 ${isDropdownOpen ? 'rotate-180' : ''}`} />
+                </span>
+                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700 ease-out"></div>
+                {location.pathname.startsWith('/solucoes') && (
+                  <div className="absolute -bottom-1 left-1/2 transform -translate-x-1/2 w-2 h-2 bg-brand-gold rounded-full animate-pulse" />
+                )}
+              </button>
+              
+              {/* Dropdown Content */}
+              <div className={`absolute top-full left-0 mt-2 w-80 bg-brand-black border border-brand-gold/20 shadow-2xl shadow-brand-gold/10 rounded-md z-[60] transition-all duration-200 ${
+                isDropdownOpen ? 'opacity-100 visible translate-y-0' : 'opacity-0 invisible -translate-y-2'
+              }`}>
                 {solutionItems.map((solution) => {
                   const SolutionIcon = solution.icon;
                   return (
-                    <DropdownMenuItem key={solution.path} asChild>
-                      <Link
-                        to={solution.path}
-                        className="flex items-center gap-3 px-4 py-3 text-white hover:text-brand-gold hover:bg-brand-gold/10 transition-colors duration-200 cursor-pointer"
-                      >
-                        <SolutionIcon className="w-5 h-5 text-brand-gold" />
-                        <span className="text-sm font-medium">{solution.label}</span>
-                      </Link>
-                    </DropdownMenuItem>
+                    <Link
+                      key={solution.path}
+                      to={solution.path}
+                      className="flex items-center gap-3 px-4 py-3 text-white hover:text-brand-gold hover:bg-brand-gold/10 transition-colors duration-200 cursor-pointer first:rounded-t-md last:rounded-b-md"
+                    >
+                      <SolutionIcon className="w-5 h-5 text-brand-gold" />
+                      <span className="text-sm font-medium">{solution.label}</span>
+                    </Link>
                   );
                 })}
-              </DropdownMenuContent>
-            </DropdownMenu>
+              </div>
+            </div>
           </nav>
 
           {/* WhatsApp Button */}
