@@ -332,12 +332,30 @@ const Solutions = () => {
                 </p>
                 
                 {/* Imagem demonstrativa - URL direta para facilitar alteração */}
-                <div className="max-w-4xl mx-auto mb-8">
+                <div className="max-w-4xl mx-auto mb-8 relative">
                   <img 
                     src={SOLUTION_IMAGES.cards[solutionKey] || SOLUTION_IMAGES.cards['pdv-frente-caixa']} 
                     alt={`Demonstração ${currentSolution.title}`}
                     className="w-full h-64 md:h-80 object-cover rounded-xl shadow-2xl"
                   />
+                  
+                  {/* Ícones flutuantes para maquininhas de cartão na página específica */}
+                  {solutionKey === 'maquininhas-cartao' && (
+                    <>
+                      <div className="absolute bottom-6 left-6 bg-white/95 backdrop-blur-sm p-3 rounded-xl shadow-xl animate-bounce">
+                        <CreditCard className="w-6 h-6 text-blue-600 mb-1" />
+                        <span className="text-sm font-bold text-blue-600 block">Stone</span>
+                      </div>
+                      <div className="absolute bottom-6 left-32 bg-white/95 backdrop-blur-sm p-3 rounded-xl shadow-xl animate-bounce" style={{ animationDelay: '0.3s' }}>
+                        <CreditCard className="w-6 h-6 text-orange-600 mb-1" />
+                        <span className="text-sm font-bold text-orange-600 block">Cielo</span>
+                      </div>
+                      <div className="absolute bottom-6 left-56 bg-white/95 backdrop-blur-sm p-3 rounded-xl shadow-xl animate-bounce" style={{ animationDelay: '0.6s' }}>
+                        <CreditCard className="w-6 h-6 text-purple-600 mb-1" />
+                        <span className="text-sm font-bold text-purple-600 block">PagBank</span>
+                      </div>
+                    </>
+                  )}
                 </div>
               </div>
             </ScrollReveal>
@@ -515,18 +533,36 @@ const Solutions = () => {
                   return (
                     <Card key={key} className="border-brand-gold/20 hover:shadow-2xl hover:shadow-brand-gold/10 transition-all duration-500 hover:-translate-y-3 hover:scale-105 group bg-gradient-to-br from-white to-gray-50/50 backdrop-blur-sm overflow-hidden cursor-pointer">
                       <a href={`/solucoes/${key}`} className="block">
-                        {/* Imagem demonstrativa */}
-                        <div className="h-48 overflow-hidden relative">
-                          <img 
-                            src={getCardImage(key)} 
-                            alt={`Demonstração ${solution.title}`}
-                            className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-                          />
-                          <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                          <div className="absolute top-4 right-4 bg-gradient-to-r from-brand-gold to-brand-gold-light p-2 rounded-full group-hover:scale-110 transition-transform duration-300">
-                            <IconComponent className="w-5 h-5 text-brand-black" />
-                          </div>
-                        </div>
+                         {/* Imagem demonstrativa */}
+                         <div className="h-48 overflow-hidden relative">
+                           <img 
+                             src={getCardImage(key)} 
+                             alt={`Demonstração ${solution.title}`}
+                             className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                           />
+                           <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                           <div className="absolute top-4 right-4 bg-gradient-to-r from-brand-gold to-brand-gold-light p-2 rounded-full group-hover:scale-110 transition-transform duration-300">
+                             <IconComponent className="w-5 h-5 text-brand-black" />
+                           </div>
+                           
+                           {/* Ícones flutuantes para maquininhas de cartão */}
+                           {key === 'maquininhas-cartao' && (
+                             <>
+                               <div className="absolute bottom-4 left-4 bg-white/90 backdrop-blur-sm p-1.5 rounded-lg shadow-lg animate-bounce">
+                                 <CreditCard className="w-4 h-4 text-blue-600" />
+                                 <span className="text-xs font-semibold text-blue-600 block leading-none">Stone</span>
+                               </div>
+                               <div className="absolute bottom-4 left-20 bg-white/90 backdrop-blur-sm p-1.5 rounded-lg shadow-lg animate-bounce" style={{ animationDelay: '0.2s' }}>
+                                 <CreditCard className="w-4 h-4 text-orange-600" />
+                                 <span className="text-xs font-semibold text-orange-600 block leading-none">Cielo</span>
+                               </div>
+                               <div className="absolute bottom-4 left-36 bg-white/90 backdrop-blur-sm p-1.5 rounded-lg shadow-lg animate-bounce" style={{ animationDelay: '0.4s' }}>
+                                 <CreditCard className="w-4 h-4 text-purple-600" />
+                                 <span className="text-xs font-semibold text-purple-600 block leading-none">PagBank</span>
+                               </div>
+                             </>
+                           )}
+                         </div>
                         
                         <CardHeader className="pb-4">
                           <div className="mb-3">
