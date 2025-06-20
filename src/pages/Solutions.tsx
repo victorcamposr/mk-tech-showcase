@@ -308,17 +308,17 @@ const Solutions = () => {
             {/* Recursos */}
             <ScrollReveal animation="fade-up" delay={100}>
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 mb-16">
-                <Card className="border-brand-gold/20 bg-gradient-to-br from-white to-gray-50/50">
+                <Card className="border-brand-gold/20 hover:shadow-2xl hover:shadow-brand-gold/10 transition-all duration-500 hover:-translate-y-3 hover:scale-105 group bg-gradient-to-br from-white to-gray-50/50 backdrop-blur-sm">
                   <CardHeader>
-                    <CardTitle className="text-brand-black flex items-center gap-2">
-                      <IconComponent className="w-6 h-6 text-brand-gold" />
+                    <CardTitle className="text-brand-black flex items-center gap-2 group-hover:text-brand-gold transition-colors duration-300">
+                      <IconComponent className="w-6 h-6 text-brand-gold group-hover:scale-110 transition-transform duration-300" />
                       Principais Recursos
                     </CardTitle>
                   </CardHeader>
                   <CardContent>
                     <ul className="space-y-3">
                       {currentSolution.features.map((feature, index) => (
-                        <li key={index} className="flex items-start text-gray-600">
+                        <li key={index} className="flex items-start text-gray-600 group-hover:text-gray-700 transition-colors duration-300">
                           <CheckBullet />
                           <span>{feature}</span>
                         </li>
@@ -327,24 +327,24 @@ const Solutions = () => {
                   </CardContent>
                 </Card>
 
-                <Card className="border-brand-gold/20 bg-gradient-to-br from-white to-gray-50/50">
+                <Card className="border-brand-gold/20 hover:shadow-2xl hover:shadow-brand-gold/10 transition-all duration-500 hover:-translate-y-3 hover:scale-105 group bg-gradient-to-br from-white to-gray-50/50 backdrop-blur-sm">
                   <CardHeader>
-                    <CardTitle className="text-brand-black">Benefícios Garantidos</CardTitle>
+                    <CardTitle className="text-brand-black group-hover:text-brand-gold transition-colors duration-300">Benefícios Garantidos</CardTitle>
                   </CardHeader>
                   <CardContent>
                     <ul className="space-y-3">
                       {currentSolution.benefits.map((benefit, index) => (
-                        <li key={index} className="flex items-start text-gray-600">
+                        <li key={index} className="flex items-start text-gray-600 group-hover:text-gray-700 transition-colors duration-300">
                           <CheckBullet />
                           <span>{benefit}</span>
                         </li>
                       ))}
                     </ul>
                     <div className="mt-6">
-                      <h4 className="font-semibold text-brand-black mb-2">Ideal para:</h4>
+                      <h4 className="font-semibold text-brand-black mb-2 group-hover:text-brand-gold transition-colors duration-300">Ideal para:</h4>
                       <div className="flex flex-wrap gap-2">
                         {currentSolution.industries.map((industry, index) => (
-                          <span key={index} className="bg-brand-gold/10 text-brand-black text-sm px-3 py-1 rounded-full">
+                          <span key={index} className="bg-brand-gold/10 text-brand-black text-sm px-3 py-1 rounded-full group-hover:bg-brand-gold/20 transition-colors duration-300">
                             {industry}
                           </span>
                         ))}
