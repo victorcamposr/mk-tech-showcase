@@ -349,7 +349,7 @@ const Solutions = () => {
                         </div>
                       </div>
                       <div className="absolute bottom-4 left-16 p-1 rounded-lg group/tooltip">
-                        <img src="/lovable-uploads/f8914b9c-f621-4ddb-8f33-cb631782bb48.png" alt="Cielo" className="w-8 h-8 object-contain" />
+                        <img src="/lovable-uploads/76fb354f-89fa-4163-9772-a8f1fdb94668.png" alt="Cielo" className="w-8 h-8 object-contain" />
                         <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-2 py-1 bg-gray-900 text-white text-xs rounded opacity-0 group-hover/tooltip:opacity-100 transition-opacity whitespace-nowrap">
                           Integrado com Cielo
                         </div>
@@ -561,7 +561,7 @@ const Solutions = () => {
                                    </div>
                                  </div>
                                  <div className="absolute bottom-3 left-14 p-0.5 rounded group/tooltip">
-                                   <img src="/lovable-uploads/f8914b9c-f621-4ddb-8f33-cb631782bb48.png" alt="Cielo" className="w-8 h-8 object-contain" />
+                                   <img src="/lovable-uploads/76fb354f-89fa-4163-9772-a8f1fdb94668.png" alt="Cielo" className="w-8 h-8 object-contain" />
                                    <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-1 px-1.5 py-0.5 bg-gray-900 text-white text-xs rounded opacity-0 group-hover/tooltip:opacity-100 transition-opacity whitespace-nowrap z-10">
                                      Integrado com Cielo
                                    </div>
