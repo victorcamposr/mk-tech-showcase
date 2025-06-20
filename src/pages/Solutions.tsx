@@ -121,9 +121,18 @@ const Solutions = () => {
                 <h1 className="text-4xl md:text-6xl font-bold text-brand-black mb-6">
                   {currentSolution.title}
                 </h1>
-                <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+                <p className="text-xl text-gray-600 max-w-3xl mx-auto mb-8">
                   {currentSolution.description}
                 </p>
+                
+                {/* Imagem demonstrativa */}
+                <div className="max-w-4xl mx-auto mb-8">
+                  <img 
+                    src="https://images.unsplash.com/photo-1461749280684-dccba630e2f6?w=800&h=400&fit=crop" 
+                    alt={`Demonstração ${currentSolution.title}`}
+                    className="w-full h-64 md:h-80 object-cover rounded-xl shadow-2xl"
+                  />
+                </div>
               </div>
             </ScrollReveal>
 
