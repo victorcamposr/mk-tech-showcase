@@ -4,7 +4,6 @@ import Footer from "@/components/Footer";
 import ColoredServiceIcon, { getServiceColors } from "@/components/ColoredServiceIcon";
 import SimpleIcon from "@/components/SimpleIcon";
 import CheckBullet from "@/components/CheckBullet";
-import TitleWithIcon from "@/components/TitleWithIcon";
 import InteractiveDashboard from "@/components/InteractiveDashboard";
 import SEO from "@/components/SEO";
 import StructuredData from "@/components/StructuredData";
@@ -380,65 +379,7 @@ const Solutions = () => {
     );
   }
 
-  // Página geral de soluções (código original)
-  const solutions = [
-    {
-      title: "PDV Completo",
-      description: "Sistema de ponto de venda robusto e intuitivo para qualquer tipo de negócio.",
-      features: [
-        "Interface touch screen otimizada",
-        "Vendas rápidas com código de barras",
-        "Múltiplas formas de pagamento",
-        "Controle de vendedores e comissões",
-        "Relatórios de vendas em tempo real",
-        "Integração com balanças e gavetas"
-      ],
-      industries: ["Varejo", "Supermercados", "Farmácias", "Lojas"],
-      iconType: "automation" as const
-    },
-    {
-      title: "Gestão de Estoque Inteligente",
-      description: "Controle total do seu estoque com tecnologia avançada e alertas automáticos.",
-      features: [
-        "Controle de entrada e saída automático",
-        "Alertas de estoque mínimo e máximo",
-        "Gestão de validade e lotes",
-        "Inventário com código de barras",
-        "Relatórios de giro de estoque",
-        "Integração com fornecedores"
-      ],
-      industries: ["Todos os segmentos"],
-      iconType: "inventory" as const
-    },
-    {
-      title: "Emissão Fiscal Completa",
-      description: "Solução completa para emissão de documentos fiscais com total conformidade.",
-      features: [
-        "NFe, NFCe e Cupom Fiscal",
-        "Certificado digital integrado",
-        "Contingência offline automática",
-        "Envio automático por email",
-        "Controle de status SEFAZ",
-        "Backup automático de XMLs"
-      ],
-      industries: ["Comércio", "Indústria", "Serviços"],
-      iconType: "fiscal" as const
-    },
-    {
-      title: "Gestão Financeira",
-      description: "Controle completo das finanças com fluxo de caixa e análises detalhadas.",
-      features: [
-        "Fluxo de caixa em tempo real",
-        "Contas a pagar e receber",
-        "Controle de vencimentos",
-        "Conciliação bancária",
-        "Relatórios gerenciais",
-        "Análise de rentabilidade"
-      ],
-      industries: ["Empresas de todos os portes"],
-      iconType: "financial" as const
-    }
-  ];
+  // Benefícios para a página geral
 
   const benefits = [
     { title: "Aumento da Eficiência", description: "Automatize processos manuais e reduza o tempo gasto em tarefas repetitivas.", iconType: "efficiency" as const },
@@ -514,72 +455,91 @@ const Solutions = () => {
             </div>
           </ScrollReveal>
 
-          {/* Soluções */}
+          {/* Soluções do Dropdown */}
           <ScrollReveal animation="fade-up" delay={200}>
             <div className="mb-16">
-            <h2 className="text-3xl font-bold text-brand-black text-center mb-12">
-              Soluções Completas por Segmento
-            </h2>
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-               {solutions.map((solution, index) => {
-                const getCardImage = (title: string) => {
-                  switch(title) {
-                    case "PDV Completo":
-                      return "https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=400&h=200&fit=crop";
-                    case "Gestão de Estoque Inteligente":
-                      return "https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?w=400&h=200&fit=crop";
-                    case "Emissão Fiscal Completa":
-                      return "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=400&h=200&fit=crop";
-                    case "Gestão Financeira":
-                      return "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=400&h=200&fit=crop";
-                    default:
-                      return null;
-                  }
-                };
-                
-                return (
-                <Card key={index} className="border-brand-gold/20 hover:shadow-2xl hover:shadow-brand-gold/10 transition-all duration-500 hover:-translate-y-3 hover:scale-105 group bg-gradient-to-br from-white to-gray-50/50 backdrop-blur-sm overflow-hidden">
-                  {getCardImage(solution.title) && (
-                    <div className="h-48 overflow-hidden">
-                      <img 
-                        src={getCardImage(solution.title)!} 
-                        alt={solution.title}
-                        className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-                      />
-                    </div>
-                  )}
-                  <CardHeader>
-                    <CardTitle className="text-brand-black mb-4">
-                      <TitleWithIcon>{solution.title}</TitleWithIcon>
-                    </CardTitle>
-                    <p className="text-gray-600 group-hover:text-gray-700 transition-colors duration-300">{solution.description}</p>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="mb-4">
-                      <h4 className="font-semibold text-brand-black mb-2">Principais Recursos:</h4>
-                      <ul className="space-y-1">
-                        {solution.features.map((feature, featureIndex) => (
-                          <li key={featureIndex} className="flex items-start text-sm text-gray-600">
-                            <CheckBullet />
-                            <span className="group-hover:text-gray-700 transition-colors duration-300">{feature}</span>
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-                    <div className="border-t pt-4">
-                      <div className="flex flex-wrap gap-2">
-                        {solution.industries.map((industry, industryIndex) => (
-                          <span key={industryIndex} className="bg-brand-gold/10 text-brand-black text-xs px-2 py-1 rounded">
-                            {industry}
-                          </span>
-                        ))}
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-                );
+              <h2 className="text-3xl font-bold text-brand-black text-center mb-12">
+                Todas as Nossas <span className="text-brand-gold">Soluções</span>
+              </h2>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                {Object.entries(specificSolutions).map(([key, solution], index) => {
+                  const IconComponent = solution.icon;
+                  const colors = getServiceColors('automation');
+                  
+                  return (
+                    <Card key={key} className="border-brand-gold/20 hover:shadow-2xl hover:shadow-brand-gold/10 transition-all duration-500 hover:-translate-y-3 hover:scale-105 group bg-gradient-to-br from-white to-gray-50/50 backdrop-blur-sm overflow-hidden cursor-pointer">
+                      <a href={`/solucoes/${key}`} className="block">
+                        <CardHeader className="pb-4">
+                          <div className="flex items-center gap-3 mb-3">
+                            <div className="bg-gradient-to-r from-brand-gold to-brand-gold-light p-3 rounded-full group-hover:scale-110 transition-transform duration-300">
+                              <IconComponent className="w-6 h-6 text-brand-black" />
+                            </div>
+                            <div className="flex-1">
+                              <CardTitle className="text-lg font-bold text-brand-black group-hover:text-brand-gold transition-colors duration-300">
+                                {solution.title}
+                              </CardTitle>
+                            </div>
+                          </div>
+                          <p className="text-gray-600 group-hover:text-gray-700 transition-colors duration-300 text-sm"
+                             style={{
+                               display: '-webkit-box',
+                               WebkitLineClamp: 3,
+                               WebkitBoxOrient: 'vertical',
+                               overflow: 'hidden'
+                             }}>
+                            {solution.description}
+                          </p>
+                        </CardHeader>
+                        <CardContent>
+                          <div className="mb-4">
+                            <h4 className="font-semibold text-brand-black mb-2 text-sm">Principais Recursos:</h4>
+                            <ul className="space-y-1">
+                              {solution.features.slice(0, 4).map((feature, featureIndex) => (
+                                <li key={featureIndex} className="flex items-start text-sm text-gray-600">
+                                  <CheckBullet />
+                                   <span className="group-hover:text-gray-700 transition-colors duration-300"
+                                         style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                                     {feature}
+                                   </span>
+                                </li>
+                              ))}
+                              {solution.features.length > 4 && (
+                                <li className="text-xs text-brand-gold font-medium ml-6">
+                                  +{solution.features.length - 4} recursos adicionais
+                                </li>
+                              )}
+                            </ul>
+                          </div>
+                          <div className="border-t pt-4">
+                            <div className="flex flex-wrap gap-1">
+                              {solution.industries.slice(0, 3).map((industry, industryIndex) => (
+                                <span key={industryIndex} className="bg-brand-gold/10 text-brand-black text-xs px-2 py-1 rounded group-hover:bg-brand-gold/20 transition-colors duration-300">
+                                  {industry}
+                                </span>
+                              ))}
+                              {solution.industries.length > 3 && (
+                                <span className="text-xs text-gray-500 px-2 py-1">
+                                  +{solution.industries.length - 3}
+                                </span>
+                              )}
+                            </div>
+                          </div>
+                          <div className="mt-4 flex items-center justify-between">
+                            <span className="text-xs text-brand-gold font-medium group-hover:text-brand-gold-dark transition-colors duration-300">
+                              Clique para ver detalhes
+                            </span>
+                            <div className="w-6 h-6 rounded-full bg-brand-gold/10 flex items-center justify-center group-hover:bg-brand-gold group-hover:scale-110 transition-all duration-300">
+                              <svg className="w-3 h-3 text-brand-gold group-hover:text-brand-black transition-colors duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                              </svg>
+                            </div>
+                          </div>
+                        </CardContent>
+                      </a>
+                    </Card>
+                  );
                 })}
-            </div>
+              </div>
             </div>
           </ScrollReveal>
 
