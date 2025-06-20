@@ -130,6 +130,53 @@ const About = () => {
             </div>
           </ScrollReveal>
 
+          {/* Processo de Trabalho */}
+          <ScrollReveal animation="fade-up" delay={200}>
+            <div className="mb-16">
+              <h2 className="text-3xl font-bold text-brand-black text-center mb-12">
+                Como Trabalhamos
+              </h2>
+              <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+                <div className="text-center group">
+                  <div className="w-16 h-16 bg-gradient-to-br from-brand-gold to-brand-gold-dark rounded-full flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform duration-300 shadow-lg">
+                    <span className="text-2xl font-bold text-brand-black">1</span>
+                  </div>
+                  <h3 className="text-lg font-semibold text-brand-black mb-2 group-hover:text-brand-gold transition-colors">Análise</h3>
+                  <p className="text-gray-600 text-sm group-hover:text-gray-700 transition-colors">
+                    Entendemos suas necessidades e processos atuais para propor a melhor solução.
+                  </p>
+                </div>
+                <div className="text-center group">
+                  <div className="w-16 h-16 bg-gradient-to-br from-brand-gold to-brand-gold-dark rounded-full flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform duration-300 shadow-lg">
+                    <span className="text-2xl font-bold text-brand-black">2</span>
+                  </div>
+                  <h3 className="text-lg font-semibold text-brand-black mb-2 group-hover:text-brand-gold transition-colors">Personalização</h3>
+                  <p className="text-gray-600 text-sm group-hover:text-gray-700 transition-colors">
+                    Adaptamos nossos sistemas às especificidades do seu negócio.
+                  </p>
+                </div>
+                <div className="text-center group">
+                  <div className="w-16 h-16 bg-gradient-to-br from-brand-gold to-brand-gold-dark rounded-full flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform duration-300 shadow-lg">
+                    <span className="text-2xl font-bold text-brand-black">3</span>
+                  </div>
+                  <h3 className="text-lg font-semibold text-brand-black mb-2 group-hover:text-brand-gold transition-colors">Implementação</h3>
+                  <p className="text-gray-600 text-sm group-hover:text-gray-700 transition-colors">
+                    Instalação e configuração completa com treinamento da equipe.
+                  </p>
+                </div>
+                <div className="text-center group">
+                  <div className="w-16 h-16 bg-gradient-to-br from-brand-gold to-brand-gold-dark rounded-full flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform duration-300 shadow-lg">
+                    <span className="text-2xl font-bold text-brand-black">4</span>
+                  </div>
+                  <h3 className="text-lg font-semibold text-brand-black mb-2 group-hover:text-brand-gold transition-colors">Suporte</h3>
+                  <p className="text-gray-600 text-sm group-hover:text-gray-700 transition-colors">
+                    Acompanhamento contínuo e suporte técnico especializado.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </ScrollReveal>
+
           {/* CTA */}
           <ScrollReveal animation="fade-up" delay={300}>
             <div className="text-center bg-gradient-to-r from-brand-black to-brand-black-light rounded-2xl p-12 backdrop-blur-sm">

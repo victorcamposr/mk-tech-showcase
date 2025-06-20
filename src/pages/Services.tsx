@@ -48,28 +48,6 @@ const Services = () => {
     }
   ];
 
-  const workProcess = [
-    {
-      step: "1",
-      title: "Análise",
-      description: "Entendemos suas necessidades e processos atuais para propor a melhor solução."
-    },
-    {
-      step: "2", 
-      title: "Personalização",
-      description: "Adaptamos nossos sistemas às especificidades do seu negócio."
-    },
-    {
-      step: "3",
-      title: "Implementação", 
-      description: "Instalação e configuração completa com treinamento da equipe."
-    },
-    {
-      step: "4",
-      title: "Suporte",
-      description: "Acompanhamento contínuo e suporte técnico especializado."
-    }
-  ];
 
   return (
     <div className="min-h-screen bg-background">
@@ -133,27 +111,6 @@ const Services = () => {
             </div>
           </ScrollReveal>
 
-          {/* Processo de Trabalho */}
-          <ScrollReveal animation="fade-up" delay={200}>
-            <div className="mb-16">
-            <h2 className="text-3xl font-bold text-brand-black text-center mb-12">
-              Como Trabalhamos
-            </h2>
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
-              {workProcess.map((process, index) => (
-                <div key={index} className="text-center group">
-                  <div className="w-16 h-16 bg-gradient-to-br from-brand-gold to-brand-gold-dark rounded-full flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform duration-300 shadow-lg">
-                    <span className="text-2xl font-bold text-brand-black">{process.step}</span>
-                  </div>
-                  <h3 className="text-lg font-semibold text-brand-black mb-2 group-hover:text-brand-gold transition-colors">{process.title}</h3>
-                  <p className="text-gray-600 text-sm group-hover:text-gray-700 transition-colors">
-                    {process.description}
-                  </p>
-                </div>
-              ))}
-            </div>
-            </div>
-          </ScrollReveal>
 
           {/* CTA */}
           <ScrollReveal animation="fade-up" delay={300}>
