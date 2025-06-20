@@ -10,16 +10,22 @@ import StructuredData from "@/components/StructuredData";
 import { ScrollReveal } from "@/components/ScrollReveal";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { CreditCard, Coffee, QrCode, Truck, Link2, BarChart3, Bot, Receipt, Monitor, TrendingUp, Banknote, Building2, Tablet } from "lucide-react";
+import { CreditCard, Coffee, QrCode, Truck, Link2, BarChart3, Bot, Receipt, Monitor, TrendingUp, Banknote, Building2, Tablet, Award, Calculator } from "lucide-react";
 
 const Solutions = () => {
   const location = useLocation();
   
+  // Função para gerar mensagem personalizada do WhatsApp
+  const getWhatsAppMessage = (solutionTitle: string, solutionKey: string) => {
+    const message = `Olá! Tenho interesse em conhecer mais sobre a solução *${solutionTitle}* da MK Tecnologia. Gostaria de receber uma demonstração gratuita personalizada para meu negócio. Aguardo o contato de vocês!`;
+    return `https://wa.me/5565993535079?text=${encodeURIComponent(message)}`;
+  };
+
   // Dados específicos para cada solução
   const specificSolutions = {
     "pdv-frente-caixa": {
       title: "PDV/Frente de Caixa Premium",
-      icon: CreditCard,
+      icon: Calculator,
       description: "Sistema completo de ponto de venda com tecnologia de ponta para otimizar suas vendas e controle de caixa.",
       features: [
         "Interface touchscreen otimizada",
@@ -328,7 +334,10 @@ const Solutions = () => {
 
                 <Card className="border-brand-gold/20 hover:shadow-2xl hover:shadow-brand-gold/10 transition-all duration-500 hover:-translate-y-3 hover:scale-105 group bg-gradient-to-br from-white to-gray-50/50 backdrop-blur-sm">
                   <CardHeader>
-                    <CardTitle className="text-brand-black group-hover:text-brand-gold transition-colors duration-300">Benefícios Garantidos</CardTitle>
+                    <CardTitle className="text-brand-black flex items-center gap-2 group-hover:text-brand-gold transition-colors duration-300">
+                      <Award className="w-6 h-6 text-brand-gold group-hover:scale-110 transition-transform duration-300" />
+                      Benefícios Garantidos
+                    </CardTitle>
                   </CardHeader>
                   <CardContent>
                     <ul className="space-y-3">
@@ -364,7 +373,7 @@ const Solutions = () => {
                   Entre em contato conosco e receba uma demonstração gratuita personalizada para seu negócio.
                 </p>
                 <Button asChild className="bg-brand-gold hover:bg-brand-gold-dark text-brand-black font-semibold group">
-                  <a href="https://wa.me/5565993535079" target="_blank" rel="noopener noreferrer" className="flex items-center gap-2">
+                  <a href={getWhatsAppMessage(currentSolution.title, solutionKey)} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2">
                     <SimpleIcon type="whatsapp-black" className="w-5 h-5 group-hover:scale-110 transition-transform" />
                     Solicitar Demonstração
                   </a>
