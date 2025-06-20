@@ -12,6 +12,30 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { CreditCard, Coffee, QrCode, Truck, Link2, BarChart3, Bot, Receipt, Monitor, TrendingUp, Banknote, Building2, Tablet, Award, Calculator } from "lucide-react";
 
+// URLs das imagens - altere aqui para trocar as imagens das soluções
+const SOLUTION_IMAGES = {
+  // Imagem principal para páginas específicas das soluções
+  hero: 'https://images.unsplash.com/photo-1461749280684-dccba630e2f6?w=800&h=400&fit=crop',
+  
+  // Imagens dos cards das soluções na página principal
+  cards: {
+    'pdv-frente-caixa': 'https://images.unsplash.com/photo-1461749280684-dccba630e2f6?w=400&h=200&fit=crop',
+    'mesas-comandas': 'https://images.unsplash.com/photo-1605810230434-7631ac76ec81?w=400&h=200&fit=crop',
+    'cardapio-digital': 'https://images.unsplash.com/photo-1486312338219-ce68d2c6f44d?w=400&h=200&fit=crop',
+    'maquininhas-cartao': 'https://images.unsplash.com/photo-1488590528505-98d2b5aba04b?w=400&h=200&fit=crop',
+    'controle-motoboys': 'https://images.unsplash.com/photo-1531297484001-80022131f5a1?w=400&h=200&fit=crop',
+    'integracoes': 'https://images.unsplash.com/photo-1487058792275-0ad4aaf24ca7?w=400&h=200&fit=crop',
+    'gestao-analise': 'https://images.unsplash.com/photo-1605810230434-7631ac76ec81?w=400&h=200&fit=crop',
+    'robo-whatsapp': 'https://images.unsplash.com/photo-1486312338219-ce68d2c6f44d?w=400&h=200&fit=crop',
+    'nota-fiscal': 'https://images.unsplash.com/photo-1461749280684-dccba630e2f6?w=400&h=200&fit=crop',
+    'auto-atendimento': 'https://images.unsplash.com/photo-1488590528505-98d2b5aba04b?w=400&h=200&fit=crop',
+    'marketing-vendas': 'https://images.unsplash.com/photo-1487058792275-0ad4aaf24ca7?w=400&h=200&fit=crop',
+    'pagamento-tef': 'https://images.unsplash.com/photo-1531297484001-80022131f5a1?w=400&h=200&fit=crop',
+    'franquias-filiais': 'https://images.unsplash.com/photo-1605810230434-7631ac76ec81?w=400&h=200&fit=crop',
+    'autoatendimento-tablet': 'https://images.unsplash.com/photo-1486312338219-ce68d2c6f44d?w=400&h=200&fit=crop',
+  }
+};
+
 const Solutions = () => {
   const location = useLocation();
   
@@ -299,10 +323,10 @@ const Solutions = () => {
                   {currentSolution.description}
                 </p>
                 
-                {/* Imagem demonstrativa */}
+                {/* Imagem demonstrativa - URL direta para facilitar alteração */}
                 <div className="max-w-4xl mx-auto mb-8">
                   <img 
-                    src="https://images.unsplash.com/photo-1461749280684-dccba630e2f6?w=800&h=400&fit=crop" 
+                    src={SOLUTION_IMAGES.hero} 
                     alt={`Demonstração ${currentSolution.title}`}
                     className="w-full h-64 md:h-80 object-cover rounded-xl shadow-2xl"
                   />
@@ -475,25 +499,9 @@ const Solutions = () => {
                   const IconComponent = solution.icon;
                   const colors = getServiceColors('automation');
                   
-                  // Função para mapear imagens demonstrativas para cada solução
+                  // Função para buscar imagem do card usando a constante SOLUTION_IMAGES
                   const getCardImage = (solutionKey: string) => {
-                    const imageMap: { [key: string]: string } = {
-                      'pdv-frente-caixa': 'photo-1461749280684-dccba630e2f6', // monitor showing programming
-                      'mesas-comandas': 'photo-1605810230434-7631ac76ec81', // group with video screens
-                      'cardapio-digital': 'photo-1486312338219-ce68d2c6f44d', // person using MacBook Pro
-                      'maquininhas-cartao': 'photo-1488590528505-98d2b5aba04b', // turned on laptop
-                      'controle-motoboys': 'photo-1531297484001-80022131f5a1', // laptop on surface
-                      'integracoes': 'photo-1487058792275-0ad4aaf24ca7', // colorful code on monitor
-                      'gestao-analise': 'photo-1605810230434-7631ac76ec81', // group with displays
-                      'robo-whatsapp': 'photo-1486312338219-ce68d2c6f44d', // person using MacBook
-                      'nota-fiscal': 'photo-1461749280684-dccba630e2f6', // monitor programming
-                      'auto-atendimento': 'photo-1488590528505-98d2b5aba04b', // laptop computer
-                      'marketing-vendas': 'photo-1487058792275-0ad4aaf24ca7', // colorful code
-                      'pagamento-tef': 'photo-1531297484001-80022131f5a1', // laptop surface
-                      'franquias-filiais': 'photo-1605810230434-7631ac76ec81', // group displays
-                      'autoatendimento-tablet': 'photo-1486312338219-ce68d2c6f44d', // MacBook Pro
-                    };
-                    return `https://images.unsplash.com/${imageMap[solutionKey] || 'photo-1461749280684-dccba630e2f6'}?w=400&h=200&fit=crop`;
+                    return SOLUTION_IMAGES.cards[solutionKey as keyof typeof SOLUTION_IMAGES.cards] || SOLUTION_IMAGES.cards['pdv-frente-caixa'];
                   };
                   
                   return (
