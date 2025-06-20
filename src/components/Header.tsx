@@ -24,6 +24,7 @@ const Header = () => {
 
   const menuItems = [
     { label: "Home", path: "/", icon: Home },
+    { label: "Soluções", path: "/solucoes", icon: Lightbulb },
     { label: "Portfólio", path: "/portfolio", icon: Grid3X3 },
     { label: "Sobre", path: "/sobre", icon: User },
     { label: "Contato", path: "/contato", icon: Phone },
