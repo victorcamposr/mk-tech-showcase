@@ -326,7 +326,7 @@ const Solutions = () => {
                 {/* Imagem demonstrativa - URL direta para facilitar alteração */}
                 <div className="max-w-4xl mx-auto mb-8">
                   <img 
-                    src={SOLUTION_IMAGES.hero} 
+                    src={SOLUTION_IMAGES.cards[solutionKey] || SOLUTION_IMAGES.cards['pdv-frente-caixa']} 
                     alt={`Demonstração ${currentSolution.title}`}
                     className="w-full h-64 md:h-80 object-cover rounded-xl shadow-2xl"
                   />
