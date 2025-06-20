@@ -9,6 +9,7 @@ const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [isMobileSolutionsOpen, setIsMobileSolutionsOpen] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -199,11 +200,83 @@ const Header = () => {
 
         {/* Mobile Navigation */}
         <div className={`md:hidden overflow-hidden transition-all duration-300 ease-out ${
-          isMenuOpen ? 'max-h-80 opacity-100' : 'max-h-0 opacity-0'
+          isMenuOpen ? 'max-h-[500px] opacity-100' : 'max-h-0 opacity-0'
         }`}>
           <div className="py-4 border-t border-brand-gold/20 bg-gradient-to-b from-transparent to-brand-black-light/20">
             <div className="flex flex-col space-y-2">
-              {menuItems.map((item) => {
+              {/* Home */}
+              <Link
+                to="/"
+                className={`px-4 py-3 rounded-lg text-sm font-medium transition-colors duration-200 ${
+                  isActive("/") 
+                    ? "text-brand-gold bg-brand-gold/15" 
+                    : "text-white hover:text-brand-gold hover:bg-white/10"
+                }`}
+                onClick={() => setIsMenuOpen(false)}
+              >
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <Home className="w-4 h-4" />
+                    <span>Home</span>
+                  </div>
+                  {isActive("/") && (
+                    <div className="w-2 h-2 bg-brand-gold rounded-full" />
+                  )}
+                </div>
+              </Link>
+
+              {/* Soluções com dropdown mobile */}
+              <div>
+                <button
+                  onClick={() => setIsMobileSolutionsOpen(!isMobileSolutionsOpen)}
+                  className={`w-full px-4 py-3 rounded-lg text-sm font-medium transition-colors duration-200 ${
+                    location.pathname.startsWith('/solucoes')
+                      ? "text-brand-gold bg-brand-gold/15" 
+                      : "text-white hover:text-brand-gold hover:bg-white/10"
+                  }`}
+                >
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <Lightbulb className="w-4 h-4" />
+                      <span>Soluções</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      {location.pathname.startsWith('/solucoes') && (
+                        <div className="w-2 h-2 bg-brand-gold rounded-full" />
+                      )}
+                      <ChevronDown className={`w-4 h-4 transition-transform duration-200 ${isMobileSolutionsOpen ? 'rotate-180' : ''}`} />
+                    </div>
+                  </div>
+                </button>
+                
+                {/* Dropdown de soluções mobile */}
+                <div className={`overflow-hidden transition-all duration-300 ${
+                  isMobileSolutionsOpen ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'
+                }`}>
+                  <div className="pl-6 space-y-1 mt-2">
+                    {solutionItems.map((solution) => {
+                      const SolutionIcon = solution.icon;
+                      return (
+                        <Link
+                          key={solution.path}
+                          to={solution.path}
+                          className="flex items-center gap-2 px-3 py-2 text-sm text-white hover:text-brand-gold hover:bg-brand-gold/10 transition-colors duration-200 rounded-lg"
+                          onClick={() => {
+                            setIsMenuOpen(false);
+                            setIsMobileSolutionsOpen(false);
+                          }}
+                        >
+                          <SolutionIcon className="w-4 h-4 text-brand-gold flex-shrink-0" />
+                          <span className="text-xs">{solution.label}</span>
+                        </Link>
+                      );
+                    })}
+                  </div>
+                </div>
+              </div>
+
+              {/* Outros itens do menu */}
+              {menuItems.slice(1).map((item) => {
                 const IconComponent = item.icon;
                 return (
                   <Link
@@ -228,6 +301,7 @@ const Header = () => {
                   </Link>
                 );
               })}
+              
               <div className="px-4 pt-2">
                 <Button 
                   asChild
