@@ -7,8 +7,8 @@ export const SOLUTION_IMAGES = {
   
   // Imagens dos cards das soluções na página principal
   cards: {
-    'pdv-frente-caixa': 'https://images.unsplash.com/photo-1461749280684-dccba630e2f6?w=400&h=200&fit=crop',
-    'mesas-comandas': 'https://images.unsplash.com/photo-1605810230434-7631ac76ec81?w=400&h=200&fit=crop',
+    'pdv-frente-caixa': 'https://media.discordapp.net/attachments/1383147272442744954/1385703039301849158/df8aa13f-f327-44cd-a2f7-dcb05da3ae90.png?ex=68570805&is=6855b685&hm=5d0b5aa92f60247f9695a224633991a2904da267aebce5179cf3d93b783c10e2&=&format=webp&quality=lossless&width=1376&height=917',
+    'mesas-comandas': 'https://media.discordapp.net/attachments/1383147272442744954/1385660144771141683/ChatGPT_Image_20_de_jun._de_2025_13_37_47.png?ex=6856e012&is=68558e92&hm=aa64526918f6004b6c6f93f9ce1c09c0a6a4c228b429e0f18bb78b2badc13252&=&format=webp&quality=lossless&width=1376&height=917',
     'cardapio-digital': 'https://images.unsplash.com/photo-1486312338219-ce68d2c6f44d?w=400&h=200&fit=crop',
     'maquininhas-cartao': 'https://images.unsplash.com/photo-1488590528505-98d2b5aba04b?w=400&h=200&fit=crop',
     'controle-motoboys': 'https://images.unsplash.com/photo-1531297484001-80022131f5a1?w=400&h=200&fit=crop',
@@ -20,7 +20,7 @@ export const SOLUTION_IMAGES = {
     'marketing-vendas': 'https://images.unsplash.com/photo-1487058792275-0ad4aaf24ca7?w=400&h=200&fit=crop',
     'pagamento-tef': 'https://images.unsplash.com/photo-1531297484001-80022131f5a1?w=400&h=200&fit=crop',
     'franquias-filiais': 'https://images.unsplash.com/photo-1605810230434-7631ac76ec81?w=400&h=200&fit=crop',
-    'autoatendimento-tablet': 'https://images.unsplash.com/photo-1486312338219-ce68d2c6f44d?w=400&h=200&fit=crop',
+    'autoatendimento-tablet': 'https://media.discordapp.net/attachments/1383147272442744954/1385703229165277304/ChatGPT_Image_20_de_jun._de_2025_16_17_31.png?ex=68570832&is=6855b6b2&hm=c8497efb45c5c1689ab321e242717f7e337e32a0fae419e7c74bc42caaeb95c9&=&format=webp&quality=lossless&width=640&height=960',
   }
 };
 
