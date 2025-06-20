@@ -52,7 +52,7 @@ const ContactIcon = ({ type, className }: ContactIconProps) => {
   };
 
   return (
-    <div className="w-full flex justify-center items-center">
+    <div className="flex justify-center items-center mb-4">
       <div className="flex justify-center items-center p-3 bg-gradient-to-br from-brand-gold/10 to-brand-gold/20 rounded-xl group-hover:from-brand-gold/20 group-hover:to-brand-gold/30 transition-all duration-500 group-hover:scale-110 transition-transform duration-300">
         {icons[type]}
       </div>

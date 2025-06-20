@@ -151,7 +151,7 @@ const Index = () => {
             <div className="max-w-6xl mx-auto">
               <div className="relative rounded-2xl overflow-hidden shadow-2xl">
                 <img 
-                  src="/lovable-uploads/dba53bd2-2bc2-4500-994b-0674463bf3db.png" 
+                  src="/lovable-uploads/20b8209e-a813-43eb-881e-15ae661610e2.png" 
                   alt="Soluções MK Tecnologia - Sistemas multi-plataforma funcionando em tablets, smartphones e computadores"
                   className="w-full h-auto object-cover"
                 />

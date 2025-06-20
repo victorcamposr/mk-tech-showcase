@@ -41,21 +41,21 @@ const Footer = () => {
           {/* Contato */}
           <div>
             <h3 className="text-brand-gold font-semibold mb-4">Contato</h3>
-            <div className="space-y-4 text-gray-300">
-              <div className="flex items-center gap-4">
-                <div className="w-5 h-5 flex-shrink-0">
+            <div className="space-y-6 text-gray-300">
+              <div className="flex items-center gap-3">
+                <div className="w-6 h-6 flex-shrink-0 flex items-center justify-center">
                   <ContactIcon type="phone" />
                 </div>
                 <span>(65) 99353-5079</span>
               </div>
-              <div className="flex items-center gap-4">
-                <div className="w-5 h-5 flex-shrink-0">
+              <div className="flex items-center gap-3">
+                <div className="w-6 h-6 flex-shrink-0 flex items-center justify-center">
                   <ContactIcon type="email" />
                 </div>
                 <span>mktecnologiaoficial@gmail.com</span>
               </div>
-              <div className="flex items-center gap-4">
-                <div className="w-5 h-5 flex-shrink-0">
+              <div className="flex items-center gap-3">
+                <div className="w-6 h-6 flex-shrink-0 flex items-center justify-center">
                   <ContactIcon type="location" />
                 </div>
                 <div className="leading-tight">
