@@ -2,14 +2,21 @@ import { useEffect } from 'react';
 
 const PerformanceOptimizer = () => {
   useEffect(() => {
-    // Preload critical fonts
-    const preloadFont = () => {
-      const linkPreload = document.createElement('link');
-      linkPreload.rel = 'preload';
-      linkPreload.as = 'font';
-      linkPreload.type = 'font/woff2';
-      linkPreload.crossOrigin = 'anonymous';
-      // Add font URLs if using custom fonts
+    // Preload critical resources
+    const preloadCriticalResources = () => {
+      // Preload critical images
+      const criticalImages = [
+        '/lovable-uploads/894786af-af73-492e-ae6a-d8a39e0ac4cb.png',
+        '/lovable-uploads/d6914ab3-880e-46c2-b690-6f9ff01daa65.png'
+      ];
+      
+      criticalImages.forEach((src) => {
+        const link = document.createElement('link');
+        link.rel = 'preload';
+        link.as = 'image';
+        link.href = src;
+        document.head.appendChild(link);
+      });
     };
 
     // Optimize images loading
@@ -91,7 +98,7 @@ const PerformanceOptimizer = () => {
     
     // Delay non-critical optimizations
     setTimeout(() => {
-      preloadFont();
+      preloadCriticalResources();
     }, 100);
 
   }, []);

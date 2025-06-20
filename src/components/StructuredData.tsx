@@ -24,7 +24,7 @@ interface BusinessSchema {
 }
 
 interface StructuredDataProps {
-  type: 'business' | 'organization' | 'localBusiness' | 'article' | 'breadcrumb';
+  type: 'business' | 'organization' | 'localBusiness' | 'article' | 'breadcrumb' | 'website' | 'service';
   data?: any;
 }
 
@@ -40,14 +40,14 @@ const StructuredData = ({ type, data }: StructuredDataProps) => {
             "@context": "https://schema.org",
             "@type": "LocalBusiness",
             "name": "MK Tecnologia",
-            "description": "Especialistas em automação comercial, sistemas PDV, controle de estoque e emissão fiscal em Pontes e Lacerda, Mato Grosso. Soluções tecnológicas completas para empresas.",
+            "description": "Especialistas em automação comercial, sistemas PDV, controle de estoque e emissão fiscal em Pontes e Lacerda, Mato Grosso. Soluções tecnológicas completas para empresas de todos os segmentos.",
             "image": "/lovable-uploads/894786af-af73-492e-ae6a-d8a39e0ac4cb.png",
-            "telephone": "+55 65 99353-5079",
-            "email": "contato@mktecnologia.com.br",
+            "telephone": "+5565993535079",
+            "email": "mktecnologiaoficial@gmail.com",
             "url": window.location.origin,
             "address": {
               "@type": "PostalAddress",
-              "streetAddress": "Rua das Flores, 123",
+              "streetAddress": "Av Marechal Rondon, 1512",
               "addressLocality": "Pontes e Lacerda",
               "addressRegion": "MT",
               "postalCode": "78250-000",
@@ -77,7 +77,8 @@ const StructuredData = ({ type, data }: StructuredDataProps) => {
               "Suporte Técnico"
             ],
             "sameAs": [
-              `https://wa.me/5565993535079`
+              "https://wa.me/5565993535079",
+              "https://instagram.com/mktecnologiaoficial"
             ]
           };
           break;
@@ -92,10 +93,15 @@ const StructuredData = ({ type, data }: StructuredDataProps) => {
             "description": "Especialistas em automação comercial e soluções tecnológicas empresariais",
             "contactPoint": {
               "@type": "ContactPoint",
-              "telephone": "+55-65-99353-5079",
+              "telephone": "+5565993535079",
               "contactType": "customer service",
-              "availableLanguage": "Portuguese"
-            }
+              "availableLanguage": "Portuguese",
+              "areaServed": "BR"
+            },
+            "sameAs": [
+              "https://wa.me/5565993535079",
+              "https://instagram.com/mktecnologiaoficial"
+            ]
           };
           break;
 
@@ -112,6 +118,76 @@ const StructuredData = ({ type, data }: StructuredDataProps) => {
               }))
             };
           }
+          break;
+
+        case 'website':
+          schema = {
+            "@context": "https://schema.org",
+            "@type": "WebSite",
+            "name": "MK Tecnologia",
+            "url": window.location.origin,
+            "description": "Site oficial da MK Tecnologia - Especialistas em automação comercial em Pontes e Lacerda, MT",
+            "publisher": {
+              "@type": "Organization",
+              "name": "MK Tecnologia"
+            },
+            "potentialAction": {
+              "@type": "SearchAction",
+              "target": {
+                "@type": "EntryPoint",
+                "urlTemplate": `${window.location.origin}/search?q={search_term_string}`
+              },
+              "query-input": "required name=search_term_string"
+            }
+          };
+          break;
+
+        case 'service':
+          schema = {
+            "@context": "https://schema.org",
+            "@type": "Service",
+            "name": "Automação Comercial",
+            "description": "Serviços completos de automação comercial, sistemas PDV, controle de estoque e emissão fiscal para empresas",
+            "provider": {
+              "@type": "Organization",
+              "name": "MK Tecnologia",
+              "url": window.location.origin
+            },
+            "areaServed": {
+              "@type": "State",
+              "name": "Mato Grosso"
+            },
+            "hasOfferCatalog": {
+              "@type": "OfferCatalog",
+              "name": "Serviços de Tecnologia",
+              "itemListElement": [
+                {
+                  "@type": "Offer",
+                  "itemOffered": {
+                    "@type": "Service",
+                    "name": "Sistema PDV",
+                    "description": "Ponto de venda completo para sua empresa"
+                  }
+                },
+                {
+                  "@type": "Offer",
+                  "itemOffered": {
+                    "@type": "Service",
+                    "name": "Controle de Estoque",
+                    "description": "Gestão inteligente de estoque com alertas automáticos"
+                  }
+                },
+                {
+                  "@type": "Offer",
+                  "itemOffered": {
+                    "@type": "Service",
+                    "name": "Emissão Fiscal",
+                    "description": "NFe, NFCe e cupons fiscais automatizados"
+                  }
+                }
+              ]
+            }
+          };
           break;
 
         default:

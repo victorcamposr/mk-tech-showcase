@@ -66,6 +66,13 @@ const SEO = ({
     updateMetaTag('author', 'MK Tecnologia');
     updateMetaTag('viewport', 'width=device-width, initial-scale=1');
     updateMetaTag('theme-color', '#F59E0B'); // brand-gold color
+    updateMetaTag('geo.region', 'BR-MT');
+    updateMetaTag('geo.placename', 'Pontes e Lacerda');
+    updateMetaTag('language', 'pt-BR');
+    updateMetaTag('rating', 'general');
+    updateMetaTag('revisit-after', '7 days');
+    updateMetaTag('distribution', 'global');
+    updateMetaTag('classification', 'business');
     
   }, [title, description, keywords, image, url, type, noindex]);
 

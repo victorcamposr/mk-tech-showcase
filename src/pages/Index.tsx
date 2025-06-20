@@ -47,6 +47,8 @@ const Index = () => {
       />
       <StructuredData type="localBusiness" />
       <StructuredData type="organization" />
+      <StructuredData type="website" />
+      <StructuredData type="service" />
       <Header />
       
       {/* Hero Section */}
@@ -151,8 +153,8 @@ const Index = () => {
             <div className="max-w-6xl mx-auto">
               <div className="relative rounded-2xl overflow-hidden shadow-2xl">
                 <img 
-                  src="/lovable-uploads/20b8209e-a813-43eb-881e-15ae661610e2.png" 
-                  alt="Soluções MK Tecnologia - Sistemas multi-plataforma funcionando em tablets, smartphones e computadores"
+                  src="/lovable-uploads/d6914ab3-880e-46c2-b690-6f9ff01daa65.png" 
+                  alt="Soluções MK Tecnologia - Sistemas multi-plataforma funcionando em tablets, smartphones, computadores e terminais PDV"
                   className="w-full h-auto object-cover"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-brand-black/30 via-transparent to-transparent"></div>

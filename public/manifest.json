@@ -1,0 +1,27 @@
+{
+  "name": "MK Tecnologia - Automação Comercial",
+  "short_name": "MK Tecnologia",
+  "description": "Especialistas em automação comercial, sistemas PDV e soluções tecnológicas em Pontes e Lacerda, MT",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#1F2937",
+  "theme_color": "#F59E0B",
+  "orientation": "portrait-primary",
+  "categories": ["business", "technology", "productivity"],
+  "lang": "pt-BR",
+  "dir": "ltr",
+  "icons": [
+    {
+      "src": "/lovable-uploads/894786af-af73-492e-ae6a-d8a39e0ac4cb.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/lovable-uploads/894786af-af73-492e-ae6a-d8a39e0ac4cb.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ]
+}
