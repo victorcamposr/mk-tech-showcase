@@ -254,6 +254,20 @@ const Header = () => {
                   isMobileSolutionsOpen ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'
                 }`}>
                   <div className="pl-6 space-y-1 mt-2">
+                    {/* Link para página principal de soluções */}
+                    <Link
+                      to="/solucoes"
+                      className="flex items-center gap-2 px-3 py-2 text-sm font-semibold text-brand-gold hover:text-brand-gold-light hover:bg-brand-gold/10 transition-colors duration-200 rounded-lg border-b border-brand-gold/20 mb-2"
+                      onClick={() => {
+                        setIsMenuOpen(false);
+                        setIsMobileSolutionsOpen(false);
+                      }}
+                    >
+                      <Lightbulb className="w-4 h-4 text-brand-gold flex-shrink-0" />
+                      <span className="text-xs">Ver todas as soluções</span>
+                    </Link>
+                    
+                    {/* Lista de soluções individuais */}
                     {solutionItems.map((solution) => {
                       const SolutionIcon = solution.icon;
                       return (
