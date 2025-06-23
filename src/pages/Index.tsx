@@ -9,7 +9,7 @@ import StructuredData from "@/components/StructuredData";
 import LazyImage from "@/components/LazyImage";
 import CriticalImage from "@/components/CriticalImage";
 import { ScrollReveal } from "@/components/ScrollReveal";
-import { Settings } from "lucide-react";
+import { Lightbulb } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -79,9 +79,9 @@ const Index = () => {
                     </a>
                   </Button>
                   <Button asChild size="lg" className="bg-white text-brand-black hover:bg-gray-100 transition-all duration-300 border border-brand-gold/20 group">
-                    <a href="/servicos" className="flex items-center gap-2">
-                      <Settings className="w-5 h-5 group-hover:scale-110 transition-transform" />
-                      Ver Serviços
+                    <a href="/solucoes" className="flex items-center gap-2">
+                      <Lightbulb className="w-5 h-5 group-hover:scale-110 transition-transform" />
+                      Ver Soluções
                     </a>
                   </Button>
                  </div>
@@ -153,7 +153,7 @@ const Index = () => {
             <div className="max-w-6xl mx-auto">
               <div className="relative rounded-2xl overflow-hidden shadow-2xl">
                 <img 
-                  src="/lovable-uploads/d6914ab3-880e-46c2-b690-6f9ff01daa65.png" 
+                  src="/lovable-uploads/0bfbfdc4-c22a-408a-b382-5ac107dd157f.png" 
                   alt="Soluções MK Tecnologia - Sistemas multi-plataforma funcionando em tablets, smartphones, computadores e terminais PDV"
                   className="w-full h-auto object-cover"
                 />
