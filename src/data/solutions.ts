@@ -21,7 +21,7 @@ export const SOLUTION_IMAGES = {
     'pagamento-tef': 'https://images.unsplash.com/photo-1556740714-a8395b3bf30f?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
     'franquias-filiais': 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
     'autoatendimento-tablet': 'https://media.discordapp.net/attachments/1383147272442744954/1385727954843205844/ChatGPT_Image_20_de_jun._de_2025_18_08_00.png?ex=68571f3a&is=6855cdba&hm=2a4bcc2da747a04cbbec281a736c8034ae5ff34cfdb8b8ebc76319479e34e41f&=&format=webp&quality=lossless&width=1376&height=917',
-    'sistema-revendas-gas-agua': 'https://images.unsplash.com/photo-1558618047-3c8c76ca7d13?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+    'sistema-revendas-gas-agua': 'https://media.discordapp.net/attachments/1344495704176984086/1386689110361505864/491496857_18124165051440724_545604413030646109_na.jpg?ex=685a9e5f&is=68594cdf&hm=b69958d5cd6776a640ff27ddc474ee8b8b76e728936c57831eb23eee2e22a8b1&=&format=webp&width=685&height=856',
   }
 };
 
