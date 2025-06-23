@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Menu, X, MessageCircle, Sparkles, Zap, Home, User, Settings, Lightbulb, Grid3X3, Phone, ChevronDown, CreditCard, Coffee, QrCode, Smartphone, Truck, Link2, BarChart3, Bot, Receipt, Monitor, TrendingUp, Banknote, Building2, Tablet, Calculator } from "lucide-react";
+import { Menu, X, MessageCircle, Sparkles, Zap, Home, User, Settings, Lightbulb, Grid3X3, Phone, ChevronDown, CreditCard, Coffee, QrCode, Smartphone, Truck, Link2, BarChart3, Bot, Receipt, Monitor, TrendingUp, Banknote, Building2, Tablet, Calculator, Fuel } from "lucide-react";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import CriticalImage from "@/components/CriticalImage";
 
@@ -45,6 +45,7 @@ const Header = () => {
     { label: "Soluções em pagamento - TEF", path: "/solucoes/pagamento-tef", icon: Banknote },
     { label: "Franquias e Filiais", path: "/solucoes/franquias-filiais", icon: Building2 },
     { label: "Autoatendimento tablet mesa", path: "/solucoes/autoatendimento-tablet", icon: Tablet },
+    { label: "Sistema para Revendas de Gás e Água", path: "/solucoes/sistema-revendas-gas-agua", icon: Fuel },
   ];
 
   return (
