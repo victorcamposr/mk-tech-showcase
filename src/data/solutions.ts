@@ -1,4 +1,4 @@
-import { CreditCard, Coffee, QrCode, Truck, Link2, BarChart3, Bot, Receipt, Monitor, TrendingUp, Banknote, Building2, Tablet, Calculator } from "lucide-react";
+import { CreditCard, Coffee, QrCode, Truck, Link2, BarChart3, Bot, Receipt, Monitor, TrendingUp, Banknote, Building2, Tablet, Calculator, Fuel } from "lucide-react";
 
 // URLs das imagens - altere aqui para trocar as imagens das soluções
 export const SOLUTION_IMAGES = {
@@ -21,6 +21,7 @@ export const SOLUTION_IMAGES = {
     'pagamento-tef': 'https://images.unsplash.com/photo-1556740714-a8395b3bf30f?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
     'franquias-filiais': 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
     'autoatendimento-tablet': 'https://media.discordapp.net/attachments/1383147272442744954/1385727954843205844/ChatGPT_Image_20_de_jun._de_2025_18_08_00.png?ex=68571f3a&is=6855cdba&hm=2a4bcc2da747a04cbbec281a736c8034ae5ff34cfdb8b8ebc76319479e34e41f&=&format=webp&quality=lossless&width=1376&height=917',
+    'sistema-revendas-gas-agua': 'https://images.unsplash.com/photo-1558618047-3c8c76ca7d13?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
   }
 };
 
@@ -271,6 +272,36 @@ export const specificSolutions = {
     ],
     benefits: ["Experiência única e moderna", "Agilidade de 70% no atendimento", "Redução de 50% nos custos operacionais"],
     industries: ["Restaurantes", "Cafeterias", "Fast food", "Bares"]
+  },
+  "sistema-revendas-gas-agua": {
+    title: "Sistema para Revendas de Gás e Água",
+    icon: Fuel,
+    description: "Gestão eficiente para você e sua revenda. Sistema online, com suas informações seguras e disponíveis a qualquer momento e em qualquer lugar.",
+    features: [
+      "Sistema online com informações seguras disponíveis 24/7",
+      "Controle de estoque em tempo real pelo celular",
+      "Aplicativo exclusivo para entregadores",
+      "Dashboard de gestão completo",
+      "Aplicativo próprio com sua marca, cor e logo",
+      "Localização do entregador mais próximo",
+      "Fechamento de caixa diário simplificado",
+      "Gestão financeira completa (contas a pagar/receber, DRE)",
+      "Mapa de calor das vendas",
+      "Rastreamento em tempo real dos entregadores",
+      "Aplicativo para emissão de notas na rua",
+      "Controle exclusivo da portaria",
+      "Mais de 50 relatórios disponíveis",
+      "Disque gás e água com teleatendimento Bina",
+      "Relatórios de preço médio e previsão de compra",
+      "Emissão de NFe, NFCe, CTE e boletos bancários"
+    ],
+    benefits: [
+      "Aumento significativo da produtividade operacional",
+      "Controle total em tempo real de toda operação",
+      "Redução de tempo de entrega com otimização de rotas",
+      "Gestão financeira automatizada e precisa"
+    ],
+    industries: ["Revendas de Gás", "Distribuidoras de Água", "Delivery de Bebidas", "Logística"]
   }
 };
 

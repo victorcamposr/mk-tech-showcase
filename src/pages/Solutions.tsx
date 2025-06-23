@@ -161,8 +161,8 @@ const Solutions = () => {
     <div className="min-h-screen bg-background">
       <SEO 
         title="Soluções em Automação Comercial"
-        description="Conheça nossas soluções completas: PDV, gestão de estoque inteligente, emissão fiscal e gestão financeira. Tecnologia de ponta para todos os segmentos empresariais em Pontes e Lacerda, MT."
-        keywords="soluções automação comercial, PDV completo, gestão estoque inteligente, emissão fiscal, gestão financeira, tecnologia empresarial, Pontes e Lacerda"
+        description="Conheça nossas soluções completas: PDV, gestão de estoque inteligente, emissão fiscal, gestão financeira e sistema para revendas de gás e água. Tecnologia de ponta para todos os segmentos empresariais em Pontes e Lacerda, MT."
+        keywords="soluções automação comercial, PDV completo, gestão estoque inteligente, emissão fiscal, gestão financeira, sistema revendas gás água, tecnologia empresarial, Pontes e Lacerda"
       />
       <StructuredData 
         type="breadcrumb" 
