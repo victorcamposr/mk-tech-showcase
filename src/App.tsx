@@ -1,3 +1,4 @@
+
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
@@ -41,6 +42,7 @@ const App = () => (
           <Route path="/solucoes/pagamento-tef" element={<Solutions />} />
           <Route path="/solucoes/franquias-filiais" element={<Solutions />} />
           <Route path="/solucoes/autoatendimento-tablet" element={<Solutions />} />
+          <Route path="/solucoes/sistema-revendas-gas-agua" element={<Solutions />} />
           <Route path="/portfolio" element={<Portfolio />} />
           <Route path="/contato" element={<Contact />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
