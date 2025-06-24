@@ -15,6 +15,7 @@ interface FormData {
   phone: string;
   subject: string;
   message: string;
+  honeypot?: string; // Campo para detectar bots
 }
 
 interface ContactFormProps {
@@ -28,6 +29,12 @@ const ContactForm = ({ onSuccess }: ContactFormProps) => {
   const onSubmit = async (data: FormData) => {
     console.log('=== INÍCIO DO ENVIO DO FORMULÁRIO ===');
     console.log('Dados do formulário:', data);
+    
+    // Verificar se é um bot (honeypot preenchido)
+    if (data.honeypot && data.honeypot.trim() !== '') {
+      console.log('Bot detectado via honeypot');
+      return;
+    }
     
     // Verificar se todos os campos obrigatórios estão preenchidos
     const requiredFields = ['name', 'email', 'phone', 'subject', 'message'];
@@ -53,8 +60,11 @@ const ContactForm = ({ onSuccess }: ContactFormProps) => {
         company: data.company || '',
         email: data.email,
         phone: data.phone,
-        subject: data.subject,
-        message: data.message
+        subject: `Contato via site: ${data.subject}`,
+        message: `Nome: ${data.name}\nEmpresa: ${data.company || 'Não informado'}\nTelefone: ${data.phone}\nE-mail: ${data.email}\n\nMensagem:\n${data.message}`,
+        from_name: data.name,
+        replyto: data.email,
+        redirect: false
       };
 
       console.log('Corpo da requisição para Web3Forms:', requestBody);
@@ -63,7 +73,8 @@ const ContactForm = ({ onSuccess }: ContactFormProps) => {
       const response = await fetch('https://api.web3forms.com/submit', {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
+          'Accept': 'application/json'
         },
         body: JSON.stringify(requestBody)
       });
@@ -85,7 +96,18 @@ const ContactForm = ({ onSuccess }: ContactFormProps) => {
         reset();
       } else {
         console.error('❌ Erro na resposta da API:', result);
-        throw new Error(result.message || 'Erro no envio');
+        
+        // Tratamento específico para erro de spam
+        if (result.message && result.message.includes('spam')) {
+          toast({
+            title: "Mensagem bloqueada",
+            description: "Sua mensagem foi identificada como spam. Tente reformular ou entre em contato pelo WhatsApp.",
+            variant: "destructive",
+            duration: 7000,
+          });
+        } else {
+          throw new Error(result.message || 'Erro no envio');
+        }
       }
     } catch (error) {
       console.error('❌ Erro durante o envio:', error);
@@ -134,6 +156,15 @@ const ContactForm = ({ onSuccess }: ContactFormProps) => {
       </CardHeader>
       <CardContent className="p-4 pt-0">
         <form className="space-y-6">
+          {/* Campo honeypot - oculto para usuários normais */}
+          <div style={{ display: 'none' }}>
+            <Input 
+              {...register("honeypot")}
+              tabIndex={-1}
+              autoComplete="off"
+            />
+          </div>
+
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
               <label className="block text-sm font-medium text-brand-black mb-2">
