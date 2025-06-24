@@ -19,30 +19,30 @@ const testimonials: Testimonial[] = [
   },
   {
     id: 2,
-    content: "Excelente solução para farmácia. O controle de medicamentos controlados facilitou muito nosso trabalho.",
-    author: "Maria Santos",
-    company: "Farmácia Vida & Saúde",
-    rating: 5
-  },
-  {
-    id: 3,
     content: "Sistema perfeito para moda. O controle de grades e relatórios são fantásticos.",
-    author: "Carlos Oliveira",
+    author: "Maria Santos",
     company: "Loja Fashion Style",
     rating: 5
   },
   {
-    id: 4,
+    id: 3,
     content: "Implementaram nosso sistema de autopeças com catálogo completo. A busca por compatibilidade de peças ficou automática e nossos vendedores são muito mais produtivos.",
-    author: "Roberto Lima",
+    author: "Carlos Oliveira",
     company: "Auto Peças Rondon",
     rating: 5
   },
   {
+    id: 4,
+    content: "O sistema para nossa distribuidora é perfeito. Controle de rotas, app para entregadores e gestão completa. Aumentamos nossa produtividade em 60%.",
+    author: "Roberto Lima",
+    company: "Distribuidora Água Cristal",
+    rating: 5
+  },
+  {
     id: 5,
-    content: "O sistema para nossa clínica médica é perfeito. Agendamento online, prontuário digital e controle de convênios tudo integrado. Recomendo para qualquer clínica.",
-    author: "Dr. Ana Costa",
-    company: "Clínica Médica Bem Estar",
+    content: "Excelente solução para nossa padaria. O controle de produção e validades facilitou muito nosso trabalho diário.",
+    author: "Ana Costa",
+    company: "Padaria Doce Vida",
     rating: 5
   }
 ];

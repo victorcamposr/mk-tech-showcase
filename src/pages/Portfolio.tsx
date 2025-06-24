@@ -19,13 +19,6 @@ const Portfolio = () => {
       emoji: "🏪"
     },
     {
-      title: "Farmácia Vida & Saúde",
-      category: "Farmácia",
-      description: "Sistema especializado para farmácia com controle de medicamentos controlados, validades e integração com convênios.",
-      results: ["Controle de medicamentos controlados", "Alertas de validade", "Integração com PBM", "NFCe automática"],
-      emoji: "💊"
-    },
-    {
       title: "Loja Fashion Style",
       category: "Moda e Vestuário",
       description: "Automação comercial para loja de roupas com controle de grades, cores, tamanhos e sazonalidade.",
@@ -47,14 +40,20 @@ const Portfolio = () => {
       emoji: "🔧"
     },
     {
-      title: "Clínica Médica Bem Estar",
-      category: "Saúde",
-      description: "Sistema de gestão para clínica médica com agendamento, prontuário eletrônico e controle financeiro.",
-      results: ["Agendamento online", "Prontuário digital", "Controle de convênios", "Relatórios médicos"],
-      emoji: "🏥"
+      title: "Distribuidora Água Cristal",
+      category: "Distribuição",
+      description: "Sistema completo para distribuidora de água com controle de rotas, gestão de entregadores e aplicativo mobile.",
+      results: ["Gestão de rotas otimizada", "App para entregadores", "Controle de estoque", "Emissão automática de NF"],
+      emoji: "💧"
+    },
+    {
+      title: "Padaria Doce Vida",
+      category: "Panificação",
+      description: "Sistema de gestão para padaria com controle de produção, validades e vendas integradas.",
+      results: ["Controle de produção", "Gestão de validades", "PDV integrado", "Relatórios de vendas"],
+      emoji: "🥖"
     }
   ];
-
 
   return (
     <div className="min-h-screen bg-background">

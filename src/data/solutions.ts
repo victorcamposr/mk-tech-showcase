@@ -118,7 +118,7 @@ export const specificSolutions = {
       "Integração com sistemas de delivery"
     ],
     benefits: ["Redução de 40% no tempo de entrega", "Maior controle operacional", "Aumento da satisfação do cliente"],
-    industries: ["Delivery", "E-commerce", "Restaurantes", "Farmácias"]
+    industries: ["Delivery", "E-commerce", "Restaurantes", "Distribuidoras"]
   },
   "integracoes": {
     title: "Equipamentos e Integrações",
