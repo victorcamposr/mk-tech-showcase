@@ -33,7 +33,7 @@ const ContactForm = ({ onSuccess }: ContactFormProps) => {
           'Content-Type': 'application/json'
         },
         body: JSON.stringify({
-          access_key: '4b611952-1cbf-41e2-92e0-94827feb419d',
+          access_key: 'd4fff2da-a30b-487a-b131-e858f54b1c95',
           name: data.name,
           company: data.company || '',
           email: data.email,
