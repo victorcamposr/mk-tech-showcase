@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { useToast } from "@/hooks/use-toast";
@@ -25,29 +26,56 @@ const ContactForm = ({ onSuccess }: ContactFormProps) => {
   const { register, handleSubmit, formState: { errors }, reset, setValue } = useForm<FormData>();
 
   const onSubmit = async (data: FormData) => {
-    console.log('Iniciando envio do formulário:', data);
+    console.log('=== INÍCIO DO ENVIO DO FORMULÁRIO ===');
+    console.log('Dados do formulário:', data);
+    
+    // Verificar se todos os campos obrigatórios estão preenchidos
+    const requiredFields = ['name', 'email', 'phone', 'subject', 'message'];
+    const missingFields = requiredFields.filter(field => !data[field as keyof FormData] || data[field as keyof FormData] === '');
+    
+    if (missingFields.length > 0) {
+      console.error('Campos obrigatórios não preenchidos:', missingFields);
+      toast({
+        title: "Campos obrigatórios",
+        description: `Preencha os campos: ${missingFields.join(', ')}`,
+        variant: "destructive",
+        duration: 5000,
+      });
+      return;
+    }
+
+    console.log('Todos os campos obrigatórios estão preenchidos');
+
     try {
+      const requestBody = {
+        access_key: 'd4fff2da-a30b-487a-b131-e858f54b1c95',
+        name: data.name,
+        company: data.company || '',
+        email: data.email,
+        phone: data.phone,
+        subject: data.subject,
+        message: data.message
+      };
+
+      console.log('Corpo da requisição para Web3Forms:', requestBody);
+      console.log('Enviando requisição para Web3Forms...');
+
       const response = await fetch('https://api.web3forms.com/submit', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify({
-          access_key: 'd4fff2da-a30b-487a-b131-e858f54b1c95',
-          name: data.name,
-          company: data.company || '',
-          email: data.email,
-          phone: data.phone,
-          subject: data.subject,
-          message: data.message
-        })
+        body: JSON.stringify(requestBody)
       });
 
-      console.log('Response status:', response.status);
-      const result = await response.json();
-      console.log('Response data:', result);
+      console.log('Status da resposta:', response.status);
+      console.log('Headers da resposta:', Object.fromEntries(response.headers.entries()));
 
-      if (response.ok) {
+      const result = await response.json();
+      console.log('Dados da resposta:', result);
+
+      if (response.ok && result.success) {
+        console.log('✅ Envio bem-sucedido!');
         onSuccess();
         toast({
           title: "Mensagem enviada!",
@@ -56,31 +84,46 @@ const ContactForm = ({ onSuccess }: ContactFormProps) => {
         });
         reset();
       } else {
-        throw new Error('Erro no envio');
+        console.error('❌ Erro na resposta da API:', result);
+        throw new Error(result.message || 'Erro no envio');
       }
     } catch (error) {
-      console.error('Erro ao enviar formulário:', error);
+      console.error('❌ Erro durante o envio:', error);
+      
+      let errorMessage = "Não foi possível enviar sua mensagem. Tente novamente mais tarde.";
+      
+      if (error instanceof TypeError && error.message.includes('fetch')) {
+        errorMessage = "Erro de conexão. Verifique sua internet e tente novamente.";
+      } else if (error instanceof Error) {
+        errorMessage = `Erro: ${error.message}`;
+      }
+      
       toast({
         title: "Erro ao enviar",
-        description: "Não foi possível enviar sua mensagem. Tente novamente mais tarde.",
+        description: errorMessage,
         variant: "destructive",
         duration: 5000,
       });
     }
+    
+    console.log('=== FIM DO PROCESSO DE ENVIO ===');
   };
 
   const handleFormSubmit = handleSubmit(
     onSubmit,
     (errors) => {
-      console.log("Form validation errors:", errors);
-      console.log("Chamando toast de campos obrigatórios...");
-      const toastResult = toast({
+      console.log("❌ Erros de validação do formulário:", errors);
+      console.log("Exibindo toast de campos obrigatórios...");
+      
+      const errorFields = Object.keys(errors);
+      console.log("Campos com erro:", errorFields);
+      
+      toast({
         title: "Campos obrigatórios",
         description: "Por favor, preencha todos os campos obrigatórios antes de enviar.",
         variant: "destructive",
         duration: 5000,
       });
-      console.log("Toast criado:", toastResult);
     }
   );
 
@@ -101,6 +144,9 @@ const ContactForm = ({ onSuccess }: ContactFormProps) => {
                 placeholder="Seu nome completo" 
                 {...register("name", { required: "Nome é obrigatório" })}
               />
+              {errors.name && (
+                <p className="text-red-500 text-sm mt-1">{errors.name.message}</p>
+              )}
             </div>
             <div>
               <label className="block text-sm font-medium text-brand-black mb-2">
@@ -123,8 +169,17 @@ const ContactForm = ({ onSuccess }: ContactFormProps) => {
                 type="email" 
                 name="email"
                 placeholder="seu@email.com" 
-                {...register("email", { required: "E-mail é obrigatório" })}
+                {...register("email", { 
+                  required: "E-mail é obrigatório",
+                  pattern: {
+                    value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
+                    message: "E-mail inválido"
+                  }
+                })}
               />
+              {errors.email && (
+                <p className="text-red-500 text-sm mt-1">{errors.email.message}</p>
+              )}
             </div>
             <div>
               <label className="block text-sm font-medium text-brand-black mb-2">
@@ -155,6 +210,9 @@ const ContactForm = ({ onSuccess }: ContactFormProps) => {
                   target.value = formattedValue;
                 }}
               />
+              {errors.phone && (
+                <p className="text-red-500 text-sm mt-1">{errors.phone.message}</p>
+              )}
             </div>
           </div>
 
@@ -167,6 +225,9 @@ const ContactForm = ({ onSuccess }: ContactFormProps) => {
               placeholder="Como podemos ajudar?" 
               {...register("subject", { required: "Assunto é obrigatório" })}
             />
+            {errors.subject && (
+              <p className="text-red-500 text-sm mt-1">{errors.subject.message}</p>
+            )}
           </div>
 
           <div>
@@ -179,6 +240,9 @@ const ContactForm = ({ onSuccess }: ContactFormProps) => {
               className="min-h-[120px]"
               {...register("message", { required: "Mensagem é obrigatória" })}
             />
+            {errors.message && (
+              <p className="text-red-500 text-sm mt-1">{errors.message.message}</p>
+            )}
           </div>
 
           <Button 
