@@ -212,16 +212,18 @@ const AdminDashboard = () => {
       gradient: 'from-blue-500 to-blue-600',
       badgeValue: stats.inactiveUsers,
       badgeLabel: 'Inativos',
-      badgeIcon: UserX
+      badgeIcon: UserX,
+      showBadge: stats.inactiveUsers > 0
     },
     {
       title: 'Contatos Recebidos',
       value: stats.totalContacts,
       icon: MessageSquare,
       gradient: 'from-green-500 to-green-600',
-      badgeValue: stats.readContacts,
-      badgeLabel: 'Lidos',
-      badgeIcon: Eye
+      badgeValue: stats.totalContacts - stats.readContacts,
+      badgeLabel: 'Não lidos',
+      badgeIcon: EyeOff,
+      showBadge: (stats.totalContacts - stats.readContacts) > 0
     },
     {
       title: 'Posts do Blog',
@@ -230,7 +232,8 @@ const AdminDashboard = () => {
       gradient: 'from-purple-500 to-purple-600',
       badgeValue: stats.draftPosts,
       badgeLabel: 'Rascunhos',
-      badgeIcon: Archive
+      badgeIcon: Archive,
+      showBadge: stats.draftPosts > 0
     },
     {
       title: 'Soluções Ativas',
@@ -239,7 +242,8 @@ const AdminDashboard = () => {
       gradient: 'from-brand-gold to-brand-gold-dark',
       badgeValue: stats.inactiveSolutions,
       badgeLabel: 'Inativas',
-      badgeIcon: ZapOff
+      badgeIcon: ZapOff,
+      showBadge: stats.inactiveSolutions > 0
     }
   ];
 
@@ -278,7 +282,7 @@ const AdminDashboard = () => {
                       <Icon className="w-6 h-6 text-white" />
                     </div>
                   </div>
-                  {stat.badgeValue > 0 && (
+                  {stat.showBadge && (
                     <div className="flex items-center gap-2">
                       <Badge variant="destructive" className="text-xs flex items-center gap-1">
                         <BadgeIcon className="w-3 h-3" />
