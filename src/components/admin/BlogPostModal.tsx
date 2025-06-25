@@ -11,6 +11,29 @@ import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
 import { X, Plus } from 'lucide-react';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import * as z from 'zod';
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from '@/components/ui/form';
+
+const blogPostSchema = z.object({
+  title: z.string().min(1, 'Título é obrigatório'),
+  excerpt: z.string().optional(),
+  content: z.string().min(1, 'Conteúdo é obrigatório'),
+  status: z.enum(['draft', 'published']),
+  featured_image: z.string().optional(),
+  meta_description: z.string().optional(),
+  slug: z.string().min(1, 'Slug é obrigatório'),
+});
+
+type BlogPostFormData = z.infer<typeof blogPostSchema>;
 
 interface BlogPostModalProps {
   isOpen: boolean;
@@ -21,103 +44,104 @@ interface BlogPostModalProps {
 }
 
 const BlogPostModal = ({ isOpen, onClose, post, onSuccess, mode }: BlogPostModalProps) => {
-  const [formData, setFormData] = useState({
-    title: '',
-    excerpt: '',
-    content: '',
-    status: 'draft' as 'draft' | 'published',
-    tags: [] as string[],
-    featured_image: '',
-    meta_description: '',
-    slug: '',
-  });
-
+  const [tags, setTags] = useState<string[]>([]);
   const [newTag, setNewTag] = useState('');
   const [loading, setLoading] = useState(false);
   const { toast } = useToast();
   const { adminProfile } = useAuth();
 
-  useEffect(() => {
-    if (isOpen) {
-      if (post && mode !== 'create') {
-        setFormData({
-          title: post.title || '',
-          excerpt: post.excerpt || '',
-          content: post.content || '',
-          status: post.status || 'draft',
-          tags: post.tags || [],
-          featured_image: post.featured_image || '',
-          meta_description: post.meta_description || '',
-          slug: post.slug || '',
-        });
-      } else {
-        resetForm();
-      }
-    }
-  }, [isOpen, post, mode]);
-
-  const resetForm = () => {
-    setFormData({
+  const form = useForm<BlogPostFormData>({
+    resolver: zodResolver(blogPostSchema),
+    defaultValues: {
       title: '',
       excerpt: '',
       content: '',
       status: 'draft',
-      tags: [],
       featured_image: '',
       meta_description: '',
       slug: '',
-    });
-    setNewTag('');
-  };
+    },
+  });
 
-  const handleInputChange = (field: string, value: any) => {
-    setFormData(prev => ({
-      ...prev,
-      [field]: value
-    }));
+  useEffect(() => {
+    if (isOpen) {
+      if (post && mode !== 'create') {
+        form.reset({
+          title: post.title || '',
+          excerpt: post.excerpt || '',
+          content: post.content || '',
+          status: post.status || 'draft',
+          featured_image: post.featured_image || '',
+          meta_description: post.meta_description || '',
+          slug: post.slug || '',
+        });
+        setTags(post.tags || []);
+      } else {
+        form.reset({
+          title: '',
+          excerpt: '',
+          content: '',
+          status: 'draft',
+          featured_image: '',
+          meta_description: '',
+          slug: '',
+        });
+        setTags([]);
+      }
+      setNewTag('');
+    }
+  }, [isOpen, post, mode, form]);
 
+  const handleTitleChange = (value: string) => {
+    form.setValue('title', value);
+    
     // Auto-generate slug from title
-    if (field === 'title' && mode === 'create') {
+    if (mode === 'create') {
       const slug = value
         .toLowerCase()
         .replace(/[^a-z0-9\s-]/g, '')
         .replace(/\s+/g, '-')
         .replace(/-+/g, '-')
         .trim();
-      setFormData(prev => ({
-        ...prev,
-        slug: slug
-      }));
+      form.setValue('slug', slug);
     }
   };
 
   const addTag = () => {
-    if (newTag.trim() && !formData.tags.includes(newTag.trim())) {
-      setFormData(prev => ({
-        ...prev,
-        tags: [...prev.tags, newTag.trim()]
-      }));
+    if (newTag.trim() && !tags.includes(newTag.trim())) {
+      setTags(prev => [...prev, newTag.trim()]);
       setNewTag('');
     }
   };
 
   const removeTag = (index: number) => {
-    setFormData(prev => ({
-      ...prev,
-      tags: prev.tags.filter((_, i) => i !== index)
-    }));
+    setTags(prev => prev.filter((_, i) => i !== index));
   };
 
-  const handleSubmit = async () => {
-    if (!formData.title.trim() || !formData.content.trim()) {
-      toast({
-        title: "Campos obrigatórios",
-        description: "Por favor, preencha pelo menos o título e o conteúdo.",
-        variant: "destructive",
-      });
-      return;
-    }
+  const logActivity = async (action: string, entityTitle: string) => {
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return;
 
+      const { data: profile } = await supabase
+        .from('admin_profiles')
+        .select('name')
+        .eq('user_id', user.id)
+        .single();
+
+      await supabase.from('admin_activities').insert({
+        action_type: action,
+        entity_type: 'blog_posts',
+        entity_id: mode === 'edit' ? post?.id : undefined,
+        entity_title: entityTitle,
+        user_name: profile?.name || 'Admin'
+      });
+    } catch (error) {
+      console.error('Error logging activity:', error);
+    }
+  };
+
+  const onSubmit = async (data: BlogPostFormData) => {
     if (!adminProfile?.id) {
       toast({
         title: "Erro de autenticação",
@@ -130,11 +154,9 @@ const BlogPostModal = ({ isOpen, onClose, post, onSuccess, mode }: BlogPostModal
     setLoading(true);
     try {
       const dataToSave = {
-        ...formData,
-        title: formData.title.trim(),
-        content: formData.content.trim(),
-        slug: formData.slug.trim() || formData.title.toLowerCase().replace(/\s+/g, '-'),
-        author_id: adminProfile.id, // Use the admin profile ID instead of temp-author
+        ...data,
+        tags: tags,
+        author_id: adminProfile.id,
       };
 
       if (mode === 'create') {
@@ -151,6 +173,8 @@ const BlogPostModal = ({ isOpen, onClose, post, onSuccess, mode }: BlogPostModal
           });
           return;
         }
+
+        await logActivity('create', data.title);
 
         toast({
           title: "Post criado",
@@ -171,6 +195,8 @@ const BlogPostModal = ({ isOpen, onClose, post, onSuccess, mode }: BlogPostModal
           });
           return;
         }
+
+        await logActivity('update', data.title);
 
         toast({
           title: "Post atualizado",
@@ -210,176 +236,229 @@ const BlogPostModal = ({ isOpen, onClose, post, onSuccess, mode }: BlogPostModal
           </DialogDescription>
         </DialogHeader>
 
-        <div className="space-y-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div className="space-y-4">
-              <div>
-                <Label htmlFor="title" className="text-sm font-medium text-gray-700">
-                  Título *
-                </Label>
-                <Input
-                  id="title"
-                  value={formData.title}
-                  onChange={(e) => handleInputChange('title', e.target.value)}
-                  disabled={!canEdit}
-                  className="mt-1"
-                  placeholder="Digite o título do post"
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="space-y-4">
+                <FormField
+                  control={form.control}
+                  name="title"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="text-sm font-medium text-gray-700">
+                        Título *
+                      </FormLabel>
+                      <FormControl>
+                        <Input
+                          {...field}
+                          onChange={(e) => {
+                            field.onChange(e);
+                            handleTitleChange(e.target.value);
+                          }}
+                          disabled={!canEdit}
+                          placeholder="Digite o título do post"
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="slug"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="text-sm font-medium text-gray-700">
+                        Slug *
+                      </FormLabel>
+                      <FormControl>
+                        <Input
+                          {...field}
+                          disabled={!canEdit}
+                          placeholder="url-amigavel-do-post"
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="status"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="text-sm font-medium text-gray-700">
+                        Status
+                      </FormLabel>
+                      <Select
+                        value={field.value}
+                        onValueChange={field.onChange}
+                        disabled={!canEdit}
+                      >
+                        <FormControl>
+                          <SelectTrigger>
+                            <SelectValue />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          <SelectItem value="draft">Rascunho</SelectItem>
+                          <SelectItem value="published">Publicado</SelectItem>
+                        </SelectContent>
+                      </Select>
+                      <FormMessage />
+                    </FormItem>
+                  )}
                 />
               </div>
 
-              <div>
-                <Label htmlFor="slug" className="text-sm font-medium text-gray-700">
-                  Slug
-                </Label>
-                <Input
-                  id="slug"
-                  value={formData.slug}
-                  onChange={(e) => handleInputChange('slug', e.target.value)}
-                  disabled={!canEdit}
-                  className="mt-1"
-                  placeholder="url-amigavel-do-post"
+              <div className="space-y-4">
+                <FormField
+                  control={form.control}
+                  name="featured_image"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="text-sm font-medium text-gray-700">
+                        Imagem Destacada
+                      </FormLabel>
+                      <FormControl>
+                        <Input
+                          {...field}
+                          disabled={!canEdit}
+                          placeholder="https://exemplo.com/imagem.jpg"
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
                 />
-              </div>
 
-              <div>
-                <Label htmlFor="status" className="text-sm font-medium text-gray-700">
-                  Status
-                </Label>
-                <Select
-                  value={formData.status}
-                  onValueChange={(value) => handleInputChange('status', value)}
-                  disabled={!canEdit}
-                >
-                  <SelectTrigger className="mt-1">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="draft">Rascunho</SelectItem>
-                    <SelectItem value="published">Publicado</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-            </div>
-
-            <div className="space-y-4">
-              <div>
-                <Label htmlFor="featured_image" className="text-sm font-medium text-gray-700">
-                  Imagem Destacada
-                </Label>
-                <Input
-                  id="featured_image"
-                  value={formData.featured_image}
-                  onChange={(e) => handleInputChange('featured_image', e.target.value)}
-                  disabled={!canEdit}
-                  className="mt-1"
-                  placeholder="https://exemplo.com/imagem.jpg"
-                />
-              </div>
-
-              <div>
-                <Label className="text-sm font-medium text-gray-700">Tags</Label>
-                {canEdit && (
-                  <div className="flex gap-2 mt-2">
-                    <Input
-                      value={newTag}
-                      onChange={(e) => setNewTag(e.target.value)}
-                      placeholder="Nova tag"
-                      className="flex-1"
-                      onKeyPress={(e) => e.key === 'Enter' && addTag()}
-                    />
-                    <Button
-                      type="button"
-                      variant="outline"
-                      onClick={addTag}
-                      size="sm"
-                    >
-                      <Plus className="w-4 h-4" />
-                    </Button>
+                <div>
+                  <Label className="text-sm font-medium text-gray-700">Tags</Label>
+                  {canEdit && (
+                    <div className="flex gap-2 mt-2">
+                      <Input
+                        value={newTag}
+                        onChange={(e) => setNewTag(e.target.value)}
+                        placeholder="Nova tag"
+                        className="flex-1"
+                        onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), addTag())}
+                      />
+                      <Button
+                        type="button"
+                        variant="outline"
+                        onClick={addTag}
+                        size="sm"
+                      >
+                        <Plus className="w-4 h-4" />
+                      </Button>
+                    </div>
+                  )}
+                  <div className="flex flex-wrap gap-2 mt-2">
+                    {tags.map((tag, index) => (
+                      <Badge key={index} variant="outline">
+                        {tag}
+                        {canEdit && (
+                          <button
+                            type="button"
+                            onClick={() => removeTag(index)}
+                            className="ml-2 text-gray-400 hover:text-gray-600"
+                          >
+                            <X className="w-3 h-3" />
+                          </button>
+                        )}
+                      </Badge>
+                    ))}
                   </div>
-                )}
-                <div className="flex flex-wrap gap-2 mt-2">
-                  {formData.tags.map((tag, index) => (
-                    <Badge key={index} variant="outline">
-                      {tag}
-                      {canEdit && (
-                        <button
-                          onClick={() => removeTag(index)}
-                          className="ml-2 text-gray-400 hover:text-gray-600"
-                        >
-                          <X className="w-3 h-3" />
-                        </button>
-                      )}
-                    </Badge>
-                  ))}
                 </div>
               </div>
             </div>
-          </div>
 
-          <div>
-            <Label htmlFor="excerpt" className="text-sm font-medium text-gray-700">
-              Resumo
-            </Label>
-            <Textarea
-              id="excerpt"
-              value={formData.excerpt}
-              onChange={(e) => handleInputChange('excerpt', e.target.value)}
-              disabled={!canEdit}
-              className="mt-1"
-              rows={3}
-              placeholder="Breve descrição do post"
+            <FormField
+              control={form.control}
+              name="excerpt"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="text-sm font-medium text-gray-700">
+                    Resumo
+                  </FormLabel>
+                  <FormControl>
+                    <Textarea
+                      {...field}
+                      disabled={!canEdit}
+                      rows={3}
+                      placeholder="Breve descrição do post"
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
             />
-          </div>
 
-          <div>
-            <Label htmlFor="content" className="text-sm font-medium text-gray-700">
-              Conteúdo *
-            </Label>
-            <Textarea
-              id="content"
-              value={formData.content}
-              onChange={(e) => handleInputChange('content', e.target.value)}
-              disabled={!canEdit}
-              className="mt-1"
-              rows={12}
-              placeholder="Escreva o conteúdo completo do post aqui..."
+            <FormField
+              control={form.control}
+              name="content"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="text-sm font-medium text-gray-700">
+                    Conteúdo *
+                  </FormLabel>
+                  <FormControl>
+                    <Textarea
+                      {...field}
+                      disabled={!canEdit}
+                      rows={12}
+                      placeholder="Escreva o conteúdo completo do post aqui..."
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
             />
-          </div>
 
-          <div>
-            <Label htmlFor="meta_description" className="text-sm font-medium text-gray-700">
-              Meta Descrição
-            </Label>
-            <Textarea
-              id="meta_description"
-              value={formData.meta_description}
-              onChange={(e) => handleInputChange('meta_description', e.target.value)}
-              disabled={!canEdit}
-              className="mt-1"
-              rows={2}
-              placeholder="Descrição para SEO (máx. 160 caracteres)"
-              maxLength={160}
+            <FormField
+              control={form.control}
+              name="meta_description"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="text-sm font-medium text-gray-700">
+                    Meta Descrição
+                  </FormLabel>
+                  <FormControl>
+                    <Textarea
+                      {...field}
+                      disabled={!canEdit}
+                      rows={2}
+                      placeholder="Descrição para SEO (máx. 160 caracteres)"
+                      maxLength={160}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
             />
-          </div>
-        </div>
 
-        <div className="flex justify-end gap-3 pt-6 border-t border-gray-200 mt-8">
-          <Button
-            variant="outline"
-            onClick={onClose}
-          >
-            {mode === 'view' ? 'Fechar' : 'Cancelar'}
-          </Button>
-          {canEdit && (
-            <Button
-              onClick={handleSubmit}
-              disabled={loading}
-              className="bg-blue-600 hover:bg-blue-700"
-            >
-              {loading ? 'Salvando...' : (mode === 'create' ? 'Criar Post' : 'Salvar Alterações')}
-            </Button>
-          )}
-        </div>
+            <div className="flex justify-end gap-3 pt-6 border-t border-gray-200 mt-8">
+              <Button
+                type="button"
+                variant="outline"
+                onClick={onClose}
+              >
+                {mode === 'view' ? 'Fechar' : 'Cancelar'}
+              </Button>
+              {canEdit && (
+                <Button
+                  type="submit"
+                  disabled={loading}
+                  className="bg-blue-600 hover:bg-blue-700"
+                >
+                  {loading ? 'Salvando...' : (mode === 'create' ? 'Criar Post' : 'Salvar Alterações')}
+                </Button>
+              )}
+            </div>
+          </form>
+        </Form>
       </DialogContent>
     </Dialog>
   );

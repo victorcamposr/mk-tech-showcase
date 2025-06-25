@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import AdminLayout from '@/components/admin/AdminLayout';
@@ -12,6 +11,30 @@ import { Badge } from '@/components/ui/badge';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import { ArrowLeft, Plus, X, Lightbulb, Calculator, Users, BarChart3, Shield, Zap, Settings, FileText, Database, Globe, Smartphone, CreditCard, Coffee, QrCode, Truck, Link2, Bot, Monitor, TrendingUp, Banknote, Building2, Tablet, Fuel, Receipt } from 'lucide-react';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import * as z from 'zod';
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from '@/components/ui/form';
+
+const solutionSchema = z.object({
+  title: z.string().min(1, 'Título é obrigatório'),
+  description: z.string().min(1, 'Descrição é obrigatória'),
+  key: z.string().min(1, 'Chave é obrigatória'),
+  status: z.enum(['active', 'inactive']),
+  icon_name: z.string().min(1, 'Ícone é obrigatório'),
+  card_image_url: z.string().optional(),
+  hero_image_url: z.string().optional(),
+  sort_order: z.number().optional(),
+});
+
+type SolutionFormData = z.infer<typeof solutionSchema>;
 
 const EditSolution = () => {
   const navigate = useNavigate();
@@ -19,23 +42,28 @@ const EditSolution = () => {
   const { toast } = useToast();
   const [loading, setLoading] = useState(false);
   const [loadingData, setLoadingData] = useState(true);
-  const [formData, setFormData] = useState({
-    title: '',
-    description: '',
-    key: '',
-    status: 'active' as 'active' | 'inactive',
-    icon_name: '',
-    features: [] as string[],
-    benefits: [] as string[],
-    industries: [] as string[],
-    card_image_url: '',
-    hero_image_url: '',
-    sort_order: null as number | null,
-  });
+  
+  const [features, setFeatures] = useState<string[]>([]);
+  const [benefits, setBenefits] = useState<string[]>([]);
+  const [industries, setIndustries] = useState<string[]>([]);
 
   const [newFeature, setNewFeature] = useState('');
   const [newBenefit, setNewBenefit] = useState('');
   const [newIndustry, setNewIndustry] = useState('');
+
+  const form = useForm<SolutionFormData>({
+    resolver: zodResolver(solutionSchema),
+    defaultValues: {
+      title: '',
+      description: '',
+      key: '',
+      status: 'active',
+      icon_name: 'lightbulb',
+      card_image_url: '',
+      hero_image_url: '',
+      sort_order: undefined,
+    },
+  });
 
   // Available icons with their components
   const availableIcons = {
@@ -87,19 +115,20 @@ const EditSolution = () => {
       }
 
       if (data) {
-        setFormData({
+        form.reset({
           title: data.title || '',
           description: data.description || '',
           key: data.key || '',
           status: data.status as 'active' | 'inactive',
           icon_name: data.icon_name || 'lightbulb',
-          features: data.features || [],
-          benefits: data.benefits || [],
-          industries: data.industries || [],
           card_image_url: data.card_image_url || '',
           hero_image_url: data.hero_image_url || '',
-          sort_order: data.sort_order,
+          sort_order: data.sort_order || undefined,
         });
+        
+        setFeatures(data.features || []);
+        setBenefits(data.benefits || []);
+        setIndustries(data.industries || []);
       }
     } catch (error: any) {
       console.error('Error fetching solution:', error);
@@ -137,49 +166,38 @@ const EditSolution = () => {
     }
   };
 
-  const handleInputChange = (field: string, value: any) => {
-    setFormData(prev => ({
-      ...prev,
-      [field]: value
-    }));
-  };
-
   const addArrayItem = (field: 'features' | 'benefits' | 'industries', value: string, setValue: (val: string) => void) => {
-    if (value.trim() && !formData[field].includes(value.trim())) {
-      setFormData(prev => ({
-        ...prev,
-        [field]: [...prev[field], value.trim()]
-      }));
-      setValue('');
+    if (value.trim()) {
+      const currentArray = field === 'features' ? features : field === 'benefits' ? benefits : industries;
+      if (!currentArray.includes(value.trim())) {
+        const newArray = [...currentArray, value.trim()];
+        if (field === 'features') setFeatures(newArray);
+        else if (field === 'benefits') setBenefits(newArray);
+        else setIndustries(newArray);
+        setValue('');
+      }
     }
   };
 
   const removeArrayItem = (field: 'features' | 'benefits' | 'industries', index: number) => {
-    setFormData(prev => ({
-      ...prev,
-      [field]: prev[field].filter((_, i) => i !== index)
-    }));
+    if (field === 'features') {
+      setFeatures(prev => prev.filter((_, i) => i !== index));
+    } else if (field === 'benefits') {
+      setBenefits(prev => prev.filter((_, i) => i !== index));
+    } else {
+      setIndustries(prev => prev.filter((_, i) => i !== index));
+    }
   };
 
-  const handleSubmit = async () => {
-    if (!formData.title.trim() || !formData.description.trim() || !formData.key.trim()) {
-      toast({
-        title: "Campos obrigatórios",
-        description: "Por favor, preencha título, descrição e chave.",
-        variant: "destructive",
-      });
-      return;
-    }
-
+  const onSubmit = async (data: SolutionFormData) => {
     setLoading(true);
     try {
       const dataToSave = {
-        ...formData,
-        title: formData.title.trim(),
-        description: formData.description.trim(),
-        key: formData.key.trim(),
-        icon_name: formData.icon_name || 'lightbulb',
-        sort_order: formData.sort_order || null,
+        ...data,
+        features,
+        benefits,
+        industries,
+        sort_order: data.sort_order || null,
       };
 
       const { error } = await supabase
@@ -197,7 +215,7 @@ const EditSolution = () => {
         return;
       }
 
-      await logActivity('update', formData.title);
+      await logActivity('update', data.title);
 
       toast({
         title: "Solução atualizada",
@@ -262,260 +280,328 @@ const EditSolution = () => {
             <CardTitle className="text-brand-black">Informações da Solução</CardTitle>
           </CardHeader>
           <CardContent className="space-y-8 py-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-              {/* Basic Information */}
-              <div className="space-y-6">
-                <div>
-                  <Label htmlFor="title" className="text-sm font-semibold text-gray-900 mb-2 block">
-                    Título *
-                  </Label>
-                  <Input
-                    id="title"
-                    value={formData.title}
-                    onChange={(e) => handleInputChange('title', e.target.value)}
-                    className="h-12 border-gray-300 focus:border-brand-gold focus:ring-brand-gold shadow-sm"
-                    placeholder="Digite o título da solução"
-                  />
+            <Form {...form}>
+              <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+                {/* ... keep existing code (form fields structure same as CreateSolution) */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                  {/* Basic Information */}
+                  <div className="space-y-6">
+                    <FormField
+                      control={form.control}
+                      name="title"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel className="text-sm font-semibold text-gray-900">
+                            Título *
+                          </FormLabel>
+                          <FormControl>
+                            <Input
+                              {...field}
+                              className="h-12 border-gray-300 focus:border-brand-gold focus:ring-brand-gold shadow-sm"
+                              placeholder="Digite o título da solução"
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
+                    <FormField
+                      control={form.control}
+                      name="key"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel className="text-sm font-semibold text-gray-900">
+                            Chave *
+                          </FormLabel>
+                          <FormControl>
+                            <Input
+                              {...field}
+                              className="h-12 border-gray-300 focus:border-brand-gold focus:ring-brand-gold shadow-sm"
+                              placeholder="chave-da-solucao"
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
+                    <FormField
+                      control={form.control}
+                      name="status"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel className="text-sm font-semibold text-gray-900">
+                            Status
+                          </FormLabel>
+                          <Select
+                            value={field.value}
+                            onValueChange={field.onChange}
+                          >
+                            <FormControl>
+                              <SelectTrigger className="h-12 border-gray-300 focus:border-brand-gold focus:ring-brand-gold shadow-sm">
+                                <SelectValue />
+                              </SelectTrigger>
+                            </FormControl>
+                            <SelectContent>
+                              <SelectItem value="active">Ativa</SelectItem>
+                              <SelectItem value="inactive">Inativa</SelectItem>
+                            </SelectContent>
+                          </Select>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
+                    <FormField
+                      control={form.control}
+                      name="sort_order"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel className="text-sm font-semibold text-gray-900">
+                            Ordem de Exibição
+                          </FormLabel>
+                          <FormControl>
+                            <Input
+                              type="number"
+                              value={field.value || ''}
+                              onChange={(e) => field.onChange(e.target.value ? parseInt(e.target.value) : undefined)}
+                              className="h-12 border-gray-300 focus:border-brand-gold focus:ring-brand-gold shadow-sm"
+                              placeholder="Ex: 1, 2, 3..."
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
+
+                  {/* Icon Selection */}
+                  <div className="space-y-6">
+                    <FormField
+                      control={form.control}
+                      name="icon_name"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel className="text-sm font-semibold text-gray-900 mb-4 block">
+                            Ícone da Solução *
+                          </FormLabel>
+                          <div className="grid grid-cols-4 gap-3">
+                            {Object.entries(availableIcons).map(([key, { component: IconComponent, name }]) => (
+                              <button
+                                key={key}
+                                type="button"
+                                onClick={() => field.onChange(key)}
+                                className={`p-4 border-2 rounded-xl flex flex-col items-center gap-2 transition-all duration-300 ${
+                                  field.value === key
+                                    ? 'border-brand-gold bg-brand-gold/10 shadow-lg'
+                                    : 'border-gray-200 hover:border-brand-gold/50 hover:bg-brand-gold/5 hover:shadow-md'
+                                } cursor-pointer`}
+                              >
+                                <IconComponent className={`w-6 h-6 ${field.value === key ? 'text-brand-gold' : 'text-gray-600'}`} />
+                                <span className="text-xs text-gray-600 font-medium">{name}</span>
+                              </button>
+                            ))}
+                          </div>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
                 </div>
 
-                <div>
-                  <Label htmlFor="key" className="text-sm font-semibold text-gray-900 mb-2 block">
-                    Chave *
-                  </Label>
-                  <Input
-                    id="key"
-                    value={formData.key}
-                    onChange={(e) => handleInputChange('key', e.target.value.toLowerCase().replace(/\s+/g, '-'))}
-                    className="h-12 border-gray-300 focus:border-brand-gold focus:ring-brand-gold shadow-sm"
-                    placeholder="chave-da-solucao"
-                  />
-                </div>
+                {/* Description */}
+                <FormField
+                  control={form.control}
+                  name="description"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="text-sm font-semibold text-gray-900">
+                        Descrição *
+                      </FormLabel>
+                      <FormControl>
+                        <Textarea
+                          {...field}
+                          className="border-gray-300 focus:border-brand-gold focus:ring-brand-gold shadow-sm"
+                          rows={4}
+                          placeholder="Descreva a solução detalhadamente"
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
 
+                {/* Features */}
                 <div>
-                  <Label htmlFor="status" className="text-sm font-semibold text-gray-900 mb-2 block">
-                    Status
-                  </Label>
-                  <Select
-                    value={formData.status}
-                    onValueChange={(value) => handleInputChange('status', value)}
-                  >
-                    <SelectTrigger className="h-12 border-gray-300 focus:border-brand-gold focus:ring-brand-gold shadow-sm">
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="active">Ativa</SelectItem>
-                      <SelectItem value="inactive">Inativa</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-
-                <div>
-                  <Label htmlFor="sort_order" className="text-sm font-semibold text-gray-900 mb-2 block">
-                    Ordem de Exibição
-                  </Label>
-                  <Input
-                    id="sort_order"
-                    type="number"
-                    value={formData.sort_order || ''}
-                    onChange={(e) => handleInputChange('sort_order', e.target.value ? parseInt(e.target.value) : null)}
-                    className="h-12 border-gray-300 focus:border-brand-gold focus:ring-brand-gold shadow-sm"
-                    placeholder="Ex: 1, 2, 3..."
-                  />
-                </div>
-              </div>
-
-              {/* Icon Selection */}
-              <div className="space-y-6">
-                <div>
-                  <Label className="text-sm font-semibold text-gray-900 mb-4 block">
-                    Ícone da Solução
-                  </Label>
-                  <div className="grid grid-cols-4 gap-3">
-                    {Object.entries(availableIcons).map(([key, { component: IconComponent, name }]) => (
-                      <button
-                        key={key}
-                        type="button"
-                        onClick={() => handleInputChange('icon_name', key)}
-                        className={`p-4 border-2 rounded-xl flex flex-col items-center gap-2 transition-all duration-300 ${
-                          formData.icon_name === key
-                            ? 'border-brand-gold bg-brand-gold/10 shadow-lg'
-                            : 'border-gray-200 hover:border-brand-gold/50 hover:bg-brand-gold/5 hover:shadow-md'
-                        } cursor-pointer`}
-                      >
-                        <IconComponent className={`w-6 h-6 ${formData.icon_name === key ? 'text-brand-gold' : 'text-gray-600'}`} />
-                        <span className="text-xs text-gray-600 font-medium">{name}</span>
-                      </button>
+                  <Label className="text-sm font-semibold text-gray-900 mb-3 block">Características</Label>
+                  <div className="flex gap-3 mb-4">
+                    <Input
+                      value={newFeature}
+                      onChange={(e) => setNewFeature(e.target.value)}
+                      placeholder="Nova característica"
+                      className="h-12 border-gray-300 focus:border-brand-gold focus:ring-brand-gold shadow-sm"
+                      onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), addArrayItem('features', newFeature, setNewFeature))}
+                    />
+                    <Button
+                      type="button"
+                      variant="outline"
+                      onClick={() => addArrayItem('features', newFeature, setNewFeature)}
+                      className="h-12 border-brand-gold text-brand-gold hover:bg-brand-gold hover:text-white shadow-sm"
+                    >
+                      <Plus className="w-4 h-4" />
+                    </Button>
+                  </div>
+                  <div className="flex flex-wrap gap-2">
+                    {features.map((feature, index) => (
+                      <Badge key={index} variant="outline" className="border-blue-200 text-blue-700 bg-blue-50 py-1 px-3">
+                        {feature}
+                        <button
+                          type="button"
+                          onClick={() => removeArrayItem('features', index)}
+                          className="ml-2 text-blue-400 hover:text-blue-600"
+                        >
+                          <X className="w-3 h-3" />
+                        </button>
+                      </Badge>
                     ))}
                   </div>
                 </div>
-              </div>
-            </div>
 
-            {/* Description */}
-            <div>
-              <Label htmlFor="description" className="text-sm font-semibold text-gray-900 mb-2 block">
-                Descrição *
-              </Label>
-              <Textarea
-                id="description"
-                value={formData.description}
-                onChange={(e) => handleInputChange('description', e.target.value)}
-                className="border-gray-300 focus:border-brand-gold focus:ring-brand-gold shadow-sm"
-                rows={4}
-                placeholder="Descreva a solução detalhadamente"
-              />
-            </div>
-
-            {/* Features */}
-            <div>
-              <Label className="text-sm font-semibold text-gray-900 mb-3 block">Características</Label>
-              <div className="flex gap-3 mb-4">
-                <Input
-                  value={newFeature}
-                  onChange={(e) => setNewFeature(e.target.value)}
-                  placeholder="Nova característica"
-                  className="h-12 border-gray-300 focus:border-brand-gold focus:ring-brand-gold shadow-sm"
-                  onKeyPress={(e) => e.key === 'Enter' && addArrayItem('features', newFeature, setNewFeature)}
-                />
-                <Button
-                  type="button"
-                  variant="outline"
-                  onClick={() => addArrayItem('features', newFeature, setNewFeature)}
-                  className="h-12 border-brand-gold text-brand-gold hover:bg-brand-gold hover:text-white shadow-sm"
-                >
-                  <Plus className="w-4 h-4" />
-                </Button>
-              </div>
-              <div className="flex flex-wrap gap-2">
-                {formData.features.map((feature, index) => (
-                  <Badge key={index} variant="outline" className="border-blue-200 text-blue-700 bg-blue-50 py-1 px-3">
-                    {feature}
-                    <button
-                      onClick={() => removeArrayItem('features', index)}
-                      className="ml-2 text-blue-400 hover:text-blue-600"
+                {/* Benefits */}
+                <div>
+                  <Label className="text-sm font-semibold text-gray-900 mb-3 block">Benefícios</Label>
+                  <div className="flex gap-3 mb-4">
+                    <Input
+                      value={newBenefit}
+                      onChange={(e) => setNewBenefit(e.target.value)}
+                      placeholder="Novo benefício"
+                      className="h-12 border-gray-300 focus:border-brand-gold focus:ring-brand-gold shadow-sm"
+                      onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), addArrayItem('benefits', newBenefit, setNewBenefit))}
+                    />
+                    <Button
+                      type="button"
+                      variant="outline"
+                      onClick={() => addArrayItem('benefits', newBenefit, setNewBenefit)}
+                      className="h-12 border-brand-gold text-brand-gold hover:bg-brand-gold hover:text-white shadow-sm"
                     >
-                      <X className="w-3 h-3" />
-                    </button>
-                  </Badge>
-                ))}
-              </div>
-            </div>
+                      <Plus className="w-4 h-4" />
+                    </Button>
+                  </div>
+                  <div className="flex flex-wrap gap-2">
+                    {benefits.map((benefit, index) => (
+                      <Badge key={index} variant="outline" className="border-green-200 text-green-700 bg-green-50 py-1 px-3">
+                        {benefit}
+                        <button
+                          type="button"
+                          onClick={() => removeArrayItem('benefits', index)}
+                          className="ml-2 text-green-400 hover:text-green-600"
+                        >
+                          <X className="w-3 h-3" />
+                        </button>
+                      </Badge>
+                    ))}
+                  </div>
+                </div>
 
-            {/* Benefits */}
-            <div>
-              <Label className="text-sm font-semibold text-gray-900 mb-3 block">Benefícios</Label>
-              <div className="flex gap-3 mb-4">
-                <Input
-                  value={newBenefit}
-                  onChange={(e) => setNewBenefit(e.target.value)}
-                  placeholder="Novo benefício"
-                  className="h-12 border-gray-300 focus:border-brand-gold focus:ring-brand-gold shadow-sm"
-                  onKeyPress={(e) => e.key === 'Enter' && addArrayItem('benefits', newBenefit, setNewBenefit)}
-                />
-                <Button
-                  type="button"
-                  variant="outline"
-                  onClick={() => addArrayItem('benefits', newBenefit, setNewBenefit)}
-                  className="h-12 border-brand-gold text-brand-gold hover:bg-brand-gold hover:text-white shadow-sm"
-                >
-                  <Plus className="w-4 h-4" />
-                </Button>
-              </div>
-              <div className="flex flex-wrap gap-2">
-                {formData.benefits.map((benefit, index) => (
-                  <Badge key={index} variant="outline" className="border-green-200 text-green-700 bg-green-50 py-1 px-3">
-                    {benefit}
-                    <button
-                      onClick={() => removeArrayItem('benefits', index)}
-                      className="ml-2 text-green-400 hover:text-green-600"
+                {/* Industries */}
+                <div>
+                  <Label className="text-sm font-semibold text-gray-900 mb-3 block">Segmentos</Label>
+                  <div className="flex gap-3 mb-4">
+                    <Input
+                      value={newIndustry}
+                      onChange={(e) => setNewIndustry(e.target.value)}
+                      placeholder="Novo segmento"
+                      className="h-12 border-gray-300 focus:border-brand-gold focus:ring-brand-gold shadow-sm"
+                      onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), addArrayItem('industries', newIndustry, setNewIndustry))}
+                    />
+                    <Button
+                      type="button"
+                      variant="outline"
+                      onClick={() => addArrayItem('industries', newIndustry, setNewIndustry)}
+                      className="h-12 border-brand-gold text-brand-gold hover:bg-brand-gold hover:text-white shadow-sm"
                     >
-                      <X className="w-3 h-3" />
-                    </button>
-                  </Badge>
-                ))}
-              </div>
-            </div>
+                      <Plus className="w-4 h-4" />
+                    </Button>
+                  </div>
+                  <div className="flex flex-wrap gap-2">
+                    {industries.map((industry, index) => (
+                      <Badge key={index} variant="outline" className="border-purple-200 text-purple-700 bg-purple-50 py-1 px-3">
+                        {industry}
+                        <button
+                          type="button"
+                          onClick={() => removeArrayItem('industries', index)}
+                          className="ml-2 text-purple-400 hover:text-purple-600"
+                        >
+                          <X className="w-3 h-3" />
+                        </button>
+                      </Badge>
+                    ))}
+                  </div>
+                </div>
 
-            {/* Industries */}
-            <div>
-              <Label className="text-sm font-semibold text-gray-900 mb-3 block">Segmentos</Label>
-              <div className="flex gap-3 mb-4">
-                <Input
-                  value={newIndustry}
-                  onChange={(e) => setNewIndustry(e.target.value)}
-                  placeholder="Novo segmento"
-                  className="h-12 border-gray-300 focus:border-brand-gold focus:ring-brand-gold shadow-sm"
-                  onKeyPress={(e) => e.key === 'Enter' && addArrayItem('industries', newIndustry, setNewIndustry)}
-                />
-                <Button
-                  type="button"
-                  variant="outline"
-                  onClick={() => addArrayItem('industries', newIndustry, setNewIndustry)}
-                  className="h-12 border-brand-gold text-brand-gold hover:bg-brand-gold hover:text-white shadow-sm"
-                >
-                  <Plus className="w-4 h-4" />
-                </Button>
-              </div>
-              <div className="flex flex-wrap gap-2">
-                {formData.industries.map((industry, index) => (
-                  <Badge key={index} variant="outline" className="border-purple-200 text-purple-700 bg-purple-50 py-1 px-3">
-                    {industry}
-                    <button
-                      onClick={() => removeArrayItem('industries', index)}
-                      className="ml-2 text-purple-400 hover:text-purple-600"
-                    >
-                      <X className="w-3 h-3" />
-                    </button>
-                  </Badge>
-                ))}
-              </div>
-            </div>
+                {/* Images */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <FormField
+                    control={form.control}
+                    name="card_image_url"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel className="text-sm font-semibold text-gray-900">
+                          URL da Imagem do Card
+                        </FormLabel>
+                        <FormControl>
+                          <Input
+                            {...field}
+                            className="h-12 border-gray-300 focus:border-brand-gold focus:ring-brand-gold shadow-sm"
+                            placeholder="https://exemplo.com/imagem.jpg"
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
 
-            {/* Images */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div>
-                <Label htmlFor="card_image_url" className="text-sm font-semibold text-gray-900 mb-2 block">
-                  URL da Imagem do Card
-                </Label>
-                <Input
-                  id="card_image_url"
-                  value={formData.card_image_url}
-                  onChange={(e) => handleInputChange('card_image_url', e.target.value)}
-                  className="h-12 border-gray-300 focus:border-brand-gold focus:ring-brand-gold shadow-sm"
-                  placeholder="https://exemplo.com/imagem.jpg"
-                />
-              </div>
+                  <FormField
+                    control={form.control}
+                    name="hero_image_url"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel className="text-sm font-semibold text-gray-900">
+                          URL da Imagem Hero
+                        </FormLabel>
+                        <FormControl>
+                          <Input
+                            {...field}
+                            className="h-12 border-gray-300 focus:border-brand-gold focus:ring-brand-gold shadow-sm"
+                            placeholder="https://exemplo.com/hero.jpg"
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
 
-              <div>
-                <Label htmlFor="hero_image_url" className="text-sm font-semibold text-gray-900 mb-2 block">
-                  URL da Imagem Hero
-                </Label>
-                <Input
-                  id="hero_image_url"
-                  value={formData.hero_image_url}
-                  onChange={(e) => handleInputChange('hero_image_url', e.target.value)}
-                  className="h-12 border-gray-300 focus:border-brand-gold focus:ring-brand-gold shadow-sm"
-                  placeholder="https://exemplo.com/hero.jpg"
-                />
-              </div>
-            </div>
-
-            <div className="flex justify-end gap-4 pt-6 border-t border-gray-100">
-              <Button
-                variant="outline"
-                onClick={() => navigate('/admin/solutions')}
-                className="h-12 px-6 border-gray-300 text-gray-600 hover:bg-gray-50 shadow-sm"
-              >
-                Cancelar
-              </Button>
-              <Button
-                onClick={handleSubmit}
-                disabled={loading}
-                className="h-12 px-8 bg-gradient-to-r from-brand-gold to-brand-gold-light hover:from-brand-gold-dark hover:to-brand-gold text-white font-semibold shadow-lg hover:shadow-xl transition-all duration-200"
-              >
-                {loading ? 'Salvando...' : 'Salvar Alterações'}
-              </Button>
-            </div>
+                <div className="flex justify-end gap-4 pt-6 border-t border-gray-100">
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={() => navigate('/admin/solutions')}
+                    className="h-12 px-6 border-gray-300 text-gray-600 hover:bg-gray-50 shadow-sm"
+                  >
+                    Cancelar
+                  </Button>
+                  <Button
+                    type="submit"
+                    disabled={loading}
+                    className="h-12 px-8 bg-gradient-to-r from-brand-gold to-brand-gold-light hover:from-brand-gold-dark hover:to-brand-gold text-white font-semibold shadow-lg hover:shadow-xl transition-all duration-200"
+                  >
+                    {loading ? 'Salvando...' : 'Salvar Alterações'}
+                  </Button>
+                </div>
+              </form>
+            </Form>
           </CardContent>
         </Card>
       </div>
