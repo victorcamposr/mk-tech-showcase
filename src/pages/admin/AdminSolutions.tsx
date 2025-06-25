@@ -22,14 +22,14 @@ import {
   Trash2
 } from 'lucide-react';
 
-interface Solution {
+interface AdminSolution {
   id: string;
   title: string;
   description: string;
   features: string[];
   benefits: string[];
   industries: string[];
-  status: string;
+  status: 'active' | 'inactive';
   created_at: string;
   updated_at: string;
   key: string;
@@ -40,14 +40,14 @@ interface Solution {
 }
 
 const AdminSolutions = () => {
-  const [solutions, setSolutions] = useState<Solution[]>([]);
+  const [solutions, setSolutions] = useState<AdminSolution[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [modalOpen, setModalOpen] = useState(false);
-  const [selectedSolution, setSelectedSolution] = useState<Solution | null>(null);
+  const [selectedSolution, setSelectedSolution] = useState<AdminSolution | null>(null);
   const [modalMode, setModalMode] = useState<'create' | 'edit' | 'view'>('create');
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
-  const [solutionToDelete, setSolutionToDelete] = useState<Solution | null>(null);
+  const [solutionToDelete, setSolutionToDelete] = useState<AdminSolution | null>(null);
   const [deleteLoading, setDeleteLoading] = useState(false);
   const { toast } = useToast();
 
@@ -95,7 +95,7 @@ const AdminSolutions = () => {
     }
   };
 
-  const toggleSolutionStatus = async (solutionId: string, currentStatus: string) => {
+  const toggleSolutionStatus = async (solutionId: string, currentStatus: 'active' | 'inactive') => {
     const newStatus = currentStatus === 'active' ? 'inactive' : 'active';
     
     try {
@@ -167,19 +167,19 @@ const AdminSolutions = () => {
     setModalOpen(true);
   };
 
-  const handleViewSolution = (solution: Solution) => {
+  const handleViewSolution = (solution: AdminSolution) => {
     setSelectedSolution(solution);
     setModalMode('view');
     setModalOpen(true);
   };
 
-  const handleEditSolution = (solution: Solution) => {
+  const handleEditSolution = (solution: AdminSolution) => {
     setSelectedSolution(solution);
     setModalMode('edit');
     setModalOpen(true);
   };
 
-  const handleDeleteClick = (solution: Solution) => {
+  const handleDeleteClick = (solution: AdminSolution) => {
     setSolutionToDelete(solution);
     setDeleteDialogOpen(true);
   };

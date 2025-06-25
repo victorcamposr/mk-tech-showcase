@@ -18,22 +18,33 @@ interface Solution {
   status: 'active' | 'inactive';
   created_at: string;
   updated_at: string;
+  icon_name: string;
+  features: string[];
+  benefits: string[];
+  industries: string[];
+  card_image_url: string | null;
+  hero_image_url: string | null;
+  sort_order: number | null;
 }
 
 interface SolutionModalProps {
   isOpen: boolean;
   onClose: () => void;
   solution?: Solution | null;
-  onSolutionSaved: () => void;
+  onSuccess: () => void;
   mode: 'create' | 'edit' | 'view';
 }
 
-const SolutionModal = ({ isOpen, onClose, solution, onSolutionSaved, mode }: SolutionModalProps) => {
+const SolutionModal = ({ isOpen, onClose, solution, onSuccess, mode }: SolutionModalProps) => {
   const [formData, setFormData] = useState({
     title: '',
     description: '',
     key: '',
-    status: 'active' as 'active' | 'inactive'
+    status: 'active' as 'active' | 'inactive',
+    icon_name: 'Lightbulb',
+    features: [] as string[],
+    benefits: [] as string[],
+    industries: [] as string[]
   });
   const [loading, setLoading] = useState(false);
   const { toast } = useToast();
@@ -44,14 +55,22 @@ const SolutionModal = ({ isOpen, onClose, solution, onSolutionSaved, mode }: Sol
         title: solution.title,
         description: solution.description,
         key: solution.key,
-        status: solution.status
+        status: solution.status,
+        icon_name: solution.icon_name || 'Lightbulb',
+        features: solution.features || [],
+        benefits: solution.benefits || [],
+        industries: solution.industries || []
       });
     } else {
       setFormData({
         title: '',
         description: '',
         key: '',
-        status: 'active'
+        status: 'active',
+        icon_name: 'Lightbulb',
+        features: [],
+        benefits: [],
+        industries: []
       });
     }
   }, [solution, mode, isOpen]);
@@ -74,14 +93,20 @@ const SolutionModal = ({ isOpen, onClose, solution, onSolutionSaved, mode }: Sol
     setLoading(true);
     try {
       const solutionData = {
-        ...formData,
-        key: formData.key || generateKey(formData.title)
+        title: formData.title,
+        description: formData.description,
+        key: formData.key || generateKey(formData.title),
+        status: formData.status,
+        icon_name: formData.icon_name,
+        features: formData.features,
+        benefits: formData.benefits,
+        industries: formData.industries
       };
 
       if (mode === 'create') {
         const { error } = await supabase
           .from('solutions')
-          .insert([solutionData]);
+          .insert(solutionData);
 
         if (error) throw error;
 
@@ -103,7 +128,7 @@ const SolutionModal = ({ isOpen, onClose, solution, onSolutionSaved, mode }: Sol
         });
       }
 
-      onSolutionSaved();
+      onSuccess();
       onClose();
     } catch (error: any) {
       console.error('Error saving solution:', error);
@@ -128,7 +153,7 @@ const SolutionModal = ({ isOpen, onClose, solution, onSolutionSaved, mode }: Sol
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-2xl max-h-[90vh] overflow-y-auto fixed top-[50%] left-[50%] translate-x-[-50%] translate-y-[-50%] z-[100]">
+      <DialogContent className="sm:max-w-2xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>{getModalTitle()}</DialogTitle>
         </DialogHeader>
@@ -177,6 +202,17 @@ const SolutionModal = ({ isOpen, onClose, solution, onSolutionSaved, mode }: Sol
               rows={4}
               disabled={mode === 'view'}
               required
+            />
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="icon_name">Ícone</Label>
+            <Input
+              id="icon_name"
+              value={formData.icon_name}
+              onChange={(e) => setFormData(prev => ({ ...prev, icon_name: e.target.value }))}
+              placeholder="Nome do ícone (ex: Lightbulb)"
+              disabled={mode === 'view'}
             />
           </div>
 
