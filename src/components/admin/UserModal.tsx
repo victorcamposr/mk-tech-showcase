@@ -48,21 +48,40 @@ const UserModal = ({ isOpen, onClose, onSuccess, user, mode }: UserModalProps) =
     },
   });
 
+  // Função para registrar atividades
+  const logActivity = async (actionType: string, entityTitle: string, entityId?: string) => {
+    try {
+      await supabase
+        .from('admin_activities')
+        .insert([{
+          action_type: actionType,
+          entity_type: 'user',
+          entity_id: entityId,
+          entity_title: entityTitle,
+          user_name: 'Admin', // Temporário - em produção seria do perfil do usuário
+        }]);
+    } catch (error) {
+      console.error('Error logging activity:', error);
+    }
+  };
+
   // Reset form when user changes or modal opens
   useEffect(() => {
-    if (isOpen && user) {
-      console.log('Setting form values for user:', user);
-      form.reset({
-        name: user?.name || '',
-        email: user?.email || '',
-        role: user?.role || 'admin',
-      });
-    } else if (isOpen && !user) {
-      form.reset({
-        name: '',
-        email: '',
-        role: 'admin',
-      });
+    if (isOpen) {
+      if (user) {
+        console.log('Setting form values for user:', user);
+        form.reset({
+          name: user.name || '',
+          email: user.email || '',
+          role: user.role || 'admin',
+        });
+      } else {
+        form.reset({
+          name: '',
+          email: '',
+          role: 'admin',
+        });
+      }
     }
   }, [isOpen, user, form]);
 
@@ -78,12 +97,17 @@ const UserModal = ({ isOpen, onClose, onSuccess, user, mode }: UserModalProps) =
             name: data.name,
             email: data.email,
             role: data.role,
-            user_id: crypto.randomUUID(), // Temporário - em produção seria do auth
+            user_id: null, // Não usar foreign key constraint
             is_active: true,
-          }]);
+          }])
+          .select()
+          .single();
 
         console.log('Insert result:', result, 'Error:', error);
         if (error) throw error;
+        
+        // Registrar atividade
+        await logActivity('create', data.name, result.id);
         
         toast({
           title: "Usuário criado com sucesso!",
@@ -97,10 +121,15 @@ const UserModal = ({ isOpen, onClose, onSuccess, user, mode }: UserModalProps) =
             email: data.email,
             role: data.role,
           })
-          .eq('id', user.id);
+          .eq('id', user.id)
+          .select()
+          .single();
 
         console.log('Update result:', result, 'Error:', error);
         if (error) throw error;
+        
+        // Registrar atividade
+        await logActivity('update', data.name, user.id);
         
         toast({
           title: "Usuário atualizado com sucesso!",
@@ -124,7 +153,7 @@ const UserModal = ({ isOpen, onClose, onSuccess, user, mode }: UserModalProps) =
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-md">
+      <DialogContent className="sm:max-w-md fixed top-[50%] left-[50%] translate-x-[-50%] translate-y-[-50%]">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <User className="w-5 h-5 text-brand-gold" />

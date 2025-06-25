@@ -65,37 +65,57 @@ const SolutionModal = ({ isOpen, onClose, onSuccess, solution, mode }: SolutionM
     },
   });
 
+  // Função para registrar atividades
+  const logActivity = async (actionType: string, entityTitle: string, entityId?: string) => {
+    try {
+      await supabase
+        .from('admin_activities')
+        .insert([{
+          action_type: actionType,
+          entity_type: 'solution',
+          entity_id: entityId,
+          entity_title: entityTitle,
+          user_name: 'Admin', // Temporário - em produção seria do perfil do usuário
+        }]);
+    } catch (error) {
+      console.error('Error logging activity:', error);
+    }
+  };
+
   // Reset form when solution changes or modal opens
   useEffect(() => {
-    if (isOpen && solution) {
-      console.log('Setting form values for solution:', solution);
-      form.reset({
-        title: solution?.title || '',
-        description: solution?.description || '',
-        key: solution?.key || '',
-        icon_name: solution?.icon_name || '',
-        status: solution?.status || 'active',
-        features: Array.isArray(solution?.features) ? solution.features.join(', ') : '',
-        benefits: Array.isArray(solution?.benefits) ? solution.benefits.join(', ') : '',
-        industries: Array.isArray(solution?.industries) ? solution.industries.join(', ') : '',
-        card_image_url: solution?.card_image_url || '',
-        hero_image_url: solution?.hero_image_url || '',
-        sort_order: solution?.sort_order || 0,
-      });
-    } else if (isOpen && !solution) {
-      form.reset({
-        title: '',
-        description: '',
-        key: '',
-        icon_name: '',
-        status: 'active',
-        features: '',
-        benefits: '',
-        industries: '',
-        card_image_url: '',
-        hero_image_url: '',
-        sort_order: 0,
-      });
+    if (isOpen) {
+      if (solution) {
+        console.log('Setting form values for solution:', solution);
+        form.reset({
+          title: solution.title || '',
+          description: solution.description || '',
+          key: solution.key || '',
+          icon_name: solution.icon_name || '',
+          status: solution.status || 'active',
+          features: Array.isArray(solution.features) ? solution.features.join(', ') : (solution.features || ''),
+          benefits: Array.isArray(solution.benefits) ? solution.benefits.join(', ') : (solution.benefits || ''),
+          industries: Array.isArray(solution.industries) ? solution.industries.join(', ') : (solution.industries || ''),
+          card_image_url: solution.card_image_url || '',
+          hero_image_url: solution.hero_image_url || '',
+          sort_order: solution.sort_order || 0,
+        });
+      } else {
+        // Reset para valores padrão quando criando nova solução
+        form.reset({
+          title: '',
+          description: '',
+          key: '',
+          icon_name: '',
+          status: 'active',
+          features: '',
+          benefits: '',
+          industries: '',
+          card_image_url: '',
+          hero_image_url: '',
+          sort_order: 0,
+        });
+      }
     }
   }, [isOpen, solution, form]);
 
@@ -125,10 +145,15 @@ const SolutionModal = ({ isOpen, onClose, onSuccess, solution, mode }: SolutionM
             card_image_url: data.card_image_url || null,
             hero_image_url: data.hero_image_url || null,
             sort_order: data.sort_order,
-          }]);
+          }])
+          .select()
+          .single();
 
         console.log('Insert result:', result, 'Error:', error);
         if (error) throw error;
+        
+        // Registrar atividade
+        await logActivity('create', data.title, result.id);
         
         toast({
           title: "Solução criada com sucesso!",
@@ -150,10 +175,15 @@ const SolutionModal = ({ isOpen, onClose, onSuccess, solution, mode }: SolutionM
             hero_image_url: data.hero_image_url || null,
             sort_order: data.sort_order,
           })
-          .eq('id', solution.id);
+          .eq('id', solution.id)
+          .select()
+          .single();
 
         console.log('Update result:', result, 'Error:', error);
         if (error) throw error;
+        
+        // Registrar atividade
+        await logActivity('update', data.title, solution.id);
         
         toast({
           title: "Solução atualizada com sucesso!",
@@ -179,7 +209,7 @@ const SolutionModal = ({ isOpen, onClose, onSuccess, solution, mode }: SolutionM
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-4xl max-h-[90vh] overflow-y-auto">
+      <DialogContent className="sm:max-w-4xl max-h-[90vh] overflow-y-auto fixed top-[50%] left-[50%] translate-x-[-50%] translate-y-[-50%]">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <Lightbulb className="w-5 h-5 text-brand-gold" />

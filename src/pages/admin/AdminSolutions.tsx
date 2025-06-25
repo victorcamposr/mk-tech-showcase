@@ -78,10 +78,28 @@ const AdminSolutions = () => {
     }
   };
 
+  // Função para registrar atividades
+  const logActivity = async (actionType: string, entityTitle: string, entityId?: string) => {
+    try {
+      await supabase
+        .from('admin_activities')
+        .insert([{
+          action_type: actionType,
+          entity_type: 'solution',
+          entity_id: entityId,
+          entity_title: entityTitle,
+          user_name: 'Admin', // Temporário - em produção seria do perfil do usuário
+        }]);
+    } catch (error) {
+      console.error('Error logging activity:', error);
+    }
+  };
+
   const toggleSolutionStatus = async (solutionId: string, currentStatus: string) => {
     const newStatus = currentStatus === 'active' ? 'inactive' : 'active';
     
     try {
+      const solution = solutions.find(s => s.id === solutionId);
       const { error } = await supabase
         .from('solutions')
         .update({ status: newStatus })
@@ -90,6 +108,12 @@ const AdminSolutions = () => {
       if (error) throw error;
 
       await fetchSolutions();
+      
+      // Registrar atividade
+      if (solution) {
+        await logActivity('update', `${solution.title} (${newStatus === 'active' ? 'ativada' : 'desativada'})`, solutionId);
+      }
+      
       toast({
         title: "Status atualizado",
         description: `Solução ${newStatus === 'active' ? 'ativada' : 'desativada'} com sucesso.`,
@@ -114,6 +138,9 @@ const AdminSolutions = () => {
         .eq('id', solutionToDelete.id);
 
       if (error) throw error;
+
+      // Registrar atividade
+      await logActivity('delete', solutionToDelete.title, solutionToDelete.id);
 
       await fetchSolutions();
       toast({

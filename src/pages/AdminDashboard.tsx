@@ -1,105 +1,123 @@
 
 import { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
 import AdminLayout from '@/components/admin/AdminLayout';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
 import { supabase } from '@/integrations/supabase/client';
 import { 
   Users, 
   FileText, 
   Lightbulb, 
-  TrendingUp, 
+  Activity,
+  TrendingUp,
   Calendar,
-  BarChart3,
-  ArrowRight,
-  Plus,
-  Settings
+  Clock
 } from 'lucide-react';
 
+interface DashboardStats {
+  totalUsers: number;
+  totalPosts: number;
+  totalSolutions: number;
+  activeSolutions: number;
+  publishedPosts: number;
+  activeUsers: number;
+}
+
+interface RecentActivity {
+  id: string;
+  action_type: string;
+  entity_type: string;
+  entity_title: string;
+  user_name: string;
+  created_at: string;
+}
+
 const AdminDashboard = () => {
-  const [stats, setStats] = useState({
-    users: 0,
-    posts: 0,
-    solutions: 0,
+  const [stats, setStats] = useState<DashboardStats>({
+    totalUsers: 0,
+    totalPosts: 0,
+    totalSolutions: 0,
     activeSolutions: 0,
+    publishedPosts: 0,
+    activeUsers: 0,
   });
+  const [recentActivities, setRecentActivities] = useState<RecentActivity[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetchStats();
+    fetchDashboardData();
   }, []);
 
-  const fetchStats = async () => {
+  const fetchDashboardData = async () => {
     try {
-      const [usersResult, postsResult, solutionsResult] = await Promise.all([
-        supabase.from('admin_profiles').select('id', { count: 'exact' }),
-        supabase.from('blog_posts').select('id', { count: 'exact' }),
-        supabase.from('solutions').select('id, status', { count: 'exact' }),
+      // Buscar estatísticas
+      const [usersResult, postsResult, solutionsResult, activitiesResult] = await Promise.all([
+        supabase.from('admin_profiles').select('*'),
+        supabase.from('blog_posts').select('*'),
+        supabase.from('solutions').select('*'),
+        supabase.from('admin_activities').select('*').order('created_at', { ascending: false }).limit(10)
       ]);
 
-      const activeSolutions = solutionsResult.data?.filter(s => s.status === 'active').length || 0;
+      console.log('Dashboard data:', { usersResult, postsResult, solutionsResult, activitiesResult });
+
+      const users = usersResult.data || [];
+      const posts = postsResult.data || [];
+      const solutions = solutionsResult.data || [];
+      const activities = activitiesResult.data || [];
 
       setStats({
-        users: usersResult.count || 0,
-        posts: postsResult.count || 0,
-        solutions: solutionsResult.count || 0,
-        activeSolutions,
+        totalUsers: users.length,
+        totalPosts: posts.length,
+        totalSolutions: solutions.length,
+        activeSolutions: solutions.filter(s => s.status === 'active').length,
+        publishedPosts: posts.filter(p => p.status === 'published').length,
+        activeUsers: users.filter(u => u.is_active).length,
       });
+
+      setRecentActivities(activities);
     } catch (error) {
-      console.error('Error fetching stats:', error);
+      console.error('Error fetching dashboard data:', error);
     } finally {
       setLoading(false);
     }
   };
 
-  const quickActions = [
-    {
-      title: "Gerenciar Usuários",
-      description: "Criar e gerenciar administradores do sistema",
-      icon: Users,
-      link: "/admin/users",
-      color: "from-blue-500 to-blue-600",
-      count: stats.users,
-    },
-    {
-      title: "Criar Post",
-      description: "Adicionar novo artigo ao blog",
-      icon: FileText,
-      link: "/admin/blog",
-      color: "from-green-500 to-green-600",
-      count: stats.posts,
-    },
-    {
-      title: "Gerenciar Soluções",
-      description: "Administrar catálogo de soluções",
-      icon: Lightbulb,
-      link: "/admin/solutions",
-      color: "from-purple-500 to-purple-600",
-      count: stats.solutions,
-    },
-  ];
+  const formatDate = (dateString: string) => {
+    return new Date(dateString).toLocaleDateString('pt-BR', {
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
+    });
+  };
 
-  const recentActivities = [
-    {
-      type: "user",
-      message: "Novo administrador cadastrado",
-      time: "2 horas atrás",
-      icon: Users,
-    },
-    {
-      type: "post",
-      message: "Post 'Tecnologia no Varejo' publicado",
-      time: "5 horas atrás",
-      icon: FileText,
-    },
-    {
-      type: "solution",
-      message: "Solução 'PDV Frente de Caixa' atualizada",
-      time: "1 dia atrás",
-      icon: Lightbulb,
-    },
-  ];
+  const getActionColor = (action: string) => {
+    switch (action) {
+      case 'create': return 'bg-green-100 text-green-800';
+      case 'update': return 'bg-blue-100 text-blue-800';
+      case 'delete': return 'bg-red-100 text-red-800';
+      default: return 'bg-gray-100 text-gray-800';
+    }
+  };
+
+  const getActionText = (action: string) => {
+    switch (action) {
+      case 'create': return 'Criado';
+      case 'update': return 'Atualizado';
+      case 'delete': return 'Excluído';
+      default: return action;
+    }
+  };
+
+  const getEntityIcon = (entityType: string) => {
+    switch (entityType) {
+      case 'user': return <Users className="w-4 h-4" />;
+      case 'blog_post': return <FileText className="w-4 h-4" />;
+      case 'solution': return <Lightbulb className="w-4 h-4" />;
+      default: return <Activity className="w-4 h-4" />;
+    }
+  };
 
   if (loading) {
     return (
@@ -118,165 +136,118 @@ const AdminDashboard = () => {
     <AdminLayout>
       <div className="space-y-8">
         {/* Header */}
-        <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
-          <div>
-            <h1 className="text-3xl font-bold text-gray-900 flex items-center gap-3">
-              <BarChart3 className="w-8 h-8 text-brand-gold" />
-              Dashboard Administrativo
-            </h1>
-            <p className="text-gray-600 mt-2">
-              Bem-vindo ao painel de controle da MK Tecnologia
-            </p>
-          </div>
-          <div className="flex items-center gap-2 text-sm text-gray-500">
-            <Calendar className="w-4 h-4" />
-            {new Date().toLocaleDateString('pt-BR', {
-              weekday: 'long',
-              year: 'numeric',
-              month: 'long',
-              day: 'numeric'
-            })}
-          </div>
+        <div>
+          <h1 className="text-3xl font-bold text-gray-900 flex items-center gap-3">
+            <TrendingUp className="w-8 h-8 text-brand-gold" />
+            Dashboard Administrativo
+          </h1>
+          <p className="text-gray-600 mt-2">
+            Visão geral do sistema e atividades recentes
+          </p>
         </div>
 
         {/* Stats Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          <Card className="shadow-lg border-0 bg-gradient-to-br from-blue-50 to-blue-100 border-l-4 border-l-blue-500">
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-blue-600 text-sm font-medium">Administradores</p>
-                  <p className="text-3xl font-bold text-gray-900">{stats.users}</p>
-                </div>
-                <Users className="w-8 h-8 text-blue-500" />
-              </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <Card className="shadow-lg border-0 hover:shadow-xl transition-shadow">
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium text-gray-600">
+                Total de Usuários
+              </CardTitle>
+              <Users className="h-5 w-5 text-brand-gold" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold text-gray-900">{stats.totalUsers}</div>
+              <p className="text-xs text-green-600 mt-1">
+                {stats.activeUsers} ativos
+              </p>
             </CardContent>
           </Card>
 
-          <Card className="shadow-lg border-0 bg-gradient-to-br from-green-50 to-green-100 border-l-4 border-l-green-500">
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-green-600 text-sm font-medium">Posts do Blog</p>
-                  <p className="text-3xl font-bold text-gray-900">{stats.posts}</p>
-                </div>
-                <FileText className="w-8 h-8 text-green-500" />
-              </div>
+          <Card className="shadow-lg border-0 hover:shadow-xl transition-shadow">
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium text-gray-600">
+                Posts do Blog
+              </CardTitle>
+              <FileText className="h-5 w-5 text-brand-gold" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold text-gray-900">{stats.totalPosts}</div>
+              <p className="text-xs text-green-600 mt-1">
+                {stats.publishedPosts} publicados
+              </p>
             </CardContent>
           </Card>
 
-          <Card className="shadow-lg border-0 bg-gradient-to-br from-purple-50 to-purple-100 border-l-4 border-l-purple-500">
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-purple-600 text-sm font-medium">Soluções Total</p>
-                  <p className="text-3xl font-bold text-gray-900">{stats.solutions}</p>
-                </div>
-                <Lightbulb className="w-8 h-8 text-purple-500" />
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card className="shadow-lg border-0 bg-gradient-to-br from-brand-gold/20 to-brand-gold-light/20 border-l-4 border-l-brand-gold">
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-brand-gold-dark text-sm font-medium">Soluções Ativas</p>
-                  <p className="text-3xl font-bold text-gray-900">{stats.activeSolutions}</p>
-                </div>
-                <TrendingUp className="w-8 h-8 text-brand-gold" />
-              </div>
+          <Card className="shadow-lg border-0 hover:shadow-xl transition-shadow">
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium text-gray-600">
+                Soluções
+              </CardTitle>
+              <Lightbulb className="h-5 w-5 text-brand-gold" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold text-gray-900">{stats.totalSolutions}</div>
+              <p className="text-xs text-green-600 mt-1">
+                {stats.activeSolutions} ativas
+              </p>
             </CardContent>
           </Card>
         </div>
-
-        {/* Quick Actions */}
-        <Card className="shadow-xl border-0">
-          <CardHeader className="bg-gradient-to-r from-brand-gold/10 to-brand-gold-light/10">
-            <CardTitle className="flex items-center gap-2 text-xl">
-              <Settings className="w-6 h-6 text-brand-gold" />
-              Ações Rápidas
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="p-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {quickActions.map((action, index) => {
-                const IconComponent = action.icon;
-                return (
-                  <Link key={index} to={action.link} className="group">
-                    <div className={`p-6 rounded-xl bg-gradient-to-br ${action.color} text-white shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200`}>
-                      <div className="flex items-center justify-between mb-4">
-                        <IconComponent className="w-8 h-8" />
-                        <ArrowRight className="w-5 h-5 opacity-0 group-hover:opacity-100 transform translate-x-2 group-hover:translate-x-0 transition-all duration-200" />
-                      </div>
-                      <h3 className="text-lg font-semibold mb-2">{action.title}</h3>
-                      <p className="text-sm opacity-90 mb-3">{action.description}</p>
-                      <div className="flex items-center justify-between">
-                        <span className="text-2xl font-bold">{action.count}</span>
-                        <Plus className="w-5 h-5 opacity-75" />
-                      </div>
-                    </div>
-                  </Link>
-                );
-              })}
-            </div>
-          </CardContent>
-        </Card>
 
         {/* Recent Activities */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          <Card className="shadow-lg border-0">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <TrendingUp className="w-5 h-5 text-brand-gold" />
-                Atividades Recentes
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              {recentActivities.map((activity, index) => {
-                const IconComponent = activity.icon;
-                return (
-                  <div key={index} className="flex items-center gap-4 p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
-                    <div className="p-2 bg-white rounded-full shadow-sm">
-                      <IconComponent className="w-4 h-4 text-brand-gold" />
+        <Card className="shadow-lg border-0">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Activity className="w-5 h-5 text-brand-gold" />
+              Atividades Recentes
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            {recentActivities.length === 0 ? (
+              <div className="text-center py-8">
+                <Clock className="w-12 h-12 text-gray-300 mx-auto mb-4" />
+                <h3 className="text-lg font-medium text-gray-900 mb-2">
+                  Nenhuma atividade recente
+                </h3>
+                <p className="text-gray-600">
+                  As atividades do sistema aparecerão aqui conforme forem realizadas.
+                </p>
+              </div>
+            ) : (
+              <div className="space-y-4">
+                {recentActivities.map((activity) => (
+                  <div key={activity.id} className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+                    <div className="flex items-center space-x-3">
+                      <div className="p-2 bg-white rounded-full shadow-sm">
+                        {getEntityIcon(activity.entity_type)}
+                      </div>
+                      <div>
+                        <div className="flex items-center gap-2 mb-1">
+                          <span className="font-medium text-gray-900">
+                            {activity.entity_title}
+                          </span>
+                          <Badge className={getActionColor(activity.action_type)}>
+                            {getActionText(activity.action_type)}
+                          </Badge>
+                        </div>
+                        <p className="text-sm text-gray-600">
+                          {activity.entity_type === 'user' && 'Usuário'}
+                          {activity.entity_type === 'blog_post' && 'Post do blog'}
+                          {activity.entity_type === 'solution' && 'Solução'}
+                          {' • '}por {activity.user_name}
+                        </p>
+                      </div>
                     </div>
-                    <div className="flex-1">
-                      <p className="text-sm font-medium text-gray-900">{activity.message}</p>
-                      <p className="text-xs text-gray-500">{activity.time}</p>
+                    <div className="flex items-center text-sm text-gray-500">
+                      <Calendar className="w-4 h-4 mr-1" />
+                      {formatDate(activity.created_at)}
                     </div>
                   </div>
-                );
-              })}
-            </CardContent>
-          </Card>
-
-          <Card className="shadow-lg border-0">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <BarChart3 className="w-5 h-5 text-brand-gold" />
-                Resumo do Sistema
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="space-y-3">
-                <div className="flex items-center justify-between p-3 bg-blue-50 rounded-lg">
-                  <span className="text-sm font-medium text-gray-700">Taxa de Soluções Ativas</span>
-                  <span className="text-lg font-bold text-blue-600">
-                    {stats.solutions > 0 ? Math.round((stats.activeSolutions / stats.solutions) * 100) : 0}%
-                  </span>
-                </div>
-                <div className="flex items-center justify-between p-3 bg-green-50 rounded-lg">
-                  <span className="text-sm font-medium text-gray-700">Total de Conteúdo</span>
-                  <span className="text-lg font-bold text-green-600">{stats.posts + stats.solutions}</span>
-                </div>
-                <div className="flex items-center justify-between p-3 bg-purple-50 rounded-lg">
-                  <span className="text-sm font-medium text-gray-700">Administradores Ativos</span>
-                  <span className="text-lg font-bold text-purple-600">{stats.users}</span>
-                </div>
+                ))}
               </div>
-            </CardContent>
-          </Card>
-        </div>
+            )}
+          </CardContent>
+        </Card>
       </div>
     </AdminLayout>
   );
