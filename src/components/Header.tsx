@@ -2,7 +2,7 @@
 import { useState, useEffect } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Menu, X, MessageCircle, Sparkles, Zap, Home, User, Settings, Lightbulb, Grid3X3, Phone, ChevronDown, CreditCard, Coffee, QrCode, Smartphone, Truck, Link2, BarChart3, Bot, Receipt, Monitor, TrendingUp, Banknote, Building2, Tablet, Calculator, Fuel } from "lucide-react";
+import { Menu, X, MessageCircle, Sparkles, Zap, Home, User, Settings, Lightbulb, Grid3X3, Phone, ChevronDown, CreditCard, Coffee, QrCode, Smartphone, Truck, Link2, BarChart3, Bot, Receipt, Monitor, TrendingUp, Banknote, Building2, Tablet, Calculator, Fuel, BookOpen } from "lucide-react";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import CriticalImage from "@/components/CriticalImage";
 import { supabase } from '@/integrations/supabase/client';
@@ -91,6 +91,7 @@ const Header = () => {
   const menuItems = [
     { label: "Home", path: "/", icon: Home },
     { label: "Portfólio", path: "/portfolio", icon: Grid3X3 },
+    { label: "Blog", path: "/blog", icon: BookOpen },
     { label: "Sobre", path: "/sobre", icon: User },
     { label: "Contato", path: "/contato", icon: Phone },
   ];
@@ -137,12 +138,10 @@ const Header = () => {
               )}
             </Link>
             
-            {/* Soluções with Modern Dropdown */}
-            <div className="relative"
-                 onMouseEnter={() => setIsDropdownOpen(true)}
-                 onMouseLeave={() => setIsDropdownOpen(false)}>
+            {/* Soluções with Click Dropdown */}
+            <div className="relative">
               <button
-                onClick={() => navigate('/solucoes')}
+                onClick={() => setIsDropdownOpen(!isDropdownOpen)}
                 className={`relative px-6 py-3 rounded-xl text-sm font-semibold transition-all duration-300 group overflow-hidden ${
                   location.pathname.startsWith('/solucoes')
                     ? "text-brand-black bg-gradient-to-r from-brand-gold to-brand-gold-light shadow-lg shadow-brand-gold/30" 
