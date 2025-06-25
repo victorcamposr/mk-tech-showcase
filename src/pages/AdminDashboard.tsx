@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import AdminLayout from '@/components/admin/AdminLayout';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -236,7 +237,7 @@ const AdminDashboard = () => {
       title: 'Total de Usuários',
       value: stats.totalUsers,
       icon: Users,
-      gradient: 'from-blue-500 to-blue-600',
+      gradient: 'from-green-500 to-green-600',
       badgeValue: stats.inactiveUsers,
       badgeLabel: 'Inativos',
       badgeIcon: UserX,
@@ -246,7 +247,7 @@ const AdminDashboard = () => {
       title: 'Contatos Recebidos',
       value: stats.totalContacts,
       icon: MessageSquare,
-      gradient: 'from-green-500 to-green-600',
+      gradient: 'from-red-500 to-red-600',
       badgeValue: stats.unreadContacts,
       badgeLabel: 'Não Lidos',
       badgeIcon: MessageSquare,
@@ -256,7 +257,7 @@ const AdminDashboard = () => {
       title: 'Posts do Blog',
       value: stats.totalPosts,
       icon: FileText,
-      gradient: 'from-purple-500 to-purple-600',
+      gradient: 'from-blue-500 to-blue-600',
       badgeValue: stats.draftPosts,
       badgeLabel: 'Rascunhos',
       badgeIcon: BookOpen,
