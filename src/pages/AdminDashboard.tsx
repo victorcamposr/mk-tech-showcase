@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import AdminLayout from '@/components/admin/AdminLayout';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -59,7 +60,8 @@ const AdminDashboard = () => {
         activitiesResult,
         usersResult,
         postsResult,
-        solutionsResult
+        solutionsResult,
+        contactsResult
       ] = await Promise.all([
         supabase
           .from('admin_activities')
@@ -74,7 +76,10 @@ const AdminDashboard = () => {
           .select('status'),
         supabase
           .from('solutions')
-          .select('status')
+          .select('status'),
+        supabase
+          .from('contacts')
+          .select('read')
       ]);
 
       // Processar atividades
@@ -94,6 +99,10 @@ const AdminDashboard = () => {
       const solutions = solutionsResult.data || [];
       const activeSolutions = solutions.filter(solution => solution.status === 'active').length;
 
+      // Processar estatísticas de contatos
+      const contacts = contactsResult.data || [];
+      const unreadContacts = contacts.filter(contact => !contact.read).length;
+
       setStats({
         totalUsers: users.length,
         activeUsers,
@@ -101,8 +110,8 @@ const AdminDashboard = () => {
         publishedPosts,
         totalSolutions: solutions.length,
         activeSolutions,
-        totalContacts: 0, // Will implement contact system next
-        unreadContacts: 0, // Will implement contact system next
+        totalContacts: contacts.length,
+        unreadContacts,
       });
 
     } catch (error) {

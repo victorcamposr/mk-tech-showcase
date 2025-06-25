@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import SimpleIcon from "@/components/SimpleIcon";
+import { supabase } from "@/integrations/supabase/client";
 
 interface FormData {
   name: string;
@@ -15,7 +16,7 @@ interface FormData {
   phone: string;
   subject: string;
   message: string;
-  honeypot?: string; // Campo para detectar bots
+  honeypot?: string;
 }
 
 interface ContactFormProps {
@@ -54,6 +55,28 @@ const ContactForm = ({ onSuccess }: ContactFormProps) => {
     console.log('Todos os campos obrigatórios estão preenchidos');
 
     try {
+      // Primeiro, salvar no banco de dados
+      console.log('Salvando contato no banco de dados...');
+      const { error: dbError } = await supabase
+        .from('contacts')
+        .insert([
+          {
+            name: data.name,
+            email: data.email,
+            phone: data.phone,
+            company: data.company || null,
+            message: `Assunto: ${data.subject}\n\nMensagem:\n${data.message}`,
+          }
+        ]);
+
+      if (dbError) {
+        console.error('❌ Erro ao salvar no banco:', dbError);
+        throw new Error('Erro ao salvar mensagem no sistema');
+      }
+
+      console.log('✅ Contato salvo no banco com sucesso!');
+
+      // Depois, enviar por email via Web3Forms
       const requestBody = {
         access_key: 'd4fff2da-a30b-487a-b131-e858f54b1c95',
         name: data.name,
@@ -67,9 +90,7 @@ const ContactForm = ({ onSuccess }: ContactFormProps) => {
         redirect: false
       };
 
-      console.log('Corpo da requisição para Web3Forms:', requestBody);
-      console.log('Enviando requisição para Web3Forms...');
-
+      console.log('Enviando email via Web3Forms...');
       const response = await fetch('https://api.web3forms.com/submit', {
         method: 'POST',
         headers: {
@@ -80,13 +101,11 @@ const ContactForm = ({ onSuccess }: ContactFormProps) => {
       });
 
       console.log('Status da resposta:', response.status);
-      console.log('Headers da resposta:', Object.fromEntries(response.headers.entries()));
-
       const result = await response.json();
       console.log('Dados da resposta:', result);
 
       if (response.ok && result.success) {
-        console.log('✅ Envio bem-sucedido!');
+        console.log('✅ Email enviado com sucesso!');
         onSuccess();
         toast({
           title: "Mensagem enviada!",
@@ -95,19 +114,16 @@ const ContactForm = ({ onSuccess }: ContactFormProps) => {
         });
         reset();
       } else {
-        console.error('❌ Erro na resposta da API:', result);
+        console.error('❌ Erro no envio do email:', result);
         
-        // Tratamento específico para erro de spam
-        if (result.message && result.message.includes('spam')) {
-          toast({
-            title: "Mensagem bloqueada",
-            description: "Sua mensagem foi identificada como spam. Tente reformular ou entre em contato pelo WhatsApp.",
-            variant: "destructive",
-            duration: 7000,
-          });
-        } else {
-          throw new Error(result.message || 'Erro no envio');
-        }
+        // Mesmo que o email falhe, o contato foi salvo no banco
+        toast({
+          title: "Mensagem recebida!",
+          description: "Sua mensagem foi salva em nosso sistema. Entraremos em contato em breve.",
+          duration: 5000,
+        });
+        onSuccess();
+        reset();
       }
     } catch (error) {
       console.error('❌ Erro durante o envio:', error);

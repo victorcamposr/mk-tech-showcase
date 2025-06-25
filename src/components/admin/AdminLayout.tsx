@@ -1,137 +1,145 @@
 
-import { ReactNode, useState } from 'react';
+import { useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { Button } from '@/components/ui/button';
 import { useAuth } from '@/hooks/useAuth';
+import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
 import { 
   LayoutDashboard, 
-  Users, 
   FileText, 
+  Users, 
+  Lightbulb, 
   LogOut, 
   Menu, 
   X,
-  Lightbulb,
-  Home
+  Mail
 } from 'lucide-react';
-import CriticalImage from '@/components/CriticalImage';
 
 interface AdminLayoutProps {
-  children: ReactNode;
+  children: React.ReactNode;
 }
 
 const AdminLayout = ({ children }: AdminLayoutProps) => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const { signOut, user } = useAuth();
   const location = useLocation();
   const navigate = useNavigate();
+  const { signOut } = useAuth();
   const { toast } = useToast();
 
-  const handleSignOut = async () => {
+  const handleLogout = async () => {
     try {
       await signOut();
-      toast({
-        title: "Logout realizado com sucesso!",
-        description: "Você foi desconectado do sistema.",
-      });
       navigate('/admin');
-    } catch (error) {
       toast({
+        title: "Logout realizado",
+        description: "Você foi desconectado com sucesso.",
+      });
+    } catch (error) {
+      console.error('Error during logout:', error);
+      toast({
+        title: "Erro no logout",
+        description: "Ocorreu um erro ao fazer logout.",
         variant: "destructive",
-        title: "Erro ao fazer logout",
-        description: "Tente novamente.",
       });
     }
   };
 
-  const menuItems = [
-    { label: 'Dashboard', path: '/admin/dashboard', icon: LayoutDashboard },
-    { label: 'Usuários', path: '/admin/users', icon: Users },
-    { label: 'Blog', path: '/admin/blog', icon: FileText },
-    { label: 'Soluções', path: '/admin/solutions', icon: Lightbulb },
+  const navigation = [
+    { name: 'Dashboard', href: '/admin/dashboard', icon: LayoutDashboard },
+    { name: 'Blog', href: '/admin/blog', icon: FileText },
+    { name: 'Soluções', href: '/admin/solutions', icon: Lightbulb },
+    { name: 'Usuários', href: '/admin/users', icon: Users },
+    { name: 'Contatos', href: '/admin/contacts', icon: Mail },
   ];
-
-  const isActive = (path: string) => location.pathname === path;
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Mobile menu button */}
-      <div className="lg:hidden fixed top-4 left-4 z-50">
-        <Button
-          onClick={() => setSidebarOpen(!sidebarOpen)}
-          className="bg-white shadow-lg hover:shadow-xl text-gray-900 border border-gray-200"
-          size="sm"
-        >
-          {sidebarOpen ? <X className="w-4 h-4" /> : <Menu className="w-4 h-4" />}
-        </Button>
+      {/* Mobile sidebar */}
+      <div className={`fixed inset-0 flex z-40 md:hidden ${sidebarOpen ? '' : 'pointer-events-none'}`}>
+        <div className={`fixed inset-0 bg-gray-600 bg-opacity-75 transition-opacity ${sidebarOpen ? 'opacity-100' : 'opacity-0'}`} onClick={() => setSidebarOpen(false)} />
+        <div className={`relative flex-1 flex flex-col max-w-xs w-full bg-white transform transition-transform ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'}`}>
+          <div className="absolute top-0 right-0 -mr-12 pt-2">
+            <button
+              className="ml-1 flex items-center justify-center h-10 w-10 rounded-full focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white"
+              onClick={() => setSidebarOpen(false)}
+            >
+              <X className="h-6 w-6 text-white" />
+            </button>
+          </div>
+          <div className="flex-1 h-0 pt-5 pb-4 overflow-y-auto">
+            <div className="flex-shrink-0 flex items-center px-4">
+              <h1 className="text-xl font-bold text-brand-gold">MK Admin</h1>
+            </div>
+            <nav className="mt-5 px-2 space-y-1">
+              {navigation.map((item) => {
+                const Icon = item.icon;
+                const isActive = location.pathname === item.href;
+                return (
+                  <Link
+                    key={item.name}
+                    to={item.href}
+                    className={`group flex items-center px-2 py-2 text-base font-medium rounded-md transition-colors ${
+                      isActive
+                        ? 'bg-brand-gold text-brand-black'
+                        : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
+                    }`}
+                    onClick={() => setSidebarOpen(false)}
+                  >
+                    <Icon className="mr-4 h-6 w-6" />
+                    {item.name}
+                  </Link>
+                );
+              })}
+            </nav>
+          </div>
+          <div className="flex-shrink-0 flex border-t border-gray-200 p-4">
+            <Button
+              variant="ghost"
+              onClick={handleLogout}
+              className="w-full justify-start text-gray-600 hover:text-gray-900"
+            >
+              <LogOut className="mr-2 h-4 w-4" />
+              Sair
+            </Button>
+          </div>
+        </div>
       </div>
 
-      {/* Sidebar */}
-      <div className={`fixed inset-y-0 left-0 z-40 w-64 bg-white shadow-xl border-r border-gray-200 transform transition-transform duration-300 ease-in-out ${
-        sidebarOpen ? 'translate-x-0' : '-translate-x-full'
-      } lg:translate-x-0`}>
-        <div className="flex flex-col h-full">
-          {/* Header */}
-          <div className="p-6 border-b border-gray-200 bg-gradient-to-r from-brand-gold/5 to-brand-gold-light/5">
-            <Link to="/" className="flex items-center space-x-3 group">
-              <CriticalImage 
-                src="/lovable-uploads/894786af-af73-492e-ae6a-d8a39e0ac4cb.png" 
-                alt="MK Tecnologia" 
-                className="h-10 w-auto"
-                width={40}
-                height={40}
-              />
-              <div>
-                <h2 className="text-gray-900 font-bold text-lg">Admin Panel</h2>
-                <p className="text-brand-gold text-sm font-medium">MK Tecnologia</p>
-              </div>
-            </Link>
+      {/* Static sidebar for desktop */}
+      <div className="hidden md:flex md:w-64 md:flex-col md:fixed md:inset-y-0">
+        <div className="flex-1 flex flex-col min-h-0 border-r border-gray-200 bg-white">
+          <div className="flex-1 flex flex-col pt-5 pb-4 overflow-y-auto">
+            <div className="flex items-center flex-shrink-0 px-4">
+              <h1 className="text-xl font-bold text-brand-gold">MK Admin</h1>
+            </div>
+            <nav className="mt-5 flex-1 px-2 space-y-1">
+              {navigation.map((item) => {
+                const Icon = item.icon;
+                const isActive = location.pathname === item.href;
+                return (
+                  <Link
+                    key={item.name}
+                    to={item.href}
+                    className={`group flex items-center px-2 py-2 text-sm font-medium rounded-md transition-colors ${
+                      isActive
+                        ? 'bg-brand-gold text-brand-black'
+                        : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
+                    }`}
+                  >
+                    <Icon className="mr-3 h-5 w-5" />
+                    {item.name}
+                  </Link>
+                );
+              })}
+            </nav>
           </div>
-
-          {/* Navigation */}
-          <nav className="flex-1 p-4 space-y-2">
-            {menuItems.map((item) => {
-              const IconComponent = item.icon;
-              return (
-                <Link
-                  key={item.path}
-                  to={item.path}
-                  className={`flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all duration-200 ${
-                    isActive(item.path)
-                      ? 'bg-gradient-to-r from-brand-gold to-brand-gold-light text-brand-black shadow-lg'
-                      : 'text-gray-700 hover:text-brand-gold hover:bg-brand-gold/5'
-                  }`}
-                  onClick={() => setSidebarOpen(false)}
-                >
-                  <IconComponent className="w-5 h-5" />
-                  {item.label}
-                </Link>
-              );
-            })}
-
-            <div className="pt-4 mt-4 border-t border-gray-200">
-              <Link
-                to="/"
-                className="flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-gray-700 hover:text-brand-gold hover:bg-brand-gold/5 transition-all duration-200"
-                onClick={() => setSidebarOpen(false)}
-              >
-                <Home className="w-5 h-5" />
-                Voltar ao Site
-              </Link>
-            </div>
-          </nav>
-
-          {/* User info and logout */}
-          <div className="p-4 border-t border-gray-200 bg-gray-50">
-            <div className="mb-4 p-3 bg-white rounded-lg border border-gray-200">
-              <p className="text-gray-900 text-sm font-medium truncate">{user?.email}</p>
-              <p className="text-brand-gold text-xs font-medium">Administrador</p>
-            </div>
+          <div className="flex-shrink-0 flex border-t border-gray-200 p-4">
             <Button
-              onClick={handleSignOut}
-              className="w-full bg-red-500 hover:bg-red-600 text-white flex items-center gap-2 shadow-md hover:shadow-lg transition-all duration-200"
+              variant="ghost"
+              onClick={handleLogout}
+              className="w-full justify-start text-gray-600 hover:text-gray-900"
             >
-              <LogOut className="w-4 h-4" />
+              <LogOut className="mr-2 h-4 w-4" />
               Sair
             </Button>
           </div>
@@ -139,19 +147,24 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
       </div>
 
       {/* Main content */}
-      <div className="lg:ml-64">
-        <main className="p-6 lg:p-8 min-h-screen">
-          {children}
+      <div className="md:pl-64 flex flex-col flex-1">
+        <div className="sticky top-0 z-10 md:hidden pl-1 pt-1 sm:pl-3 sm:pt-3 bg-gray-50">
+          <button
+            type="button"
+            className="-ml-0.5 -mt-0.5 h-12 w-12 inline-flex items-center justify-center rounded-md text-gray-500 hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-brand-gold"
+            onClick={() => setSidebarOpen(true)}
+          >
+            <Menu className="h-6 w-6" />
+          </button>
+        </div>
+        <main className="flex-1">
+          <div className="py-6">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+              {children}
+            </div>
+          </div>
         </main>
       </div>
-
-      {/* Overlay for mobile */}
-      {sidebarOpen && (
-        <div 
-          className="fixed inset-0 bg-black/50 z-30 lg:hidden"
-          onClick={() => setSidebarOpen(false)}
-        />
-      )}
     </div>
   );
 };
