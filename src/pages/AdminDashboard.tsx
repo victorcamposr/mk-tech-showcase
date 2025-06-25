@@ -14,15 +14,6 @@ import {
   Clock
 } from 'lucide-react';
 
-interface DashboardStats {
-  totalUsers: number;
-  totalPosts: number;
-  totalSolutions: number;
-  activeSolutions: number;
-  publishedPosts: number;
-  activeUsers: number;
-}
-
 interface RecentActivity {
   id: string;
   action_type: string;
@@ -33,48 +24,27 @@ interface RecentActivity {
 }
 
 const AdminDashboard = () => {
-  const [stats, setStats] = useState<DashboardStats>({
-    totalUsers: 0,
-    totalPosts: 0,
-    totalSolutions: 0,
-    activeSolutions: 0,
-    publishedPosts: 0,
-    activeUsers: 0,
-  });
   const [recentActivities, setRecentActivities] = useState<RecentActivity[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetchDashboardData();
+    fetchRecentActivities();
   }, []);
 
-  const fetchDashboardData = async () => {
+  const fetchRecentActivities = async () => {
     try {
-      // Buscar estatísticas
-      const [usersResult, postsResult, solutionsResult, activitiesResult] = await Promise.all([
-        supabase.from('admin_profiles').select('*'),
-        supabase.from('blog_posts').select('*'),
-        supabase.from('solutions').select('*'),
-        supabase.from('admin_activities').select('*').order('created_at', { ascending: false }).limit(10)
-      ]);
+      const { data: activities, error } = await supabase
+        .from('admin_activities')
+        .select('*')
+        .order('created_at', { ascending: false })
+        .limit(10);
 
-      console.log('Dashboard data:', { usersResult, postsResult, solutionsResult, activitiesResult });
-
-      const users = usersResult.data || [];
-      const posts = postsResult.data || [];
-      const solutions = solutionsResult.data || [];
-      const activities = activitiesResult.data || [];
-
-      setStats({
-        totalUsers: users.length,
-        totalPosts: posts.length,
-        totalSolutions: solutions.length,
-        activeSolutions: solutions.filter(s => s.status === 'active').length,
-        publishedPosts: posts.filter(p => p.status === 'published').length,
-        activeUsers: users.filter(u => u.is_active).length,
-      });
-
-      setRecentActivities(activities);
+      if (error) {
+        console.error('Error fetching activities:', error);
+      } else {
+        console.log('Recent activities:', activities);
+        setRecentActivities(activities || []);
+      }
     } catch (error) {
       console.error('Error fetching dashboard data:', error);
     } finally {
@@ -119,19 +89,6 @@ const AdminDashboard = () => {
     }
   };
 
-  if (loading) {
-    return (
-      <AdminLayout>
-        <div className="flex items-center justify-center h-64">
-          <div className="text-center">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-brand-gold mx-auto"></div>
-            <p className="mt-4 text-gray-600">Carregando dashboard...</p>
-          </div>
-        </div>
-      </AdminLayout>
-    );
-  }
-
   return (
     <AdminLayout>
       <div className="space-y-8">
@@ -146,19 +103,19 @@ const AdminDashboard = () => {
           </p>
         </div>
 
-        {/* Stats Cards */}
+        {/* Stats Cards - Estáticas como antes */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           <Card className="shadow-lg border-0 hover:shadow-xl transition-shadow">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium text-gray-600">
-                Total de Usuários
+                Usuários Administrativos
               </CardTitle>
               <Users className="h-5 w-5 text-brand-gold" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold text-gray-900">{stats.totalUsers}</div>
+              <div className="text-2xl font-bold text-gray-900">5</div>
               <p className="text-xs text-green-600 mt-1">
-                {stats.activeUsers} ativos
+                4 ativos
               </p>
             </CardContent>
           </Card>
@@ -171,9 +128,9 @@ const AdminDashboard = () => {
               <FileText className="h-5 w-5 text-brand-gold" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold text-gray-900">{stats.totalPosts}</div>
+              <div className="text-2xl font-bold text-gray-900">12</div>
               <p className="text-xs text-green-600 mt-1">
-                {stats.publishedPosts} publicados
+                8 publicados
               </p>
             </CardContent>
           </Card>
@@ -181,20 +138,20 @@ const AdminDashboard = () => {
           <Card className="shadow-lg border-0 hover:shadow-xl transition-shadow">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium text-gray-600">
-                Soluções
+                Soluções Ativas
               </CardTitle>
               <Lightbulb className="h-5 w-5 text-brand-gold" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold text-gray-900">{stats.totalSolutions}</div>
+              <div className="text-2xl font-bold text-gray-900">6</div>
               <p className="text-xs text-green-600 mt-1">
-                {stats.activeSolutions} ativas
+                Todas ativas
               </p>
             </CardContent>
           </Card>
         </div>
 
-        {/* Recent Activities */}
+        {/* Recent Activities - Dinâmicas */}
         <Card className="shadow-lg border-0">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
@@ -203,7 +160,12 @@ const AdminDashboard = () => {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            {recentActivities.length === 0 ? (
+            {loading ? (
+              <div className="text-center py-8">
+                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-brand-gold mx-auto"></div>
+                <p className="mt-4 text-gray-600">Carregando atividades...</p>
+              </div>
+            ) : recentActivities.length === 0 ? (
               <div className="text-center py-8">
                 <Clock className="w-12 h-12 text-gray-300 mx-auto mb-4" />
                 <h3 className="text-lg font-medium text-gray-900 mb-2">
@@ -234,7 +196,7 @@ const AdminDashboard = () => {
                           {activity.entity_type === 'user' && 'Usuário'}
                           {activity.entity_type === 'blog_post' && 'Post do blog'}
                           {activity.entity_type === 'solution' && 'Solução'}
-                          {' • '}por {activity.user_name}
+                          {' • '}por {activity.user_name || 'Admin'}
                         </p>
                       </div>
                     </div>

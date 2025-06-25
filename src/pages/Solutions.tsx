@@ -1,4 +1,6 @@
+
 import { useLocation } from "react-router-dom";
+import { useEffect, useState } from "react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -10,24 +12,72 @@ import { ScrollReveal } from "@/components/ScrollReveal";
 import { Award } from "lucide-react";
 import { specificSolutions, SOLUTION_IMAGES } from "@/data/solutions";
 import { getWhatsAppMessage } from "@/utils/whatsapp";
+import { supabase } from "@/integrations/supabase/client";
 import SolutionHero from "@/components/solutions/SolutionHero";
 import SolutionBenefits from "@/components/solutions/SolutionBenefits";
 import SolutionCard from "@/components/solutions/SolutionCard";
 import SolutionCTA from "@/components/solutions/SolutionCTA";
 import CardMachineOperators from "@/components/solutions/CardMachineOperators";
 
+interface DatabaseSolution {
+  id: string;
+  key: string;
+  title: string;
+  description: string;
+  features: string[];
+  benefits: string[];
+  industries: string[];
+  icon_name: string;
+  card_image_url: string | null;
+  hero_image_url: string | null;
+  status: string;
+}
+
 const Solutions = () => {
   const location = useLocation();
+  const [dbSolutions, setDbSolutions] = useState<DatabaseSolution[]>([]);
+  const [loading, setLoading] = useState(true);
   
+  // Buscar soluções do banco de dados
+  useEffect(() => {
+    const fetchSolutions = async () => {
+      try {
+        const { data, error } = await supabase
+          .from('solutions')
+          .select('*')
+          .eq('status', 'active')
+          .order('sort_order', { ascending: true });
+
+        if (error) {
+          console.error('Error fetching solutions:', error);
+        } else {
+          console.log('Fetched solutions from database:', data);
+          setDbSolutions(data || []);
+        }
+      } catch (error) {
+        console.error('Error fetching solutions:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchSolutions();
+  }, []);
+
   // Detectar qual solução específica está sendo visualizada
   const currentPath = location.pathname;
   const isSpecificSolution = currentPath.includes('/solucoes/');
   const solutionKey = currentPath.split('/solucoes/')[1] as keyof typeof specificSolutions;
-  const currentSolution = specificSolutions[solutionKey];
+  
+  // Buscar solução específica do banco primeiro, depois fallback para dados estáticos
+  const currentSolution = dbSolutions.find(sol => sol.key === solutionKey) || specificSolutions[solutionKey];
 
   // Se for uma solução específica, renderizar conteúdo personalizado
   if (isSpecificSolution && currentSolution) {
-    const IconComponent = currentSolution.icon;
+    // Para soluções do banco, usar ícone padrão ou mapear
+    const IconComponent = 'icon_name' in currentSolution 
+      ? specificSolutions[solutionKey]?.icon || Award
+      : currentSolution.icon;
     
     return (
       <div className="min-h-screen bg-background">
@@ -58,7 +108,12 @@ const Solutions = () => {
                 {/* Imagem demonstrativa */}
                 <div className="max-w-4xl mx-auto mb-8 relative">
                   <img 
-                    src={SOLUTION_IMAGES.cards[solutionKey] || SOLUTION_IMAGES.cards['pdv-frente-caixa']} 
+                    src={
+                      ('card_image_url' in currentSolution && currentSolution.card_image_url) ||
+                      ('hero_image_url' in currentSolution && currentSolution.hero_image_url) ||
+                      SOLUTION_IMAGES.cards[solutionKey] || 
+                      SOLUTION_IMAGES.cards['pdv-frente-caixa']
+                    } 
                     alt={`Demonstração ${currentSolution.title}`}
                     className="w-full h-64 md:h-80 object-cover bg-gray-50 rounded-xl shadow-2xl"
                   />
@@ -184,21 +239,45 @@ const Solutions = () => {
             </div>
           </ScrollReveal>
 
-          {/* Soluções do Dropdown */}
+          {/* Soluções - Prioritizar banco de dados, fallback para estáticas */}
           <ScrollReveal animation="fade-up" delay={200}>
             <div className="mb-16">
               <h2 className="text-3xl font-bold text-brand-black text-center mb-12">
                 Todas as Nossas <span className="text-brand-gold">Soluções</span>
               </h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                {Object.entries(specificSolutions).map(([key, solution]) => (
-                  <SolutionCard 
-                    key={key} 
-                    solutionKey={key} 
-                    solution={solution} 
-                  />
-                ))}
-              </div>
+              
+              {loading ? (
+                <div className="text-center py-8">
+                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-brand-gold mx-auto"></div>
+                  <p className="mt-4 text-gray-600">Carregando soluções...</p>
+                </div>
+              ) : (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                  {/* Exibir soluções do banco primeiro */}
+                  {dbSolutions.map((solution) => (
+                    <SolutionCard 
+                      key={solution.id} 
+                      solutionKey={solution.key} 
+                      solution={{
+                        title: solution.title,
+                        icon: specificSolutions[solution.key as keyof typeof specificSolutions]?.icon || Award,
+                        description: solution.description,
+                        features: solution.features,
+                        industries: solution.industries
+                      }} 
+                    />
+                  ))}
+                  
+                  {/* Fallback para soluções estáticas que não estão no banco */}
+                  {dbSolutions.length === 0 && Object.entries(specificSolutions).map(([key, solution]) => (
+                    <SolutionCard 
+                      key={key} 
+                      solutionKey={key} 
+                      solution={solution} 
+                    />
+                  ))}
+                </div>
+              )}
             </div>
           </ScrollReveal>
 

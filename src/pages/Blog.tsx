@@ -31,54 +31,87 @@ const Blog = () => {
     const fetchPosts = async () => {
       console.log('Fetching blog posts...');
       
-      // Primeiro buscar os posts
-      const { data: postsData, error: postsError } = await supabase
-        .from('blog_posts')
-        .select('*')
-        .eq('status', 'published')
-        .order('published_at', { ascending: false });
+      try {
+        // Buscar posts publicados
+        const { data: postsData, error: postsError } = await supabase
+          .from('blog_posts')
+          .select('*')
+          .eq('status', 'published')
+          .order('published_at', { ascending: false });
 
-      if (postsError) {
-        console.error('Error fetching blog posts:', postsError);
-        setLoading(false);
-        return;
-      }
+        if (postsError) {
+          console.error('Error fetching blog posts:', postsError);
+          setPosts([]);
+          setLoading(false);
+          return;
+        }
 
-      if (!postsData || postsData.length === 0) {
-        console.log('No blog posts found');
+        if (!postsData || postsData.length === 0) {
+          console.log('No blog posts found');
+          setPosts([]);
+          setLoading(false);
+          return;
+        }
+
+        console.log('Found posts:', postsData);
+
+        // Buscar autores para os posts que têm author_id
+        const postsWithAuthors: BlogPost[] = [];
+        
+        for (const post of postsData) {
+          let authorName = 'MK Tecnologia'; // Nome padrão
+          
+          if (post.author_id) {
+            console.log('Looking for author with ID:', post.author_id);
+            
+            // Tentar buscar pelo user_id primeiro
+            const { data: authorByUserId } = await supabase
+              .from('admin_profiles')
+              .select('name')
+              .eq('user_id', post.author_id)
+              .maybeSingle();
+            
+            if (authorByUserId) {
+              authorName = authorByUserId.name;
+              console.log('Found author by user_id:', authorName);
+            } else {
+              // Se não encontrar pelo user_id, tentar pelo id direto
+              const { data: authorById } = await supabase
+                .from('admin_profiles')
+                .select('name')
+                .eq('id', post.author_id)
+                .maybeSingle();
+              
+              if (authorById) {
+                authorName = authorById.name;
+                console.log('Found author by id:', authorName);
+              } else {
+                console.log('No author found for ID:', post.author_id);
+              }
+            }
+          }
+
+          postsWithAuthors.push({
+            id: post.id,
+            title: post.title,
+            slug: post.slug,
+            excerpt: post.excerpt || '',
+            featured_image: post.featured_image || '',
+            tags: post.tags || [],
+            published_at: post.published_at || post.created_at,
+            author_id: post.author_id || '',
+            author_name: authorName
+          });
+        }
+
+        console.log('Posts with authors:', postsWithAuthors);
+        setPosts(postsWithAuthors);
+      } catch (error) {
+        console.error('Error in fetchPosts:', error);
         setPosts([]);
+      } finally {
         setLoading(false);
-        return;
       }
-
-      // Buscar perfis dos autores separadamente
-      const authorIds = [...new Set(postsData.map(post => post.author_id))];
-      const { data: authorsData, error: authorsError } = await supabase
-        .from('admin_profiles')
-        .select('user_id, name')
-        .in('user_id', authorIds);
-
-      if (authorsError) {
-        console.error('Error fetching authors:', authorsError);
-        setLoading(false);
-        return;
-      }
-
-      // Combinar dados dos posts com nomes dos autores
-      const postsWithAuthors: BlogPost[] = postsData.map(post => ({
-        id: post.id,
-        title: post.title,
-        slug: post.slug,
-        excerpt: post.excerpt || '',
-        featured_image: post.featured_image || '',
-        tags: post.tags || [],
-        published_at: post.published_at || post.created_at,
-        author_id: post.author_id,
-        author_name: authorsData?.find(author => author.user_id === post.author_id)?.name || 'Autor Desconhecido'
-      }));
-
-      setPosts(postsWithAuthors);
-      setLoading(false);
     };
 
     fetchPosts();

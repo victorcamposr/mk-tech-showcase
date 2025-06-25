@@ -20,7 +20,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { useForm } from 'react-hook-form';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
-import { User, Plus, Save } from 'lucide-react';
+import { User, Plus, Save, Info } from 'lucide-react';
+import { Alert, AlertDescription } from '@/components/ui/alert';
 
 interface UserData {
   name: string;
@@ -111,7 +112,7 @@ const UserModal = ({ isOpen, onClose, onSuccess, user, mode }: UserModalProps) =
         
         toast({
           title: "Usuário criado com sucesso!",
-          description: "O novo administrador foi adicionado ao sistema.",
+          description: "O administrador foi adicionado. Ele deve criar sua conta usando o email cadastrado.",
         });
       } else {
         const { data: result, error } = await supabase
@@ -160,6 +161,16 @@ const UserModal = ({ isOpen, onClose, onSuccess, user, mode }: UserModalProps) =
             {mode === 'create' ? 'Novo Administrador' : 'Editar Administrador'}
           </DialogTitle>
         </DialogHeader>
+        
+        {mode === 'create' && (
+          <Alert>
+            <Info className="h-4 w-4" />
+            <AlertDescription>
+              Após criar o usuário, ele precisará se registrar no sistema usando o email cadastrado. 
+              Envie as instruções de acesso para o novo administrador.
+            </AlertDescription>
+          </Alert>
+        )}
         
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">

@@ -13,6 +13,8 @@ interface SolutionCardProps {
     description: string;
     features: string[];
     industries: string[];
+    card_image_url?: string | null;
+    hero_image_url?: string | null;
   };
 }
 
@@ -20,8 +22,16 @@ const SolutionCard = ({ solutionKey, solution }: SolutionCardProps) => {
   const IconComponent = solution.icon;
   const colors = getServiceColors('automation');
   
-  // Função para buscar imagem do card usando a constante SOLUTION_IMAGES
+  // Função para buscar imagem do card - priorizar banco, depois constante
   const getCardImage = (solutionKey: string) => {
+    // Se há imagem do banco, usar ela
+    if (solution.card_image_url) {
+      return solution.card_image_url;
+    }
+    if (solution.hero_image_url) {
+      return solution.hero_image_url;
+    }
+    // Fallback para imagens estáticas
     return SOLUTION_IMAGES.cards[solutionKey as keyof typeof SOLUTION_IMAGES.cards] || SOLUTION_IMAGES.cards['pdv-frente-caixa'];
   };
   
