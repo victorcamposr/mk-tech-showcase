@@ -3,6 +3,7 @@ import { CARD_MACHINE_OPERATORS } from "@/data/solutions";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { ScrollReveal } from "@/components/ScrollReveal";
+import { useState } from "react";
 
 interface CardMachineOperatorsProps {
   isCompact?: boolean;
@@ -10,19 +11,23 @@ interface CardMachineOperatorsProps {
 }
 
 const CardMachineOperators = ({ isCompact = false, maxVisible }: CardMachineOperatorsProps) => {
+  const [showTooltip, setShowTooltip] = useState(false);
+  
   const operatorsToShow = maxVisible 
     ? CARD_MACHINE_OPERATORS.slice(0, maxVisible)
     : CARD_MACHINE_OPERATORS;
   
-  const remainingCount = maxVisible 
-    ? Math.max(0, CARD_MACHINE_OPERATORS.length - maxVisible)
-    : 0;
+  const remainingOperators = maxVisible 
+    ? CARD_MACHINE_OPERATORS.slice(maxVisible)
+    : [];
+  
+  const remainingCount = remainingOperators.length;
 
   if (isCompact) {
     return (
       <div className="space-y-4">
         <div className="text-center">
-          <h3 className="text-sm font-semibold text-brand-black mb-2">
+          <h3 className="text-sm font-semibold text-white mb-2">
             Integrado com as principais operadoras:
           </h3>
         </div>
@@ -30,10 +35,10 @@ const CardMachineOperators = ({ isCompact = false, maxVisible }: CardMachineOper
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
           {operatorsToShow.map((operator, index) => (
             <ScrollReveal key={operator.id} animation="fade-up" delay={index * 50}>
-              <Card className="group hover:shadow-lg transition-all duration-300 hover:-translate-y-1 border-brand-gold/20 bg-gradient-to-br from-white to-gray-50/30">
+              <Card className="group hover:shadow-lg transition-all duration-300 hover:-translate-y-1 border-brand-gold/20 bg-gradient-to-br from-white/90 to-gray-50/80 backdrop-blur-sm">
                 <CardContent className="p-3 text-center">
                   <div className="mb-2 flex justify-center">
-                    <div className="w-8 h-8 bg-white rounded-lg shadow-sm flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                    <div className="w-8 h-8 flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
                       <img 
                         src={operator.icon} 
                         alt={operator.name}
@@ -50,13 +55,40 @@ const CardMachineOperators = ({ isCompact = false, maxVisible }: CardMachineOper
           ))}
           
           {remainingCount > 0 && (
-            <Card className="border-brand-gold/20 bg-gradient-to-br from-brand-gold/5 to-brand-gold/10">
-              <CardContent className="p-3 text-center flex items-center justify-center">
-                <div className="text-xs font-medium text-brand-gold">
-                  +{remainingCount} mais
+            <div className="relative">
+              <Card 
+                className="border-brand-gold/20 bg-gradient-to-br from-brand-gold/5 to-brand-gold/10 cursor-pointer hover:shadow-lg transition-all duration-300 hover:-translate-y-1"
+                onMouseEnter={() => setShowTooltip(true)}
+                onMouseLeave={() => setShowTooltip(false)}
+              >
+                <CardContent className="p-3 text-center flex items-center justify-center">
+                  <div className="text-xs font-medium text-brand-gold">
+                    +{remainingCount} mais
+                  </div>
+                </CardContent>
+              </Card>
+              
+              {/* Tooltip com as outras operadoras */}
+              {showTooltip && (
+                <div className="absolute top-full left-1/2 transform -translate-x-1/2 mt-2 z-50 bg-white rounded-lg shadow-xl border border-brand-gold/20 p-3 min-w-48">
+                  <div className="text-xs font-semibold text-brand-black mb-2">Outras integrações:</div>
+                  <div className="space-y-1">
+                    {remainingOperators.map((operator) => (
+                      <div key={operator.id} className="flex items-center gap-2 text-xs text-gray-600">
+                        <img 
+                          src={operator.icon} 
+                          alt={operator.name}
+                          className="w-4 h-4 object-contain" 
+                        />
+                        <span>{operator.name}</span>
+                      </div>
+                    ))}
+                  </div>
+                  {/* Seta do tooltip */}
+                  <div className="absolute -top-1 left-1/2 transform -translate-x-1/2 w-2 h-2 bg-white border-l border-t border-brand-gold/20 rotate-45"></div>
                 </div>
-              </CardContent>
-            </Card>
+              )}
+            </div>
           )}
         </div>
       </div>
@@ -81,9 +113,9 @@ const CardMachineOperators = ({ isCompact = false, maxVisible }: CardMachineOper
             <Card className="group hover:shadow-2xl hover:shadow-brand-gold/10 transition-all duration-500 hover:-translate-y-3 hover:scale-105 border-brand-gold/20 bg-gradient-to-br from-white to-gray-50/50 backdrop-blur-sm overflow-hidden">
               <CardContent className="p-6">
                 <div className="text-center space-y-4">
-                  {/* Logo da operadora */}
+                  {/* Logo da operadora - sem borda branca */}
                   <div className="flex justify-center">
-                    <div className="w-16 h-16 bg-gradient-to-br from-gray-50 to-white rounded-xl shadow-lg flex items-center justify-center group-hover:shadow-xl group-hover:scale-110 transition-all duration-300 border border-gray-100">
+                    <div className="w-16 h-16 flex items-center justify-center group-hover:scale-110 transition-all duration-300">
                       <img 
                         src={operator.icon} 
                         alt={operator.name}
