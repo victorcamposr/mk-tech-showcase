@@ -1,5 +1,5 @@
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import {
   Dialog,
   DialogContent,
@@ -42,25 +42,47 @@ const UserModal = ({ isOpen, onClose, onSuccess, user, mode }: UserModalProps) =
   
   const form = useForm<UserData>({
     defaultValues: {
-      name: user?.name || '',
-      email: user?.email || '',
-      role: user?.role || 'admin',
+      name: '',
+      email: '',
+      role: 'admin',
     },
   });
 
+  // Reset form when user changes or modal opens
+  useEffect(() => {
+    if (isOpen && user) {
+      console.log('Setting form values for user:', user);
+      form.reset({
+        name: user?.name || '',
+        email: user?.email || '',
+        role: user?.role || 'admin',
+      });
+    } else if (isOpen && !user) {
+      form.reset({
+        name: '',
+        email: '',
+        role: 'admin',
+      });
+    }
+  }, [isOpen, user, form]);
+
   const onSubmit = async (data: UserData) => {
     setLoading(true);
+    console.log('Submitting user data:', data);
+    
     try {
       if (mode === 'create') {
-        const { error } = await supabase
+        const { data: result, error } = await supabase
           .from('admin_profiles')
           .insert([{
             name: data.name,
             email: data.email,
             role: data.role,
-            user_id: crypto.randomUUID(), // Temporary - in real app would be from auth
+            user_id: crypto.randomUUID(), // Temporário - em produção seria do auth
+            is_active: true,
           }]);
 
+        console.log('Insert result:', result, 'Error:', error);
         if (error) throw error;
         
         toast({
@@ -68,7 +90,7 @@ const UserModal = ({ isOpen, onClose, onSuccess, user, mode }: UserModalProps) =
           description: "O novo administrador foi adicionado ao sistema.",
         });
       } else {
-        const { error } = await supabase
+        const { data: result, error } = await supabase
           .from('admin_profiles')
           .update({
             name: data.name,
@@ -77,6 +99,7 @@ const UserModal = ({ isOpen, onClose, onSuccess, user, mode }: UserModalProps) =
           })
           .eq('id', user.id);
 
+        console.log('Update result:', result, 'Error:', error);
         if (error) throw error;
         
         toast({
@@ -87,12 +110,12 @@ const UserModal = ({ isOpen, onClose, onSuccess, user, mode }: UserModalProps) =
 
       onSuccess();
       onClose();
-      form.reset();
     } catch (error) {
+      console.error('Error saving user:', error);
       toast({
         variant: "destructive",
         title: "Erro ao salvar usuário",
-        description: "Tente novamente em alguns instantes.",
+        description: error.message || "Tente novamente em alguns instantes.",
       });
     } finally {
       setLoading(false);
@@ -145,7 +168,7 @@ const UserModal = ({ isOpen, onClose, onSuccess, user, mode }: UserModalProps) =
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Nível de Acesso</FormLabel>
-                  <Select onValueChange={field.onChange} defaultValue={field.value}>
+                  <Select onValueChange={field.onChange} value={field.value}>
                     <FormControl>
                       <SelectTrigger>
                         <SelectValue placeholder="Selecione o nível" />

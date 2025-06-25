@@ -2,6 +2,7 @@
 import { useState, useEffect } from 'react';
 import AdminLayout from '@/components/admin/AdminLayout';
 import SolutionModal from '@/components/admin/SolutionModal';
+import DeleteConfirmDialog from '@/components/admin/DeleteConfirmDialog';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -17,7 +18,8 @@ import {
   Calendar,
   Settings,
   CheckCircle,
-  XCircle
+  XCircle,
+  Trash2
 } from 'lucide-react';
 
 interface Solution {
@@ -27,7 +29,7 @@ interface Solution {
   features: string[];
   benefits: string[];
   industries: string[];
-  status: string; // Changed from 'active' | 'inactive' to string
+  status: string;
   created_at: string;
   updated_at: string;
   key: string;
@@ -44,6 +46,9 @@ const AdminSolutions = () => {
   const [modalOpen, setModalOpen] = useState(false);
   const [selectedSolution, setSelectedSolution] = useState<Solution | null>(null);
   const [modalMode, setModalMode] = useState<'create' | 'edit' | 'view'>('create');
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [solutionToDelete, setSolutionToDelete] = useState<Solution | null>(null);
+  const [deleteLoading, setDeleteLoading] = useState(false);
   const { toast } = useToast();
 
   useEffect(() => {
@@ -52,14 +57,17 @@ const AdminSolutions = () => {
 
   const fetchSolutions = async () => {
     try {
+      console.log('Fetching solutions...');
       const { data, error } = await supabase
         .from('solutions')
         .select('*')
-        .order('created_at', { ascending: false });
+        .order('sort_order', { ascending: true });
 
+      console.log('Solutions fetched:', data, 'Error:', error);
       if (error) throw error;
       setSolutions(data || []);
     } catch (error) {
+      console.error('Error fetching solutions:', error);
       toast({
         variant: "destructive",
         title: "Erro ao carregar soluções",
@@ -95,6 +103,37 @@ const AdminSolutions = () => {
     }
   };
 
+  const handleDeleteSolution = async () => {
+    if (!solutionToDelete) return;
+    
+    setDeleteLoading(true);
+    try {
+      const { error } = await supabase
+        .from('solutions')
+        .delete()
+        .eq('id', solutionToDelete.id);
+
+      if (error) throw error;
+
+      await fetchSolutions();
+      toast({
+        title: "Solução excluída",
+        description: "A solução foi removida permanentemente do sistema.",
+      });
+      
+      setDeleteDialogOpen(false);
+      setSolutionToDelete(null);
+    } catch (error) {
+      toast({
+        variant: "destructive",
+        title: "Erro ao excluir solução",
+        description: "Não foi possível excluir a solução.",
+      });
+    } finally {
+      setDeleteLoading(false);
+    }
+  };
+
   const handleNewSolution = () => {
     setSelectedSolution(null);
     setModalMode('create');
@@ -111,6 +150,11 @@ const AdminSolutions = () => {
     setSelectedSolution(solution);
     setModalMode('edit');
     setModalOpen(true);
+  };
+
+  const handleDeleteClick = (solution: Solution) => {
+    setSolutionToDelete(solution);
+    setDeleteDialogOpen(true);
   };
 
   const filteredSolutions = solutions.filter(solution =>
@@ -299,6 +343,14 @@ const AdminSolutions = () => {
                         >
                           {solution.status === 'active' ? 'Desativar' : 'Ativar'}
                         </Button>
+                        <Button
+                          size="sm"
+                          variant="destructive"
+                          onClick={() => handleDeleteClick(solution)}
+                          className="shadow-md hover:shadow-lg transition-all duration-200"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </Button>
                       </div>
                     </div>
                   </div>
@@ -315,6 +367,19 @@ const AdminSolutions = () => {
           onSuccess={fetchSolutions}
           solution={selectedSolution}
           mode={modalMode}
+        />
+
+        {/* Delete Confirmation Dialog */}
+        <DeleteConfirmDialog
+          isOpen={deleteDialogOpen}
+          onClose={() => {
+            setDeleteDialogOpen(false);
+            setSolutionToDelete(null);
+          }}
+          onConfirm={handleDeleteSolution}
+          loading={deleteLoading}
+          title="Excluir Solução"
+          description={`Tem certeza que deseja excluir a solução "${solutionToDelete?.title}"? Esta ação não pode ser desfeita.`}
         />
       </div>
     </AdminLayout>

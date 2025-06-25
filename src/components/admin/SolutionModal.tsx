@@ -1,5 +1,5 @@
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import {
   Dialog,
   DialogContent,
@@ -18,11 +18,10 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Badge } from '@/components/ui/badge';
 import { useForm } from 'react-hook-form';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
-import { Lightbulb, Plus, Save, X } from 'lucide-react';
+import { Lightbulb, Plus, Save } from 'lucide-react';
 
 interface SolutionData {
   title: string;
@@ -52,31 +51,67 @@ const SolutionModal = ({ isOpen, onClose, onSuccess, solution, mode }: SolutionM
   
   const form = useForm<SolutionData>({
     defaultValues: {
-      title: solution?.title || '',
-      description: solution?.description || '',
-      key: solution?.key || '',
-      icon_name: solution?.icon_name || '',
-      status: solution?.status || 'active',
-      features: solution?.features?.join(', ') || '',
-      benefits: solution?.benefits?.join(', ') || '',
-      industries: solution?.industries?.join(', ') || '',
-      card_image_url: solution?.card_image_url || '',
-      hero_image_url: solution?.hero_image_url || '',
-      sort_order: solution?.sort_order || 0,
+      title: '',
+      description: '',
+      key: '',
+      icon_name: '',
+      status: 'active',
+      features: '',
+      benefits: '',
+      industries: '',
+      card_image_url: '',
+      hero_image_url: '',
+      sort_order: 0,
     },
   });
+
+  // Reset form when solution changes or modal opens
+  useEffect(() => {
+    if (isOpen && solution) {
+      console.log('Setting form values for solution:', solution);
+      form.reset({
+        title: solution?.title || '',
+        description: solution?.description || '',
+        key: solution?.key || '',
+        icon_name: solution?.icon_name || '',
+        status: solution?.status || 'active',
+        features: Array.isArray(solution?.features) ? solution.features.join(', ') : '',
+        benefits: Array.isArray(solution?.benefits) ? solution.benefits.join(', ') : '',
+        industries: Array.isArray(solution?.industries) ? solution.industries.join(', ') : '',
+        card_image_url: solution?.card_image_url || '',
+        hero_image_url: solution?.hero_image_url || '',
+        sort_order: solution?.sort_order || 0,
+      });
+    } else if (isOpen && !solution) {
+      form.reset({
+        title: '',
+        description: '',
+        key: '',
+        icon_name: '',
+        status: 'active',
+        features: '',
+        benefits: '',
+        industries: '',
+        card_image_url: '',
+        hero_image_url: '',
+        sort_order: 0,
+      });
+    }
+  }, [isOpen, solution, form]);
 
   const onSubmit = async (data: SolutionData) => {
     if (mode === 'view') return;
     
     setLoading(true);
+    console.log('Submitting solution data:', data);
+    
     try {
-      const featuresArray = data.features.split(',').map(item => item.trim()).filter(item => item);
-      const benefitsArray = data.benefits.split(',').map(item => item.trim()).filter(item => item);
-      const industriesArray = data.industries.split(',').map(item => item.trim()).filter(item => item);
+      const featuresArray = data.features ? data.features.split(',').map(item => item.trim()).filter(item => item) : [];
+      const benefitsArray = data.benefits ? data.benefits.split(',').map(item => item.trim()).filter(item => item) : [];
+      const industriesArray = data.industries ? data.industries.split(',').map(item => item.trim()).filter(item => item) : [];
       
       if (mode === 'create') {
-        const { error } = await supabase
+        const { data: result, error } = await supabase
           .from('solutions')
           .insert([{
             title: data.title,
@@ -92,6 +127,7 @@ const SolutionModal = ({ isOpen, onClose, onSuccess, solution, mode }: SolutionM
             sort_order: data.sort_order,
           }]);
 
+        console.log('Insert result:', result, 'Error:', error);
         if (error) throw error;
         
         toast({
@@ -99,7 +135,7 @@ const SolutionModal = ({ isOpen, onClose, onSuccess, solution, mode }: SolutionM
           description: "A nova solução foi adicionada ao catálogo.",
         });
       } else {
-        const { error } = await supabase
+        const { data: result, error } = await supabase
           .from('solutions')
           .update({
             title: data.title,
@@ -116,6 +152,7 @@ const SolutionModal = ({ isOpen, onClose, onSuccess, solution, mode }: SolutionM
           })
           .eq('id', solution.id);
 
+        console.log('Update result:', result, 'Error:', error);
         if (error) throw error;
         
         toast({
@@ -126,12 +163,12 @@ const SolutionModal = ({ isOpen, onClose, onSuccess, solution, mode }: SolutionM
 
       onSuccess();
       onClose();
-      form.reset();
     } catch (error) {
+      console.error('Error saving solution:', error);
       toast({
         variant: "destructive",
         title: "Erro ao salvar solução",
-        description: "Tente novamente em alguns instantes.",
+        description: error.message || "Tente novamente em alguns instantes.",
       });
     } finally {
       setLoading(false);
@@ -222,7 +259,7 @@ const SolutionModal = ({ isOpen, onClose, onSuccess, solution, mode }: SolutionM
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Status</FormLabel>
-                    <Select onValueChange={field.onChange} defaultValue={field.value} disabled={isReadOnly}>
+                    <Select onValueChange={field.onChange} value={field.value} disabled={isReadOnly}>
                       <FormControl>
                         <SelectTrigger>
                           <SelectValue placeholder="Selecione o status" />
