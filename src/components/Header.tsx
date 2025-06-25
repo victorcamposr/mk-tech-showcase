@@ -105,22 +105,15 @@ const Header = () => {
     }`}>
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-18">
-          {/* Logo with advanced hover effect */}
-          <Link to="/" className="flex items-center space-x-3 group relative">
-            <div className="relative">
-              <CriticalImage 
-                src="/lovable-uploads/894786af-af73-492e-ae6a-d8a39e0ac4cb.png" 
-                alt="MK Tecnologia" 
-                className="h-12 w-auto transition-all duration-500 group-hover:scale-110 group-hover:rotate-3"
-                width={48}
-                height={48}
-              />
-              <div className="absolute -inset-1 bg-gradient-to-r from-brand-gold to-brand-gold-light rounded-full opacity-0 group-hover:opacity-20 transition-opacity duration-500 blur-sm"></div>
-            </div>
-            <div className="flex items-center space-x-1 opacity-0 group-hover:opacity-100 transition-all duration-300">
-              <Sparkles className="w-4 h-4 text-brand-gold animate-pulse" />
-              <span className="text-brand-gold text-sm font-semibold">Tech</span>
-            </div>
+          {/* Logo */}
+          <Link to="/" className="flex items-center space-x-3">
+            <CriticalImage 
+              src="/lovable-uploads/894786af-af73-492e-ae6a-d8a39e0ac4cb.png" 
+              alt="MK Tecnologia" 
+              className="h-12 w-auto"
+              width={48}
+              height={48}
+            />
           </Link>
 
           {/* Desktop Navigation */}
