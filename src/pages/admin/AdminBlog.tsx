@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import AdminLayout from '@/components/admin/AdminLayout';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -22,10 +21,17 @@ interface BlogPost {
   id: string;
   title: string;
   content: string;
-  status: 'draft' | 'published';
+  status: string; // Changed from 'draft' | 'published' to string
   author_id: string;
   created_at: string;
   updated_at: string;
+  slug: string;
+  excerpt: string | null;
+  featured_image: string | null;
+  meta_title: string | null;
+  meta_description: string | null;
+  published_at: string | null;
+  tags: string[] | null;
 }
 
 const AdminBlog = () => {

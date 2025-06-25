@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import AdminLayout from '@/components/admin/AdminLayout';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -24,10 +23,16 @@ interface Solution {
   title: string;
   description: string;
   features: string[];
-  category: string;
-  status: 'active' | 'inactive';
+  benefits: string[];
+  industries: string[];
+  status: string; // Changed from 'active' | 'inactive' to string
   created_at: string;
   updated_at: string;
+  key: string;
+  icon_name: string;
+  card_image_url: string | null;
+  hero_image_url: string | null;
+  sort_order: number | null;
 }
 
 const AdminSolutions = () => {
@@ -87,7 +92,7 @@ const AdminSolutions = () => {
 
   const filteredSolutions = solutions.filter(solution =>
     solution.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    solution.category.toLowerCase().includes(searchTerm.toLowerCase())
+    solution.key.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   const activeCount = solutions.filter(solution => solution.status === 'active').length;
@@ -145,7 +150,7 @@ const AdminSolutions = () => {
             <div className="relative">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
               <Input
-                placeholder="Buscar soluções ou categorias..."
+                placeholder="Buscar soluções..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className="pl-10 bg-white border-gray-300 focus:border-brand-gold focus:ring-brand-gold"
@@ -216,7 +221,7 @@ const AdminSolutions = () => {
                     
                     <div className="mb-4">
                       <Badge variant="outline" className="text-xs">
-                        {solution.category}
+                        {solution.key}
                       </Badge>
                     </div>
 
