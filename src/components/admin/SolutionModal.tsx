@@ -242,8 +242,8 @@ const SolutionModal = ({ isOpen, onClose, solution, onSuccess, mode }: SolutionM
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-4xl max-h-[95vh] overflow-y-auto shadow-2xl border-0 bg-white rounded-lg p-0">
-        <DialogHeader className="border-b border-gray-100 pb-6 p-6">
+      <DialogContent className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 sm:max-w-4xl max-h-[90vh] overflow-y-auto shadow-2xl border-0 z-[100] bg-white rounded-lg">
+        <DialogHeader className="border-b border-gray-100 pb-6">
           <DialogTitle className="text-2xl font-bold text-gray-900 flex items-center gap-3">
             <div className="w-12 h-12 bg-gradient-to-br from-brand-gold to-brand-gold-light rounded-xl flex items-center justify-center shadow-lg">
               <Lightbulb className="w-6 h-6 text-white" />
@@ -259,7 +259,7 @@ const SolutionModal = ({ isOpen, onClose, solution, onSuccess, mode }: SolutionM
           </DialogDescription>
         </DialogHeader>
 
-        <div className="space-y-8 py-6 px-6">
+        <div className="space-y-8 py-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             {/* Basic Information */}
             <div className="space-y-6">
@@ -297,13 +297,13 @@ const SolutionModal = ({ isOpen, onClose, solution, onSuccess, mode }: SolutionM
                 </Label>
                 <Select
                   value={formData.status}
-                  onValueChange={(value: 'active' | 'inactive') => handleInputChange('status', value)}
+                  onValueChange={(value) => handleInputChange('status', value)}
                   disabled={!canEdit}
                 >
                   <SelectTrigger className="h-12 border-gray-300 focus:border-brand-gold focus:ring-brand-gold shadow-sm">
                     <SelectValue />
                   </SelectTrigger>
-                  <SelectContent className="bg-white border shadow-lg z-[200]">
+                  <SelectContent>
                     <SelectItem value="active">Ativa</SelectItem>
                     <SelectItem value="inactive">Inativa</SelectItem>
                   </SelectContent>
@@ -555,7 +555,7 @@ const SolutionModal = ({ isOpen, onClose, solution, onSuccess, mode }: SolutionM
           </div>
         </div>
 
-        <div className="flex justify-end gap-4 pt-6 border-t border-gray-100 px-6 pb-6">
+        <div className="flex justify-end gap-4 pt-6 border-t border-gray-100">
           <Button
             variant="outline"
             onClick={onClose}
