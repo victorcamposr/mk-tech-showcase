@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import AdminLayout from '@/components/admin/AdminLayout';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -63,7 +62,7 @@ const AdminSolutions = () => {
       const { data, error } = await supabase
         .from('solutions')
         .select('*')
-        .order('sort_order', { ascending: true, nullsLast: true })
+        .order('sort_order', { ascending: true, nullsFirst: false })
         .order('created_at', { ascending: false });
 
       if (error) {

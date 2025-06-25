@@ -3,10 +3,19 @@ import { useState, useEffect, createContext, useContext, ReactNode } from 'react
 import { User, Session } from '@supabase/supabase-js';
 import { supabase } from '@/integrations/supabase/client';
 
+interface AdminProfile {
+  id: string;
+  name: string;
+  email: string;
+  role: string;
+  is_active: boolean;
+}
+
 interface AuthContextType {
   user: User | null;
   session: Session | null;
   isAdmin: boolean;
+  adminProfile: AdminProfile | null;
   loading: boolean;
   signIn: (email: string, password: string) => Promise<{ error: any }>;
   signUp: (email: string, password: string, name: string) => Promise<{ error: any }>;
@@ -19,6 +28,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
   const [session, setSession] = useState<Session | null>(null);
   const [isAdmin, setIsAdmin] = useState(false);
+  const [adminProfile, setAdminProfile] = useState<AdminProfile | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -42,13 +52,16 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
               
               console.log('Admin profile check:', { profile, error });
               setIsAdmin(!!profile);
+              setAdminProfile(profile);
             } catch (error) {
               console.error('Error checking admin status:', error);
               setIsAdmin(false);
+              setAdminProfile(null);
             }
           }, 0);
         } else {
           setIsAdmin(false);
+          setAdminProfile(null);
         }
         
         setLoading(false);
@@ -101,6 +114,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       user,
       session,
       isAdmin,
+      adminProfile,
       loading,
       signIn,
       signUp,
