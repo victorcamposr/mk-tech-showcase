@@ -55,31 +55,26 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
       name: 'Dashboard', 
       href: '/admin/dashboard', 
       icon: LayoutDashboard,
-      color: 'from-blue-500 to-blue-600'
     },
     { 
       name: 'Blog', 
       href: '/admin/blog', 
       icon: FileText,
-      color: 'from-green-500 to-green-600'
     },
     { 
       name: 'Soluções', 
       href: '/admin/solutions', 
       icon: Lightbulb,
-      color: 'from-yellow-500 to-yellow-600'
     },
     { 
       name: 'Usuários', 
       href: '/admin/users', 
       icon: Users,
-      color: 'from-purple-500 to-purple-600'
     },
     { 
       name: 'Contatos', 
       href: '/admin/contacts', 
       icon: Mail,
-      color: 'from-red-500 to-red-600'
     },
   ];
 
@@ -90,16 +85,18 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
       <div className="flex-1 h-0 pt-5 pb-4 overflow-y-auto">
         <div className="flex-shrink-0 flex items-center px-4 mb-8">
           <div className="flex items-center">
-            <img 
-              src="/lovable-uploads/894786af-af73-492e-ae6a-d8a39e0ac4cb.png" 
-              alt="MK Sistemas Logo" 
-              className="w-12 h-12 rounded-xl shadow-lg mr-4"
-            />
-            <div>
-              <h1 className="text-2xl font-bold bg-gradient-to-r from-brand-gold to-amber-600 bg-clip-text text-transparent">
+            <div className="w-12 h-12 rounded-xl shadow-lg mr-4 bg-white p-1">
+              <img 
+                src="/lovable-uploads/894786af-af73-492e-ae6a-d8a39e0ac4cb.png" 
+                alt="MK Sistemas Logo" 
+                className="w-full h-full rounded-lg object-contain"
+              />
+            </div>
+            <div className="bg-black px-3 py-2 rounded-lg">
+              <h1 className="text-xl font-bold text-white">
                 MK Admin
               </h1>
-              <p className="text-sm text-gray-500 font-medium">Painel Administrativo</p>
+              <p className="text-xs text-gray-300 font-medium">Painel Administrativo</p>
             </div>
           </div>
         </div>
@@ -111,19 +108,21 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
               <Link
                 key={item.name}
                 to={item.href}
-                className={`group flex items-center px-4 py-3 text-sm font-medium rounded-xl transition-all duration-200 ${
+                className={`group flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-all duration-200 ${
                   active
-                    ? 'bg-gradient-to-r from-brand-gold/15 to-amber-500/15 text-brand-gold border border-brand-gold/20 shadow-lg scale-[1.02]'
-                    : 'text-gray-700 hover:bg-gray-50 hover:text-brand-gold hover:scale-[1.02] hover:shadow-sm'
+                    ? 'bg-gray-100 text-gray-900 border border-gray-200 shadow-sm'
+                    : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
                 }`}
                 onClick={() => setSidebarOpen(false)}
               >
-                <div className={`mr-3 w-8 h-8 rounded-lg flex items-center justify-center bg-gradient-to-br ${item.color} shadow-md`}>
-                  <Icon className="h-4 w-4 text-white" />
+                <div className={`mr-3 w-7 h-7 rounded-md flex items-center justify-center ${
+                  active ? 'bg-gray-200' : 'bg-gray-100'
+                }`}>
+                  <Icon className="h-4 w-4" />
                 </div>
                 {item.name}
                 {active && (
-                  <div className="ml-auto w-2 h-2 bg-brand-gold rounded-full animate-pulse"></div>
+                  <div className="ml-auto w-2 h-2 bg-gray-400 rounded-full"></div>
                 )}
               </Link>
             );
@@ -132,9 +131,9 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
       </div>
       <div className="flex-shrink-0 border-t border-gray-100 p-4 space-y-3">
         {/* User Profile Section */}
-        <div className="flex items-center space-x-3 p-3 bg-gradient-to-r from-gray-50 to-gray-100 rounded-xl">
-          <div className="w-10 h-10 bg-gradient-to-br from-brand-gold to-amber-600 rounded-full flex items-center justify-center shadow-md">
-            <User className="h-5 w-5 text-white" />
+        <div className="flex items-center space-x-3 p-3 bg-gray-50 rounded-lg">
+          <div className="w-10 h-10 bg-gray-200 rounded-full flex items-center justify-center">
+            <User className="h-5 w-5 text-gray-600" />
           </div>
           <div className="flex-1 min-w-0">
             <p className="text-sm font-semibold text-gray-900 truncate">
@@ -151,7 +150,7 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
           <Button
             variant="ghost"
             onClick={handleGoToSite}
-            className="w-full justify-start text-gray-600 hover:text-blue-600 hover:bg-blue-50 transition-colors rounded-xl"
+            className="w-full justify-start text-gray-600 hover:text-blue-600 hover:bg-blue-50 transition-colors rounded-lg"
           >
             <Home className="mr-3 h-4 w-4" />
             Ir para o Site
@@ -159,7 +158,7 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
           <Button
             variant="ghost"
             onClick={handleLogout}
-            className="w-full justify-start text-gray-600 hover:text-red-600 hover:bg-red-50 transition-colors rounded-xl"
+            className="w-full justify-start text-gray-600 hover:text-red-600 hover:bg-red-50 transition-colors rounded-lg"
           >
             <LogOut className="mr-3 h-4 w-4" />
             Sair
@@ -170,7 +169,7 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
   );
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-100">
+    <div className="min-h-screen bg-gray-50">
       {/* Mobile sidebar */}
       <div className={`fixed inset-0 flex z-40 md:hidden ${sidebarOpen ? '' : 'pointer-events-none'}`}>
         <div 
@@ -192,17 +191,17 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
 
       {/* Static sidebar for desktop */}
       <div className="hidden md:flex md:w-80 md:flex-col md:fixed md:inset-y-0 z-30">
-        <div className="flex-1 flex flex-col min-h-0 bg-white/80 backdrop-blur-xl border-r border-gray-200/50 shadow-xl">
+        <div className="flex-1 flex flex-col min-h-0 bg-white border-r border-gray-200 shadow-sm">
           <SidebarContent />
         </div>
       </div>
 
       {/* Main content */}
       <div className="md:pl-80 flex flex-col flex-1">
-        <div className="sticky top-0 z-20 md:hidden pl-1 pt-1 sm:pl-3 sm:pt-3 bg-white/90 backdrop-blur-xl border-b border-gray-200/50">
+        <div className="sticky top-0 z-20 md:hidden pl-1 pt-1 sm:pl-3 sm:pt-3 bg-white border-b border-gray-200">
           <button
             type="button"
-            className="-ml-0.5 -mt-0.5 h-12 w-12 inline-flex items-center justify-center rounded-xl text-gray-500 hover:text-gray-900 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-brand-gold/50 transition-colors"
+            className="-ml-0.5 -mt-0.5 h-12 w-12 inline-flex items-center justify-center rounded-lg text-gray-500 hover:text-gray-900 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-300 transition-colors"
             onClick={() => setSidebarOpen(true)}
           >
             <Menu className="h-6 w-6" />

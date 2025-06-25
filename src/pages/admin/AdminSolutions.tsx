@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import AdminLayout from '@/components/admin/AdminLayout';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -16,7 +17,17 @@ import {
   Trash2, 
   Lightbulb,
   Filter,
-  RefreshCw
+  RefreshCw,
+  Calculator,
+  Users,
+  BarChart3,
+  Shield,
+  Zap,
+  Settings,
+  FileText,
+  Database,
+  Globe,
+  Smartphone
 } from 'lucide-react';
 
 interface AdminSolution {
@@ -47,6 +58,25 @@ const AdminSolutions = () => {
   const [selectedSolution, setSelectedSolution] = useState<AdminSolution | null>(null);
   const [modalMode, setModalMode] = useState<'create' | 'edit' | 'view'>('create');
   const { toast } = useToast();
+
+  // Icon mapping
+  const iconMap: Record<string, any> = {
+    calculator: Calculator,
+    users: Users,
+    'bar-chart-3': BarChart3,
+    shield: Shield,
+    zap: Zap,
+    settings: Settings,
+    'file-text': FileText,
+    database: Database,
+    globe: Globe,
+    smartphone: Smartphone,
+    lightbulb: Lightbulb,
+  };
+
+  const getIcon = (iconName: string) => {
+    return iconMap[iconName] || Lightbulb;
+  };
 
   useEffect(() => {
     fetchSolutions();
@@ -181,13 +211,13 @@ const AdminSolutions = () => {
         {/* Header */}
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-4xl font-bold bg-gradient-to-r from-gray-900 via-gray-800 to-gray-700 bg-clip-text text-transparent flex items-center gap-3">
-              <div className="w-10 h-10 bg-gradient-to-br from-yellow-500 to-yellow-600 rounded-xl flex items-center justify-center shadow-lg">
-                <Lightbulb className="w-6 h-6 text-white" />
+            <h1 className="text-3xl font-bold text-gray-900 flex items-center gap-3">
+              <div className="w-10 h-10 bg-gray-100 rounded-lg flex items-center justify-center">
+                <Lightbulb className="w-6 h-6 text-gray-600" />
               </div>
               Gerenciar Soluções
             </h1>
-            <p className="text-gray-600 mt-2 text-lg">
+            <p className="text-gray-600 mt-2">
               Gerencie as soluções e serviços da empresa
             </p>
           </div>
@@ -195,14 +225,14 @@ const AdminSolutions = () => {
             <Button
               onClick={fetchSolutions}
               variant="outline"
-              className="border-brand-gold/20 text-brand-gold hover:bg-brand-gold/5"
+              className="border-gray-300 text-gray-600 hover:bg-gray-50"
             >
               <RefreshCw className="w-4 h-4 mr-2" />
               Atualizar
             </Button>
             <Button
               onClick={handleCreate}
-              className="bg-brand-gold hover:bg-brand-gold/90 text-brand-black font-semibold shadow-lg"
+              className="bg-gray-900 hover:bg-gray-800 text-white font-medium"
             >
               <Plus className="w-4 h-4 mr-2" />
               Nova Solução
@@ -211,11 +241,11 @@ const AdminSolutions = () => {
         </div>
 
         {/* Filters */}
-        <Card className="shadow-xl border-0 bg-gradient-to-br from-white to-gray-50">
+        <Card className="shadow-sm border border-gray-200">
           <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-blue-600 rounded-lg flex items-center justify-center">
-                <Filter className="w-4 h-4 text-white" />
+            <CardTitle className="flex items-center gap-2 text-gray-900">
+              <div className="w-8 h-8 bg-gray-100 rounded-lg flex items-center justify-center">
+                <Filter className="w-4 h-4 text-gray-600" />
               </div>
               Filtros
             </CardTitle>
@@ -229,7 +259,7 @@ const AdminSolutions = () => {
                     placeholder="Buscar por título, descrição ou chave..."
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
-                    className="pl-10 border-gray-300 focus:border-brand-gold focus:ring-brand-gold"
+                    className="pl-10 border-gray-300 focus:border-gray-500 focus:ring-gray-500"
                   />
                 </div>
               </div>
@@ -237,21 +267,21 @@ const AdminSolutions = () => {
                 <Button
                   variant={statusFilter === 'all' ? 'default' : 'outline'}
                   onClick={() => setStatusFilter('all')}
-                  className={statusFilter === 'all' ? 'bg-brand-gold hover:bg-brand-gold/90 text-brand-black' : ''}
+                  className={statusFilter === 'all' ? 'bg-gray-900 hover:bg-gray-800 text-white' : 'border-gray-300 text-gray-600 hover:bg-gray-50'}
                 >
                   Todas
                 </Button>
                 <Button
                   variant={statusFilter === 'active' ? 'default' : 'outline'}
                   onClick={() => setStatusFilter('active')}
-                  className={statusFilter === 'active' ? 'bg-emerald-600 hover:bg-emerald-700 text-white' : ''}
+                  className={statusFilter === 'active' ? 'bg-green-600 hover:bg-green-700 text-white' : 'border-gray-300 text-gray-600 hover:bg-gray-50'}
                 >
                   Ativas
                 </Button>
                 <Button
                   variant={statusFilter === 'inactive' ? 'default' : 'outline'}
                   onClick={() => setStatusFilter('inactive')}
-                  className={statusFilter === 'inactive' ? 'bg-red-600 hover:bg-red-700 text-white' : ''}
+                  className={statusFilter === 'inactive' ? 'bg-red-600 hover:bg-red-700 text-white' : 'border-gray-300 text-gray-600 hover:bg-gray-50'}
                 >
                   Inativas
                 </Button>
@@ -260,80 +290,96 @@ const AdminSolutions = () => {
           </CardContent>
         </Card>
 
-        {/* Solutions List */}
-        <Card className="shadow-xl border-0 bg-gradient-to-br from-white to-gray-50">
-          <CardHeader>
-            <CardTitle className="flex items-center justify-between">
-              <span className="flex items-center gap-2">
-                <div className="w-8 h-8 bg-gradient-to-br from-brand-gold to-yellow-600 rounded-lg flex items-center justify-center">
-                  <Lightbulb className="w-4 h-4 text-white" />
-                </div>
-                Soluções ({filteredSolutions.length})
-              </span>
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            {loading ? (
-              <div className="text-center py-12">
-                <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-brand-gold mx-auto"></div>
-                <p className="mt-4 text-gray-600">Carregando soluções...</p>
-              </div>
-            ) : filteredSolutions.length === 0 ? (
-              <div className="text-center py-12">
-                <Lightbulb className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-                <h3 className="text-xl font-medium text-gray-900 mb-2">
-                  {searchTerm || statusFilter !== 'all' ? 'Nenhuma solução encontrada' : 'Nenhuma solução cadastrada'}
-                </h3>
-                <p className="text-gray-600 mb-6">
-                  {searchTerm || statusFilter !== 'all' 
-                    ? 'Tente ajustar os filtros para encontrar o que procura.'
-                    : 'Comece criando sua primeira solução para o sistema.'
-                  }
-                </p>
-                {!searchTerm && statusFilter === 'all' && (
-                  <Button 
-                    onClick={handleCreate}
-                    className="bg-brand-gold hover:bg-brand-gold/90 text-brand-black font-semibold"
-                  >
-                    <Plus className="w-4 h-4 mr-2" />
-                    Criar Primeira Solução
-                  </Button>
-                )}
-              </div>
-            ) : (
-              <div className="space-y-4">
-                {filteredSolutions.map((solution) => (
-                  <div key={solution.id} className="bg-white p-6 rounded-xl shadow-sm border hover:shadow-md transition-shadow">
-                    <div className="flex items-start justify-between">
-                      <div className="flex-1">
-                        <div className="flex items-center gap-3 mb-2">
-                          <h3 className="text-xl font-semibold text-gray-900">{solution.title}</h3>
-                          <Badge className={`${
-                            solution.status === 'active' 
-                              ? 'bg-emerald-100 text-emerald-800 border-emerald-200' 
-                              : 'bg-red-100 text-red-800 border-red-200'
-                          } border font-medium`}>
-                            {solution.status === 'active' ? 'Ativa' : 'Inativa'}
-                          </Badge>
-                          {solution.sort_order !== null && (
-                            <Badge variant="outline" className="text-xs">
-                              Ordem: {solution.sort_order}
+        {/* Solutions Grid */}
+        <div>
+          {loading ? (
+            <div className="text-center py-12">
+              <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-gray-900 mx-auto"></div>
+              <p className="mt-4 text-gray-600">Carregando soluções...</p>
+            </div>
+          ) : filteredSolutions.length === 0 ? (
+            <div className="text-center py-12">
+              <Lightbulb className="w-16 h-16 text-gray-300 mx-auto mb-4" />
+              <h3 className="text-xl font-medium text-gray-900 mb-2">
+                {searchTerm || statusFilter !== 'all' ? 'Nenhuma solução encontrada' : 'Nenhuma solução cadastrada'}
+              </h3>
+              <p className="text-gray-600 mb-6">
+                {searchTerm || statusFilter !== 'all' 
+                  ? 'Tente ajustar os filtros para encontrar o que procura.'
+                  : 'Comece criando sua primeira solução para o sistema.'
+                }
+              </p>
+              {!searchTerm && statusFilter === 'all' && (
+                <Button 
+                  onClick={handleCreate}
+                  className="bg-gray-900 hover:bg-gray-800 text-white font-medium"
+                >
+                  <Plus className="w-4 h-4 mr-2" />
+                  Criar Primeira Solução
+                </Button>
+              )}
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {filteredSolutions.map((solution) => {
+                const Icon = getIcon(solution.icon_name);
+                return (
+                  <Card key={solution.id} className="relative overflow-hidden hover:shadow-md transition-shadow border border-gray-200">
+                    <CardContent className="p-6">
+                      {/* Status Badge */}
+                      <div className="absolute top-4 right-4">
+                        <Badge className={`${
+                          solution.status === 'active' 
+                            ? 'bg-green-100 text-green-800 border-green-200' 
+                            : 'bg-red-100 text-red-800 border-red-200'
+                        } border font-medium text-xs`}>
+                          {solution.status === 'active' ? 'Ativa' : 'Inativa'}
+                        </Badge>
+                      </div>
+
+                      {/* Icon and Title */}
+                      <div className="flex items-start gap-4 mb-4">
+                        <div className="w-12 h-12 bg-gray-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                          <Icon className="w-6 h-6 text-gray-600" />
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <h3 className="text-lg font-semibold text-gray-900 truncate mb-1">
+                            {solution.title}
+                          </h3>
+                          <p className="text-sm text-gray-500 font-mono bg-gray-50 px-2 py-1 rounded">
+                            {solution.key}
+                          </p>
+                        </div>
+                      </div>
+
+                      {/* Description */}
+                      <p className="text-gray-600 text-sm mb-4 line-clamp-2">
+                        {solution.description}
+                      </p>
+
+                      {/* Features Tags */}
+                      {solution.features && solution.features.length > 0 && (
+                        <div className="flex flex-wrap gap-1 mb-4">
+                          {solution.features.slice(0, 3).map((feature, index) => (
+                            <Badge key={index} variant="outline" className="text-xs border-gray-300 text-gray-600">
+                              {feature}
+                            </Badge>
+                          ))}
+                          {solution.features.length > 3 && (
+                            <Badge variant="outline" className="text-xs border-gray-300 text-gray-600">
+                              +{solution.features.length - 3}
                             </Badge>
                           )}
                         </div>
-                        <p className="text-gray-600 mb-3 line-clamp-2">{solution.description}</p>
-                        <div className="flex items-center gap-4 text-sm text-gray-500">
-                          <span>Chave: <code className="bg-gray-100 px-2 py-1 rounded text-xs">{solution.key}</code></span>
-                          <span>Ícone: {solution.icon_name || 'Não definido'}</span>
-                          <span>Criado em: {formatDate(solution.created_at)}</span>
-                        </div>
-                      </div>
-                      <div className="flex items-center gap-2 ml-4">
+                      )}
+
+                      {/* Action Buttons */}
+                      <div className="flex items-center gap-2 pt-4 border-t border-gray-100">
                         <Button
                           variant="outline"
                           size="sm"
                           onClick={() => handleView(solution)}
-                          className="border-blue-200 text-blue-600 hover:bg-blue-50"
+                          className="flex-1 border-gray-300 text-gray-600 hover:bg-gray-50"
                         >
                           <Eye className="w-4 h-4 mr-1" />
                           Ver
@@ -342,7 +388,7 @@ const AdminSolutions = () => {
                           variant="outline"
                           size="sm"
                           onClick={() => handleEdit(solution)}
-                          className="border-green-200 text-green-600 hover:bg-green-50"
+                          className="flex-1 border-gray-300 text-gray-600 hover:bg-gray-50"
                         >
                           <Edit className="w-4 h-4 mr-1" />
                           Editar
@@ -351,19 +397,28 @@ const AdminSolutions = () => {
                           variant="outline"
                           size="sm"
                           onClick={() => handleDelete(solution)}
-                          className="border-red-200 text-red-600 hover:bg-red-50"
+                          className="border-red-300 text-red-600 hover:bg-red-50"
                         >
-                          <Trash2 className="w-4 h-4 mr-1" />
-                          Excluir
+                          <Trash2 className="w-4 h-4" />
                         </Button>
                       </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            )}
-          </CardContent>
-        </Card>
+
+                      {/* Metadata */}
+                      <div className="mt-4 pt-4 border-t border-gray-100">
+                        <div className="flex justify-between items-center text-xs text-gray-500">
+                          <span>Criado em: {formatDate(solution.created_at)}</span>
+                          {solution.sort_order !== null && (
+                            <span>Ordem: {solution.sort_order}</span>
+                          )}
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                );
+              })}
+            </div>
+          )}
+        </div>
       </div>
 
       <SolutionModal
