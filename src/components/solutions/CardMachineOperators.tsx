@@ -70,8 +70,8 @@ const CardMachineOperators = ({ variant = 'compact', className = '' }: CardMachi
                 className="w-8 h-8 object-contain"
               />
             </div>
-            <div className="absolute top-full left-1/2 transform -translate-x-1/2 mt-2 px-2 py-1 bg-gray-900 text-white text-xs rounded opacity-0 group-hover/tooltip:opacity-100 transition-opacity whitespace-nowrap z-10">
-              Integrado com {operator.name}
+            <div className="absolute top-full left-1/2 transform -translate-x-1/2 mt-2 px-2 py-1 bg-gray-900 text-white text-xs rounded opacity-0 group-hover/tooltip:opacity-100 transition-opacity whitespace-nowrap z-10 max-w-32 text-center">
+              {operator.name}
             </div>
           </div>
         ))}
@@ -94,8 +94,8 @@ const CardMachineOperators = ({ variant = 'compact', className = '' }: CardMachi
               className="w-6 h-6 object-contain"
             />
           </div>
-          <div className="absolute top-full left-1/2 transform -translate-x-1/2 mt-1 px-1.5 py-0.5 bg-gray-900 text-white text-xs rounded opacity-0 group-hover/tooltip:opacity-100 transition-opacity whitespace-nowrap z-10">
-            Integrado com {operator.name}
+          <div className="absolute top-full left-1/2 transform -translate-x-1/2 mt-1 px-1.5 py-0.5 bg-gray-900 text-white text-xs rounded opacity-0 group-hover/tooltip:opacity-100 transition-opacity whitespace-nowrap z-10 max-w-24 text-center">
+            {operator.name}
           </div>
         </div>
       ))}
@@ -107,16 +107,16 @@ const CardMachineOperators = ({ variant = 'compact', className = '' }: CardMachi
               <span className="text-xs font-medium text-brand-black">+{remainingOperators.length}</span>
             </div>
           </HoverCardTrigger>
-          <HoverCardContent className="w-80 p-3" side="top" align="center">
+          <HoverCardContent className="w-60 p-2" side="top" align="center">
             <div className="space-y-2">
               <h4 className="text-sm font-semibold text-brand-black">Outras integrações:</h4>
-              <div className="grid grid-cols-2 gap-2">
+              <div className="grid grid-cols-1 gap-1">
                 {remainingOperators.map((operator, index) => (
-                  <div key={index} className="flex items-center gap-2 p-2 rounded-lg bg-gray-50">
+                  <div key={index} className="flex items-center gap-2 p-1.5 rounded bg-gray-50">
                     <img 
                       src={operator.icon} 
                       alt={operator.alt}
-                      className="w-6 h-6 object-contain"
+                      className="w-5 h-5 object-contain"
                     />
                     <span className="text-xs text-gray-700">{operator.name}</span>
                   </div>
