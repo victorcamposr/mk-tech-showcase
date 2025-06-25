@@ -39,7 +39,8 @@ import {
   Banknote,
   Building2,
   Tablet,
-  Fuel
+  Fuel,
+  Receipt
 } from 'lucide-react';
 
 interface AdminSolution {
