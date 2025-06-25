@@ -9,7 +9,7 @@ import InteractiveDashboard from "@/components/InteractiveDashboard";
 import SEO from "@/components/SEO";
 import StructuredData from "@/components/StructuredData";
 import { ScrollReveal } from "@/components/ScrollReveal";
-import { Award } from "lucide-react";
+import { Award, Calculator, Users, BarChart3, Shield, Zap, Settings, FileText, Database, Globe, Smartphone, Lightbulb, Package, Receipt, DollarSign, Headphones, CreditCard } from "lucide-react";
 import { specificSolutions, SOLUTION_IMAGES } from "@/data/solutions";
 import { getWhatsAppMessage } from "@/utils/whatsapp";
 import { supabase } from "@/integrations/supabase/client";
@@ -32,6 +32,30 @@ interface DatabaseSolution {
   hero_image_url: string | null;
   status: string;
 }
+
+// Mapeamento de ícones para as soluções
+const iconMap: Record<string, any> = {
+  calculator: Calculator,
+  users: Users,
+  'bar-chart-3': BarChart3,
+  shield: Shield,
+  zap: Zap,
+  settings: Settings,
+  'file-text': FileText,
+  database: Database,
+  globe: Globe,
+  smartphone: Smartphone,
+  lightbulb: Lightbulb,
+  package: Package,
+  receipt: Receipt,
+  'dollar-sign': DollarSign,
+  headphones: Headphones,
+  'credit-card': CreditCard,
+};
+
+const getIconComponent = (iconName: string) => {
+  return iconMap[iconName] || Lightbulb;
+};
 
 const Solutions = () => {
   const location = useLocation();
@@ -70,15 +94,24 @@ const Solutions = () => {
   const solutionKey = currentPath.split('/solucoes/')[1] as keyof typeof specificSolutions;
   
   // Buscar solução específica do banco primeiro, depois fallback para dados estáticos
-  const currentSolution = dbSolutions.find(sol => sol.key === solutionKey) || specificSolutions[solutionKey];
+  const currentDbSolution = dbSolutions.find(sol => sol.key === solutionKey);
+  const currentStaticSolution = specificSolutions[solutionKey];
+  
+  let currentSolution = null;
+  let IconComponent = Award;
+
+  if (currentDbSolution) {
+    // Usar dados do banco
+    currentSolution = currentDbSolution;
+    IconComponent = getIconComponent(currentDbSolution.icon_name);
+  } else if (currentStaticSolution) {
+    // Usar dados estáticos
+    currentSolution = currentStaticSolution;
+    IconComponent = currentStaticSolution.icon;
+  }
 
   // Se for uma solução específica, renderizar conteúdo personalizado
   if (isSpecificSolution && currentSolution) {
-    // Para soluções do banco, usar ícone padrão ou mapear
-    const IconComponent = 'icon_name' in currentSolution 
-      ? specificSolutions[solutionKey]?.icon || Award
-      : currentSolution.icon;
-    
     return (
       <div className="min-h-screen bg-background">
         <SEO 
@@ -260,10 +293,12 @@ const Solutions = () => {
                       solutionKey={solution.key} 
                       solution={{
                         title: solution.title,
-                        icon: specificSolutions[solution.key as keyof typeof specificSolutions]?.icon || Award,
+                        icon: getIconComponent(solution.icon_name),
                         description: solution.description,
                         features: solution.features,
-                        industries: solution.industries
+                        industries: solution.industries,
+                        card_image_url: solution.card_image_url,
+                        hero_image_url: solution.hero_image_url
                       }} 
                     />
                   ))}
