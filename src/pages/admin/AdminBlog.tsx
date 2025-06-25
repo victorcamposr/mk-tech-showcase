@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import AdminLayout from '@/components/admin/AdminLayout';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -175,15 +176,13 @@ const AdminBlog = () => {
 
   return (
     <AdminLayout>
-      <div className="space-y-6">
+      <div className="space-y-8">
         {/* Header */}
-        <div className="flex items-center justify-between">
+        <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
           <div>
-            <h1 className="text-3xl font-bold text-brand-black flex items-center gap-3">
-              <div className="w-10 h-10 bg-gradient-to-r from-blue-500 to-blue-600 rounded-lg flex items-center justify-center shadow-lg">
-                <FileText className="w-6 h-6 text-white" />
-              </div>
-              Blog
+            <h1 className="text-3xl font-bold text-gray-900 flex items-center gap-3">
+              <FileText className="w-8 h-8 text-brand-gold" />
+              Gerenciar Blog
             </h1>
             <p className="text-gray-600 mt-2">
               Gerencie os posts do blog
@@ -194,15 +193,14 @@ const AdminBlog = () => {
               onClick={fetchPosts}
               variant="outline"
               size="sm"
-              className="border-brand-gold/30 text-brand-gold hover:bg-brand-gold/10 transition-all duration-300"
+              className="shadow-md hover:shadow-lg transition-all duration-200"
             >
               <RefreshCw className="w-4 h-4 mr-2" />
               Atualizar
             </Button>
             <Button
               onClick={handleCreate}
-              size="sm"
-              className="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-semibold shadow-lg hover:shadow-xl transition-all duration-300"
+              className="bg-gradient-to-r from-brand-gold to-brand-gold-light hover:from-brand-gold-dark hover:to-brand-gold text-white font-semibold shadow-lg hover:shadow-xl transition-all duration-200"
             >
               <Plus className="w-4 h-4 mr-2" />
               Novo Post
@@ -210,92 +208,116 @@ const AdminBlog = () => {
           </div>
         </div>
 
-        {/* Filters Card */}
-        <Card className="border-brand-gold/20 shadow-lg">
-          <CardHeader className="pb-3 bg-gradient-to-r from-brand-gold/5 to-brand-gold/10 border-b border-brand-gold/20">
-            <CardTitle className="text-lg flex items-center gap-2 text-brand-black">
+        {/* Search and Stats */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-4 gap-6">
+          <div className="lg:col-span-2">
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+              <Input
+                placeholder="Buscar posts..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="pl-10 bg-white border-gray-300 focus:border-brand-gold focus:ring-brand-gold shadow-sm"
+              />
+            </div>
+          </div>
+          <Card className="shadow-lg border-0">
+            <CardContent className="p-4">
+              <div className="text-center">
+                <div className="text-2xl font-bold text-green-600">
+                  {posts.filter(p => p.status === 'published').length}
+                </div>
+                <div className="text-sm text-gray-600">Publicados</div>
+              </div>
+            </CardContent>
+          </Card>
+          <Card className="shadow-lg border-0">
+            <CardContent className="p-4">
+              <div className="text-center">
+                <div className="text-2xl font-bold text-yellow-600">
+                  {posts.filter(p => p.status === 'draft').length}
+                </div>
+                <div className="text-sm text-gray-600">Rascunhos</div>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* Filters */}
+        <Card className="shadow-lg border-0">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
               <Filter className="w-5 h-5 text-brand-gold" />
               Filtros
             </CardTitle>
           </CardHeader>
-          <CardContent className="p-6">
-            <div className="flex flex-col sm:flex-row gap-4">
-              <div className="flex-1">
-                <div className="relative">
-                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-brand-gold w-4 h-4" />
-                  <Input
-                    placeholder="Buscar posts..."
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                    className="pl-10 border-brand-gold/30 focus:border-brand-gold focus:ring-brand-gold/20 transition-all duration-300"
-                  />
-                </div>
-              </div>
-              <div className="flex gap-2">
-                <Button
-                  variant={statusFilter === 'all' ? 'default' : 'outline'}
-                  size="sm"
-                  onClick={() => setStatusFilter('all')}
-                  className={statusFilter === 'all' 
-                    ? 'bg-gradient-to-r from-brand-gold to-brand-gold-dark hover:from-brand-gold-dark hover:to-brand-gold text-brand-black shadow-lg' 
-                    : 'border-brand-gold/30 text-brand-gold hover:bg-brand-gold/10 transition-all duration-300'
-                  }
-                >
-                  Todos
-                </Button>
-                <Button
-                  variant={statusFilter === 'published' ? 'default' : 'outline'}
-                  size="sm"
-                  onClick={() => setStatusFilter('published')}
-                  className={statusFilter === 'published' 
-                    ? 'bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white shadow-lg' 
-                    : 'border-green-300 text-green-600 hover:bg-green-50 transition-all duration-300'
-                  }
-                >
-                  Publicados
-                </Button>
-                <Button
-                  variant={statusFilter === 'draft' ? 'default' : 'outline'}
-                  size="sm"
-                  onClick={() => setStatusFilter('draft')}
-                  className={statusFilter === 'draft' 
-                    ? 'bg-gradient-to-r from-yellow-500 to-yellow-600 hover:from-yellow-600 hover:to-yellow-700 text-white shadow-lg' 
-                    : 'border-yellow-300 text-yellow-600 hover:bg-yellow-50 transition-all duration-300'
-                  }
-                >
-                  Rascunhos
-                </Button>
-              </div>
+          <CardContent>
+            <div className="flex gap-2">
+              <Button
+                variant={statusFilter === 'all' ? 'default' : 'outline'}
+                size="sm"
+                onClick={() => setStatusFilter('all')}
+                className={statusFilter === 'all' 
+                  ? 'bg-brand-gold hover:bg-brand-gold-dark text-white shadow-md' 
+                  : 'shadow-md hover:shadow-lg transition-all duration-200'
+                }
+              >
+                Todos
+              </Button>
+              <Button
+                variant={statusFilter === 'published' ? 'default' : 'outline'}
+                size="sm"
+                onClick={() => setStatusFilter('published')}
+                className={statusFilter === 'published' 
+                  ? 'bg-green-600 hover:bg-green-700 text-white shadow-md' 
+                  : 'shadow-md hover:shadow-lg transition-all duration-200'
+                }
+              >
+                Publicados
+              </Button>
+              <Button
+                variant={statusFilter === 'draft' ? 'default' : 'outline'}
+                size="sm"
+                onClick={() => setStatusFilter('draft')}
+                className={statusFilter === 'draft' 
+                  ? 'bg-yellow-600 hover:bg-yellow-700 text-white shadow-md' 
+                  : 'shadow-md hover:shadow-lg transition-all duration-200'
+                }
+              >
+                Rascunhos
+              </Button>
             </div>
           </CardContent>
         </Card>
 
-        {/* Posts Table */}
-        <Card className="border-brand-gold/20 shadow-lg">
-          <CardHeader className="pb-3 bg-gradient-to-r from-brand-gold/5 to-brand-gold/10 border-b border-brand-gold/20">
-            <CardTitle className="text-lg flex items-center justify-between text-brand-black">
+        {/* Posts List */}
+        <Card className="shadow-lg border-0">
+          <CardHeader>
+            <CardTitle className="flex items-center justify-between">
               <span className="flex items-center gap-2">
                 <FileText className="w-5 h-5 text-brand-gold" />
                 Posts do Blog
               </span>
-              <Badge variant="outline" className="bg-brand-gold/10 text-brand-gold border-brand-gold/30 shadow-sm">
+              <Badge variant="outline" className="bg-brand-gold/10 text-brand-gold border-brand-gold/30">
                 {filteredPosts.length} posts
               </Badge>
             </CardTitle>
           </CardHeader>
-          <CardContent className="p-0">
+          <CardContent>
             {loading ? (
-              <div className="text-center py-12">
-                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-brand-gold mx-auto"></div>
-                <p className="mt-4 text-gray-600">Carregando posts...</p>
+              <div className="flex items-center justify-center h-64">
+                <div className="text-center">
+                  <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-brand-gold mx-auto"></div>
+                  <p className="mt-4 text-gray-600">Carregando posts...</p>
+                </div>
               </div>
             ) : filteredPosts.length === 0 ? (
               <div className="text-center py-12">
                 <FileText className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-                <h3 className="text-xl font-semibold text-brand-black mb-2">
+                <h3 className="text-lg font-medium text-gray-900 mb-2">
                   {searchTerm || statusFilter !== 'all' ? 'Nenhum post encontrado' : 'Nenhum post cadastrado'}
                 </h3>
-                <p className="text-gray-600 mb-6">
+                <p className="text-gray-600 mb-4">
                   {searchTerm || statusFilter !== 'all' 
                     ? 'Tente ajustar os filtros para encontrar o que procura.'
                     : 'Comece criando seu primeiro post.'
@@ -304,8 +326,7 @@ const AdminBlog = () => {
                 {!searchTerm && statusFilter === 'all' && (
                   <Button 
                     onClick={handleCreate} 
-                    size="sm" 
-                    className="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-semibold shadow-lg"
+                    className="bg-gradient-to-r from-brand-gold to-brand-gold-light hover:from-brand-gold-dark hover:to-brand-gold text-white font-semibold shadow-lg"
                   >
                     <Plus className="w-4 h-4 mr-2" />
                     Criar Primeiro Post
@@ -313,85 +334,78 @@ const AdminBlog = () => {
                 )}
               </div>
             ) : (
-              <div className="divide-y divide-gray-100">
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 {filteredPosts.map((post) => (
-                  <div key={post.id} className="p-6 hover:bg-brand-gold/5 transition-all duration-300">
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center space-x-4 flex-1">
-                        <div className="w-12 h-12 bg-gradient-to-br from-blue-500/20 to-blue-600/30 rounded-lg flex items-center justify-center flex-shrink-0 shadow-sm">
-                          <FileText className="w-6 h-6 text-blue-600" />
+                  <div
+                    key={post.id}
+                    className="p-6 bg-gray-50 rounded-xl hover:bg-gray-100 transition-colors border-l-4 border-brand-gold"
+                  >
+                    <div className="flex items-start justify-between mb-4">
+                      <div className="flex items-center gap-3">
+                        <div className="p-2 bg-white rounded-full shadow-sm">
+                          <FileText className="w-6 h-6 text-brand-gold" />
                         </div>
-                        <div className="flex-1 min-w-0">
-                          <div className="flex items-center gap-3 mb-2">
-                            <h3 className="text-lg font-semibold text-brand-black truncate">
-                              {post.title}
-                            </h3>
-                            <Badge 
-                              variant={post.status === 'published' ? 'default' : 'secondary'}
-                              className={post.status === 'published' 
-                                ? 'bg-green-100 text-green-800 border-green-200 shadow-sm' 
-                                : 'bg-yellow-100 text-yellow-800 border-yellow-200 shadow-sm'
-                              }
-                            >
-                              {post.status === 'published' ? 'Publicado' : 'Rascunho'}
-                            </Badge>
-                          </div>
-                          <p className="text-xs text-gray-500 font-mono bg-brand-gold/10 px-3 py-1 rounded-md inline-block mb-2">
+                        <div>
+                          <h3 className="text-lg font-semibold text-gray-900">{post.title}</h3>
+                          <span className="text-xs text-gray-500 font-mono bg-brand-gold/10 px-2 py-1 rounded mt-1 inline-block">
                             {post.slug}
-                          </p>
-                          <p className="text-gray-600 text-sm line-clamp-2 mb-3">
-                            {post.excerpt}
-                          </p>
-                          {post.tags && post.tags.length > 0 && (
-                            <div className="flex flex-wrap gap-1 mb-2">
-                              {post.tags.slice(0, 3).map((tag, index) => (
-                                <Badge key={index} variant="outline" className="text-xs border-purple-200 text-purple-700 bg-purple-50">
-                                  {tag}
-                                </Badge>
-                              ))}
-                              {post.tags.length > 3 && (
-                                <Badge variant="outline" className="text-xs border-brand-gold/30 text-brand-gold bg-brand-gold/10">
-                                  +{post.tags.length - 3}
-                                </Badge>
-                              )}
-                            </div>
-                          )}
-                          <div className="flex items-center gap-4 text-xs text-gray-400">
-                            <span className="flex items-center gap-1">
-                              <Calendar className="w-3 h-3" />
-                              Criado: {formatDate(post.created_at)}
-                            </span>
-                            {post.published_at && (
-                              <span className="flex items-center gap-1">
-                                <Calendar className="w-3 h-3" />
-                                Publicado: {formatDate(post.published_at)}
-                              </span>
-                            )}
-                          </div>
+                          </span>
                         </div>
                       </div>
-                      <div className="flex items-center gap-2 ml-4">
-                        <Button
-                          variant="outline"
-                          size="sm"
+                      <Badge 
+                        variant={post.status === 'published' ? 'default' : 'destructive'}
+                        className="text-xs"
+                      >
+                        {post.status === 'published' ? 'Publicado' : 'Rascunho'}
+                      </Badge>
+                    </div>
+                    
+                    <p className="text-gray-600 text-sm line-clamp-2 mb-4">
+                      {post.excerpt}
+                    </p>
+                    
+                    {post.tags && post.tags.length > 0 && (
+                      <div className="flex flex-wrap gap-1 mb-4">
+                        {post.tags.slice(0, 3).map((tag, index) => (
+                          <Badge key={index} variant="outline" className="text-xs border-purple-200 text-purple-700 bg-purple-50">
+                            {tag}
+                          </Badge>
+                        ))}
+                        {post.tags.length > 3 && (
+                          <Badge variant="outline" className="text-xs border-brand-gold/30 text-brand-gold bg-brand-gold/10">
+                            +{post.tags.length - 3}
+                          </Badge>
+                        )}
+                      </div>
+                    )}
+
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-1 text-sm text-gray-500">
+                        <Calendar className="w-4 h-4" />
+                        {formatDate(post.created_at)}
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <Button 
+                          size="sm" 
+                          variant="outline" 
                           onClick={() => handleView(post)}
-                          className="border-brand-gold/30 text-brand-gold hover:bg-brand-gold/10 transition-all duration-300 shadow-sm"
+                          className="shadow-md hover:shadow-lg transition-all duration-200"
                         >
                           <Eye className="w-4 h-4" />
                         </Button>
                         <Button
-                          variant="outline"
                           size="sm"
+                          variant="outline"
                           onClick={() => handleEdit(post)}
-                          className="border-blue-300 text-blue-600 hover:bg-blue-50 transition-all duration-300 shadow-sm"
+                          className="shadow-md hover:shadow-lg transition-all duration-200"
                         >
                           <Edit className="w-4 h-4" />
                         </Button>
                         <Button
-                          variant="outline"
                           size="sm"
+                          variant="destructive"
                           onClick={() => handleDelete(post)}
-                          className="border-red-300 text-red-600 hover:bg-red-50 transition-all duration-300 shadow-sm"
+                          className="shadow-md hover:shadow-lg transition-all duration-200"
                         >
                           <Trash2 className="w-4 h-4" />
                         </Button>

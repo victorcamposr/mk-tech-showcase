@@ -224,29 +224,29 @@ const SolutionModal = ({ isOpen, onClose, solution, onSuccess, mode }: SolutionM
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-4xl max-h-[90vh] overflow-y-auto bg-white shadow-2xl">
-        <DialogHeader className="border-b border-gray-200 pb-4">
-          <DialogTitle className="text-xl font-semibold text-brand-black flex items-center gap-3">
-            <div className="w-10 h-10 bg-gradient-to-br from-brand-gold to-brand-gold-dark rounded-lg flex items-center justify-center">
-              <Lightbulb className="w-5 h-5 text-white" />
+      <DialogContent className="sm:max-w-4xl max-h-[90vh] overflow-y-auto shadow-2xl border-0">
+        <DialogHeader className="border-b border-gray-100 pb-6">
+          <DialogTitle className="text-2xl font-bold text-gray-900 flex items-center gap-3">
+            <div className="w-12 h-12 bg-gradient-to-br from-brand-gold to-brand-gold-light rounded-xl flex items-center justify-center shadow-lg">
+              <Lightbulb className="w-6 h-6 text-white" />
             </div>
             {mode === 'create' && 'Nova Solução'}
             {mode === 'edit' && 'Editar Solução'}
             {mode === 'view' && 'Visualizar Solução'}
           </DialogTitle>
-          <DialogDescription className="text-gray-600 mt-2">
+          <DialogDescription className="text-gray-600 mt-2 text-base">
             {mode === 'create' && 'Crie uma nova solução para o sistema'}
             {mode === 'edit' && 'Edite as informações da solução'}
             {mode === 'view' && 'Visualize os detalhes da solução'}
           </DialogDescription>
         </DialogHeader>
 
-        <div className="space-y-6 py-4">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="space-y-8 py-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             {/* Basic Information */}
-            <div className="space-y-4">
+            <div className="space-y-6">
               <div>
-                <Label htmlFor="title" className="text-sm font-medium text-brand-black">
+                <Label htmlFor="title" className="text-sm font-semibold text-gray-900 mb-2 block">
                   Título *
                 </Label>
                 <Input
@@ -254,13 +254,13 @@ const SolutionModal = ({ isOpen, onClose, solution, onSuccess, mode }: SolutionM
                   value={formData.title}
                   onChange={(e) => handleInputChange('title', e.target.value)}
                   disabled={!canEdit}
-                  className="mt-1 border-brand-gold/30 focus:border-brand-gold focus:ring-brand-gold/20"
+                  className="h-12 border-gray-300 focus:border-brand-gold focus:ring-brand-gold shadow-sm"
                   placeholder="Digite o título da solução"
                 />
               </div>
 
               <div>
-                <Label htmlFor="key" className="text-sm font-medium text-brand-black">
+                <Label htmlFor="key" className="text-sm font-semibold text-gray-900 mb-2 block">
                   Chave *
                 </Label>
                 <Input
@@ -268,13 +268,13 @@ const SolutionModal = ({ isOpen, onClose, solution, onSuccess, mode }: SolutionM
                   value={formData.key}
                   onChange={(e) => handleInputChange('key', e.target.value.toLowerCase().replace(/\s+/g, '-'))}
                   disabled={!canEdit}
-                  className="mt-1 border-brand-gold/30 focus:border-brand-gold focus:ring-brand-gold/20"
+                  className="h-12 border-gray-300 focus:border-brand-gold focus:ring-brand-gold shadow-sm"
                   placeholder="chave-da-solucao"
                 />
               </div>
 
               <div>
-                <Label htmlFor="status" className="text-sm font-medium text-brand-black">
+                <Label htmlFor="status" className="text-sm font-semibold text-gray-900 mb-2 block">
                   Status
                 </Label>
                 <Select
@@ -282,7 +282,7 @@ const SolutionModal = ({ isOpen, onClose, solution, onSuccess, mode }: SolutionM
                   onValueChange={(value) => handleInputChange('status', value)}
                   disabled={!canEdit}
                 >
-                  <SelectTrigger className="mt-1 border-brand-gold/30 focus:border-brand-gold focus:ring-brand-gold/20">
+                  <SelectTrigger className="h-12 border-gray-300 focus:border-brand-gold focus:ring-brand-gold shadow-sm">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
@@ -293,7 +293,7 @@ const SolutionModal = ({ isOpen, onClose, solution, onSuccess, mode }: SolutionM
               </div>
 
               <div>
-                <Label htmlFor="sort_order" className="text-sm font-medium text-brand-black">
+                <Label htmlFor="sort_order" className="text-sm font-semibold text-gray-900 mb-2 block">
                   Ordem de Exibição
                 </Label>
                 <Input
@@ -302,24 +302,24 @@ const SolutionModal = ({ isOpen, onClose, solution, onSuccess, mode }: SolutionM
                   value={formData.sort_order || ''}
                   onChange={(e) => handleInputChange('sort_order', e.target.value ? parseInt(e.target.value) : null)}
                   disabled={!canEdit}
-                  className="mt-1 border-brand-gold/30 focus:border-brand-gold focus:ring-brand-gold/20"
+                  className="h-12 border-gray-300 focus:border-brand-gold focus:ring-brand-gold shadow-sm"
                   placeholder="Ex: 1, 2, 3..."
                 />
               </div>
             </div>
 
             {/* Icon Selection */}
-            <div className="space-y-4">
+            <div className="space-y-6">
               <div>
-                <Label className="text-sm font-medium text-brand-black">
+                <Label className="text-sm font-semibold text-gray-900 mb-4 block">
                   Ícone da Solução
                 </Label>
                 
                 {/* Icons from existing solutions */}
                 {existingSolutions.length > 0 && (
-                  <div className="mt-2">
-                    <p className="text-xs text-gray-500 mb-2">Ícones de soluções existentes:</p>
-                    <div className="grid grid-cols-4 gap-2 mb-4">
+                  <div className="mb-6">
+                    <p className="text-xs text-gray-500 mb-3 font-medium">Ícones de soluções existentes:</p>
+                    <div className="grid grid-cols-4 gap-3">
                       {existingSolutions.map((sol) => {
                         const IconComponent = availableIcons[sol.icon_name as keyof typeof availableIcons]?.component || Lightbulb;
                         return (
@@ -328,15 +328,15 @@ const SolutionModal = ({ isOpen, onClose, solution, onSuccess, mode }: SolutionM
                             type="button"
                             onClick={() => canEdit && handleInputChange('icon_name', sol.icon_name)}
                             disabled={!canEdit}
-                            className={`p-3 border rounded-lg flex flex-col items-center gap-1 transition-all duration-300 ${
+                            className={`p-4 border-2 rounded-xl flex flex-col items-center gap-2 transition-all duration-300 ${
                               formData.icon_name === sol.icon_name
                                 ? 'border-brand-gold bg-brand-gold/10 shadow-lg'
-                                : 'border-gray-300 hover:border-brand-gold/50 hover:bg-brand-gold/5'
+                                : 'border-gray-200 hover:border-brand-gold/50 hover:bg-brand-gold/5 hover:shadow-md'
                             } ${!canEdit ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
                             title={`${sol.title} (${sol.key})`}
                           >
-                            <IconComponent className={`w-5 h-5 ${formData.icon_name === sol.icon_name ? 'text-brand-gold' : 'text-gray-600'}`} />
-                            <span className="text-xs text-gray-600 truncate w-full text-center">
+                            <IconComponent className={`w-6 h-6 ${formData.icon_name === sol.icon_name ? 'text-brand-gold' : 'text-gray-600'}`} />
+                            <span className="text-xs text-gray-600 truncate w-full text-center font-medium">
                               {sol.title}
                             </span>
                           </button>
@@ -348,22 +348,22 @@ const SolutionModal = ({ isOpen, onClose, solution, onSuccess, mode }: SolutionM
 
                 {/* Available icons */}
                 <div>
-                  <p className="text-xs text-gray-500 mb-2">Ícones disponíveis:</p>
-                  <div className="grid grid-cols-4 gap-2">
+                  <p className="text-xs text-gray-500 mb-3 font-medium">Ícones disponíveis:</p>
+                  <div className="grid grid-cols-4 gap-3">
                     {Object.entries(availableIcons).map(([key, { component: IconComponent, name }]) => (
                       <button
                         key={key}
                         type="button"
                         onClick={() => canEdit && handleInputChange('icon_name', key)}
                         disabled={!canEdit}
-                        className={`p-3 border rounded-lg flex flex-col items-center gap-1 transition-all duration-300 ${
+                        className={`p-4 border-2 rounded-xl flex flex-col items-center gap-2 transition-all duration-300 ${
                           formData.icon_name === key
                             ? 'border-brand-gold bg-brand-gold/10 shadow-lg'
-                            : 'border-gray-300 hover:border-brand-gold/50 hover:bg-brand-gold/5'
+                            : 'border-gray-200 hover:border-brand-gold/50 hover:bg-brand-gold/5 hover:shadow-md'
                         } ${!canEdit ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
                       >
-                        <IconComponent className={`w-5 h-5 ${formData.icon_name === key ? 'text-brand-gold' : 'text-gray-600'}`} />
-                        <span className="text-xs text-gray-600">{name}</span>
+                        <IconComponent className={`w-6 h-6 ${formData.icon_name === key ? 'text-brand-gold' : 'text-gray-600'}`} />
+                        <span className="text-xs text-gray-600 font-medium">{name}</span>
                       </button>
                     ))}
                   </div>
@@ -374,7 +374,7 @@ const SolutionModal = ({ isOpen, onClose, solution, onSuccess, mode }: SolutionM
 
           {/* Description */}
           <div>
-            <Label htmlFor="description" className="text-sm font-medium text-brand-black">
+            <Label htmlFor="description" className="text-sm font-semibold text-gray-900 mb-2 block">
               Descrição *
             </Label>
             <Textarea
@@ -382,7 +382,7 @@ const SolutionModal = ({ isOpen, onClose, solution, onSuccess, mode }: SolutionM
               value={formData.description}
               onChange={(e) => handleInputChange('description', e.target.value)}
               disabled={!canEdit}
-              className="mt-1 border-brand-gold/30 focus:border-brand-gold focus:ring-brand-gold/20"
+              className="border-gray-300 focus:border-brand-gold focus:ring-brand-gold shadow-sm"
               rows={4}
               placeholder="Descreva a solução detalhadamente"
             />
@@ -390,29 +390,29 @@ const SolutionModal = ({ isOpen, onClose, solution, onSuccess, mode }: SolutionM
 
           {/* Features */}
           <div>
-            <Label className="text-sm font-medium text-brand-black">Características</Label>
+            <Label className="text-sm font-semibold text-gray-900 mb-3 block">Características</Label>
             {canEdit && (
-              <div className="flex gap-2 mt-2">
+              <div className="flex gap-3 mb-4">
                 <Input
                   value={newFeature}
                   onChange={(e) => setNewFeature(e.target.value)}
                   placeholder="Nova característica"
-                  className="border-brand-gold/30 focus:border-brand-gold focus:ring-brand-gold/20"
+                  className="h-12 border-gray-300 focus:border-brand-gold focus:ring-brand-gold shadow-sm"
                   onKeyPress={(e) => e.key === 'Enter' && addArrayItem('features', newFeature, setNewFeature)}
                 />
                 <Button
                   type="button"
                   variant="outline"
                   onClick={() => addArrayItem('features', newFeature, setNewFeature)}
-                  className="border-brand-gold/30 text-brand-gold hover:bg-brand-gold/10"
+                  className="h-12 border-brand-gold text-brand-gold hover:bg-brand-gold hover:text-white shadow-sm"
                 >
                   <Plus className="w-4 h-4" />
                 </Button>
               </div>
             )}
-            <div className="flex flex-wrap gap-2 mt-2">
+            <div className="flex flex-wrap gap-2">
               {formData.features.map((feature, index) => (
-                <Badge key={index} variant="outline" className="border-blue-200 text-blue-700 bg-blue-50">
+                <Badge key={index} variant="outline" className="border-blue-200 text-blue-700 bg-blue-50 py-1 px-3">
                   {feature}
                   {canEdit && (
                     <button
@@ -429,29 +429,29 @@ const SolutionModal = ({ isOpen, onClose, solution, onSuccess, mode }: SolutionM
 
           {/* Benefits */}
           <div>
-            <Label className="text-sm font-medium text-brand-black">Benefícios</Label>
+            <Label className="text-sm font-semibold text-gray-900 mb-3 block">Benefícios</Label>
             {canEdit && (
-              <div className="flex gap-2 mt-2">
+              <div className="flex gap-3 mb-4">
                 <Input
                   value={newBenefit}
                   onChange={(e) => setNewBenefit(e.target.value)}
                   placeholder="Novo benefício"
-                  className="border-brand-gold/30 focus:border-brand-gold focus:ring-brand-gold/20"
+                  className="h-12 border-gray-300 focus:border-brand-gold focus:ring-brand-gold shadow-sm"
                   onKeyPress={(e) => e.key === 'Enter' && addArrayItem('benefits', newBenefit, setNewBenefit)}
                 />
                 <Button
                   type="button"
                   variant="outline"
                   onClick={() => addArrayItem('benefits', newBenefit, setNewBenefit)}
-                  className="border-brand-gold/30 text-brand-gold hover:bg-brand-gold/10"
+                  className="h-12 border-brand-gold text-brand-gold hover:bg-brand-gold hover:text-white shadow-sm"
                 >
                   <Plus className="w-4 h-4" />
                 </Button>
               </div>
             )}
-            <div className="flex flex-wrap gap-2 mt-2">
+            <div className="flex flex-wrap gap-2">
               {formData.benefits.map((benefit, index) => (
-                <Badge key={index} variant="outline" className="border-green-200 text-green-700 bg-green-50">
+                <Badge key={index} variant="outline" className="border-green-200 text-green-700 bg-green-50 py-1 px-3">
                   {benefit}
                   {canEdit && (
                     <button
@@ -468,29 +468,29 @@ const SolutionModal = ({ isOpen, onClose, solution, onSuccess, mode }: SolutionM
 
           {/* Industries */}
           <div>
-            <Label className="text-sm font-medium text-brand-black">Segmentos</Label>
+            <Label className="text-sm font-semibold text-gray-900 mb-3 block">Segmentos</Label>
             {canEdit && (
-              <div className="flex gap-2 mt-2">
+              <div className="flex gap-3 mb-4">
                 <Input
                   value={newIndustry}
                   onChange={(e) => setNewIndustry(e.target.value)}
                   placeholder="Novo segmento"
-                  className="border-brand-gold/30 focus:border-brand-gold focus:ring-brand-gold/20"
+                  className="h-12 border-gray-300 focus:border-brand-gold focus:ring-brand-gold shadow-sm"
                   onKeyPress={(e) => e.key === 'Enter' && addArrayItem('industries', newIndustry, setNewIndustry)}
                 />
                 <Button
                   type="button"
                   variant="outline"
                   onClick={() => addArrayItem('industries', newIndustry, setNewIndustry)}
-                  className="border-brand-gold/30 text-brand-gold hover:bg-brand-gold/10"
+                  className="h-12 border-brand-gold text-brand-gold hover:bg-brand-gold hover:text-white shadow-sm"
                 >
                   <Plus className="w-4 h-4" />
                 </Button>
               </div>
             )}
-            <div className="flex flex-wrap gap-2 mt-2">
+            <div className="flex flex-wrap gap-2">
               {formData.industries.map((industry, index) => (
-                <Badge key={index} variant="outline" className="border-purple-200 text-purple-700 bg-purple-50">
+                <Badge key={index} variant="outline" className="border-purple-200 text-purple-700 bg-purple-50 py-1 px-3">
                   {industry}
                   {canEdit && (
                     <button
@@ -508,7 +508,7 @@ const SolutionModal = ({ isOpen, onClose, solution, onSuccess, mode }: SolutionM
           {/* Images */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
-              <Label htmlFor="card_image_url" className="text-sm font-medium text-brand-black">
+              <Label htmlFor="card_image_url" className="text-sm font-semibold text-gray-900 mb-2 block">
                 URL da Imagem do Card
               </Label>
               <Input
@@ -516,13 +516,13 @@ const SolutionModal = ({ isOpen, onClose, solution, onSuccess, mode }: SolutionM
                 value={formData.card_image_url}
                 onChange={(e) => handleInputChange('card_image_url', e.target.value)}
                 disabled={!canEdit}
-                className="mt-1 border-brand-gold/30 focus:border-brand-gold focus:ring-brand-gold/20"
+                className="h-12 border-gray-300 focus:border-brand-gold focus:ring-brand-gold shadow-sm"
                 placeholder="https://exemplo.com/imagem.jpg"
               />
             </div>
 
             <div>
-              <Label htmlFor="hero_image_url" className="text-sm font-medium text-brand-black">
+              <Label htmlFor="hero_image_url" className="text-sm font-semibold text-gray-900 mb-2 block">
                 URL da Imagem Hero
               </Label>
               <Input
@@ -530,18 +530,18 @@ const SolutionModal = ({ isOpen, onClose, solution, onSuccess, mode }: SolutionM
                 value={formData.hero_image_url}
                 onChange={(e) => handleInputChange('hero_image_url', e.target.value)}
                 disabled={!canEdit}
-                className="mt-1 border-brand-gold/30 focus:border-brand-gold focus:ring-brand-gold/20"
+                className="h-12 border-gray-300 focus:border-brand-gold focus:ring-brand-gold shadow-sm"
                 placeholder="https://exemplo.com/hero.jpg"
               />
             </div>
           </div>
         </div>
 
-        <div className="flex justify-end gap-3 pt-4 border-t border-gray-200">
+        <div className="flex justify-end gap-4 pt-6 border-t border-gray-100">
           <Button
             variant="outline"
             onClick={onClose}
-            className="border-gray-300 text-gray-600 hover:bg-gray-100"
+            className="h-12 px-6 border-gray-300 text-gray-600 hover:bg-gray-50 shadow-sm"
           >
             {mode === 'view' ? 'Fechar' : 'Cancelar'}
           </Button>
@@ -549,7 +549,7 @@ const SolutionModal = ({ isOpen, onClose, solution, onSuccess, mode }: SolutionM
             <Button
               onClick={handleSubmit}
               disabled={loading}
-              className="bg-gradient-to-r from-brand-gold to-brand-gold-dark hover:from-brand-gold-dark hover:to-brand-gold text-brand-black font-semibold shadow-lg"
+              className="h-12 px-8 bg-gradient-to-r from-brand-gold to-brand-gold-light hover:from-brand-gold-dark hover:to-brand-gold text-white font-semibold shadow-lg hover:shadow-xl transition-all duration-200"
             >
               {loading ? 'Salvando...' : (mode === 'create' ? 'Criar Solução' : 'Salvar Alterações')}
             </Button>

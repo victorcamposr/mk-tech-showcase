@@ -27,7 +27,8 @@ import {
   FileText,
   Database,
   Globe,
-  Smartphone
+  Smartphone,
+  Calendar
 } from 'lucide-react';
 
 interface AdminSolution {
@@ -206,18 +207,16 @@ const AdminSolutions = () => {
 
   return (
     <AdminLayout>
-      <div className="space-y-6">
+      <div className="space-y-8">
         {/* Header */}
-        <div className="flex items-center justify-between">
+        <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
           <div>
-            <h1 className="text-3xl font-bold text-brand-black flex items-center gap-3">
-              <div className="w-10 h-10 bg-gradient-to-r from-brand-gold to-brand-gold-dark rounded-lg flex items-center justify-center">
-                <Lightbulb className="w-6 h-6 text-white" />
-              </div>
-              Soluções
+            <h1 className="text-3xl font-bold text-gray-900 flex items-center gap-3">
+              <Lightbulb className="w-8 h-8 text-brand-gold" />
+              Gerenciar Soluções
             </h1>
             <p className="text-gray-600 mt-2">
-              Gerencie as soluções disponéveis no sistema
+              Gerencie as soluções disponíveis no sistema
             </p>
           </div>
           <div className="flex gap-3">
@@ -225,15 +224,14 @@ const AdminSolutions = () => {
               onClick={fetchSolutions}
               variant="outline"
               size="sm"
-              className="border-brand-gold/30 text-brand-gold hover:bg-brand-gold/10"
+              className="shadow-md hover:shadow-lg transition-all duration-200"
             >
               <RefreshCw className="w-4 h-4 mr-2" />
               Atualizar
             </Button>
             <Button
               onClick={handleCreate}
-              size="sm"
-              className="bg-gradient-to-r from-brand-gold to-brand-gold-dark hover:from-brand-gold-dark hover:to-brand-gold text-brand-black font-semibold"
+              className="bg-gradient-to-r from-brand-gold to-brand-gold-light hover:from-brand-gold-dark hover:to-brand-gold text-white font-semibold shadow-lg hover:shadow-xl transition-all duration-200"
             >
               <Plus className="w-4 h-4 mr-2" />
               Nova Solução
@@ -241,75 +239,113 @@ const AdminSolutions = () => {
           </div>
         </div>
 
-        {/* Filters Card */}
-        <Card className="border-brand-gold/20">
-          <CardHeader className="pb-3 bg-gradient-to-r from-brand-gold/5 to-brand-gold/10">
-            <CardTitle className="text-lg flex items-center gap-2 text-brand-black">
+        {/* Search and Stats */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-4 gap-6">
+          <div className="lg:col-span-2">
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+              <Input
+                placeholder="Buscar soluções..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="pl-10 bg-white border-gray-300 focus:border-brand-gold focus:ring-brand-gold shadow-sm"
+              />
+            </div>
+          </div>
+          <Card className="shadow-lg border-0">
+            <CardContent className="p-4">
+              <div className="text-center">
+                <div className="text-2xl font-bold text-green-600">
+                  {solutions.filter(s => s.status === 'active').length}
+                </div>
+                <div className="text-sm text-gray-600">Ativas</div>
+              </div>
+            </CardContent>
+          </Card>
+          <Card className="shadow-lg border-0">
+            <CardContent className="p-4">
+              <div className="text-center">
+                <div className="text-2xl font-bold text-red-600">
+                  {solutions.filter(s => s.status === 'inactive').length}
+                </div>
+                <div className="text-sm text-gray-600">Inativas</div>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* Filters */}
+        <Card className="shadow-lg border-0">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
               <Filter className="w-5 h-5 text-brand-gold" />
               Filtros
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="flex flex-col sm:flex-row gap-4">
-              <div className="flex-1">
-                <div className="relative">
-                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-brand-gold w-4 h-4" />
-                  <Input
-                    placeholder="Buscar soluções..."
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                    className="pl-10 border-brand-gold/30 focus:border-brand-gold focus:ring-brand-gold/20"
-                  />
-                </div>
-              </div>
-              <div className="flex gap-2">
-                <Button
-                  variant={statusFilter === 'all' ? 'default' : 'outline'}
-                  size="sm"
-                  onClick={() => setStatusFilter('all')}
-                  className={statusFilter === 'all' ? 'bg-brand-gold hover:bg-brand-gold-dark text-brand-black' : 'border-brand-gold/30 text-brand-gold hover:bg-brand-gold/10'}
-                >
-                  Todas
-                </Button>
-                <Button
-                  variant={statusFilter === 'active' ? 'default' : 'outline'}
-                  size="sm"
-                  onClick={() => setStatusFilter('active')}
-                  className={statusFilter === 'active' ? 'bg-green-600 hover:bg-green-700 text-white' : 'border-green-300 text-green-600 hover:bg-green-50'}
-                >
-                  Ativas
-                </Button>
-                <Button
-                  variant={statusFilter === 'inactive' ? 'default' : 'outline'}
-                  size="sm"
-                  onClick={() => setStatusFilter('inactive')}
-                  className={statusFilter === 'inactive' ? 'bg-red-600 hover:bg-red-700 text-white' : 'border-red-300 text-red-600 hover:bg-red-50'}
-                >
-                  Inativas
-                </Button>
-              </div>
+            <div className="flex gap-2">
+              <Button
+                variant={statusFilter === 'all' ? 'default' : 'outline'}
+                size="sm"
+                onClick={() => setStatusFilter('all')}
+                className={statusFilter === 'all' 
+                  ? 'bg-brand-gold hover:bg-brand-gold-dark text-white shadow-md' 
+                  : 'shadow-md hover:shadow-lg transition-all duration-200'
+                }
+              >
+                Todas
+              </Button>
+              <Button
+                variant={statusFilter === 'active' ? 'default' : 'outline'}
+                size="sm"
+                onClick={() => setStatusFilter('active')}
+                className={statusFilter === 'active' 
+                  ? 'bg-green-600 hover:bg-green-700 text-white shadow-md' 
+                  : 'shadow-md hover:shadow-lg transition-all duration-200'
+                }
+              >
+                Ativas
+              </Button>
+              <Button
+                variant={statusFilter === 'inactive' ? 'default' : 'outline'}
+                size="sm"
+                onClick={() => setStatusFilter('inactive')}
+                className={statusFilter === 'inactive' 
+                  ? 'bg-red-600 hover:bg-red-700 text-white shadow-md' 
+                  : 'shadow-md hover:shadow-lg transition-all duration-200'
+                }
+              >
+                Inativas
+              </Button>
             </div>
           </CardContent>
         </Card>
 
-        {/* Solutions Table */}
-        <Card className="border-brand-gold/20">
-          <CardHeader className="pb-3 bg-gradient-to-r from-brand-gold/5 to-brand-gold/10">
-            <CardTitle className="text-lg flex items-center justify-between text-brand-black">
-              <span>Soluções Cadastradas</span>
-              <Badge variant="outline" className="bg-brand-gold/10 text-brand-gold border-brand-gold/30">{filteredSolutions.length} soluções</Badge>
+        {/* Solutions List */}
+        <Card className="shadow-lg border-0">
+          <CardHeader>
+            <CardTitle className="flex items-center justify-between">
+              <span className="flex items-center gap-2">
+                <Lightbulb className="w-5 h-5 text-brand-gold" />
+                Soluções Cadastradas
+              </span>
+              <Badge variant="outline" className="bg-brand-gold/10 text-brand-gold border-brand-gold/30">
+                {filteredSolutions.length} soluções
+              </Badge>
             </CardTitle>
           </CardHeader>
-          <CardContent className="p-0">
+          <CardContent>
             {loading ? (
-              <div className="text-center py-8">
-                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-brand-gold mx-auto"></div>
-                <p className="mt-2 text-gray-600">Carregando soluções...</p>
+              <div className="flex items-center justify-center h-64">
+                <div className="text-center">
+                  <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-brand-gold mx-auto"></div>
+                  <p className="mt-4 text-gray-600">Carregando soluções...</p>
+                </div>
               </div>
             ) : filteredSolutions.length === 0 ? (
-              <div className="text-center py-8">
-                <Lightbulb className="w-12 h-12 text-gray-300 mx-auto mb-4" />
-                <h3 className="text-lg font-medium text-brand-black mb-2">
+              <div className="text-center py-12">
+                <Lightbulb className="w-16 h-16 text-gray-300 mx-auto mb-4" />
+                <h3 className="text-lg font-medium text-gray-900 mb-2">
                   {searchTerm || statusFilter !== 'all' ? 'Nenhuma solução encontrada' : 'Nenhuma solução cadastrada'}
                 </h3>
                 <p className="text-gray-600 mb-4">
@@ -319,87 +355,97 @@ const AdminSolutions = () => {
                   }
                 </p>
                 {!searchTerm && statusFilter === 'all' && (
-                  <Button onClick={handleCreate} size="sm" className="bg-gradient-to-r from-brand-gold to-brand-gold-dark hover:from-brand-gold-dark hover:to-brand-gold text-brand-black font-semibold">
+                  <Button 
+                    onClick={handleCreate} 
+                    className="bg-gradient-to-r from-brand-gold to-brand-gold-light hover:from-brand-gold-dark hover:to-brand-gold text-white font-semibold shadow-lg"
+                  >
                     <Plus className="w-4 h-4 mr-2" />
                     Criar Primeira Solução
                   </Button>
                 )}
               </div>
             ) : (
-              <div className="divide-y divide-gray-200">
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 {filteredSolutions.map((solution) => {
                   const Icon = getIcon(solution.icon_name);
                   return (
-                    <div key={solution.id} className="p-4 hover:bg-brand-gold/5 transition-colors">
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center space-x-4 flex-1">
-                          <div className="w-10 h-10 bg-gradient-to-br from-brand-gold/20 to-brand-gold/30 rounded-lg flex items-center justify-center flex-shrink-0">
-                            <Icon className="w-5 h-5 text-brand-gold" />
+                    <div
+                      key={solution.id}
+                      className="p-6 bg-gray-50 rounded-xl hover:bg-gray-100 transition-colors border-l-4 border-brand-gold"
+                    >
+                      <div className="flex items-start justify-between mb-4">
+                        <div className="flex items-center gap-3">
+                          <div className="p-2 bg-white rounded-full shadow-sm">
+                            <Icon className="w-6 h-6 text-brand-gold" />
                           </div>
-                          <div className="flex-1 min-w-0">
-                            <div className="flex items-center gap-3 mb-1">
-                              <h3 className="text-base font-semibold text-brand-black truncate">
-                                {solution.title}
-                              </h3>
-                              <Badge 
-                                variant={solution.status === 'active' ? 'default' : 'secondary'}
-                                className={solution.status === 'active' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}
-                              >
-                                {solution.status === 'active' ? 'Ativa' : 'Inativa'}
-                              </Badge>
+                          <div>
+                            <h3 className="text-lg font-semibold text-gray-900">{solution.title}</h3>
+                            <div className="flex items-center gap-2 mt-1">
+                              <span className="text-xs text-gray-500 font-mono bg-brand-gold/10 px-2 py-1 rounded">
+                                {solution.key}
+                              </span>
                               {solution.sort_order !== null && (
                                 <Badge variant="outline" className="text-xs border-brand-gold/30 text-brand-gold">
                                   #{solution.sort_order}
                                 </Badge>
                               )}
                             </div>
-                            <p className="text-xs text-gray-500 font-mono bg-brand-gold/10 px-2 py-1 rounded inline-block mb-1">
-                              {solution.key}
-                            </p>
-                            <p className="text-gray-600 text-sm line-clamp-2 mb-2">
-                              {solution.description}
-                            </p>
-                            {solution.features && solution.features.length > 0 && (
-                              <div className="flex flex-wrap gap-1 mb-1">
-                                {solution.features.slice(0, 3).map((feature, index) => (
-                                  <Badge key={index} variant="outline" className="text-xs border-blue-200 text-blue-700">
-                                    {feature}
-                                  </Badge>
-                                ))}
-                                {solution.features.length > 3 && (
-                                  <Badge variant="outline" className="text-xs border-brand-gold/30 text-brand-gold">
-                                    +{solution.features.length - 3}
-                                  </Badge>
-                                )}
-                              </div>
-                            )}
-                            <p className="text-xs text-gray-400">
-                              Criado em: {formatDate(solution.created_at)}
-                            </p>
                           </div>
                         </div>
-                        <div className="flex items-center gap-2 ml-4">
-                          <Button
-                            variant="outline"
-                            size="sm"
+                        <Badge 
+                          variant={solution.status === 'active' ? 'default' : 'destructive'}
+                          className="text-xs"
+                        >
+                          {solution.status === 'active' ? 'Ativa' : 'Inativa'}
+                        </Badge>
+                      </div>
+                      
+                      <p className="text-gray-600 text-sm line-clamp-2 mb-4">
+                        {solution.description}
+                      </p>
+                      
+                      {solution.features && solution.features.length > 0 && (
+                        <div className="flex flex-wrap gap-1 mb-4">
+                          {solution.features.slice(0, 3).map((feature, index) => (
+                            <Badge key={index} variant="outline" className="text-xs border-blue-200 text-blue-700 bg-blue-50">
+                              {feature}
+                            </Badge>
+                          ))}
+                          {solution.features.length > 3 && (
+                            <Badge variant="outline" className="text-xs border-brand-gold/30 text-brand-gold bg-brand-gold/10">
+                              +{solution.features.length - 3}
+                            </Badge>
+                          )}
+                        </div>
+                      )}
+
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-1 text-sm text-gray-500">
+                          <Calendar className="w-4 h-4" />
+                          {formatDate(solution.created_at)}
+                        </div>
+                        <div className="flex items-center space-x-2">
+                          <Button 
+                            size="sm" 
+                            variant="outline" 
                             onClick={() => handleView(solution)}
-                            className="border-brand-gold/30 text-brand-gold hover:bg-brand-gold/10"
+                            className="shadow-md hover:shadow-lg transition-all duration-200"
                           >
                             <Eye className="w-4 h-4" />
                           </Button>
                           <Button
-                            variant="outline"
                             size="sm"
+                            variant="outline"
                             onClick={() => handleEdit(solution)}
-                            className="border-blue-300 text-blue-600 hover:bg-blue-50"
+                            className="shadow-md hover:shadow-lg transition-all duration-200"
                           >
                             <Edit className="w-4 h-4" />
                           </Button>
                           <Button
-                            variant="outline"
                             size="sm"
+                            variant="destructive"
                             onClick={() => handleDelete(solution)}
-                            className="border-red-300 text-red-600 hover:bg-red-50"
+                            className="shadow-md hover:shadow-lg transition-all duration-200"
                           >
                             <Trash2 className="w-4 h-4" />
                           </Button>
