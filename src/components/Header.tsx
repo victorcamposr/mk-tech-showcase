@@ -1,5 +1,5 @@
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Menu, X, MessageCircle, Sparkles, Zap, Home, User, Settings, Lightbulb, Grid3X3, Phone, ChevronDown, CreditCard, Coffee, QrCode, Smartphone, Truck, Link2, BarChart3, Bot, Receipt, Monitor, TrendingUp, Banknote, Building2, Tablet, Calculator, Fuel, BookOpen } from "lucide-react";
@@ -25,6 +25,7 @@ const Header = () => {
   const [solutions, setSolutions] = useState<Solution[]>([]);
   const location = useLocation();
   const navigate = useNavigate();
+  const dropdownRef = useRef<HTMLDivElement>(null);
 
   // Static solution icon mapping based on solution keys
   const staticSolutionIcons: Record<string, any> = {
@@ -56,6 +57,30 @@ const Header = () => {
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
+
+  // Fechar dropdown ao clicar fora
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setIsDropdownOpen(false);
+      }
+    };
+
+    if (isDropdownOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [isDropdownOpen]);
+
+  // Scroll para o topo ao navegar entre soluções
+  useEffect(() => {
+    if (location.pathname.startsWith('/solucoes/')) {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  }, [location.pathname]);
 
   useEffect(() => {
     fetchSolutions();
@@ -98,6 +123,10 @@ const Header = () => {
 
   const whatsappUrl = "https://api.whatsapp.com/send?phone=5565999833097&text=Olá! Gostaria de saber mais sobre as soluções da MK Tecnologia.";
 
+  const handleSolutionClick = () => {
+    setIsDropdownOpen(false);
+  };
+
   return (
     <header className={`sticky top-0 z-50 transition-all duration-500 ease-out ${
       isScrolled 
@@ -139,7 +168,7 @@ const Header = () => {
             </Link>
             
             {/* Soluções with Click Dropdown */}
-            <div className="relative">
+            <div className="relative" ref={dropdownRef}>
               <button
                 onClick={() => setIsDropdownOpen(!isDropdownOpen)}
                 className={`relative px-6 py-3 rounded-xl text-sm font-semibold transition-all duration-300 group overflow-hidden ${
@@ -176,7 +205,7 @@ const Header = () => {
                             key={solution.id}
                             to={`/solucoes/${solution.key}`}
                             className="flex items-start gap-4 px-6 py-4 hover:bg-brand-gold/10 transition-all duration-300 group"
-                            onClick={() => setIsDropdownOpen(false)}
+                            onClick={handleSolutionClick}
                           >
                             <div className="flex-shrink-0 w-10 h-10 bg-gradient-to-br from-brand-gold/20 to-brand-gold-light/20 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
                               <Icon className="w-5 h-5 text-brand-gold" />
@@ -193,7 +222,7 @@ const Header = () => {
                       <Link
                         to="/solucoes"
                         className="text-sm text-brand-gold hover:text-brand-gold-light font-semibold transition-colors duration-300 flex items-center gap-2"
-                        onClick={() => setIsDropdownOpen(false)}
+                        onClick={handleSolutionClick}
                       >
                         Ver todas as soluções
                         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">

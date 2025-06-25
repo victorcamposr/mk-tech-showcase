@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import AdminLayout from '@/components/admin/AdminLayout';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -28,7 +27,19 @@ import {
   Database,
   Globe,
   Smartphone,
-  Calendar
+  Calendar,
+  CreditCard,
+  Coffee,
+  QrCode,
+  Truck,
+  Link2,
+  Bot,
+  Monitor,
+  TrendingUp,
+  Banknote,
+  Building2,
+  Tablet,
+  Fuel
 } from 'lucide-react';
 
 interface AdminSolution {
@@ -60,7 +71,26 @@ const AdminSolutions = () => {
   const [modalMode, setModalMode] = useState<'create' | 'edit' | 'view'>('create');
   const { toast } = useToast();
 
-  // Icon mapping
+  // Static solution icon mapping based on solution keys (same as frontend)
+  const staticSolutionIcons: Record<string, any> = {
+    'pdv-frente-caixa': Calculator,
+    'mesas-comandas': Coffee,
+    'cardapio-digital': QrCode,
+    'maquininhas-cartao': CreditCard,
+    'controle-motoboys': Truck,
+    'integracoes': Link2,
+    'gestao-analise': BarChart3,
+    'robo-whatsapp': Bot,
+    'nota-fiscal': Receipt,
+    'auto-atendimento': Monitor,
+    'marketing-vendas': TrendingUp,
+    'pagamento-tef': Banknote,
+    'franquias-filiais': Building2,
+    'autoatendimento-tablet': Tablet,
+    'sistema-revendas-gas-agua': Fuel,
+  };
+
+  // Fallback icon mapping
   const iconMap: Record<string, any> = {
     calculator: Calculator,
     users: Users,
@@ -73,10 +103,27 @@ const AdminSolutions = () => {
     globe: Globe,
     smartphone: Smartphone,
     lightbulb: Lightbulb,
+    'credit-card': CreditCard,
+    coffee: Coffee,
+    'qr-code': QrCode,
+    truck: Truck,
+    link2: Link2,
+    bot: Bot,
+    monitor: Monitor,
+    'trending-up': TrendingUp,
+    banknote: Banknote,
+    building2: Building2,
+    tablet: Tablet,
+    fuel: Fuel,
   };
 
-  const getIcon = (iconName: string) => {
-    return iconMap[iconName] || Lightbulb;
+  const getIcon = (solution: AdminSolution) => {
+    // First try to get icon from static mapping based on solution key
+    if (staticSolutionIcons[solution.key]) {
+      return staticSolutionIcons[solution.key];
+    }
+    // Fallback to icon mapping by icon_name
+    return iconMap[solution.icon_name] || Lightbulb;
   };
 
   useEffect(() => {
@@ -367,7 +414,7 @@ const AdminSolutions = () => {
             ) : (
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 {filteredSolutions.map((solution) => {
-                  const Icon = getIcon(solution.icon_name);
+                  const Icon = getIcon(solution);
                   return (
                     <div
                       key={solution.id}
