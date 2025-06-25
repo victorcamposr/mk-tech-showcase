@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import {
   Dialog,
@@ -61,15 +60,27 @@ const UserModal = ({ isOpen, onClose, onSuccess, user, mode }: UserModalProps) =
   // Função para registrar atividades
   const logActivity = async (actionType: string, entityTitle: string, entityId?: string) => {
     try {
-      await supabase
-        .from('admin_activities')
-        .insert([{
-          action_type: actionType,
-          entity_type: 'user',
-          entity_id: entityId,
-          entity_title: entityTitle,
-          user_name: 'Admin', // Temporário - em produção seria do perfil do usuário
-        }]);
+      // Get current user profile
+      const { data: { user: currentUser } } = await supabase.auth.getUser();
+      if (!currentUser) return;
+
+      const { data: profile } = await supabase
+        .from('admin_profiles')
+        .select('name')
+        .eq('user_id', currentUser.id)
+        .single();
+
+      if (profile) {
+        await supabase
+          .from('admin_activities')
+          .insert({
+            action_type: actionType,
+            entity_type: 'admin_profiles',
+            entity_title: entityTitle,
+            entity_id: entityId,
+            user_name: profile.name
+          });
+      }
     } catch (error) {
       console.error('Error logging activity:', error);
     }
@@ -122,7 +133,7 @@ const UserModal = ({ isOpen, onClose, onSuccess, user, mode }: UserModalProps) =
       }
 
       // Registrar atividade
-      await logActivity('delete', user.name, user.id);
+      await logActivity('delete', `excluiu o usuário ${user.name}`, user.id);
       
       toast({
         title: "Usuário excluído com sucesso!",
@@ -206,7 +217,7 @@ const UserModal = ({ isOpen, onClose, onSuccess, user, mode }: UserModalProps) =
         console.log('Profile created:', profileData);
         
         // Registrar atividade
-        await logActivity('create', data.name, profileData.id);
+        await logActivity('create', `criou o usuário ${data.name}`, profileData.id);
         
         toast({
           title: "Usuário criado com sucesso!",
@@ -248,7 +259,7 @@ const UserModal = ({ isOpen, onClose, onSuccess, user, mode }: UserModalProps) =
         }
         
         // Registrar atividade
-        await logActivity('update', data.name, user.id);
+        await logActivity('update', `atualizou o usuário ${data.name}`, user.id);
         
         toast({
           title: "Usuário atualizado com sucesso!",
