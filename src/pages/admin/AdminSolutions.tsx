@@ -1,38 +1,37 @@
+
 import { useState, useEffect } from 'react';
 import AdminLayout from '@/components/admin/AdminLayout';
-import SolutionModal from '@/components/admin/SolutionModal';
-import DeleteConfirmDialog from '@/components/admin/DeleteConfirmDialog';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
+import SolutionModal from '@/components/admin/SolutionModal';
+import DeleteConfirmDialog from '@/components/admin/DeleteConfirmDialog';
 import { 
-  Lightbulb, 
   Plus, 
   Search, 
-  Edit,
-  Eye,
-  Calendar,
-  Settings,
-  CheckCircle,
-  XCircle,
-  Trash2
+  Eye, 
+  Edit, 
+  Trash2, 
+  Lightbulb,
+  Filter,
+  RefreshCw
 } from 'lucide-react';
 
 interface AdminSolution {
   id: string;
   title: string;
   description: string;
-  features: string[];
-  benefits: string[];
-  industries: string[];
+  key: string;
   status: 'active' | 'inactive';
   created_at: string;
   updated_at: string;
-  key: string;
   icon_name: string;
+  features: string[];
+  benefits: string[];
+  industries: string[];
   card_image_url: string | null;
   hero_image_url: string | null;
   sort_order: number | null;
@@ -40,349 +39,323 @@ interface AdminSolution {
 
 const AdminSolutions = () => {
   const [solutions, setSolutions] = useState<AdminSolution[]>([]);
+  const [filteredSolutions, setFilteredSolutions] = useState<AdminSolution[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
+  const [statusFilter, setStatusFilter] = useState<'all' | 'active' | 'inactive'>('all');
   const [modalOpen, setModalOpen] = useState(false);
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [selectedSolution, setSelectedSolution] = useState<AdminSolution | null>(null);
   const [modalMode, setModalMode] = useState<'create' | 'edit' | 'view'>('create');
-  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
-  const [solutionToDelete, setSolutionToDelete] = useState<AdminSolution | null>(null);
-  const [deleteLoading, setDeleteLoading] = useState(false);
   const { toast } = useToast();
 
   useEffect(() => {
     fetchSolutions();
   }, []);
 
+  useEffect(() => {
+    filterSolutions();
+  }, [solutions, searchTerm, statusFilter]);
+
   const fetchSolutions = async () => {
+    setLoading(true);
     try {
-      console.log('Fetching solutions...');
       const { data, error } = await supabase
         .from('solutions')
         .select('*')
-        .order('sort_order', { ascending: true });
+        .order('sort_order', { ascending: true, nullsLast: true })
+        .order('created_at', { ascending: false });
 
-      console.log('Solutions fetched:', data, 'Error:', error);
-      if (error) throw error;
-      
-      // Cast the data to ensure proper typing
-      const typedSolutions: AdminSolution[] = (data || []).map(solution => ({
+      if (error) {
+        throw error;
+      }
+
+      // Cast status to proper type
+      const typedSolutions = (data || []).map(solution => ({
         ...solution,
         status: solution.status as 'active' | 'inactive'
       }));
-      
+
       setSolutions(typedSolutions);
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error fetching solutions:', error);
       toast({
-        variant: "destructive",
         title: "Erro ao carregar soluções",
-        description: "Não foi possível carregar a lista de soluções.",
+        description: error.message || "Não foi possível carregar as soluções.",
+        variant: "destructive",
       });
     } finally {
       setLoading(false);
     }
   };
 
-  // Função para registrar atividades
-  const logActivity = async (actionType: string, entityTitle: string, entityId?: string) => {
-    try {
-      await supabase
-        .from('admin_activities')
-        .insert([{
-          action_type: actionType,
-          entity_type: 'solution',
-          entity_id: entityId,
-          entity_title: entityTitle,
-          user_name: 'Admin', // Temporário - em produção seria do perfil do usuário
-        }]);
-    } catch (error) {
-      console.error('Error logging activity:', error);
+  const filterSolutions = () => {
+    let filtered = solutions;
+
+    if (searchTerm) {
+      filtered = filtered.filter(solution =>
+        solution.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        solution.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        solution.key.toLowerCase().includes(searchTerm.toLowerCase())
+      );
     }
+
+    if (statusFilter !== 'all') {
+      filtered = filtered.filter(solution => solution.status === statusFilter);
+    }
+
+    setFilteredSolutions(filtered);
   };
 
-  const toggleSolutionStatus = async (solutionId: string, currentStatus: 'active' | 'inactive') => {
-    const newStatus = currentStatus === 'active' ? 'inactive' : 'active';
-    
-    try {
-      const solution = solutions.find(s => s.id === solutionId);
-      const { error } = await supabase
-        .from('solutions')
-        .update({ status: newStatus })
-        .eq('id', solutionId);
-
-      if (error) throw error;
-
-      await fetchSolutions();
-      
-      // Registrar atividade
-      if (solution) {
-        await logActivity('update', `${solution.title} (${newStatus === 'active' ? 'ativada' : 'desativada'})`, solutionId);
-      }
-      
-      toast({
-        title: "Status atualizado",
-        description: `Solução ${newStatus === 'active' ? 'ativada' : 'desativada'} com sucesso.`,
-      });
-    } catch (error) {
-      toast({
-        variant: "destructive",
-        title: "Erro ao atualizar status",
-        description: "Não foi possível atualizar o status da solução.",
-      });
-    }
-  };
-
-  const handleDeleteSolution = async () => {
-    if (!solutionToDelete) return;
-    
-    setDeleteLoading(true);
-    try {
-      const { error } = await supabase
-        .from('solutions')
-        .delete()
-        .eq('id', solutionToDelete.id);
-
-      if (error) throw error;
-
-      // Registrar atividade
-      await logActivity('delete', solutionToDelete.title, solutionToDelete.id);
-
-      await fetchSolutions();
-      toast({
-        title: "Solução excluída",
-        description: "A solução foi removida permanentemente do sistema.",
-      });
-      
-      setDeleteDialogOpen(false);
-      setSolutionToDelete(null);
-    } catch (error) {
-      toast({
-        variant: "destructive",
-        title: "Erro ao excluir solução",
-        description: "Não foi possível excluir a solução.",
-      });
-    } finally {
-      setDeleteLoading(false);
-    }
-  };
-
-  const handleNewSolution = () => {
+  const handleCreate = () => {
     setSelectedSolution(null);
     setModalMode('create');
     setModalOpen(true);
   };
 
-  const handleViewSolution = (solution: AdminSolution) => {
+  const handleView = (solution: AdminSolution) => {
     setSelectedSolution(solution);
     setModalMode('view');
     setModalOpen(true);
   };
 
-  const handleEditSolution = (solution: AdminSolution) => {
+  const handleEdit = (solution: AdminSolution) => {
     setSelectedSolution(solution);
     setModalMode('edit');
     setModalOpen(true);
   };
 
-  const handleDeleteClick = (solution: AdminSolution) => {
-    setSolutionToDelete(solution);
+  const handleDelete = (solution: AdminSolution) => {
+    setSelectedSolution(solution);
     setDeleteDialogOpen(true);
   };
 
-  const filteredSolutions = solutions.filter(solution =>
-    solution.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    solution.key.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  const confirmDelete = async () => {
+    if (!selectedSolution) return;
 
-  const activeCount = solutions.filter(solution => solution.status === 'active').length;
-  const inactiveCount = solutions.filter(solution => solution.status === 'inactive').length;
+    try {
+      const { error } = await supabase
+        .from('solutions')
+        .delete()
+        .eq('id', selectedSolution.id);
+
+      if (error) {
+        throw error;
+      }
+
+      toast({
+        title: "Solução excluída",
+        description: "A solução foi excluída com sucesso.",
+      });
+
+      fetchSolutions();
+    } catch (error: any) {
+      console.error('Error deleting solution:', error);
+      toast({
+        title: "Erro ao excluir solução",
+        description: error.message || "Não foi possível excluir a solução.",
+        variant: "destructive",
+      });
+    } finally {
+      setDeleteDialogOpen(false);
+      setSelectedSolution(null);
+    }
+  };
+
+  const handleModalSuccess = () => {
+    fetchSolutions();
+  };
 
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString('pt-BR', {
       day: '2-digit',
       month: '2-digit',
-      year: 'numeric'
+      year: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
     });
   };
-
-  const truncateDescription = (description: string, maxLength: number = 120) => {
-    if (description.length <= maxLength) return description;
-    return description.substring(0, maxLength) + '...';
-  };
-
-  if (loading) {
-    return (
-      <AdminLayout>
-        <div className="flex items-center justify-center h-64">
-          <div className="text-center">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-brand-gold mx-auto"></div>
-            <p className="mt-4 text-gray-600">Carregando soluções...</p>
-          </div>
-        </div>
-      </AdminLayout>
-    );
-  }
 
   return (
     <AdminLayout>
       <div className="space-y-8">
         {/* Header */}
-        <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+        <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-3xl font-bold text-gray-900 flex items-center gap-3">
-              <Lightbulb className="w-8 h-8 text-brand-gold" />
+            <h1 className="text-4xl font-bold bg-gradient-to-r from-gray-900 via-gray-800 to-gray-700 bg-clip-text text-transparent flex items-center gap-3">
+              <div className="w-10 h-10 bg-gradient-to-br from-yellow-500 to-yellow-600 rounded-xl flex items-center justify-center shadow-lg">
+                <Lightbulb className="w-6 h-6 text-white" />
+              </div>
               Gerenciar Soluções
             </h1>
-            <p className="text-gray-600 mt-2">
-              Gerencie o catálogo de soluções da empresa
+            <p className="text-gray-600 mt-2 text-lg">
+              Gerencie as soluções e serviços da empresa
             </p>
           </div>
-          <Button 
-            onClick={handleNewSolution}
-            className="bg-gradient-to-r from-brand-gold to-brand-gold-light hover:from-brand-gold-dark hover:to-brand-gold text-brand-black font-semibold shadow-lg hover:shadow-xl transition-all duration-200"
-          >
-            <Plus className="w-4 h-4 mr-2" />
-            Nova Solução
-          </Button>
-        </div>
-
-        {/* Search and Stats */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-4 gap-6">
-          <div className="lg:col-span-2">
-            <div className="relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
-              <Input
-                placeholder="Buscar soluções..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-10 bg-white border-gray-300 focus:border-brand-gold focus:ring-brand-gold"
-              />
-            </div>
+          <div className="flex items-center gap-3">
+            <Button
+              onClick={fetchSolutions}
+              variant="outline"
+              className="border-brand-gold/20 text-brand-gold hover:bg-brand-gold/5"
+            >
+              <RefreshCw className="w-4 h-4 mr-2" />
+              Atualizar
+            </Button>
+            <Button
+              onClick={handleCreate}
+              className="bg-brand-gold hover:bg-brand-gold/90 text-brand-black font-semibold shadow-lg"
+            >
+              <Plus className="w-4 h-4 mr-2" />
+              Nova Solução
+            </Button>
           </div>
-          <Card className="shadow-lg border-0">
-            <CardContent className="p-4">
-              <div className="text-center">
-                <div className="text-2xl font-bold text-green-600">{activeCount}</div>
-                <div className="text-sm text-gray-600">Ativas</div>
-              </div>
-            </CardContent>
-          </Card>
-          <Card className="shadow-lg border-0">
-            <CardContent className="p-4">
-              <div className="text-center">
-                <div className="text-2xl font-bold text-red-600">{inactiveCount}</div>
-                <div className="text-sm text-gray-600">Inativas</div>
-              </div>
-            </CardContent>
-          </Card>
         </div>
 
-        {/* Solutions List */}
-        <Card className="shadow-lg border-0">
+        {/* Filters */}
+        <Card className="shadow-xl border-0 bg-gradient-to-br from-white to-gray-50">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              <Settings className="w-5 h-5 text-brand-gold" />
-              Catálogo de Soluções
+              <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-blue-600 rounded-lg flex items-center justify-center">
+                <Filter className="w-4 h-4 text-white" />
+              </div>
+              Filtros
             </CardTitle>
           </CardHeader>
           <CardContent>
-            {filteredSolutions.length === 0 ? (
+            <div className="flex flex-col sm:flex-row gap-4">
+              <div className="flex-1">
+                <div className="relative">
+                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+                  <Input
+                    placeholder="Buscar por título, descrição ou chave..."
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    className="pl-10 border-gray-300 focus:border-brand-gold focus:ring-brand-gold"
+                  />
+                </div>
+              </div>
+              <div className="flex gap-2">
+                <Button
+                  variant={statusFilter === 'all' ? 'default' : 'outline'}
+                  onClick={() => setStatusFilter('all')}
+                  className={statusFilter === 'all' ? 'bg-brand-gold hover:bg-brand-gold/90 text-brand-black' : ''}
+                >
+                  Todas
+                </Button>
+                <Button
+                  variant={statusFilter === 'active' ? 'default' : 'outline'}
+                  onClick={() => setStatusFilter('active')}
+                  className={statusFilter === 'active' ? 'bg-emerald-600 hover:bg-emerald-700 text-white' : ''}
+                >
+                  Ativas
+                </Button>
+                <Button
+                  variant={statusFilter === 'inactive' ? 'default' : 'outline'}
+                  onClick={() => setStatusFilter('inactive')}
+                  className={statusFilter === 'inactive' ? 'bg-red-600 hover:bg-red-700 text-white' : ''}
+                >
+                  Inativas
+                </Button>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Solutions List */}
+        <Card className="shadow-xl border-0 bg-gradient-to-br from-white to-gray-50">
+          <CardHeader>
+            <CardTitle className="flex items-center justify-between">
+              <span className="flex items-center gap-2">
+                <div className="w-8 h-8 bg-gradient-to-br from-brand-gold to-yellow-600 rounded-lg flex items-center justify-center">
+                  <Lightbulb className="w-4 h-4 text-white" />
+                </div>
+                Soluções ({filteredSolutions.length})
+              </span>
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            {loading ? (
+              <div className="text-center py-12">
+                <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-brand-gold mx-auto"></div>
+                <p className="mt-4 text-gray-600">Carregando soluções...</p>
+              </div>
+            ) : filteredSolutions.length === 0 ? (
               <div className="text-center py-12">
                 <Lightbulb className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-                <h3 className="text-lg font-medium text-gray-900 mb-2">
-                  {searchTerm ? 'Nenhuma solução encontrada' : 'Nenhuma solução cadastrada'}
+                <h3 className="text-xl font-medium text-gray-900 mb-2">
+                  {searchTerm || statusFilter !== 'all' ? 'Nenhuma solução encontrada' : 'Nenhuma solução cadastrada'}
                 </h3>
-                <p className="text-gray-600">
-                  {searchTerm 
-                    ? 'Tente usar outros termos de busca.' 
-                    : 'Adicione a primeira solução ao catálogo.'}
+                <p className="text-gray-600 mb-6">
+                  {searchTerm || statusFilter !== 'all' 
+                    ? 'Tente ajustar os filtros para encontrar o que procura.'
+                    : 'Comece criando sua primeira solução para o sistema.'
+                  }
                 </p>
+                {!searchTerm && statusFilter === 'all' && (
+                  <Button 
+                    onClick={handleCreate}
+                    className="bg-brand-gold hover:bg-brand-gold/90 text-brand-black font-semibold"
+                  >
+                    <Plus className="w-4 h-4 mr-2" />
+                    Criar Primeira Solução
+                  </Button>
+                )}
               </div>
             ) : (
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              <div className="space-y-4">
                 {filteredSolutions.map((solution) => (
-                  <div
-                    key={solution.id}
-                    className="p-6 bg-gray-50 rounded-xl hover:bg-gray-100 transition-colors border-l-4 border-brand-gold"
-                  >
-                    <div className="flex items-start justify-between mb-4">
-                      <div className="flex items-center gap-2">
-                        {solution.status === 'active' ? (
-                          <CheckCircle className="w-5 h-5 text-green-600" />
-                        ) : (
-                          <XCircle className="w-5 h-5 text-red-600" />
-                        )}
-                        <h3 className="text-lg font-semibold text-gray-900">{solution.title}</h3>
-                      </div>
-                      <Badge variant={solution.status === 'active' ? 'default' : 'destructive'}>
-                        {solution.status === 'active' ? 'Ativa' : 'Inativa'}
-                      </Badge>
-                    </div>
-                    
-                    <p className="text-gray-600 mb-4">{truncateDescription(solution.description)}</p>
-                    
-                    <div className="mb-4">
-                      <Badge variant="outline" className="text-xs">
-                        {solution.key}
-                      </Badge>
-                    </div>
-
-                    {solution.features && solution.features.length > 0 && (
-                      <div className="mb-4">
-                        <div className="text-sm text-gray-600 mb-2">Recursos principais:</div>
-                        <div className="flex flex-wrap gap-1">
-                          {solution.features.slice(0, 3).map((feature, index) => (
-                            <Badge key={index} variant="secondary" className="text-xs">
-                              {feature}
-                            </Badge>
-                          ))}
-                          {solution.features.length > 3 && (
-                            <Badge variant="secondary" className="text-xs">
-                              +{solution.features.length - 3} mais
+                  <div key={solution.id} className="bg-white p-6 rounded-xl shadow-sm border hover:shadow-md transition-shadow">
+                    <div className="flex items-start justify-between">
+                      <div className="flex-1">
+                        <div className="flex items-center gap-3 mb-2">
+                          <h3 className="text-xl font-semibold text-gray-900">{solution.title}</h3>
+                          <Badge className={`${
+                            solution.status === 'active' 
+                              ? 'bg-emerald-100 text-emerald-800 border-emerald-200' 
+                              : 'bg-red-100 text-red-800 border-red-200'
+                          } border font-medium`}>
+                            {solution.status === 'active' ? 'Ativa' : 'Inativa'}
+                          </Badge>
+                          {solution.sort_order !== null && (
+                            <Badge variant="outline" className="text-xs">
+                              Ordem: {solution.sort_order}
                             </Badge>
                           )}
                         </div>
+                        <p className="text-gray-600 mb-3 line-clamp-2">{solution.description}</p>
+                        <div className="flex items-center gap-4 text-sm text-gray-500">
+                          <span>Chave: <code className="bg-gray-100 px-2 py-1 rounded text-xs">{solution.key}</code></span>
+                          <span>Ícone: {solution.icon_name || 'Não definido'}</span>
+                          <span>Criado em: {formatDate(solution.created_at)}</span>
+                        </div>
                       </div>
-                    )}
-
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-1 text-sm text-gray-500">
-                        <Calendar className="w-4 h-4" />
-                        {formatDate(solution.created_at)}
-                      </div>
-                      <div className="flex items-center space-x-2">
-                        <Button 
-                          size="sm" 
-                          variant="outline" 
-                          onClick={() => handleViewSolution(solution)}
-                          className="shadow-md hover:shadow-lg transition-all duration-200"
+                      <div className="flex items-center gap-2 ml-4">
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => handleView(solution)}
+                          className="border-blue-200 text-blue-600 hover:bg-blue-50"
                         >
-                          <Eye className="w-4 h-4" />
-                        </Button>
-                        <Button 
-                          size="sm" 
-                          variant="outline" 
-                          onClick={() => handleEditSolution(solution)}
-                          className="shadow-md hover:shadow-lg transition-all duration-200"
-                        >
-                          <Edit className="w-4 h-4" />
+                          <Eye className="w-4 h-4 mr-1" />
+                          Ver
                         </Button>
                         <Button
+                          variant="outline"
                           size="sm"
-                          variant={solution.status === 'active' ? 'destructive' : 'default'}
-                          onClick={() => toggleSolutionStatus(solution.id, solution.status)}
-                          className="shadow-md hover:shadow-lg transition-all duration-200"
+                          onClick={() => handleEdit(solution)}
+                          className="border-green-200 text-green-600 hover:bg-green-50"
                         >
-                          {solution.status === 'active' ? 'Desativar' : 'Ativar'}
+                          <Edit className="w-4 h-4 mr-1" />
+                          Editar
                         </Button>
                         <Button
+                          variant="outline"
                           size="sm"
-                          variant="destructive"
-                          onClick={() => handleDeleteClick(solution)}
-                          className="shadow-md hover:shadow-lg transition-all duration-200"
+                          onClick={() => handleDelete(solution)}
+                          className="border-red-200 text-red-600 hover:bg-red-50"
                         >
-                          <Trash2 className="w-4 h-4" />
+                          <Trash2 className="w-4 h-4 mr-1" />
+                          Excluir
                         </Button>
                       </div>
                     </div>
@@ -392,29 +365,33 @@ const AdminSolutions = () => {
             )}
           </CardContent>
         </Card>
-
-        {/* Solution Modal */}
-        <SolutionModal
-          isOpen={modalOpen}
-          onClose={() => setModalOpen(false)}
-          onSuccess={fetchSolutions}
-          solution={selectedSolution}
-          mode={modalMode}
-        />
-
-        {/* Delete Confirmation Dialog */}
-        <DeleteConfirmDialog
-          isOpen={deleteDialogOpen}
-          onClose={() => {
-            setDeleteDialogOpen(false);
-            setSolutionToDelete(null);
-          }}
-          onConfirm={handleDeleteSolution}
-          loading={deleteLoading}
-          title="Excluir Solução"
-          description={`Tem certeza que deseja excluir a solução "${solutionToDelete?.title}"? Esta ação não pode ser desfeita.`}
-        />
       </div>
+
+      <SolutionModal
+        isOpen={modalOpen}
+        onClose={() => {
+          setModalOpen(false);
+          setSelectedSolution(null);
+        }}
+        solution={selectedSolution}
+        onSuccess={handleModalSuccess}
+        mode={modalMode}
+      />
+
+      <DeleteConfirmDialog
+        isOpen={deleteDialogOpen}
+        onClose={() => {
+          setDeleteDialogOpen(false);
+          setSelectedSolution(null);
+        }}
+        onConfirm={confirmDelete}
+        title="Excluir Solução"
+        description={
+          selectedSolution 
+            ? `Tem certeza que deseja excluir a solução "${selectedSolution.title}"? Esta ação não pode ser desfeita.`
+            : ''
+        }
+      />
     </AdminLayout>
   );
 };

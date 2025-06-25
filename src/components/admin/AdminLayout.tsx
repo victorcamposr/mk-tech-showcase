@@ -12,7 +12,9 @@ import {
   LogOut, 
   Menu, 
   X,
-  Mail
+  Mail,
+  Home,
+  User
 } from 'lucide-react';
 
 interface AdminLayoutProps {
@@ -23,7 +25,7 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
-  const { signOut } = useAuth();
+  const { signOut, adminProfile } = useAuth();
   const { toast } = useToast();
 
   const handleLogout = async () => {
@@ -44,15 +46,128 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
     }
   };
 
+  const handleGoToSite = () => {
+    window.open('/', '_blank');
+  };
+
   const navigation = [
-    { name: 'Dashboard', href: '/admin/dashboard', icon: LayoutDashboard },
-    { name: 'Blog', href: '/admin/blog', icon: FileText },
-    { name: 'Soluções', href: '/admin/solutions', icon: Lightbulb },
-    { name: 'Usuários', href: '/admin/users', icon: Users },
-    { name: 'Contatos', href: '/admin/contacts', icon: Mail },
+    { 
+      name: 'Dashboard', 
+      href: '/admin/dashboard', 
+      icon: LayoutDashboard,
+      color: 'from-blue-500 to-blue-600'
+    },
+    { 
+      name: 'Blog', 
+      href: '/admin/blog', 
+      icon: FileText,
+      color: 'from-green-500 to-green-600'
+    },
+    { 
+      name: 'Soluções', 
+      href: '/admin/solutions', 
+      icon: Lightbulb,
+      color: 'from-yellow-500 to-yellow-600'
+    },
+    { 
+      name: 'Usuários', 
+      href: '/admin/users', 
+      icon: Users,
+      color: 'from-purple-500 to-purple-600'
+    },
+    { 
+      name: 'Contatos', 
+      href: '/admin/contacts', 
+      icon: Mail,
+      color: 'from-red-500 to-red-600'
+    },
   ];
 
   const isActive = (href: string) => location.pathname === href;
+
+  const SidebarContent = () => (
+    <>
+      <div className="flex-1 h-0 pt-5 pb-4 overflow-y-auto">
+        <div className="flex-shrink-0 flex items-center px-4 mb-8">
+          <div className="flex items-center">
+            <img 
+              src="/lovable-uploads/894786af-af73-492e-ae6a-d8a39e0ac4cb.png" 
+              alt="MK Sistemas Logo" 
+              className="w-12 h-12 rounded-xl shadow-lg mr-4"
+            />
+            <div>
+              <h1 className="text-2xl font-bold bg-gradient-to-r from-brand-gold to-amber-600 bg-clip-text text-transparent">
+                MK Admin
+              </h1>
+              <p className="text-sm text-gray-500 font-medium">Painel Administrativo</p>
+            </div>
+          </div>
+        </div>
+        <nav className="flex-1 px-4 space-y-2">
+          {navigation.map((item) => {
+            const Icon = item.icon;
+            const active = isActive(item.href);
+            return (
+              <Link
+                key={item.name}
+                to={item.href}
+                className={`group flex items-center px-4 py-3 text-sm font-medium rounded-xl transition-all duration-200 ${
+                  active
+                    ? 'bg-gradient-to-r from-brand-gold/15 to-amber-500/15 text-brand-gold border border-brand-gold/20 shadow-lg scale-[1.02]'
+                    : 'text-gray-700 hover:bg-gray-50 hover:text-brand-gold hover:scale-[1.02] hover:shadow-sm'
+                }`}
+                onClick={() => setSidebarOpen(false)}
+              >
+                <div className={`mr-3 w-8 h-8 rounded-lg flex items-center justify-center bg-gradient-to-br ${item.color} shadow-md`}>
+                  <Icon className="h-4 w-4 text-white" />
+                </div>
+                {item.name}
+                {active && (
+                  <div className="ml-auto w-2 h-2 bg-brand-gold rounded-full animate-pulse"></div>
+                )}
+              </Link>
+            );
+          })}
+        </nav>
+      </div>
+      <div className="flex-shrink-0 border-t border-gray-100 p-4 space-y-3">
+        {/* User Profile Section */}
+        <div className="flex items-center space-x-3 p-3 bg-gradient-to-r from-gray-50 to-gray-100 rounded-xl">
+          <div className="w-10 h-10 bg-gradient-to-br from-brand-gold to-amber-600 rounded-full flex items-center justify-center shadow-md">
+            <User className="h-5 w-5 text-white" />
+          </div>
+          <div className="flex-1 min-w-0">
+            <p className="text-sm font-semibold text-gray-900 truncate">
+              {adminProfile?.name || 'Administrador'}
+            </p>
+            <p className="text-xs text-gray-500 uppercase tracking-wide font-medium">
+              {adminProfile?.role === 'super_admin' ? 'Super Admin' : 'Administrador'}
+            </p>
+          </div>
+        </div>
+        
+        {/* Action Buttons */}
+        <div className="space-y-2">
+          <Button
+            variant="ghost"
+            onClick={handleGoToSite}
+            className="w-full justify-start text-gray-600 hover:text-blue-600 hover:bg-blue-50 transition-colors rounded-xl"
+          >
+            <Home className="mr-3 h-4 w-4" />
+            Ir para o Site
+          </Button>
+          <Button
+            variant="ghost"
+            onClick={handleLogout}
+            className="w-full justify-start text-gray-600 hover:text-red-600 hover:bg-red-50 transition-colors rounded-xl"
+          >
+            <LogOut className="mr-3 h-4 w-4" />
+            Sair
+          </Button>
+        </div>
+      </div>
+    </>
+  );
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-100">
@@ -71,118 +186,19 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
               <X className="h-5 w-5" />
             </button>
           </div>
-          <div className="flex-1 h-0 pt-5 pb-4 overflow-y-auto">
-            <div className="flex-shrink-0 flex items-center px-4 mb-8">
-              <div className="flex items-center">
-                <img 
-                  src="/lovable-uploads/f8914b9c-f621-4ddb-8f33-cb631782bb48.png" 
-                  alt="MK Sistemas Logo" 
-                  className="w-10 h-10 rounded-lg shadow-md mr-3"
-                />
-                <div>
-                  <h1 className="text-xl font-bold bg-gradient-to-r from-brand-gold to-amber-600 bg-clip-text text-transparent">
-                    MK Admin
-                  </h1>
-                  <p className="text-xs text-gray-500">Painel Administrativo</p>
-                </div>
-              </div>
-            </div>
-            <nav className="px-3 space-y-1">
-              {navigation.map((item) => {
-                const Icon = item.icon;
-                const active = isActive(item.href);
-                return (
-                  <Link
-                    key={item.name}
-                    to={item.href}
-                    className={`group flex items-center px-4 py-3 text-sm font-medium rounded-xl transition-all duration-200 ${
-                      active
-                        ? 'bg-gradient-to-r from-brand-gold/15 to-amber-500/15 text-brand-gold border border-brand-gold/20 shadow-md'
-                        : 'text-gray-700 hover:bg-gray-50 hover:text-brand-gold hover:scale-[1.02]'
-                    }`}
-                    onClick={() => setSidebarOpen(false)}
-                  >
-                    <Icon className={`mr-3 h-5 w-5 transition-colors ${active ? 'text-brand-gold' : 'text-gray-500 group-hover:text-brand-gold'}`} />
-                    {item.name}
-                    {active && (
-                      <div className="ml-auto w-2 h-2 bg-brand-gold rounded-full animate-pulse"></div>
-                    )}
-                  </Link>
-                );
-              })}
-            </nav>
-          </div>
-          <div className="flex-shrink-0 border-t border-gray-100 p-4">
-            <Button
-              variant="ghost"
-              onClick={handleLogout}
-              className="w-full justify-start text-gray-600 hover:text-red-600 hover:bg-red-50 transition-colors rounded-xl"
-            >
-              <LogOut className="mr-2 h-4 w-4" />
-              Sair
-            </Button>
-          </div>
+          <SidebarContent />
         </div>
       </div>
 
       {/* Static sidebar for desktop */}
-      <div className="hidden md:flex md:w-72 md:flex-col md:fixed md:inset-y-0 z-30">
+      <div className="hidden md:flex md:w-80 md:flex-col md:fixed md:inset-y-0 z-30">
         <div className="flex-1 flex flex-col min-h-0 bg-white/80 backdrop-blur-xl border-r border-gray-200/50 shadow-xl">
-          <div className="flex-1 flex flex-col pt-5 pb-4 overflow-y-auto">
-            <div className="flex items-center flex-shrink-0 px-6 mb-8">
-              <div className="flex items-center">
-                <img 
-                  src="/lovable-uploads/f8914b9c-f621-4ddb-8f33-cb631782bb48.png" 
-                  alt="MK Sistemas Logo" 
-                  className="w-12 h-12 rounded-xl shadow-lg mr-4"
-                />
-                <div>
-                  <h1 className="text-2xl font-bold bg-gradient-to-r from-brand-gold to-amber-600 bg-clip-text text-transparent">
-                    MK Admin
-                  </h1>
-                  <p className="text-sm text-gray-500 font-medium">Painel Administrativo</p>
-                </div>
-              </div>
-            </div>
-            <nav className="flex-1 px-4 space-y-2">
-              {navigation.map((item) => {
-                const Icon = item.icon;
-                const active = isActive(item.href);
-                return (
-                  <Link
-                    key={item.name}
-                    to={item.href}
-                    className={`group flex items-center px-4 py-3 text-sm font-medium rounded-xl transition-all duration-200 ${
-                      active
-                        ? 'bg-gradient-to-r from-brand-gold/15 to-amber-500/15 text-brand-gold border border-brand-gold/20 shadow-lg scale-[1.02]'
-                        : 'text-gray-700 hover:bg-gray-50 hover:text-brand-gold hover:scale-[1.02] hover:shadow-sm'
-                    }`}
-                  >
-                    <Icon className={`mr-3 h-5 w-5 transition-colors ${active ? 'text-brand-gold' : 'text-gray-500 group-hover:text-brand-gold'}`} />
-                    {item.name}
-                    {active && (
-                      <div className="ml-auto w-2 h-2 bg-brand-gold rounded-full animate-pulse"></div>
-                    )}
-                  </Link>
-                );
-              })}
-            </nav>
-          </div>
-          <div className="flex-shrink-0 border-t border-gray-100 p-4">
-            <Button
-              variant="ghost"
-              onClick={handleLogout}
-              className="w-full justify-start text-gray-600 hover:text-red-600 hover:bg-red-50 transition-colors rounded-xl"
-            >
-              <LogOut className="mr-2 h-4 w-4" />
-              Sair
-            </Button>
-          </div>
+          <SidebarContent />
         </div>
       </div>
 
       {/* Main content */}
-      <div className="md:pl-72 flex flex-col flex-1">
+      <div className="md:pl-80 flex flex-col flex-1">
         <div className="sticky top-0 z-20 md:hidden pl-1 pt-1 sm:pl-3 sm:pt-3 bg-white/90 backdrop-blur-xl border-b border-gray-200/50">
           <button
             type="button"

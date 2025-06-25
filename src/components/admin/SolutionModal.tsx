@@ -35,34 +35,13 @@ interface SolutionModalProps {
   mode: 'create' | 'edit' | 'view';
 }
 
-const iconOptions = [
-  'Lightbulb',
-  'Monitor',
-  'Package',
-  'Receipt',
-  'DollarSign',
-  'Headphones',
-  'FileText',
-  'Settings',
-  'Cog',
-  'Zap',
-  'Shield',
-  'Target',
-  'TrendingUp',
-  'Users',
-  'Database',
-  'Cloud',
-  'Smartphone',
-  'Globe'
-];
-
 const SolutionModal = ({ isOpen, onClose, solution, onSuccess, mode }: SolutionModalProps) => {
   const [formData, setFormData] = useState({
     title: '',
     description: '',
     key: '',
     status: 'active' as 'active' | 'inactive',
-    icon_name: 'Lightbulb',
+    icon_name: '',
     features: [] as string[],
     benefits: [] as string[],
     industries: [] as string[],
@@ -73,8 +52,15 @@ const SolutionModal = ({ isOpen, onClose, solution, onSuccess, mode }: SolutionM
   const [featuresText, setFeaturesText] = useState('');
   const [benefitsText, setBenefitsText] = useState('');
   const [industriesText, setIndustriesText] = useState('');
+  const [availableIcons, setAvailableIcons] = useState<string[]>([]);
   const [loading, setLoading] = useState(false);
   const { toast } = useToast();
+
+  useEffect(() => {
+    if (isOpen) {
+      fetchAvailableIcons();
+    }
+  }, [isOpen]);
 
   useEffect(() => {
     if (solution && (mode === 'edit' || mode === 'view')) {
@@ -83,7 +69,7 @@ const SolutionModal = ({ isOpen, onClose, solution, onSuccess, mode }: SolutionM
         description: solution.description,
         key: solution.key,
         status: solution.status,
-        icon_name: solution.icon_name || 'Lightbulb',
+        icon_name: solution.icon_name || '',
         features: solution.features || [],
         benefits: solution.benefits || [],
         industries: solution.industries || [],
@@ -100,7 +86,7 @@ const SolutionModal = ({ isOpen, onClose, solution, onSuccess, mode }: SolutionM
         description: '',
         key: '',
         status: 'active',
-        icon_name: 'Lightbulb',
+        icon_name: '',
         features: [],
         benefits: [],
         industries: [],
@@ -113,6 +99,22 @@ const SolutionModal = ({ isOpen, onClose, solution, onSuccess, mode }: SolutionM
       setIndustriesText('');
     }
   }, [solution, mode, isOpen]);
+
+  const fetchAvailableIcons = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('solutions')
+        .select('icon_name')
+        .not('icon_name', 'is', null);
+
+      if (error) throw error;
+
+      const icons = Array.from(new Set(data?.map(s => s.icon_name).filter(Boolean))) as string[];
+      setAvailableIcons(icons);
+    } catch (error) {
+      console.error('Error fetching available icons:', error);
+    }
+  };
 
   const generateKey = (title: string) => {
     return title
@@ -195,14 +197,14 @@ const SolutionModal = ({ isOpen, onClose, solution, onSuccess, mode }: SolutionM
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-4xl max-h-[90vh] overflow-y-auto">
-        <DialogHeader>
-          <DialogTitle className="text-xl font-semibold text-gray-900">{getModalTitle()}</DialogTitle>
+      <DialogContent className="fixed top-[50%] left-[50%] translate-x-[-50%] translate-y-[-50%] w-[95vw] max-w-4xl max-h-[85vh] overflow-y-auto bg-white shadow-2xl z-50">
+        <DialogHeader className="pb-4 border-b">
+          <DialogTitle className="text-2xl font-bold text-gray-900">{getModalTitle()}</DialogTitle>
         </DialogHeader>
-        <form onSubmit={handleSubmit} className="space-y-6">
+        <form onSubmit={handleSubmit} className="space-y-6 p-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="space-y-2">
-              <Label htmlFor="title">Título *</Label>
+              <Label htmlFor="title" className="text-sm font-semibold text-gray-700">Título *</Label>
               <Input
                 id="title"
                 value={formData.title}
@@ -217,11 +219,12 @@ const SolutionModal = ({ isOpen, onClose, solution, onSuccess, mode }: SolutionM
                 placeholder="Título da solução"
                 disabled={mode === 'view'}
                 required
+                className="border-gray-300 focus:border-brand-gold focus:ring-brand-gold"
               />
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="key">Chave da URL *</Label>
+              <Label htmlFor="key" className="text-sm font-semibold text-gray-700">Chave da URL *</Label>
               <Input
                 id="key"
                 value={formData.key}
@@ -229,15 +232,16 @@ const SolutionModal = ({ isOpen, onClose, solution, onSuccess, mode }: SolutionM
                 placeholder="chave-da-url"
                 disabled={mode === 'view'}
                 required
+                className="border-gray-300 focus:border-brand-gold focus:ring-brand-gold"
               />
-              <p className="text-sm text-gray-500">
+              <p className="text-xs text-gray-500">
                 Esta chave será usada na URL: /solucoes/{formData.key}
               </p>
             </div>
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="description">Descrição *</Label>
+            <Label htmlFor="description" className="text-sm font-semibold text-gray-700">Descrição *</Label>
             <Textarea
               id="description"
               value={formData.description}
@@ -246,22 +250,23 @@ const SolutionModal = ({ isOpen, onClose, solution, onSuccess, mode }: SolutionM
               rows={4}
               disabled={mode === 'view'}
               required
+              className="border-gray-300 focus:border-brand-gold focus:ring-brand-gold"
             />
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <div className="space-y-2">
-              <Label htmlFor="icon_name">Ícone</Label>
+              <Label htmlFor="icon_name" className="text-sm font-semibold text-gray-700">Ícone</Label>
               <Select
                 value={formData.icon_name}
                 onValueChange={(value) => setFormData(prev => ({ ...prev, icon_name: value }))}
                 disabled={mode === 'view'}
               >
-                <SelectTrigger>
-                  <SelectValue />
+                <SelectTrigger className="border-gray-300 focus:border-brand-gold focus:ring-brand-gold">
+                  <SelectValue placeholder="Selecione um ícone" />
                 </SelectTrigger>
                 <SelectContent>
-                  {iconOptions.map((icon) => (
+                  {availableIcons.map((icon) => (
                     <SelectItem key={icon} value={icon}>
                       {icon}
                     </SelectItem>
@@ -271,7 +276,7 @@ const SolutionModal = ({ isOpen, onClose, solution, onSuccess, mode }: SolutionM
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="status">Status</Label>
+              <Label htmlFor="status" className="text-sm font-semibold text-gray-700">Status</Label>
               <Select
                 value={formData.status}
                 onValueChange={(value: 'active' | 'inactive') => 
@@ -279,7 +284,7 @@ const SolutionModal = ({ isOpen, onClose, solution, onSuccess, mode }: SolutionM
                 }
                 disabled={mode === 'view'}
               >
-                <SelectTrigger>
+                <SelectTrigger className="border-gray-300 focus:border-brand-gold focus:ring-brand-gold">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
@@ -290,7 +295,7 @@ const SolutionModal = ({ isOpen, onClose, solution, onSuccess, mode }: SolutionM
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="sort_order">Ordem</Label>
+              <Label htmlFor="sort_order" className="text-sm font-semibold text-gray-700">Ordem</Label>
               <Input
                 id="sort_order"
                 type="number"
@@ -298,12 +303,13 @@ const SolutionModal = ({ isOpen, onClose, solution, onSuccess, mode }: SolutionM
                 onChange={(e) => setFormData(prev => ({ ...prev, sort_order: parseInt(e.target.value) || 0 }))}
                 placeholder="0"
                 disabled={mode === 'view'}
+                className="border-gray-300 focus:border-brand-gold focus:ring-brand-gold"
               />
             </div>
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="features">Recursos (separados por vírgula)</Label>
+            <Label htmlFor="features" className="text-sm font-semibold text-gray-700">Recursos (separados por vírgula)</Label>
             <Textarea
               id="features"
               value={featuresText}
@@ -311,11 +317,12 @@ const SolutionModal = ({ isOpen, onClose, solution, onSuccess, mode }: SolutionM
               placeholder="Recurso 1, Recurso 2, Recurso 3"
               rows={3}
               disabled={mode === 'view'}
+              className="border-gray-300 focus:border-brand-gold focus:ring-brand-gold"
             />
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="benefits">Benefícios (separados por vírgula)</Label>
+            <Label htmlFor="benefits" className="text-sm font-semibold text-gray-700">Benefícios (separados por vírgula)</Label>
             <Textarea
               id="benefits"
               value={benefitsText}
@@ -323,11 +330,12 @@ const SolutionModal = ({ isOpen, onClose, solution, onSuccess, mode }: SolutionM
               placeholder="Benefício 1, Benefício 2, Benefício 3"
               rows={3}
               disabled={mode === 'view'}
+              className="border-gray-300 focus:border-brand-gold focus:ring-brand-gold"
             />
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="industries">Segmentos (separados por vírgula)</Label>
+            <Label htmlFor="industries" className="text-sm font-semibold text-gray-700">Segmentos (separados por vírgula)</Label>
             <Textarea
               id="industries"
               value={industriesText}
@@ -335,47 +343,51 @@ const SolutionModal = ({ isOpen, onClose, solution, onSuccess, mode }: SolutionM
               placeholder="Varejo, Indústria, Serviços"
               rows={2}
               disabled={mode === 'view'}
+              className="border-gray-300 focus:border-brand-gold focus:ring-brand-gold"
             />
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="space-y-2">
-              <Label htmlFor="card_image_url">Imagem do Card (URL)</Label>
+              <Label htmlFor="card_image_url" className="text-sm font-semibold text-gray-700">Imagem do Card (URL)</Label>
               <Input
                 id="card_image_url"
                 value={formData.card_image_url}
                 onChange={(e) => setFormData(prev => ({ ...prev, card_image_url: e.target.value }))}
                 placeholder="https://exemplo.com/imagem-card.jpg"
                 disabled={mode === 'view'}
+                className="border-gray-300 focus:border-brand-gold focus:ring-brand-gold"
               />
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="hero_image_url">Imagem Hero (URL)</Label>
+              <Label htmlFor="hero_image_url" className="text-sm font-semibold text-gray-700">Imagem Hero (URL)</Label>
               <Input
                 id="hero_image_url"
                 value={formData.hero_image_url}
                 onChange={(e) => setFormData(prev => ({ ...prev, hero_image_url: e.target.value }))}
                 placeholder="https://exemplo.com/imagem-hero.jpg"
                 disabled={mode === 'view'}
+                className="border-gray-300 focus:border-brand-gold focus:ring-brand-gold"
               />
             </div>
           </div>
 
           {mode !== 'view' && (
-            <div className="flex justify-end space-x-2 pt-6 border-t">
+            <div className="flex justify-end space-x-4 pt-6 border-t border-gray-200">
               <Button
                 type="button"
                 variant="outline"
                 onClick={onClose}
                 disabled={loading}
+                className="px-6 py-2 border-gray-300 text-gray-700 hover:bg-gray-50"
               >
                 Cancelar
               </Button>
               <Button
                 type="submit"
                 disabled={loading}
-                className="bg-brand-gold hover:bg-brand-gold/90 text-brand-black"
+                className="px-6 py-2 bg-brand-gold hover:bg-brand-gold/90 text-brand-black font-semibold"
               >
                 {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
                 {mode === 'create' ? 'Criar Solução' : 'Salvar Alterações'}
