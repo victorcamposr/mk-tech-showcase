@@ -196,6 +196,13 @@ const AdminSolutions = () => {
 
   const confirmDelete = async (solutionId: string) => {
     try {
+      // Primeiro busca os dados da solução antes de excluir para log
+      const { data: solutionData } = await supabase
+        .from('solutions')
+        .select('title')
+        .eq('id', solutionId)
+        .single();
+
       const { error } = await supabase
         .from('solutions')
         .delete()
@@ -204,6 +211,9 @@ const AdminSolutions = () => {
       if (error) {
         throw error;
       }
+
+      // Log da atividade de exclusão
+      await logActivity('delete', solutionData?.title || 'Solução');
 
       toast({
         title: "Solução excluída",
@@ -220,6 +230,28 @@ const AdminSolutions = () => {
       });
     } finally {
       setDeleteConfirmId(null);
+    }
+  };
+
+  const logActivity = async (action: string, entityTitle: string) => {
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return;
+
+      const { data: profile } = await supabase
+        .from('admin_profiles')
+        .select('name')
+        .eq('user_id', user.id)
+        .single();
+
+      await supabase.from('admin_activities').insert({
+        action_type: action,
+        entity_type: 'solutions',
+        entity_title: entityTitle,
+        user_name: profile?.name || 'Admin'
+      });
+    } catch (error) {
+      console.error('Error logging activity:', error);
     }
   };
 

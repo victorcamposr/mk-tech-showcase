@@ -1,5 +1,6 @@
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+
+import { useState, useEffect } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
 import AdminLayout from '@/components/admin/AdminLayout';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -12,11 +13,12 @@ import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import { ArrowLeft, Plus, X, Lightbulb, Calculator, Users, BarChart3, Shield, Zap, Settings, FileText, Database, Globe, Smartphone, CreditCard, Coffee, QrCode, Truck, Link2, Bot, Monitor, TrendingUp, Banknote, Building2, Tablet, Fuel, Receipt } from 'lucide-react';
 
-const CreateSolution = () => {
+const EditSolution = () => {
   const navigate = useNavigate();
+  const { id } = useParams();
   const { toast } = useToast();
   const [loading, setLoading] = useState(false);
-  
+  const [loadingData, setLoadingData] = useState(true);
   const [formData, setFormData] = useState({
     title: '',
     description: '',
@@ -63,6 +65,55 @@ const CreateSolution = () => {
     receipt: { component: Receipt, name: 'Receipt' },
   };
 
+  useEffect(() => {
+    if (id) {
+      fetchSolution();
+    }
+  }, [id]);
+
+  const fetchSolution = async () => {
+    if (!id) return;
+    
+    setLoadingData(true);
+    try {
+      const { data, error } = await supabase
+        .from('solutions')
+        .select('*')
+        .eq('id', id)
+        .single();
+
+      if (error) {
+        throw error;
+      }
+
+      if (data) {
+        setFormData({
+          title: data.title || '',
+          description: data.description || '',
+          key: data.key || '',
+          status: data.status as 'active' | 'inactive',
+          icon_name: data.icon_name || 'lightbulb',
+          features: data.features || [],
+          benefits: data.benefits || [],
+          industries: data.industries || [],
+          card_image_url: data.card_image_url || '',
+          hero_image_url: data.hero_image_url || '',
+          sort_order: data.sort_order,
+        });
+      }
+    } catch (error: any) {
+      console.error('Error fetching solution:', error);
+      toast({
+        title: "Erro ao carregar solução",
+        description: error.message || "Não foi possível carregar os dados da solução.",
+        variant: "destructive",
+      });
+      navigate('/admin/solutions');
+    } finally {
+      setLoadingData(false);
+    }
+  };
+
   const logActivity = async (action: string, entityTitle: string) => {
     try {
       const { data: { user } } = await supabase.auth.getUser();
@@ -77,6 +128,7 @@ const CreateSolution = () => {
       await supabase.from('admin_activities').insert({
         action_type: action,
         entity_type: 'solutions',
+        entity_id: id,
         entity_title: entityTitle,
         user_name: profile?.name || 'Admin'
       });
@@ -132,28 +184,29 @@ const CreateSolution = () => {
 
       const { error } = await supabase
         .from('solutions')
-        .insert([dataToSave]);
+        .update(dataToSave)
+        .eq('id', id);
 
       if (error) {
         console.error('Database error:', error);
         toast({
-          title: "Erro ao criar solução",
-          description: error.message || "Não foi possível criar a solução.",
+          title: "Erro ao atualizar solução",
+          description: error.message || "Não foi possível atualizar a solução.",
           variant: "destructive",
         });
         return;
       }
 
-      await logActivity('create', formData.title);
+      await logActivity('update', formData.title);
 
       toast({
-        title: "Solução criada",
-        description: "A solução foi criada com sucesso.",
+        title: "Solução atualizada",
+        description: "A solução foi atualizada com sucesso.",
       });
 
       navigate('/admin/solutions');
     } catch (error: any) {
-      console.error('Error saving solution:', error);
+      console.error('Error updating solution:', error);
       toast({
         title: "Erro inesperado",
         description: error.message || "Ocorreu um erro inesperado.",
@@ -163,6 +216,19 @@ const CreateSolution = () => {
       setLoading(false);
     }
   };
+
+  if (loadingData) {
+    return (
+      <AdminLayout>
+        <div className="flex items-center justify-center h-64">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-brand-gold mx-auto"></div>
+            <p className="mt-4 text-gray-600">Carregando dados da solução...</p>
+          </div>
+        </div>
+      </AdminLayout>
+    );
+  }
 
   return (
     <AdminLayout>
@@ -183,10 +249,10 @@ const CreateSolution = () => {
               <div className="w-12 h-12 bg-gradient-to-br from-brand-gold to-brand-gold-light rounded-xl flex items-center justify-center shadow-lg">
                 <Lightbulb className="w-6 h-6 text-white" />
               </div>
-              Nova Solução
+              Editar Solução
             </h1>
             <p className="text-gray-600 mt-2">
-              Crie uma nova solução para o sistema
+              Edite os dados da solução
             </p>
           </div>
         </div>
@@ -447,7 +513,7 @@ const CreateSolution = () => {
                 disabled={loading}
                 className="h-12 px-8 bg-gradient-to-r from-brand-gold to-brand-gold-light hover:from-brand-gold-dark hover:to-brand-gold text-white font-semibold shadow-lg hover:shadow-xl transition-all duration-200"
               >
-                {loading ? 'Salvando...' : 'Criar Solução'}
+                {loading ? 'Salvando...' : 'Salvar Alterações'}
               </Button>
             </div>
           </CardContent>
@@ -457,4 +523,4 @@ const CreateSolution = () => {
   );
 };
 
-export default CreateSolution;
+export default EditSolution;
