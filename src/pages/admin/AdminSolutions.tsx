@@ -8,7 +8,6 @@ import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import SolutionModal from "@/components/admin/SolutionModal";
 import DeleteConfirmDialog from "@/components/admin/DeleteConfirmDialog";
-import AdminLayout from "@/components/admin/AdminLayout";
 
 interface Solution {
   id: string;
@@ -73,13 +72,7 @@ const AdminSolutions = () => {
 
       if (error) throw error;
 
-      // Type cast the status property to match our interface
-      const typedSolutions = (data || []).map(solution => ({
-        ...solution,
-        status: solution.status as 'active' | 'inactive'
-      }));
-
-      setSolutions(typedSolutions);
+      setSolutions(data || []);
     } catch (error) {
       console.error('Error fetching solutions:', error);
       toast({
@@ -149,145 +142,139 @@ const AdminSolutions = () => {
 
   if (loading) {
     return (
-      <AdminLayout>
-        <div className="flex items-center justify-center min-h-[400px]">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-brand-gold"></div>
-        </div>
-      </AdminLayout>
+      <div className="flex items-center justify-center min-h-[400px]">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-brand-gold"></div>
+      </div>
     );
   }
 
   return (
-    <AdminLayout>
-      <div className="space-y-6">
-        <div className="flex justify-between items-center">
-          <h2 className="text-2xl font-bold text-brand-black">Gerenciar Soluções</h2>
-          <Button onClick={handleAdd}>
-            <Plus className="w-4 h-4 mr-2" />
-            Nova Solução
-          </Button>
-        </div>
-
-        <div className="grid gap-6">
-          {solutions.map((solution) => {
-            const IconComponent = getIconComponent(solution);
-            return (
-              <Card key={solution.id} className="hover:shadow-lg transition-shadow">
-                <CardHeader>
-                  <div className="flex items-start justify-between">
-                    <div className="flex items-center gap-3">
-                      <div className="flex-shrink-0 w-10 h-10 bg-gradient-to-br from-brand-gold/20 to-brand-gold-light/20 rounded-xl flex items-center justify-center">
-                        <IconComponent className="w-5 h-5 text-brand-gold" />
-                      </div>
-                      <div>
-                        <CardTitle className="text-lg">{solution.title}</CardTitle>
-                        <p className="text-sm text-gray-600 mt-1">Key: {solution.key}</p>
-                      </div>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <Badge variant={solution.status === 'active' ? 'default' : 'secondary'}>
-                        {solution.status === 'active' ? 'Ativa' : 'Inativa'}
-                      </Badge>
-                      <Button variant="outline" size="sm" onClick={() => handleEdit(solution)}>
-                        <Edit className="w-4 h-4" />
-                      </Button>
-                      <Button variant="outline" size="sm" onClick={() => handleDelete(solution)}>
-                        <Trash2 className="w-4 h-4 text-red-500" />
-                      </Button>
-                    </div>
-                  </div>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-gray-600 mb-4">{solution.description}</p>
-                  
-                  <div className="grid md:grid-cols-2 gap-4">
-                    <div>
-                      <h4 className="font-semibold text-sm text-brand-black mb-2">Recursos ({solution.features.length})</h4>
-                      <ul className="text-sm text-gray-600 space-y-1">
-                        {solution.features.slice(0, 3).map((feature, index) => (
-                          <li key={index} className="flex items-start">
-                            <span className="w-1 h-1 bg-brand-gold rounded-full mt-2 mr-2 flex-shrink-0"></span>
-                            {feature}
-                          </li>
-                        ))}
-                        {solution.features.length > 3 && (
-                          <li className="text-brand-gold font-medium">
-                            +{solution.features.length - 3} mais recursos
-                          </li>
-                        )}
-                      </ul>
-                    </div>
-                    
-                    <div>
-                      <h4 className="font-semibold text-sm text-brand-black mb-2">Benefícios ({solution.benefits.length})</h4>
-                      <ul className="text-sm text-gray-600 space-y-1">
-                        {solution.benefits.slice(0, 3).map((benefit, index) => (
-                          <li key={index} className="flex items-start">
-                            <span className="w-1 h-1 bg-brand-gold rounded-full mt-2 mr-2 flex-shrink-0"></span>
-                            {benefit}
-                          </li>
-                        ))}
-                        {solution.benefits.length > 3 && (
-                          <li className="text-brand-gold font-medium">
-                            +{solution.benefits.length - 3} mais benefícios
-                          </li>
-                        )}
-                      </ul>
-                    </div>
-                  </div>
-
-                  {solution.industries.length > 0 && (
-                    <div className="mt-4">
-                      <h4 className="font-semibold text-sm text-brand-black mb-2">Segmentos</h4>
-                      <div className="flex flex-wrap gap-2">
-                        {solution.industries.map((industry, index) => (
-                          <Badge key={index} variant="outline" className="text-xs">
-                            {industry}
-                          </Badge>
-                        ))}
-                      </div>
-                    </div>
-                  )}
-
-                  <div className="mt-4 text-xs text-gray-500">
-                    Ordem: {solution.sort_order || 'Não definida'} | 
-                    Criado em: {new Date(solution.created_at).toLocaleDateString('pt-BR')}
-                  </div>
-                </CardContent>
-              </Card>
-            );
-          })}
-        </div>
-
-        {solutions.length === 0 && (
-          <Card>
-            <CardContent className="text-center py-8">
-              <p className="text-gray-500">Nenhuma solução cadastrada ainda.</p>
-              <Button onClick={handleAdd} className="mt-4">
-                <Plus className="w-4 h-4 mr-2" />
-                Criar primeira solução
-              </Button>
-            </CardContent>
-          </Card>
-        )}
-
-        <SolutionModal
-          isOpen={isModalOpen}
-          onClose={handleModalClose}
-          solution={selectedSolution}
-          onSuccess={handleModalClose}
-          mode={selectedSolution ? 'edit' : 'create'}
-        />
-
-        <DeleteConfirmDialog
-          isOpen={deleteConfirmOpen}
-          onClose={() => setDeleteConfirmOpen(false)}
-          onConfirm={confirmDelete}
-          title="Excluir Solução"
-          description={`Tem certeza que deseja excluir a solução "${solutionToDelete?.title}"? Esta ação não pode ser desfeita.`}
-        />
+    <div className="space-y-6">
+      <div className="flex justify-between items-center">
+        <h2 className="text-2xl font-bold text-brand-black">Gerenciar Soluções</h2>
+        <Button onClick={handleAdd}>
+          <Plus className="w-4 h-4 mr-2" />
+          Nova Solução
+        </Button>
       </div>
-    </AdminLayout>
+
+      <div className="grid gap-6">
+        {solutions.map((solution) => {
+          const IconComponent = getIconComponent(solution);
+          return (
+            <Card key={solution.id} className="hover:shadow-lg transition-shadow">
+              <CardHeader>
+                <div className="flex items-start justify-between">
+                  <div className="flex items-center gap-3">
+                    <div className="flex-shrink-0 w-10 h-10 bg-gradient-to-br from-brand-gold/20 to-brand-gold-light/20 rounded-xl flex items-center justify-center">
+                      <IconComponent className="w-5 h-5 text-brand-gold" />
+                    </div>
+                    <div>
+                      <CardTitle className="text-lg">{solution.title}</CardTitle>
+                      <p className="text-sm text-gray-600 mt-1">Key: {solution.key}</p>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Badge variant={solution.status === 'active' ? 'default' : 'secondary'}>
+                      {solution.status === 'active' ? 'Ativa' : 'Inativa'}
+                    </Badge>
+                    <Button variant="outline" size="sm" onClick={() => handleEdit(solution)}>
+                      <Edit className="w-4 h-4" />
+                    </Button>
+                    <Button variant="outline" size="sm" onClick={() => handleDelete(solution)}>
+                      <Trash2 className="w-4 h-4 text-red-500" />
+                    </Button>
+                  </div>
+                </div>
+              </CardHeader>
+              <CardContent>
+                <p className="text-gray-600 mb-4">{solution.description}</p>
+                
+                <div className="grid md:grid-cols-2 gap-4">
+                  <div>
+                    <h4 className="font-semibold text-sm text-brand-black mb-2">Recursos ({solution.features.length})</h4>
+                    <ul className="text-sm text-gray-600 space-y-1">
+                      {solution.features.slice(0, 3).map((feature, index) => (
+                        <li key={index} className="flex items-start">
+                          <span className="w-1 h-1 bg-brand-gold rounded-full mt-2 mr-2 flex-shrink-0"></span>
+                          {feature}
+                        </li>
+                      ))}
+                      {solution.features.length > 3 && (
+                        <li className="text-brand-gold font-medium">
+                          +{solution.features.length - 3} mais recursos
+                        </li>
+                      )}
+                    </ul>
+                  </div>
+                  
+                  <div>
+                    <h4 className="font-semibold text-sm text-brand-black mb-2">Benefícios ({solution.benefits.length})</h4>
+                    <ul className="text-sm text-gray-600 space-y-1">
+                      {solution.benefits.slice(0, 3).map((benefit, index) => (
+                        <li key={index} className="flex items-start">
+                          <span className="w-1 h-1 bg-brand-gold rounded-full mt-2 mr-2 flex-shrink-0"></span>
+                          {benefit}
+                        </li>
+                      ))}
+                      {solution.benefits.length > 3 && (
+                        <li className="text-brand-gold font-medium">
+                          +{solution.benefits.length - 3} mais benefícios
+                        </li>
+                      )}
+                    </ul>
+                  </div>
+                </div>
+
+                {solution.industries.length > 0 && (
+                  <div className="mt-4">
+                    <h4 className="font-semibold text-sm text-brand-black mb-2">Segmentos</h4>
+                    <div className="flex flex-wrap gap-2">
+                      {solution.industries.map((industry, index) => (
+                        <Badge key={index} variant="outline" className="text-xs">
+                          {industry}
+                        </Badge>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                <div className="mt-4 text-xs text-gray-500">
+                  Ordem: {solution.sort_order || 'Não definida'} | 
+                  Criado em: {new Date(solution.created_at).toLocaleDateString('pt-BR')}
+                </div>
+              </CardContent>
+            </Card>
+          );
+        })}
+      </div>
+
+      {solutions.length === 0 && (
+        <Card>
+          <CardContent className="text-center py-8">
+            <p className="text-gray-500">Nenhuma solução cadastrada ainda.</p>
+            <Button onClick={handleAdd} className="mt-4">
+              <Plus className="w-4 h-4 mr-2" />
+              Criar primeira solução
+            </Button>
+          </CardContent>
+        </Card>
+      )}
+
+      <SolutionModal
+        isOpen={isModalOpen}
+        onClose={handleModalClose}
+        solution={selectedSolution}
+      />
+
+      <DeleteConfirmDialog
+        isOpen={deleteConfirmOpen}
+        onClose={() => setDeleteConfirmOpen(false)}
+        onConfirm={confirmDelete}
+        title="Excluir Solução"
+        description={`Tem certeza que deseja excluir a solução "${solutionToDelete?.title}"? Esta ação não pode ser desfeita.`}
+      />
+    </div>
   );
 };
 
