@@ -26,7 +26,7 @@ interface UserData {
   name: string;
   email: string;
   password: string;
-  role: 'admin' | 'editor';
+  role: 'admin' | 'super_admin';
   is_active: boolean;
 }
 
@@ -326,7 +326,7 @@ const UserModal = ({ isOpen, onClose, onSuccess, user, mode }: UserModalProps) =
                       </FormControl>
                       <SelectContent>
                         <SelectItem value="admin">Admin</SelectItem>
-                        <SelectItem value="editor">Editor</SelectItem>
+                        <SelectItem value="super_admin">Super Admin</SelectItem>
                       </SelectContent>
                     </Select>
                     <FormMessage />
