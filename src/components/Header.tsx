@@ -1,4 +1,3 @@
-
 import { useState, useEffect, useRef } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -27,7 +26,7 @@ const Header = () => {
   const navigate = useNavigate();
   const dropdownRef = useRef<HTMLDivElement>(null);
 
-  // Static solution icon mapping based on solution keys
+  // Static solution icon mapping based on solution keys (same as AdminSolutions)
   const staticSolutionIcons: Record<string, any> = {
     'pdv-frente-caixa': Calculator,
     'mesas-comandas': Coffee,
@@ -46,8 +45,41 @@ const Header = () => {
     'sistema-revendas-gas-agua': Fuel,
   };
 
+  // Fallback icon mapping by icon_name (same as AdminSolutions)
+  const iconMap: Record<string, any> = {
+    calculator: Calculator,
+    users: User,
+    'bar-chart-3': BarChart3,
+    shield: Settings,
+    zap: Zap,
+    settings: Settings,
+    'file-text': Receipt,
+    database: Grid3X3,
+    globe: Grid3X3,
+    smartphone: Smartphone,
+    lightbulb: Lightbulb,
+    'credit-card': CreditCard,
+    coffee: Coffee,
+    'qr-code': QrCode,
+    truck: Truck,
+    link2: Link2,
+    bot: Bot,
+    monitor: Monitor,
+    'trending-up': TrendingUp,
+    banknote: Banknote,
+    building2: Building2,
+    tablet: Tablet,
+    fuel: Fuel,
+    receipt: Receipt,
+  };
+
   const getIcon = (solution: Solution) => {
-    return staticSolutionIcons[solution.key] || Lightbulb;
+    // First try to get icon from static mapping based on solution key
+    if (staticSolutionIcons[solution.key]) {
+      return staticSolutionIcons[solution.key];
+    }
+    // Fallback to icon mapping by icon_name
+    return iconMap[solution.icon_name] || Lightbulb;
   };
 
   useEffect(() => {
