@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
@@ -242,7 +243,7 @@ const SolutionModal = ({ isOpen, onClose, solution, onSuccess, mode }: SolutionM
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 sm:max-w-4xl max-h-[90vh] overflow-y-auto shadow-2xl border-0 z-[100] bg-white rounded-lg">
+      <DialogContent className="sm:max-w-4xl max-h-[90vh] overflow-y-auto shadow-2xl border-0 bg-white rounded-lg">
         <DialogHeader className="border-b border-gray-100 pb-6">
           <DialogTitle className="text-2xl font-bold text-gray-900 flex items-center gap-3">
             <div className="w-12 h-12 bg-gradient-to-br from-brand-gold to-brand-gold-light rounded-xl flex items-center justify-center shadow-lg">
@@ -297,7 +298,7 @@ const SolutionModal = ({ isOpen, onClose, solution, onSuccess, mode }: SolutionM
                 </Label>
                 <Select
                   value={formData.status}
-                  onValueChange={(value) => handleInputChange('status', value)}
+                  onValueChange={(value: 'active' | 'inactive') => handleInputChange('status', value)}
                   disabled={!canEdit}
                 >
                   <SelectTrigger className="h-12 border-gray-300 focus:border-brand-gold focus:ring-brand-gold shadow-sm">

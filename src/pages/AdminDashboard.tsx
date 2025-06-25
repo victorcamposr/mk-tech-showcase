@@ -34,7 +34,7 @@ interface DashboardStats {
   totalPosts: number;
   totalSolutions: number;
   inactiveUsers: number;
-  readContacts: number;
+  unreadContacts: number;
   draftPosts: number;
   inactiveSolutions: number;
 }
@@ -55,7 +55,7 @@ const AdminDashboard = () => {
     totalPosts: 0,
     totalSolutions: 0,
     inactiveUsers: 0,
-    readContacts: 0,
+    unreadContacts: 0,
     draftPosts: 0,
     inactiveSolutions: 0
   });
@@ -75,13 +75,13 @@ const AdminDashboard = () => {
 
   const fetchDashboardData = async () => {
     try {
-      const [usersRes, contactsRes, postsRes, solutionsRes, inactiveUsersRes, readContactsRes, draftPostsRes, inactiveSolutionsRes] = await Promise.all([
+      const [usersRes, contactsRes, postsRes, solutionsRes, inactiveUsersRes, unreadContactsRes, draftPostsRes, inactiveSolutionsRes] = await Promise.all([
         supabase.from('admin_profiles').select('id', { count: 'exact', head: true }),
         supabase.from('contacts').select('id', { count: 'exact', head: true }),
         supabase.from('blog_posts').select('id', { count: 'exact', head: true }),
         supabase.from('solutions').select('id', { count: 'exact', head: true }),
         supabase.from('admin_profiles').select('id', { count: 'exact', head: true }).eq('is_active', false),
-        supabase.from('contacts').select('id', { count: 'exact', head: true }).eq('read', true),
+        supabase.from('contacts').select('id', { count: 'exact', head: true }).eq('read', false),
         supabase.from('blog_posts').select('id', { count: 'exact', head: true }).eq('status', 'draft'),
         supabase.from('solutions').select('id', { count: 'exact', head: true }).eq('status', 'inactive')
       ]);
@@ -92,7 +92,7 @@ const AdminDashboard = () => {
         totalPosts: postsRes.count || 0,
         totalSolutions: solutionsRes.count || 0,
         inactiveUsers: inactiveUsersRes.count || 0,
-        readContacts: readContactsRes.count || 0,
+        unreadContacts: unreadContactsRes.count || 0,
         draftPosts: draftPostsRes.count || 0,
         inactiveSolutions: inactiveSolutionsRes.count || 0
       });
@@ -168,9 +168,9 @@ const AdminDashboard = () => {
 
   const getActionText = (action: string) => {
     switch (action) {
-      case 'create': return 'Criou';
-      case 'update': return 'Atualizou';
-      case 'delete': return 'Excluiu';
+      case 'create': return 'criou';
+      case 'update': return 'atualizou';
+      case 'delete': return 'excluiu';
       default: return action;
     }
   };
@@ -202,6 +202,15 @@ const AdminDashboard = () => {
     }
   };
 
+  const getActivityDescription = (activity: RecentActivity) => {
+    const entityTypeText = activity.entity_type.toLowerCase() === 'solutions' ? 'solução' :
+                          activity.entity_type.toLowerCase() === 'users' ? 'usuário' :
+                          activity.entity_type.toLowerCase() === 'posts' ? 'post' :
+                          activity.entity_type.toLowerCase() === 'contacts' ? 'contato' : activity.entity_type;
+    
+    return `${activity.user_name} ${getActionText(activity.action_type)} a ${entityTypeText} "${activity.entity_title}"`;
+  };
+
   const totalPages = Math.ceil(totalActivities / ACTIVITIES_PER_PAGE);
 
   const statsCards = [
@@ -219,9 +228,9 @@ const AdminDashboard = () => {
       value: stats.totalContacts,
       icon: MessageSquare,
       gradient: 'from-green-500 to-green-600',
-      badgeValue: stats.readContacts,
-      badgeLabel: 'Lidos',
-      badgeIcon: Eye
+      badgeValue: stats.unreadContacts,
+      badgeLabel: 'Não Lidos',
+      badgeIcon: EyeOff
     },
     {
       title: 'Posts do Blog',
@@ -266,6 +275,8 @@ const AdminDashboard = () => {
           {statsCards.map((stat, index) => {
             const Icon = stat.icon;
             const BadgeIcon = stat.badgeIcon;
+            const shouldShowBadge = stat.badgeValue > 0;
+            
             return (
               <Card key={index} className="relative overflow-hidden border-brand-gold/20 shadow-lg hover:shadow-xl transition-all duration-300 bg-white hover:-translate-y-1">
                 <CardContent className="p-6">
@@ -278,7 +289,7 @@ const AdminDashboard = () => {
                       <Icon className="w-6 h-6 text-white" />
                     </div>
                   </div>
-                  {stat.badgeValue > 0 && (
+                  {shouldShowBadge && (
                     <div className="flex items-center gap-2">
                       <Badge variant="destructive" className="text-xs flex items-center gap-1">
                         <BadgeIcon className="w-3 h-3" />
@@ -370,13 +381,9 @@ const AdminDashboard = () => {
                                 </Badge>
                               </div>
                               <p className="text-sm text-brand-black font-medium mb-1">
-                                "{activity.entity_title}"
+                                {getActivityDescription(activity)}
                               </p>
                               <div className="flex items-center gap-3 text-xs text-gray-500">
-                                <span className="flex items-center gap-1">
-                                  <Users className="w-3 h-3" />
-                                  {activity.user_name}
-                                </span>
                                 <span className="flex items-center gap-1">
                                   <Calendar className="w-3 h-3" />
                                   {formatDate(activity.created_at)}
