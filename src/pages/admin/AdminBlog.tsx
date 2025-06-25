@@ -7,7 +7,7 @@ import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
-import { FileText, Plus, Search, Edit, Trash2, Calendar } from 'lucide-react';
+import { FileText, Plus, Search, Edit, Trash2, Eye, Calendar } from 'lucide-react';
 import BlogPostModal from '@/components/admin/BlogPostModal';
 import DeleteConfirmDialog from '@/components/admin/DeleteConfirmDialog';
 
@@ -18,14 +18,10 @@ interface BlogPost {
   content: string;
   excerpt: string;
   status: 'draft' | 'published';
-  featured_image?: string;
-  author_id: string;
+  featured_image_url?: string;
+  author: string;
   created_at: string;
   updated_at: string;
-  tags?: string[];
-  meta_description?: string;
-  meta_title?: string;
-  published_at?: string;
 }
 
 const AdminBlog = () => {
@@ -105,7 +101,7 @@ const AdminBlog = () => {
         // Creating new post
         const { error } = await supabase
           .from('blog_posts')
-          .insert(postData);
+          .insert([postData]);
         
         if (error) throw error;
         action = 'create';
@@ -165,7 +161,8 @@ const AdminBlog = () => {
   };
 
   const filteredPosts = posts.filter(post =>
-    post.title.toLowerCase().includes(searchTerm.toLowerCase())
+    post.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    post.author.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   const formatDate = (dateString: string) => {
@@ -210,7 +207,7 @@ const AdminBlog = () => {
             <div className="relative">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-purple-400 w-4 h-4" />
               <Input
-                placeholder="Buscar por título..."
+                placeholder="Buscar por título ou autor..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className="pl-10 border-purple-200 focus:border-purple-500 focus:ring-purple-500/20"
@@ -264,6 +261,7 @@ const AdminBlog = () => {
                           </Badge>
                         </div>
                         <div className="flex items-center gap-4 text-sm text-gray-500">
+                          <span>Por: {post.author}</span>
                           <span className="flex items-center gap-1">
                             <Calendar className="w-3 h-3" />
                             {formatDate(post.created_at)}
@@ -307,16 +305,15 @@ const AdminBlog = () => {
 
         {/* Modals */}
         <BlogPostModal
-          isOpen={modalOpen}
-          onClose={() => setModalOpen(false)}
+          open={modalOpen}
+          onOpenChange={setModalOpen}
           post={selectedPost}
-          onSuccess={fetchPosts}
-          mode={selectedPost ? 'edit' : 'create'}
+          onSave={handleSave}
         />
 
         <DeleteConfirmDialog
-          isOpen={deleteDialogOpen}
-          onClose={() => setDeleteDialogOpen(false)}
+          open={deleteDialogOpen}
+          onOpenChange={setDeleteDialogOpen}
           title="Excluir Post"
           description={`Tem certeza que deseja excluir o post "${postToDelete?.title}"? Esta ação não pode ser desfeita.`}
           onConfirm={handleDelete}
