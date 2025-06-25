@@ -43,14 +43,6 @@ interface DashboardStats {
 }
 
 const AdminDashboard = () => {
-  const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 10;
-  const totalPages = Math.ceil(filteredActivities.length / itemsPerPage);
-
-  const paginatedActivities = filteredActivities.slice(
-    (currentPage - 1) * itemsPerPage,
-    currentPage * itemsPerPage
-  );
   const [recentActivities, setRecentActivities] = useState<RecentActivity[]>([]);
   const [filteredActivities, setFilteredActivities] = useState<RecentActivity[]>([]);
   const [stats, setStats] = useState<DashboardStats>({
@@ -395,7 +387,7 @@ const AdminDashboard = () => {
               </div>
             ) : (
               <div className="space-y-4">
-                {paginatedActivities.map((activity) => (
+                {filteredActivities.map((activity) => (
                   <div key={activity.id} className="flex items-center justify-between p-4 bg-white rounded-xl shadow-sm border hover:shadow-md transition-shadow">
                     <div className="flex items-center space-x-4">
                       <div className="p-3 bg-gray-50 rounded-xl">
