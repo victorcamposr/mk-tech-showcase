@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import AdminLayout from '@/components/admin/AdminLayout';
 import SolutionModal from '@/components/admin/SolutionModal';
@@ -65,7 +64,14 @@ const AdminSolutions = () => {
 
       console.log('Solutions fetched:', data, 'Error:', error);
       if (error) throw error;
-      setSolutions(data || []);
+      
+      // Cast the data to ensure proper typing
+      const typedSolutions: AdminSolution[] = (data || []).map(solution => ({
+        ...solution,
+        status: solution.status as 'active' | 'inactive'
+      }));
+      
+      setSolutions(typedSolutions);
     } catch (error) {
       console.error('Error fetching solutions:', error);
       toast({
