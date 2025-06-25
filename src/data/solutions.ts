@@ -25,66 +25,6 @@ export const SOLUTION_IMAGES = {
   }
 };
 
-// Dados das operadoras de maquininhas de cartão
-export const CARD_MACHINE_OPERATORS = [
-  {
-    id: 'stone',
-    name: 'Stone',
-    icon: '/lovable-uploads/a8ecfad8-8626-44ee-a7eb-afcfd88ca462.png',
-    description: 'Taxas competitivas e tecnologia avançada',
-    features: ['TEF integrado', 'Recebimento em 1 dia', 'Sem aluguel']
-  },
-  {
-    id: 'cielo',
-    name: 'Cielo',
-    icon: '/lovable-uploads/76fb354f-89fa-4163-9772-a8f1fdb94668.png',
-    description: 'Líder do mercado brasileiro',
-    features: ['Ampla aceitação', 'Rede nacional', 'Suporte 24h']
-  },
-  {
-    id: 'pagbank',
-    name: 'PagBank',
-    icon: '/lovable-uploads/2a8e6032-1804-4f62-aa10-ae0ad095cab8.png',
-    description: 'Conta digital integrada',
-    features: ['Conta PJ gratuita', 'Pix instantâneo', 'Gestão financeira']
-  },
-  {
-    id: 'moderninha-rede',
-    name: 'Moderninha Rede/Itaú',
-    icon: '/lovable-uploads/a8ecfad8-8626-44ee-a7eb-afcfd88ca462.png', // Temporário - usar mesmo da Stone
-    description: 'Soluções modernas do Itaú',
-    features: ['Banco Itaú', 'Moderninha', 'Crédito facilitado']
-  },
-  {
-    id: 'azulzinha-caixa',
-    name: 'Azulzinha/Caixa',
-    icon: '/lovable-uploads/76fb354f-89fa-4163-9772-a8f1fdb94668.png', // Temporário - usar mesmo da Cielo
-    description: 'Força da Caixa Econômica',
-    features: ['Caixa Econômica', 'Azulzinha', 'Benefícios sociais']
-  },
-  {
-    id: 'sicredi',
-    name: 'Sicredi',
-    icon: '/lovable-uploads/2a8e6032-1804-4f62-aa10-ae0ad095cab8.png', // Temporário - usar mesmo do PagBank
-    description: 'Cooperativismo e proximidade',
-    features: ['Cooperativa', 'Atendimento local', 'Parceria sólida']
-  },
-  {
-    id: 'bin',
-    name: 'Bin',
-    icon: '/lovable-uploads/a8ecfad8-8626-44ee-a7eb-afcfd88ca462.png', // Temporário - usar mesmo da Stone
-    description: 'Inovação em pagamentos',
-    features: ['Tecnologia Bin', 'Soluções digitais', 'Eficiência']
-  },
-  {
-    id: 'getnet',
-    name: 'GetNet',
-    icon: '/lovable-uploads/76fb354f-89fa-4163-9772-a8f1fdb94668.png', // Temporário - usar mesmo da Cielo
-    description: 'Santander para empresas',
-    features: ['Grupo Santander', 'GetNet', 'Soluções corporativas']
-  }
-];
-
 // Dados específicos para cada solução
 export const specificSolutions = {
   "pdv-frente-caixa": {
@@ -155,7 +95,7 @@ export const specificSolutions = {
       "Controle de mesas e comandas eletrônicas",
       "Pedidos balcão em segundos",
       "Solução rápida e leve",
-      "Integrado com múltiplas operadoras",
+      "Integrado com Stone, Cielo e outras bandeiras",
       "PDV completo dentro da máquina",
       "Agilidade no atendimento",
       "Suporte técnico especializado"

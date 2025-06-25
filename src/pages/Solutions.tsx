@@ -1,4 +1,3 @@
-
 import { useLocation } from "react-router-dom";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
@@ -15,7 +14,6 @@ import SolutionHero from "@/components/solutions/SolutionHero";
 import SolutionBenefits from "@/components/solutions/SolutionBenefits";
 import SolutionCard from "@/components/solutions/SolutionCard";
 import SolutionCTA from "@/components/solutions/SolutionCTA";
-import CardMachineOperators from "@/components/solutions/CardMachineOperators";
 
 const Solutions = () => {
   const location = useLocation();
@@ -63,21 +61,36 @@ const Solutions = () => {
                     alt={`Demonstração ${currentSolution.title}`}
                     className="w-full h-64 md:h-80 object-cover bg-gray-50 rounded-xl shadow-2xl"
                   />
+                  
+                  {/* Ícones flutuantes para maquininhas de cartão na página específica */}
+                  {solutionKey === 'maquininhas-cartao' && (
+                    <>
+                      <div className="absolute bottom-4 left-4 p-1 rounded-lg group/tooltip">
+                        <img src="/lovable-uploads/a8ecfad8-8626-44ee-a7eb-afcfd88ca462.png" alt="Stone" className="w-8 h-8 object-contain" />
+                        <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-2 py-1 bg-gray-900 text-white text-xs rounded opacity-0 group-hover/tooltip:opacity-100 transition-opacity whitespace-nowrap">
+                          Integrado com Stone
+                        </div>
+                      </div>
+                      <div className="absolute bottom-4 left-16 p-1 rounded-lg group/tooltip">
+                        <img src="/lovable-uploads/76fb354f-89fa-4163-9772-a8f1fdb94668.png" alt="Cielo" className="w-8 h-8 object-contain" />
+                        <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-2 py-1 bg-gray-900 text-white text-xs rounded opacity-0 group-hover/tooltip:opacity-100 transition-opacity whitespace-nowrap">
+                          Integrado com Cielo
+                        </div>
+                      </div>
+                      <div className="absolute bottom-4 left-28 p-1 rounded-lg group/tooltip">
+                        <img src="/lovable-uploads/2a8e6032-1804-4f62-aa10-ae0ad095cab8.png" alt="PagBank" className="w-8 h-8 object-contain" />
+                        <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-2 py-1 bg-gray-900 text-white text-xs rounded opacity-0 group-hover/tooltip:opacity-100 transition-opacity whitespace-nowrap">
+                          Integrado com PagBank
+                        </div>
+                      </div>
+                    </>
+                  )}
                 </div>
               </div>
             </ScrollReveal>
 
-            {/* Seção especial para operadoras de maquininhas */}
-            {solutionKey === 'maquininhas-cartao' && (
-              <ScrollReveal animation="fade-up" delay={100}>
-                <div className="mb-16">
-                  <CardMachineOperators />
-                </div>
-              </ScrollReveal>
-            )}
-
             {/* Recursos */}
-            <ScrollReveal animation="fade-up" delay={150}>
+            <ScrollReveal animation="fade-up" delay={100}>
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 mb-16">
                 <Card className="border-brand-gold/20 hover:shadow-2xl hover:shadow-brand-gold/10 transition-all duration-500 hover:-translate-y-3 hover:scale-105 group bg-gradient-to-br from-white to-gray-50/50 backdrop-blur-sm">
                   <CardHeader>
