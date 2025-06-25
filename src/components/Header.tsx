@@ -1,5 +1,5 @@
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Menu, X, MessageCircle, Sparkles, Zap, Home, User, Settings, Lightbulb, Grid3X3, Phone, ChevronDown, CreditCard, Coffee, QrCode, Smartphone, Truck, Link2, BarChart3, Bot, Receipt, Monitor, TrendingUp, Banknote, Building2, Tablet, Calculator, Fuel, BookOpen } from "lucide-react";
@@ -25,7 +25,6 @@ const Header = () => {
   const [solutions, setSolutions] = useState<Solution[]>([]);
   const location = useLocation();
   const navigate = useNavigate();
-  const dropdownRef = useRef<HTMLDivElement>(null);
 
   // Static solution icon mapping based on solution keys
   const staticSolutionIcons: Record<string, any> = {
@@ -57,27 +56,6 @@ const Header = () => {
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
-
-  // Close dropdown when clicking outside
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
-        setIsDropdownOpen(false);
-      }
-    };
-
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-    };
-  }, []);
-
-  // Scroll to top when navigating between solution pages
-  useEffect(() => {
-    if (location.pathname.startsWith('/solucoes/')) {
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    }
-  }, [location.pathname]);
 
   useEffect(() => {
     fetchSolutions();
@@ -129,21 +107,14 @@ const Header = () => {
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-18">
           {/* Logo */}
-          <Link to="/" className="flex items-center space-x-3 group relative">
-            <div className="relative">
-              <CriticalImage 
-                src="/lovable-uploads/894786af-af73-492e-ae6a-d8a39e0ac4cb.png" 
-                alt="MK Tecnologia" 
-                className="h-12 w-auto transition-all duration-500 group-hover:scale-110 group-hover:rotate-3"
-                width={48}
-                height={48}
-              />
-              <div className="absolute -inset-1 bg-gradient-to-r from-brand-gold to-brand-gold-light rounded-full opacity-0 group-hover:opacity-20 transition-opacity duration-500 blur-sm"></div>
-            </div>
-            <div className="flex items-center space-x-1 opacity-0 group-hover:opacity-100 transition-all duration-300">
-              <Sparkles className="w-4 h-4 text-brand-gold animate-pulse" />
-              <span className="text-brand-gold text-sm font-semibold">Tech</span>
-            </div>
+          <Link to="/" className="flex items-center space-x-3">
+            <CriticalImage 
+              src="/lovable-uploads/894786af-af73-492e-ae6a-d8a39e0ac4cb.png" 
+              alt="MK Tecnologia" 
+              className="h-12 w-auto"
+              width={48}
+              height={48}
+            />
           </Link>
 
           {/* Desktop Navigation */}
@@ -168,7 +139,7 @@ const Header = () => {
             </Link>
             
             {/* Soluções with Click Dropdown */}
-            <div className="relative" ref={dropdownRef}>
+            <div className="relative">
               <button
                 onClick={() => setIsDropdownOpen(!isDropdownOpen)}
                 className={`relative px-6 py-3 rounded-xl text-sm font-semibold transition-all duration-300 group overflow-hidden ${
