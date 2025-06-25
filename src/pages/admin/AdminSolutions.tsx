@@ -7,11 +7,9 @@ import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
-import DeleteConfirmDialog from '@/components/admin/DeleteConfirmDialog';
 import { 
   Plus, 
   Search, 
-  Eye, 
   Edit, 
   Trash2, 
   Lightbulb,
@@ -40,7 +38,9 @@ import {
   Building2,
   Tablet,
   Fuel,
-  Receipt
+  Receipt,
+  Check,
+  X
 } from 'lucide-react';
 
 interface AdminSolution {
@@ -67,8 +67,7 @@ const AdminSolutions = () => {
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState<'all' | 'active' | 'inactive'>('all');
-  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
-  const [selectedSolution, setSelectedSolution] = useState<AdminSolution | null>(null);
+  const [deleteConfirmId, setDeleteConfirmId] = useState<string | null>(null);
   const { toast } = useToast();
 
   // Static solution icon mapping based on solution keys (same as frontend)
@@ -187,27 +186,20 @@ const AdminSolutions = () => {
     navigate('/admin/solutions/create');
   };
 
-  const handleView = (solution: AdminSolution) => {
-    navigate(`/admin/solutions/${solution.id}/view`);
-  };
-
   const handleEdit = (solution: AdminSolution) => {
-    navigate(`/admin/solutions/${solution.id}/edit`);
+    navigate(`/admin/solutions/edit/${solution.id}`);
   };
 
-  const handleDelete = (solution: AdminSolution) => {
-    setSelectedSolution(solution);
-    setDeleteDialogOpen(true);
+  const handleDeleteClick = (solution: AdminSolution) => {
+    setDeleteConfirmId(solution.id);
   };
 
-  const confirmDelete = async () => {
-    if (!selectedSolution) return;
-
+  const confirmDelete = async (solutionId: string) => {
     try {
       const { error } = await supabase
         .from('solutions')
         .delete()
-        .eq('id', selectedSolution.id);
+        .eq('id', solutionId);
 
       if (error) {
         throw error;
@@ -227,8 +219,7 @@ const AdminSolutions = () => {
         variant: "destructive",
       });
     } finally {
-      setDeleteDialogOpen(false);
-      setSelectedSolution(null);
+      setDeleteConfirmId(null);
     }
   };
 
@@ -462,14 +453,6 @@ const AdminSolutions = () => {
                           {formatDate(solution.created_at)}
                         </div>
                         <div className="flex items-center space-x-2">
-                          <Button 
-                            size="sm" 
-                            variant="outline" 
-                            onClick={() => handleView(solution)}
-                            className="shadow-md hover:shadow-lg transition-all duration-200"
-                          >
-                            <Eye className="w-4 h-4" />
-                          </Button>
                           <Button
                             size="sm"
                             variant="outline"
@@ -478,14 +461,41 @@ const AdminSolutions = () => {
                           >
                             <Edit className="w-4 h-4" />
                           </Button>
-                          <Button
-                            size="sm"
-                            variant="destructive"
-                            onClick={() => handleDelete(solution)}
-                            className="shadow-md hover:shadow-lg transition-all duration-200"
-                          >
-                            <Trash2 className="w-4 h-4" />
-                          </Button>
+                          <div className="relative">
+                            <Button
+                              size="sm"
+                              variant="destructive"
+                              onClick={() => handleDeleteClick(solution)}
+                              className="shadow-md hover:shadow-lg transition-all duration-200"
+                            >
+                              <Trash2 className="w-4 h-4" />
+                            </Button>
+                            {deleteConfirmId === solution.id && (
+                              <div className="absolute bottom-full right-0 mb-2 bg-white border border-gray-200 rounded-lg shadow-lg p-3 z-10 min-w-48">
+                                <p className="text-sm text-gray-700 mb-3">Excluir esta solução?</p>
+                                <div className="flex gap-2">
+                                  <Button
+                                    size="sm"
+                                    variant="outline"
+                                    onClick={() => setDeleteConfirmId(null)}
+                                    className="flex-1"
+                                  >
+                                    <X className="w-3 h-3 mr-1" />
+                                    Cancelar
+                                  </Button>
+                                  <Button
+                                    size="sm"
+                                    variant="destructive"
+                                    onClick={() => confirmDelete(solution.id)}
+                                    className="flex-1"
+                                  >
+                                    <Check className="w-3 h-3 mr-1" />
+                                    Confirmar
+                                  </Button>
+                                </div>
+                              </div>
+                            )}
+                          </div>
                         </div>
                       </div>
                     </div>
@@ -496,21 +506,6 @@ const AdminSolutions = () => {
           </CardContent>
         </Card>
       </div>
-
-      <DeleteConfirmDialog
-        isOpen={deleteDialogOpen}
-        onClose={() => {
-          setDeleteDialogOpen(false);
-          setSelectedSolution(null);
-        }}
-        onConfirm={confirmDelete}
-        title="Excluir Solução"
-        description={
-          selectedSolution 
-            ? `Tem certeza que deseja excluir a solução "${selectedSolution.title}"? Esta ação não pode ser desfeita.`
-            : ''
-        }
-      />
     </AdminLayout>
   );
 };

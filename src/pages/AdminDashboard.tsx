@@ -18,14 +18,14 @@ import {
   ChevronLeft,
   ChevronRight,
   CalendarIcon,
-  Eye,
-  EyeOff,
-  UserCheck,
   UserX,
   BookOpen,
-  Archive,
   Zap,
-  ZapOff
+  ZapOff,
+  Plus,
+  Edit,
+  Trash2,
+  UserCheck
 } from 'lucide-react';
 
 interface DashboardStats {
@@ -157,21 +157,12 @@ const AdminDashboard = () => {
     });
   };
 
-  const getActionColor = (action: string) => {
+  const getActionIcon = (action: string) => {
     switch (action) {
-      case 'create': return 'bg-green-100 text-green-800 border-green-200';
-      case 'update': return 'bg-blue-100 text-blue-800 border-blue-200';
-      case 'delete': return 'bg-red-100 text-red-800 border-red-200';
-      default: return 'bg-gray-100 text-gray-800 border-gray-200';
-    }
-  };
-
-  const getActionText = (action: string) => {
-    switch (action) {
-      case 'create': return 'Criou';
-      case 'update': return 'Atualizou';
-      case 'delete': return 'Excluiu';
-      default: return action;
+      case 'create': return Plus;
+      case 'update': return Edit;
+      case 'delete': return Trash2;
+      default: return Activity;
     }
   };
 
@@ -203,16 +194,31 @@ const AdminDashboard = () => {
     }
   };
 
+  const getActionText = (action: string, entityType: string) => {
+    const entity = getEntityTypeLabel(entityType);
+    
+    switch (action) {
+      case 'create':
+        return `criou ${entity.toLowerCase()}`;
+      case 'update':
+        return `atualizou ${entity.toLowerCase()}`;
+      case 'delete':
+        return `excluiu ${entity.toLowerCase()}`;
+      default:
+        return `modificou ${entity.toLowerCase()}`;
+    }
+  };
+
   const getEntityTypeLabel = (entityType: string) => {
     switch (entityType.toLowerCase()) {
       case 'admin_profiles':
-        return 'Usuário';
+        return 'usuário';
       case 'contacts':
-        return 'Contato';
+        return 'contato';
       case 'blog_posts':
-        return 'Post do Blog';
+        return 'post do blog';
       case 'solutions':
-        return 'Solução';
+        return 'solução';
       default:
         return entityType;
     }
@@ -238,7 +244,7 @@ const AdminDashboard = () => {
       gradient: 'from-green-500 to-green-600',
       badgeValue: stats.unreadContacts,
       badgeLabel: 'Não Lidos',
-      badgeIcon: Eye,
+      badgeIcon: MessageSquare,
       showBadge: stats.unreadContacts > 0
     },
     {
@@ -248,7 +254,7 @@ const AdminDashboard = () => {
       gradient: 'from-purple-500 to-purple-600',
       badgeValue: stats.draftPosts,
       badgeLabel: 'Rascunhos',
-      badgeIcon: Archive,
+      badgeIcon: BookOpen,
       showBadge: stats.draftPosts > 0
     },
     {
@@ -373,24 +379,20 @@ const AdminDashboard = () => {
                 <div className="divide-y divide-gray-100">
                   {activities.map((activity, index) => {
                     const EntityIcon = getEntityIcon(activity.entity_type);
+                    const ActionIcon = getActionIcon(activity.action_type);
                     return (
                       <div key={activity.id} className="p-4 hover:bg-brand-gold/5 transition-colors">
                         <div className="flex items-center justify-between">
                           <div className="flex items-center space-x-4">
-                            <div className="w-12 h-12 bg-brand-gold/20 rounded-full flex items-center justify-center">
+                            <div className="w-12 h-12 bg-brand-gold/20 rounded-full flex items-center justify-center relative">
                               <EntityIcon className="w-6 h-6 text-brand-gold" />
+                              <div className="absolute -bottom-1 -right-1 w-5 h-5 bg-white rounded-full flex items-center justify-center border-2 border-brand-gold/20">
+                                <ActionIcon className="w-3 h-3 text-brand-gold" />
+                              </div>
                             </div>
                             <div>
-                              <div className="flex items-center gap-3 mb-2">
-                                <Badge className={`text-xs border ${getActionColor(activity.action_type)}`}>
-                                  {getActionText(activity.action_type)}
-                                </Badge>
-                                <Badge variant="outline" className="text-xs bg-gray-50 text-gray-700 border-gray-200">
-                                  {getEntityTypeLabel(activity.entity_type)}
-                                </Badge>
-                              </div>
                               <p className="text-sm text-brand-black font-medium mb-1">
-                                <span className="font-semibold text-brand-gold">{activity.user_name}</span> {getActionText(activity.action_type).toLowerCase()} {getEntityTypeLabel(activity.entity_type).toLowerCase()}: "{activity.entity_title}"
+                                <span className="font-semibold text-brand-gold">{activity.user_name}</span> {getActionText(activity.action_type, activity.entity_type)} "{activity.entity_title}"
                               </p>
                               <div className="flex items-center gap-3 text-xs text-gray-500">
                                 <span className="flex items-center gap-1">
