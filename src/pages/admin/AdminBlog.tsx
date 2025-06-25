@@ -3,77 +3,83 @@ import { useState, useEffect } from 'react';
 import AdminLayout from '@/components/admin/AdminLayout';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
+import { Badge } from '@/components/ui/badge';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
-import { FileText, Plus, Search, Edit, Trash2, Eye, Calendar } from 'lucide-react';
 import BlogPostModal from '@/components/admin/BlogPostModal';
 import DeleteConfirmDialog from '@/components/admin/DeleteConfirmDialog';
+import { 
+  Plus, 
+  Search, 
+  Eye, 
+  Edit, 
+  Trash2, 
+  FileText,
+  Filter,
+  RefreshCw,
+  Calendar
+} from 'lucide-react';
 
 interface BlogPost {
   id: string;
   title: string;
   slug: string;
-  content: string;
   excerpt: string;
-  status: 'draft' | 'published';
-  featured_image_url?: string;
-  author: string;
+  content: string;
+  featured_image: string | null;
+  status: 'published' | 'draft';
+  tags: string[];
+  author_id: string;
+  published_at: string | null;
   created_at: string;
   updated_at: string;
 }
 
 const AdminBlog = () => {
   const [posts, setPosts] = useState<BlogPost[]>([]);
+  const [filteredPosts, setFilteredPosts] = useState<BlogPost[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
+  const [statusFilter, setStatusFilter] = useState<'all' | 'published' | 'draft'>('all');
   const [modalOpen, setModalOpen] = useState(false);
-  const [selectedPost, setSelectedPost] = useState<BlogPost | null>(null);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
-  const [postToDelete, setPostToDelete] = useState<BlogPost | null>(null);
+  const [selectedPost, setSelectedPost] = useState<BlogPost | null>(null);
+  const [modalMode, setModalMode] = useState<'create' | 'edit' | 'view'>('create');
   const { toast } = useToast();
 
   useEffect(() => {
     fetchPosts();
   }, []);
 
-  const logActivity = async (action: string, entityTitle: string) => {
-    try {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) return;
-
-      const { data: profile } = await supabase
-        .from('admin_profiles')
-        .select('name')
-        .eq('user_id', user.id)
-        .single();
-
-      await supabase.from('admin_activities').insert({
-        action_type: action,
-        entity_type: 'blog_posts',
-        entity_title: entityTitle,
-        user_name: profile?.name || 'Admin'
-      });
-    } catch (error) {
-      console.error('Error logging activity:', error);
-    }
-  };
+  useEffect(() => {
+    filterPosts();
+  }, [posts, searchTerm, statusFilter]);
 
   const fetchPosts = async () => {
+    setLoading(true);
     try {
       const { data, error } = await supabase
         .from('blog_posts')
         .select('*')
         .order('created_at', { ascending: false });
 
-      if (error) throw error;
-      setPosts(data || []);
-    } catch (error) {
+      if (error) {
+        throw error;
+      }
+
+      // Type assertion to ensure proper typing
+      const typedPosts = (data || []).map(post => ({
+        ...post,
+        status: post.status as 'published' | 'draft'
+      })) as BlogPost[];
+
+      setPosts(typedPosts);
+    } catch (error: any) {
       console.error('Error fetching posts:', error);
       toast({
         title: "Erro ao carregar posts",
-        description: "Não foi possível carregar os posts do blog.",
+        description: error.message || "Não foi possível carregar os posts.",
         variant: "destructive",
       });
     } finally {
@@ -81,65 +87,59 @@ const AdminBlog = () => {
     }
   };
 
-  const handleSave = async (postData: Partial<BlogPost>) => {
-    try {
-      let result;
-      let action;
-      let title;
+  const filterPosts = () => {
+    let filtered = posts;
 
-      if (selectedPost) {
-        // Editing existing post
-        const { error } = await supabase
-          .from('blog_posts')
-          .update(postData)
-          .eq('id', selectedPost.id);
-        
-        if (error) throw error;
-        action = 'update';
-        title = postData.title || selectedPost.title;
-      } else {
-        // Creating new post
-        const { error } = await supabase
-          .from('blog_posts')
-          .insert([postData]);
-        
-        if (error) throw error;
-        action = 'create';
-        title = postData.title || 'Novo Post';
-      }
-
-      await logActivity(action, title);
-      
-      toast({
-        title: selectedPost ? "Post atualizado" : "Post criado",
-        description: selectedPost ? "O post foi atualizado com sucesso." : "O post foi criado com sucesso.",
-      });
-
-      fetchPosts();
-      setModalOpen(false);
-      setSelectedPost(null);
-    } catch (error: any) {
-      console.error('Error saving post:', error);
-      toast({
-        title: "Erro ao salvar post",
-        description: error.message || "Não foi possível salvar o post.",
-        variant: "destructive",
-      });
+    if (searchTerm) {
+      filtered = filtered.filter(post =>
+        post.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        post.excerpt.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        post.slug.toLowerCase().includes(searchTerm.toLowerCase())
+      );
     }
+
+    if (statusFilter !== 'all') {
+      filtered = filtered.filter(post => post.status === statusFilter);
+    }
+
+    setFilteredPosts(filtered);
   };
 
-  const handleDelete = async () => {
-    if (!postToDelete) return;
+  const handleCreate = () => {
+    setSelectedPost(null);
+    setModalMode('create');
+    setModalOpen(true);
+  };
+
+  const handleView = (post: BlogPost) => {
+    setSelectedPost(post);
+    setModalMode('view');
+    setModalOpen(true);
+  };
+
+  const handleEdit = (post: BlogPost) => {
+    setSelectedPost(post);
+    setModalMode('edit');
+    setModalOpen(true);
+  };
+
+  const handleDelete = (post: BlogPost) => {
+    setSelectedPost(post);
+    setDeleteDialogOpen(true);
+  };
+
+  const confirmDelete = async () => {
+    if (!selectedPost) return;
 
     try {
       const { error } = await supabase
         .from('blog_posts')
         .delete()
-        .eq('id', postToDelete.id);
+        .eq('id', selectedPost.id);
 
-      if (error) throw error;
-
-      await logActivity('delete', postToDelete.title);
+      if (error) {
+        throw error;
+      }
 
       toast({
         title: "Post excluído",
@@ -156,20 +156,21 @@ const AdminBlog = () => {
       });
     } finally {
       setDeleteDialogOpen(false);
-      setPostToDelete(null);
+      setSelectedPost(null);
     }
   };
 
-  const filteredPosts = posts.filter(post =>
-    post.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    post.author.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  const handleModalSuccess = () => {
+    fetchPosts();
+  };
 
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString('pt-BR', {
       day: '2-digit',
       month: '2-digit',
-      year: 'numeric'
+      year: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
     });
   };
 
@@ -177,120 +178,234 @@ const AdminBlog = () => {
     <AdminLayout>
       <div className="space-y-8">
         {/* Header */}
-        <div className="flex items-center justify-between">
+        <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
           <div>
-            <h1 className="text-3xl font-bold text-brand-black flex items-center gap-3">
-              <div className="w-10 h-10 bg-gradient-to-r from-purple-500 to-purple-600 rounded-lg flex items-center justify-center">
-                <FileText className="w-6 h-6 text-white" />
-              </div>
+            <h1 className="text-3xl font-bold text-gray-900 flex items-center gap-3">
+              <FileText className="w-8 h-8 text-brand-gold" />
               Gerenciar Blog
             </h1>
             <p className="text-gray-600 mt-2">
-              Gerencie os posts do seu blog
+              Gerencie os posts do blog
             </p>
           </div>
-          <Button
-            onClick={() => {
-              setSelectedPost(null);
-              setModalOpen(true);
-            }}
-            className="bg-gradient-to-r from-purple-500 to-purple-600 hover:from-purple-600 hover:to-purple-700 text-white shadow-lg hover:shadow-xl transition-all duration-200"
-          >
-            <Plus className="w-4 h-4 mr-2" />
-            Novo Post
-          </Button>
+          <div className="flex gap-3">
+            <Button
+              onClick={fetchPosts}
+              variant="outline"
+              size="sm"
+              className="shadow-md hover:shadow-lg transition-all duration-200"
+            >
+              <RefreshCw className="w-4 h-4 mr-2" />
+              Atualizar
+            </Button>
+            <Button
+              onClick={handleCreate}
+              className="bg-gradient-to-r from-brand-gold to-brand-gold-light hover:from-brand-gold-dark hover:to-brand-gold text-white font-semibold shadow-lg hover:shadow-xl transition-all duration-200"
+            >
+              <Plus className="w-4 h-4 mr-2" />
+              Novo Post
+            </Button>
+          </div>
         </div>
 
-        {/* Search */}
-        <Card className="shadow-lg border-purple-500/20">
-          <CardContent className="p-6">
+        {/* Search and Stats */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-4 gap-6">
+          <div className="lg:col-span-2">
             <div className="relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-purple-400 w-4 h-4" />
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
               <Input
-                placeholder="Buscar por título ou autor..."
+                placeholder="Buscar posts..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-10 border-purple-200 focus:border-purple-500 focus:ring-purple-500/20"
+                className="pl-10 bg-white border-gray-300 focus:border-brand-gold focus:ring-brand-gold shadow-sm"
               />
+            </div>
+          </div>
+          <Card className="shadow-lg border-0">
+            <CardContent className="p-4">
+              <div className="text-center">
+                <div className="text-2xl font-bold text-green-600">
+                  {posts.filter(p => p.status === 'published').length}
+                </div>
+                <div className="text-sm text-gray-600">Publicados</div>
+              </div>
+            </CardContent>
+          </Card>
+          <Card className="shadow-lg border-0">
+            <CardContent className="p-4">
+              <div className="text-center">
+                <div className="text-2xl font-bold text-yellow-600">
+                  {posts.filter(p => p.status === 'draft').length}
+                </div>
+                <div className="text-sm text-gray-600">Rascunhos</div>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* Filters */}
+        <Card className="shadow-lg border-0">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Filter className="w-5 h-5 text-brand-gold" />
+              Filtros
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="flex gap-2">
+              <Button
+                variant={statusFilter === 'all' ? 'default' : 'outline'}
+                size="sm"
+                onClick={() => setStatusFilter('all')}
+                className={statusFilter === 'all' 
+                  ? 'bg-brand-gold hover:bg-brand-gold-dark text-white shadow-md' 
+                  : 'shadow-md hover:shadow-lg transition-all duration-200'
+                }
+              >
+                Todos
+              </Button>
+              <Button
+                variant={statusFilter === 'published' ? 'default' : 'outline'}
+                size="sm"
+                onClick={() => setStatusFilter('published')}
+                className={statusFilter === 'published' 
+                  ? 'bg-green-600 hover:bg-green-700 text-white shadow-md' 
+                  : 'shadow-md hover:shadow-lg transition-all duration-200'
+                }
+              >
+                Publicados
+              </Button>
+              <Button
+                variant={statusFilter === 'draft' ? 'default' : 'outline'}
+                size="sm"
+                onClick={() => setStatusFilter('draft')}
+                className={statusFilter === 'draft' 
+                  ? 'bg-yellow-600 hover:bg-yellow-700 text-white shadow-md' 
+                  : 'shadow-md hover:shadow-lg transition-all duration-200'
+                }
+              >
+                Rascunhos
+              </Button>
             </div>
           </CardContent>
         </Card>
 
         {/* Posts List */}
-        <Card className="shadow-lg border-purple-500/20">
-          <CardHeader className="bg-gradient-to-r from-purple-500/5 to-purple-600/10 border-b border-purple-500/20">
-            <CardTitle className="flex items-center gap-3 text-brand-black">
-              <FileText className="w-5 h-5 text-purple-500" />
-              Posts do Blog
-              <Badge variant="outline" className="ml-auto bg-purple-500/10 text-purple-600 border-purple-500/30">
+        <Card className="shadow-lg border-0">
+          <CardHeader>
+            <CardTitle className="flex items-center justify-between">
+              <span className="flex items-center gap-2">
+                <FileText className="w-5 h-5 text-brand-gold" />
+                Posts do Blog
+              </span>
+              <Badge variant="outline" className="bg-brand-gold/10 text-brand-gold border-brand-gold/30">
                 {filteredPosts.length} posts
               </Badge>
             </CardTitle>
           </CardHeader>
-          <CardContent className="p-0">
+          <CardContent>
             {loading ? (
-              <div className="p-8 text-center">
-                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-purple-500 mx-auto"></div>
-                <p className="mt-4 text-gray-600">Carregando posts...</p>
+              <div className="flex items-center justify-center h-64">
+                <div className="text-center">
+                  <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-brand-gold mx-auto"></div>
+                  <p className="mt-4 text-gray-600">Carregando posts...</p>
+                </div>
               </div>
             ) : filteredPosts.length === 0 ? (
-              <div className="p-8 text-center">
-                <FileText className="w-12 h-12 text-gray-300 mx-auto mb-4" />
-                <p className="text-gray-500">
-                  {searchTerm ? 'Nenhum post encontrado' : 'Nenhum post cadastrado'}
+              <div className="text-center py-12">
+                <FileText className="w-16 h-16 text-gray-300 mx-auto mb-4" />
+                <h3 className="text-lg font-medium text-gray-900 mb-2">
+                  {searchTerm || statusFilter !== 'all' ? 'Nenhum post encontrado' : 'Nenhum post cadastrado'}
+                </h3>
+                <p className="text-gray-600 mb-4">
+                  {searchTerm || statusFilter !== 'all' 
+                    ? 'Tente ajustar os filtros para encontrar o que procura.'
+                    : 'Comece criando seu primeiro post.'
+                  }
                 </p>
+                {!searchTerm && statusFilter === 'all' && (
+                  <Button 
+                    onClick={handleCreate} 
+                    className="bg-gradient-to-r from-brand-gold to-brand-gold-light hover:from-brand-gold-dark hover:to-brand-gold text-white font-semibold shadow-lg"
+                  >
+                    <Plus className="w-4 h-4 mr-2" />
+                    Criar Primeiro Post
+                  </Button>
+                )}
               </div>
             ) : (
-              <div className="divide-y divide-gray-100">
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 {filteredPosts.map((post) => (
-                  <div key={post.id} className="p-6 hover:bg-purple-500/5 transition-colors">
-                    <div className="flex items-center justify-between">
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-center gap-3 mb-2">
-                          <h3 className="text-lg font-semibold text-brand-black truncate">
-                            {post.title}
-                          </h3>
-                          <Badge
-                            variant={post.status === 'published' ? 'default' : 'secondary'}
-                            className={post.status === 'published' 
-                              ? 'bg-green-100 text-green-800 border-green-200' 
-                              : 'bg-gray-100 text-gray-800 border-gray-200'
-                            }
-                          >
-                            {post.status === 'published' ? 'Publicado' : 'Rascunho'}
-                          </Badge>
+                  <div
+                    key={post.id}
+                    className="p-6 bg-gray-50 rounded-xl hover:bg-gray-100 transition-colors border-l-4 border-brand-gold"
+                  >
+                    <div className="flex items-start justify-between mb-4">
+                      <div className="flex items-center gap-3">
+                        <div className="p-2 bg-white rounded-full shadow-sm">
+                          <FileText className="w-6 h-6 text-brand-gold" />
                         </div>
-                        <div className="flex items-center gap-4 text-sm text-gray-500">
-                          <span>Por: {post.author}</span>
-                          <span className="flex items-center gap-1">
-                            <Calendar className="w-3 h-3" />
-                            {formatDate(post.created_at)}
+                        <div>
+                          <h3 className="text-lg font-semibold text-gray-900">{post.title}</h3>
+                          <span className="text-xs text-gray-500 font-mono bg-brand-gold/10 px-2 py-1 rounded mt-1 inline-block">
+                            {post.slug}
                           </span>
                         </div>
-                        {post.excerpt && (
-                          <p className="text-gray-600 mt-2 line-clamp-2">{post.excerpt}</p>
+                      </div>
+                      <Badge 
+                        variant={post.status === 'published' ? 'default' : 'destructive'}
+                        className="text-xs"
+                      >
+                        {post.status === 'published' ? 'Publicado' : 'Rascunho'}
+                      </Badge>
+                    </div>
+                    
+                    <p className="text-gray-600 text-sm line-clamp-2 mb-4">
+                      {post.excerpt}
+                    </p>
+                    
+                    {post.tags && post.tags.length > 0 && (
+                      <div className="flex flex-wrap gap-1 mb-4">
+                        {post.tags.slice(0, 3).map((tag, index) => (
+                          <Badge key={index} variant="outline" className="text-xs border-purple-200 text-purple-700 bg-purple-50">
+                            {tag}
+                          </Badge>
+                        ))}
+                        {post.tags.length > 3 && (
+                          <Badge variant="outline" className="text-xs border-brand-gold/30 text-brand-gold bg-brand-gold/10">
+                            +{post.tags.length - 3}
+                          </Badge>
                         )}
                       </div>
-                      <div className="flex items-center gap-2 ml-4">
+                    )}
+
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-1 text-sm text-gray-500">
+                        <Calendar className="w-4 h-4" />
+                        {formatDate(post.created_at)}
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <Button 
+                          size="sm" 
+                          variant="outline" 
+                          onClick={() => handleView(post)}
+                          className="shadow-md hover:shadow-lg transition-all duration-200"
+                        >
+                          <Eye className="w-4 h-4" />
+                        </Button>
                         <Button
-                          variant="ghost"
                           size="sm"
-                          onClick={() => {
-                            setSelectedPost(post);
-                            setModalOpen(true);
-                          }}
-                          className="text-purple-600 hover:text-purple-700 hover:bg-purple-50"
+                          variant="outline"
+                          onClick={() => handleEdit(post)}
+                          className="shadow-md hover:shadow-lg transition-all duration-200"
                         >
                           <Edit className="w-4 h-4" />
                         </Button>
                         <Button
-                          variant="ghost"
                           size="sm"
-                          onClick={() => {
-                            setPostToDelete(post);
-                            setDeleteDialogOpen(true);
-                          }}
-                          className="text-red-600 hover:text-red-700 hover:bg-red-50"
+                          variant="destructive"
+                          onClick={() => handleDelete(post)}
+                          className="shadow-md hover:shadow-lg transition-all duration-200"
                         >
                           <Trash2 className="w-4 h-4" />
                         </Button>
@@ -302,23 +417,33 @@ const AdminBlog = () => {
             )}
           </CardContent>
         </Card>
-
-        {/* Modals */}
-        <BlogPostModal
-          open={modalOpen}
-          onOpenChange={setModalOpen}
-          post={selectedPost}
-          onSave={handleSave}
-        />
-
-        <DeleteConfirmDialog
-          open={deleteDialogOpen}
-          onOpenChange={setDeleteDialogOpen}
-          title="Excluir Post"
-          description={`Tem certeza que deseja excluir o post "${postToDelete?.title}"? Esta ação não pode ser desfeita.`}
-          onConfirm={handleDelete}
-        />
       </div>
+
+      <BlogPostModal
+        isOpen={modalOpen}
+        onClose={() => {
+          setModalOpen(false);
+          setSelectedPost(null);
+        }}
+        post={selectedPost}
+        onSuccess={handleModalSuccess}
+        mode={modalMode}
+      />
+
+      <DeleteConfirmDialog
+        isOpen={deleteDialogOpen}
+        onClose={() => {
+          setDeleteDialogOpen(false);
+          setSelectedPost(null);
+        }}
+        onConfirm={confirmDelete}
+        title="Excluir Post"
+        description={
+          selectedPost 
+            ? `Tem certeza que deseja excluir o post "${selectedPost.title}"? Esta ação não pode ser desfeita.`
+            : ''
+        }
+      />
     </AdminLayout>
   );
 };
