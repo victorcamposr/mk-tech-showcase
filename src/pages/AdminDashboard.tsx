@@ -17,8 +17,15 @@ import {
   ArrowRight,
   ChevronLeft,
   ChevronRight,
-  Filter,
-  CalendarIcon
+  CalendarIcon,
+  Eye,
+  EyeOff,
+  UserCheck,
+  UserX,
+  BookOpen,
+  Archive,
+  Zap,
+  ZapOff
 } from 'lucide-react';
 
 interface DashboardStats {
@@ -26,6 +33,10 @@ interface DashboardStats {
   totalContacts: number;
   totalPosts: number;
   totalSolutions: number;
+  inactiveUsers: number;
+  readContacts: number;
+  draftPosts: number;
+  inactiveSolutions: number;
 }
 
 interface RecentActivity {
@@ -42,7 +53,11 @@ const AdminDashboard = () => {
     totalUsers: 0,
     totalContacts: 0,
     totalPosts: 0,
-    totalSolutions: 0
+    totalSolutions: 0,
+    inactiveUsers: 0,
+    readContacts: 0,
+    draftPosts: 0,
+    inactiveSolutions: 0
   });
   const [activities, setActivities] = useState<RecentActivity[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
@@ -60,18 +75,26 @@ const AdminDashboard = () => {
 
   const fetchDashboardData = async () => {
     try {
-      const [usersRes, contactsRes, postsRes, solutionsRes] = await Promise.all([
+      const [usersRes, contactsRes, postsRes, solutionsRes, inactiveUsersRes, readContactsRes, draftPostsRes, inactiveSolutionsRes] = await Promise.all([
         supabase.from('admin_profiles').select('id', { count: 'exact', head: true }),
         supabase.from('contacts').select('id', { count: 'exact', head: true }),
         supabase.from('blog_posts').select('id', { count: 'exact', head: true }),
-        supabase.from('solutions').select('id', { count: 'exact', head: true })
+        supabase.from('solutions').select('id', { count: 'exact', head: true }),
+        supabase.from('admin_profiles').select('id', { count: 'exact', head: true }).eq('is_active', false),
+        supabase.from('contacts').select('id', { count: 'exact', head: true }).eq('read', true),
+        supabase.from('blog_posts').select('id', { count: 'exact', head: true }).eq('status', 'draft'),
+        supabase.from('solutions').select('id', { count: 'exact', head: true }).eq('status', 'inactive')
       ]);
 
       setStats({
         totalUsers: usersRes.count || 0,
         totalContacts: contactsRes.count || 0,
         totalPosts: postsRes.count || 0,
-        totalSolutions: solutionsRes.count || 0
+        totalSolutions: solutionsRes.count || 0,
+        inactiveUsers: inactiveUsersRes.count || 0,
+        readContacts: readContactsRes.count || 0,
+        draftPosts: draftPostsRes.count || 0,
+        inactiveSolutions: inactiveSolutionsRes.count || 0
       });
     } catch (error) {
       console.error('Error fetching dashboard stats:', error);
@@ -152,6 +175,33 @@ const AdminDashboard = () => {
     }
   };
 
+  const getEntityIcon = (entityType: string) => {
+    switch (entityType.toLowerCase()) {
+      case 'users':
+      case 'user':
+      case 'usuário':
+      case 'usuários':
+        return Users;
+      case 'contacts':
+      case 'contact':
+      case 'contato':
+      case 'contatos':
+        return MessageSquare;
+      case 'blog_posts':
+      case 'blog':
+      case 'post':
+      case 'posts':
+        return FileText;
+      case 'solutions':
+      case 'solution':
+      case 'solução':
+      case 'soluções':
+        return Lightbulb;
+      default:
+        return Activity;
+    }
+  };
+
   const totalPages = Math.ceil(totalActivities / ACTIVITIES_PER_PAGE);
 
   const statsCards = [
@@ -159,25 +209,37 @@ const AdminDashboard = () => {
       title: 'Total de Usuários',
       value: stats.totalUsers,
       icon: Users,
-      gradient: 'from-blue-500 to-blue-600'
+      gradient: 'from-blue-500 to-blue-600',
+      badgeValue: stats.inactiveUsers,
+      badgeLabel: 'Inativos',
+      badgeIcon: UserX
     },
     {
       title: 'Contatos Recebidos',
       value: stats.totalContacts,
       icon: MessageSquare,
-      gradient: 'from-green-500 to-green-600'
+      gradient: 'from-green-500 to-green-600',
+      badgeValue: stats.readContacts,
+      badgeLabel: 'Lidos',
+      badgeIcon: Eye
     },
     {
       title: 'Posts do Blog',
       value: stats.totalPosts,
       icon: FileText,
-      gradient: 'from-purple-500 to-purple-600'
+      gradient: 'from-purple-500 to-purple-600',
+      badgeValue: stats.draftPosts,
+      badgeLabel: 'Rascunhos',
+      badgeIcon: Archive
     },
     {
       title: 'Soluções Ativas',
       value: stats.totalSolutions,
       icon: Lightbulb,
-      gradient: 'from-brand-gold to-brand-gold-dark'
+      gradient: 'from-brand-gold to-brand-gold-dark',
+      badgeValue: stats.inactiveSolutions,
+      badgeLabel: 'Inativas',
+      badgeIcon: ZapOff
     }
   ];
 
@@ -203,10 +265,11 @@ const AdminDashboard = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           {statsCards.map((stat, index) => {
             const Icon = stat.icon;
+            const BadgeIcon = stat.badgeIcon;
             return (
               <Card key={index} className="relative overflow-hidden border-brand-gold/20 shadow-lg hover:shadow-xl transition-all duration-300 bg-white hover:-translate-y-1">
                 <CardContent className="p-6">
-                  <div className="flex items-center justify-between">
+                  <div className="flex items-center justify-between mb-4">
                     <div>
                       <p className="text-sm font-medium text-gray-600 mb-1">{stat.title}</p>
                       <p className="text-3xl font-bold text-brand-black">{stat.value}</p>
@@ -215,6 +278,14 @@ const AdminDashboard = () => {
                       <Icon className="w-6 h-6 text-white" />
                     </div>
                   </div>
+                  {stat.badgeValue > 0 && (
+                    <div className="flex items-center gap-2">
+                      <Badge variant="destructive" className="text-xs flex items-center gap-1">
+                        <BadgeIcon className="w-3 h-3" />
+                        {stat.badgeValue} {stat.badgeLabel}
+                      </Badge>
+                    </div>
+                  )}
                 </CardContent>
               </Card>
             );
@@ -280,34 +351,44 @@ const AdminDashboard = () => {
             ) : (
               <>
                 <div className="divide-y divide-gray-100">
-                  {activities.map((activity, index) => (
-                    <div key={activity.id} className="p-4 hover:bg-brand-gold/5 transition-colors">
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center space-x-4">
-                          <div className="w-10 h-10 bg-brand-gold/20 rounded-full flex items-center justify-center">
-                            <Calendar className="w-5 h-5 text-brand-gold" />
-                          </div>
-                          <div>
-                            <div className="flex items-center gap-2 mb-1">
-                              <Badge className={`text-xs border ${getActionColor(activity.action_type)}`}>
-                                {getActionText(activity.action_type)}
-                              </Badge>
-                              <span className="text-sm font-medium text-brand-black">
-                                {activity.entity_type}
-                              </span>
+                  {activities.map((activity, index) => {
+                    const EntityIcon = getEntityIcon(activity.entity_type);
+                    return (
+                      <div key={activity.id} className="p-4 hover:bg-brand-gold/5 transition-colors">
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center space-x-4">
+                            <div className="w-12 h-12 bg-brand-gold/20 rounded-full flex items-center justify-center">
+                              <EntityIcon className="w-6 h-6 text-brand-gold" />
                             </div>
-                            <p className="text-sm text-gray-600">
-                              <span className="font-medium text-brand-gold">{activity.user_name}</span> {getActionText(activity.action_type).toLowerCase()} "{activity.entity_title}"
-                            </p>
-                            <p className="text-xs text-gray-400 mt-1">
-                              {formatDate(activity.created_at)}
-                            </p>
+                            <div>
+                              <div className="flex items-center gap-3 mb-2">
+                                <Badge className={`text-xs border ${getActionColor(activity.action_type)}`}>
+                                  {getActionText(activity.action_type)}
+                                </Badge>
+                                <Badge variant="outline" className="text-xs bg-gray-50 text-gray-700 border-gray-200">
+                                  {activity.entity_type}
+                                </Badge>
+                              </div>
+                              <p className="text-sm text-brand-black font-medium mb-1">
+                                "{activity.entity_title}"
+                              </p>
+                              <div className="flex items-center gap-3 text-xs text-gray-500">
+                                <span className="flex items-center gap-1">
+                                  <Users className="w-3 h-3" />
+                                  {activity.user_name}
+                                </span>
+                                <span className="flex items-center gap-1">
+                                  <Calendar className="w-3 h-3" />
+                                  {formatDate(activity.created_at)}
+                                </span>
+                              </div>
+                            </div>
                           </div>
+                          <ArrowRight className="w-4 h-4 text-brand-gold flex-shrink-0" />
                         </div>
-                        <ArrowRight className="w-4 h-4 text-brand-gold" />
                       </div>
-                    </div>
-                  ))}
+                    );
+                  })}
                 </div>
 
                 {/* Pagination */}

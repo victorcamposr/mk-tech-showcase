@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
@@ -9,7 +8,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Badge } from '@/components/ui/badge';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
-import { X, Plus, Calculator, Users, BarChart3, Shield, Zap, Settings, FileText, Database, Globe, Smartphone, Lightbulb } from 'lucide-react';
+import { X, Plus, Calculator, Users, BarChart3, Shield, Zap, Settings, FileText, Database, Globe, Smartphone, Lightbulb, CreditCard, Coffee, QrCode, Truck, Link2, Bot, Monitor, TrendingUp, Banknote, Building2, Tablet, Fuel, Receipt } from 'lucide-react';
 
 interface SolutionModalProps {
   isOpen: boolean;
@@ -61,6 +60,19 @@ const SolutionModal = ({ isOpen, onClose, solution, onSuccess, mode }: SolutionM
     globe: { component: Globe, name: 'Globe' },
     smartphone: { component: Smartphone, name: 'Smartphone' },
     lightbulb: { component: Lightbulb, name: 'Lightbulb' },
+    'credit-card': { component: CreditCard, name: 'Credit Card' },
+    coffee: { component: Coffee, name: 'Coffee' },
+    'qr-code': { component: QrCode, name: 'QR Code' },
+    truck: { component: Truck, name: 'Truck' },
+    link2: { component: Link2, name: 'Link' },
+    bot: { component: Bot, name: 'Bot' },
+    monitor: { component: Monitor, name: 'Monitor' },
+    'trending-up': { component: TrendingUp, name: 'Trending Up' },
+    banknote: { component: Banknote, name: 'Banknote' },
+    building2: { component: Building2, name: 'Building' },
+    tablet: { component: Tablet, name: 'Tablet' },
+    fuel: { component: Fuel, name: 'Fuel' },
+    receipt: { component: Receipt, name: 'Receipt' },
   };
 
   useEffect(() => {
@@ -88,11 +100,17 @@ const SolutionModal = ({ isOpen, onClose, solution, onSuccess, mode }: SolutionM
 
   const fetchExistingSolutions = async () => {
     try {
-      const { data, error } = await supabase
+      let query = supabase
         .from('solutions')
         .select('id, title, key, icon_name')
-        .neq('id', solution?.id || '')
         .order('title');
+
+      // Only exclude current solution if we have a valid solution ID
+      if (solution?.id && typeof solution.id === 'string' && solution.id.trim() !== '') {
+        query = query.neq('id', solution.id);
+      }
+
+      const { data, error } = await query;
 
       if (error) throw error;
       setExistingSolutions(data || []);
