@@ -25,20 +25,27 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     // Set up auth state listener FIRST
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (event, session) => {
+        console.log('Auth state changed:', event, session?.user?.email);
         setSession(session);
         setUser(session?.user ?? null);
         
         if (session?.user) {
-          // Check admin status
+          // Check admin status using maybeSingle to avoid PGRST116 error
           setTimeout(async () => {
-            const { data: profile } = await supabase
-              .from('admin_profiles')
-              .select('*')
-              .eq('user_id', session.user.id)
-              .eq('is_active', true)
-              .single();
-            
-            setIsAdmin(!!profile);
+            try {
+              const { data: profile, error } = await supabase
+                .from('admin_profiles')
+                .select('*')
+                .eq('user_id', session.user.id)
+                .eq('is_active', true)
+                .maybeSingle();
+              
+              console.log('Admin profile check:', { profile, error });
+              setIsAdmin(!!profile);
+            } catch (error) {
+              console.error('Error checking admin status:', error);
+              setIsAdmin(false);
+            }
           }, 0);
         } else {
           setIsAdmin(false);
@@ -50,6 +57,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
     // THEN check for existing session
     supabase.auth.getSession().then(({ data: { session } }) => {
+      console.log('Initial session check:', session?.user?.email);
       setSession(session);
       setUser(session?.user ?? null);
       setLoading(false);
@@ -59,10 +67,12 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   }, []);
 
   const signIn = async (email: string, password: string) => {
+    console.log('Attempting sign in for:', email);
     const { error } = await supabase.auth.signInWithPassword({
       email,
       password,
     });
+    console.log('Sign in result:', { error });
     return { error };
   };
 

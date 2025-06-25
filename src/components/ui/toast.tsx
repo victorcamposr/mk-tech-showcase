@@ -1,8 +1,8 @@
+
 import * as React from "react"
 import * as ToastPrimitives from "@radix-ui/react-toast"
 import { cva, type VariantProps } from "class-variance-authority"
 import { X } from "lucide-react"
-import { createPortal } from "react-dom"
 
 import { cn } from "@/lib/utils"
 
@@ -11,53 +11,20 @@ const ToastProvider = ToastPrimitives.Provider
 const ToastViewport = React.forwardRef<
   React.ElementRef<typeof ToastPrimitives.Viewport>,
   React.ComponentPropsWithoutRef<typeof ToastPrimitives.Viewport>
->(({ className, ...props }, ref) => {
-  console.log("ToastViewport renderizado");
-  
-  // Criar um portal para renderizar diretamente no body
-  const [container, setContainer] = React.useState<HTMLElement | null>(null);
-  
-  React.useEffect(() => {
-    let toastContainer = document.getElementById('toast-container');
-    if (!toastContainer) {
-      toastContainer = document.createElement('div');
-      toastContainer.id = 'toast-container';
-      toastContainer.style.cssText = `
-        position: fixed !important;
-        top: 1rem !important;
-        right: 1rem !important;
-        z-index: 999999 !important;
-        max-width: 420px !important;
-        width: auto !important;
-        pointer-events: none !important;
-        display: flex !important;
-        flex-direction: column !important;
-        gap: 0.5rem !important;
-      `;
-      document.body.appendChild(toastContainer);
-    }
-    setContainer(toastContainer);
-    
-    return () => {
-      // Não remover o container aqui para evitar problemas de limpeza
-    };
-  }, []);
-  
-  if (!container) return null;
-  
-  return createPortal(
-    <ToastPrimitives.Viewport
-      ref={ref}
-      className="flex flex-col gap-2 pointer-events-none"
-      {...props}
-    />,
-    container
-  );
-})
+>(({ className, ...props }, ref) => (
+  <ToastPrimitives.Viewport
+    ref={ref}
+    className={cn(
+      "fixed top-0 z-[100] flex max-h-screen w-full flex-col-reverse p-4 sm:bottom-0 sm:right-0 sm:top-auto sm:flex-col md:max-w-[420px]",
+      className
+    )}
+    {...props}
+  />
+))
 ToastViewport.displayName = ToastPrimitives.Viewport.displayName
 
 const toastVariants = cva(
-  "group pointer-events-auto relative flex w-full items-center justify-between space-x-4 overflow-hidden rounded-md border p-6 pr-8 shadow-lg transition-all data-[swipe=cancel]:translate-x-0 data-[swipe=end]:translate-x-[var(--radix-toast-swipe-end-x)] data-[swipe=move]:translate-x-[var(--radix-toast-swipe-move-x)] data-[swipe=move]:transition-none data-[state=open]:animate-in data-[state=closed]:animate-out data-[swipe=end]:animate-out data-[state=closed]:fade-out-80 data-[state=closed]:slide-out-to-right-full data-[state=open]:slide-in-from-top-full",
+  "group pointer-events-auto relative flex w-full items-center justify-between space-x-4 overflow-hidden rounded-md border p-6 pr-8 shadow-lg transition-all data-[swipe=cancel]:translate-x-0 data-[swipe=end]:translate-x-[var(--radix-toast-swipe-end-x)] data-[swipe=move]:translate-x-[var(--radix-toast-swipe-move-x)] data-[swipe=move]:transition-none data-[state=open]:animate-in data-[state=closed]:animate-out data-[swipe=end]:animate-out data-[state=closed]:fade-out-80 data-[state=closed]:slide-out-to-right-full data-[state=open]:slide-in-from-top-full data-[state=open]:sm:slide-in-from-bottom-full",
   {
     variants: {
       variant: {
@@ -77,8 +44,6 @@ const Toast = React.forwardRef<
   React.ComponentPropsWithoutRef<typeof ToastPrimitives.Root> &
     VariantProps<typeof toastVariants>
 >(({ className, variant, ...props }, ref) => {
-  console.log("Toast renderizado com variant:", variant, "props:", props);
-  
   return (
     <ToastPrimitives.Root
       ref={ref}
