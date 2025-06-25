@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import AdminLayout from '@/components/admin/AdminLayout';
@@ -153,11 +152,17 @@ const CreateSolution = () => {
     setLoading(true);
     try {
       const dataToSave = {
-        ...data,
+        title: data.title,
+        description: data.description,
+        key: data.key,
+        status: data.status,
+        icon_name: data.icon_name,
+        card_image_url: data.card_image_url || '',
+        hero_image_url: data.hero_image_url || '',
+        sort_order: data.sort_order || 0,
         features,
         benefits,
         industries,
-        sort_order: data.sort_order || null,
       };
 
       const { error } = await supabase
@@ -246,11 +251,13 @@ const CreateSolution = () => {
                                 field.onChange(e);
                                 handleTitleChange(e.target.value);
                               }}
-                              className="h-12 border-gray-300 focus:border-brand-gold focus:ring-brand-gold shadow-sm"
+                              className={`h-12 border-gray-300 focus:border-brand-gold focus:ring-brand-gold shadow-sm ${
+                                form.formState.errors.title ? 'border-red-500 focus:border-red-500' : ''
+                              }`}
                               placeholder="Digite o título da solução"
                             />
                           </FormControl>
-                          <FormMessage />
+                          <FormMessage className="text-red-500" />
                         </FormItem>
                       )}
                     />
@@ -266,11 +273,13 @@ const CreateSolution = () => {
                           <FormControl>
                             <Input
                               {...field}
-                              className="h-12 border-gray-300 focus:border-brand-gold focus:ring-brand-gold shadow-sm"
+                              className={`h-12 border-gray-300 focus:border-brand-gold focus:ring-brand-gold shadow-sm ${
+                                form.formState.errors.key ? 'border-red-500 focus:border-red-500' : ''
+                              }`}
                               placeholder="chave-da-solucao"
                             />
                           </FormControl>
-                          <FormMessage />
+                          <FormMessage className="text-red-500" />
                         </FormItem>
                       )}
                     />
@@ -297,7 +306,7 @@ const CreateSolution = () => {
                               <SelectItem value="inactive">Inativa</SelectItem>
                             </SelectContent>
                           </Select>
-                          <FormMessage />
+                          <FormMessage className="text-red-500" />
                         </FormItem>
                       )}
                     />
@@ -319,7 +328,7 @@ const CreateSolution = () => {
                               placeholder="Ex: 1, 2, 3..."
                             />
                           </FormControl>
-                          <FormMessage />
+                          <FormMessage className="text-red-500" />
                         </FormItem>
                       )}
                     />
@@ -352,7 +361,7 @@ const CreateSolution = () => {
                               </button>
                             ))}
                           </div>
-                          <FormMessage />
+                          <FormMessage className="text-red-500" />
                         </FormItem>
                       )}
                     />
@@ -371,12 +380,14 @@ const CreateSolution = () => {
                       <FormControl>
                         <Textarea
                           {...field}
-                          className="border-gray-300 focus:border-brand-gold focus:ring-brand-gold shadow-sm"
+                          className={`border-gray-300 focus:border-brand-gold focus:ring-brand-gold shadow-sm ${
+                            form.formState.errors.description ? 'border-red-500 focus:border-red-500' : ''
+                          }`}
                           rows={4}
                           placeholder="Descreva a solução detalhadamente"
                         />
                       </FormControl>
-                      <FormMessage />
+                      <FormMessage className="text-red-500" />
                     </FormItem>
                   )}
                 />
@@ -506,7 +517,7 @@ const CreateSolution = () => {
                             placeholder="https://exemplo.com/imagem.jpg"
                           />
                         </FormControl>
-                        <FormMessage />
+                        <FormMessage className="text-red-500" />
                       </FormItem>
                     )}
                   />
@@ -526,7 +537,7 @@ const CreateSolution = () => {
                             placeholder="https://exemplo.com/hero.jpg"
                           />
                         </FormControl>
-                        <FormMessage />
+                        <FormMessage className="text-red-500" />
                       </FormItem>
                     )}
                   />

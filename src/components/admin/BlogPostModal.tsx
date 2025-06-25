@@ -154,7 +154,13 @@ const BlogPostModal = ({ isOpen, onClose, post, onSuccess, mode }: BlogPostModal
     setLoading(true);
     try {
       const dataToSave = {
-        ...data,
+        title: data.title,
+        content: data.content,
+        slug: data.slug,
+        excerpt: data.excerpt || '',
+        status: data.status,
+        featured_image: data.featured_image || '',
+        meta_description: data.meta_description || '',
         tags: tags,
         author_id: adminProfile.id,
       };
@@ -257,9 +263,10 @@ const BlogPostModal = ({ isOpen, onClose, post, onSuccess, mode }: BlogPostModal
                           }}
                           disabled={!canEdit}
                           placeholder="Digite o título do post"
+                          className={form.formState.errors.title ? 'border-red-500 focus:border-red-500' : ''}
                         />
                       </FormControl>
-                      <FormMessage />
+                      <FormMessage className="text-red-500" />
                     </FormItem>
                   )}
                 />
@@ -277,9 +284,10 @@ const BlogPostModal = ({ isOpen, onClose, post, onSuccess, mode }: BlogPostModal
                           {...field}
                           disabled={!canEdit}
                           placeholder="url-amigavel-do-post"
+                          className={form.formState.errors.slug ? 'border-red-500 focus:border-red-500' : ''}
                         />
                       </FormControl>
-                      <FormMessage />
+                      <FormMessage className="text-red-500" />
                     </FormItem>
                   )}
                 />
@@ -307,7 +315,7 @@ const BlogPostModal = ({ isOpen, onClose, post, onSuccess, mode }: BlogPostModal
                           <SelectItem value="published">Publicado</SelectItem>
                         </SelectContent>
                       </Select>
-                      <FormMessage />
+                      <FormMessage className="text-red-500" />
                     </FormItem>
                   )}
                 />
@@ -329,7 +337,7 @@ const BlogPostModal = ({ isOpen, onClose, post, onSuccess, mode }: BlogPostModal
                           placeholder="https://exemplo.com/imagem.jpg"
                         />
                       </FormControl>
-                      <FormMessage />
+                      <FormMessage className="text-red-500" />
                     </FormItem>
                   )}
                 />
@@ -391,7 +399,7 @@ const BlogPostModal = ({ isOpen, onClose, post, onSuccess, mode }: BlogPostModal
                       placeholder="Breve descrição do post"
                     />
                   </FormControl>
-                  <FormMessage />
+                  <FormMessage className="text-red-500" />
                 </FormItem>
               )}
             />
@@ -410,9 +418,10 @@ const BlogPostModal = ({ isOpen, onClose, post, onSuccess, mode }: BlogPostModal
                       disabled={!canEdit}
                       rows={12}
                       placeholder="Escreva o conteúdo completo do post aqui..."
+                      className={form.formState.errors.content ? 'border-red-500 focus:border-red-500' : ''}
                     />
                   </FormControl>
-                  <FormMessage />
+                  <FormMessage className="text-red-500" />
                 </FormItem>
               )}
             />
@@ -434,7 +443,7 @@ const BlogPostModal = ({ isOpen, onClose, post, onSuccess, mode }: BlogPostModal
                       maxLength={160}
                     />
                   </FormControl>
-                  <FormMessage />
+                  <FormMessage className="text-red-500" />
                 </FormItem>
               )}
             />

@@ -193,11 +193,17 @@ const EditSolution = () => {
     setLoading(true);
     try {
       const dataToSave = {
-        ...data,
+        title: data.title,
+        description: data.description,
+        key: data.key,
+        status: data.status,
+        icon_name: data.icon_name,
+        card_image_url: data.card_image_url || '',
+        hero_image_url: data.hero_image_url || '',
+        sort_order: data.sort_order || 0,
         features,
         benefits,
         industries,
-        sort_order: data.sort_order || null,
       };
 
       const { error } = await supabase
@@ -251,7 +257,6 @@ const EditSolution = () => {
   return (
     <AdminLayout>
       <div className="space-y-8">
-        {/* Header */}
         <div className="flex items-center gap-4">
           <Button
             variant="outline"
@@ -282,9 +287,7 @@ const EditSolution = () => {
           <CardContent className="space-y-8 py-6">
             <Form {...form}>
               <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-                {/* ... keep existing code (form fields structure same as CreateSolution) */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                  {/* Basic Information */}
                   <div className="space-y-6">
                     <FormField
                       control={form.control}
@@ -297,11 +300,13 @@ const EditSolution = () => {
                           <FormControl>
                             <Input
                               {...field}
-                              className="h-12 border-gray-300 focus:border-brand-gold focus:ring-brand-gold shadow-sm"
+                              className={`h-12 border-gray-300 focus:border-brand-gold focus:ring-brand-gold shadow-sm ${
+                                form.formState.errors.title ? 'border-red-500 focus:border-red-500' : ''
+                              }`}
                               placeholder="Digite o título da solução"
                             />
                           </FormControl>
-                          <FormMessage />
+                          <FormMessage className="text-red-500" />
                         </FormItem>
                       )}
                     />
@@ -317,11 +322,13 @@ const EditSolution = () => {
                           <FormControl>
                             <Input
                               {...field}
-                              className="h-12 border-gray-300 focus:border-brand-gold focus:ring-brand-gold shadow-sm"
+                              className={`h-12 border-gray-300 focus:border-brand-gold focus:ring-brand-gold shadow-sm ${
+                                form.formState.errors.key ? 'border-red-500 focus:border-red-500' : ''
+                              }`}
                               placeholder="chave-da-solucao"
                             />
                           </FormControl>
-                          <FormMessage />
+                          <FormMessage className="text-red-500" />
                         </FormItem>
                       )}
                     />
@@ -348,7 +355,7 @@ const EditSolution = () => {
                               <SelectItem value="inactive">Inativa</SelectItem>
                             </SelectContent>
                           </Select>
-                          <FormMessage />
+                          <FormMessage className="text-red-500" />
                         </FormItem>
                       )}
                     />
@@ -370,13 +377,12 @@ const EditSolution = () => {
                               placeholder="Ex: 1, 2, 3..."
                             />
                           </FormControl>
-                          <FormMessage />
+                          <FormMessage className="text-red-500" />
                         </FormItem>
                       )}
                     />
                   </div>
 
-                  {/* Icon Selection */}
                   <div className="space-y-6">
                     <FormField
                       control={form.control}
@@ -403,14 +409,13 @@ const EditSolution = () => {
                               </button>
                             ))}
                           </div>
-                          <FormMessage />
+                          <FormMessage className="text-red-500" />
                         </FormItem>
                       )}
                     />
                   </div>
                 </div>
 
-                {/* Description */}
                 <FormField
                   control={form.control}
                   name="description"
@@ -422,17 +427,18 @@ const EditSolution = () => {
                       <FormControl>
                         <Textarea
                           {...field}
-                          className="border-gray-300 focus:border-brand-gold focus:ring-brand-gold shadow-sm"
+                          className={`border-gray-300 focus:border-brand-gold focus:ring-brand-gold shadow-sm ${
+                            form.formState.errors.description ? 'border-red-500 focus:border-red-500' : ''
+                          }`}
                           rows={4}
                           placeholder="Descreva a solução detalhadamente"
                         />
                       </FormControl>
-                      <FormMessage />
+                      <FormMessage className="text-red-500" />
                     </FormItem>
                   )}
                 />
 
-                {/* Features */}
                 <div>
                   <Label className="text-sm font-semibold text-gray-900 mb-3 block">Características</Label>
                   <div className="flex gap-3 mb-4">
@@ -468,7 +474,6 @@ const EditSolution = () => {
                   </div>
                 </div>
 
-                {/* Benefits */}
                 <div>
                   <Label className="text-sm font-semibold text-gray-900 mb-3 block">Benefícios</Label>
                   <div className="flex gap-3 mb-4">
@@ -504,7 +509,6 @@ const EditSolution = () => {
                   </div>
                 </div>
 
-                {/* Industries */}
                 <div>
                   <Label className="text-sm font-semibold text-gray-900 mb-3 block">Segmentos</Label>
                   <div className="flex gap-3 mb-4">
@@ -540,7 +544,6 @@ const EditSolution = () => {
                   </div>
                 </div>
 
-                {/* Images */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <FormField
                     control={form.control}
@@ -557,7 +560,7 @@ const EditSolution = () => {
                             placeholder="https://exemplo.com/imagem.jpg"
                           />
                         </FormControl>
-                        <FormMessage />
+                        <FormMessage className="text-red-500" />
                       </FormItem>
                     )}
                   />
@@ -577,7 +580,7 @@ const EditSolution = () => {
                             placeholder="https://exemplo.com/hero.jpg"
                           />
                         </FormControl>
-                        <FormMessage />
+                        <FormMessage className="text-red-500" />
                       </FormItem>
                     )}
                   />
