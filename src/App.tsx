@@ -1,93 +1,77 @@
 
 import { Toaster } from "@/components/ui/toaster";
+import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import { AuthProvider } from "@/hooks/useAuth";
-import ScrollToTop from "./components/ScrollToTop";
-import AccessibilityHelper from "./components/AccessibilityHelper";
-import PerformanceOptimizer from "./components/PerformanceOptimizer";
-import ProtectedRoute from "./components/admin/ProtectedRoute";
+import { PerformanceOptimizer } from "./components/PerformanceOptimizer";
+import { AccessibilityHelper } from "./components/AccessibilityHelper";
+import { ScrollToTop } from "./components/ScrollToTop";
 import Index from "./pages/Index";
 import About from "./pages/About";
 import Services from "./pages/Services";
+import Solutions from "./pages/Solutions";
 import Portfolio from "./pages/Portfolio";
 import Contact from "./pages/Contact";
-import Solutions from "./pages/Solutions";
 import Blog from "./pages/Blog";
+import BlogPost from "./pages/BlogPost";
+import NotFound from "./pages/NotFound";
 import AdminLogin from "./pages/AdminLogin";
 import AdminDashboard from "./pages/AdminDashboard";
-import AdminUsers from "./pages/admin/AdminUsers";
 import AdminBlog from "./pages/admin/AdminBlog";
+import AdminUsers from "./pages/admin/AdminUsers";
 import AdminSolutions from "./pages/admin/AdminSolutions";
-import NotFound from "./pages/NotFound";
+import ProtectedRoute from "./components/admin/ProtectedRoute";
 
 const queryClient = new QueryClient();
 
-const App = () => (
-  <QueryClientProvider client={queryClient}>
-    <TooltipProvider>
-      <AuthProvider>
-        <AccessibilityHelper>
+function App() {
+  return (
+    <QueryClientProvider client={queryClient}>
+      <TooltipProvider>
+        <Toaster />
+        <Sonner />
+        <BrowserRouter>
+          <ScrollToTop />
           <PerformanceOptimizer />
-          <BrowserRouter future={{ v7_startTransition: true }}>
-            <ScrollToTop />
-            <Routes>
-              <Route path="/" element={<Index />} />
-              <Route path="/sobre" element={<About />} />
-              <Route path="/servicos" element={<Services />} />
-              <Route path="/solucoes" element={<Solutions />} />
-              <Route path="/solucoes/pdv-frente-caixa" element={<Solutions />} />
-              <Route path="/solucoes/mesas-comandas" element={<Solutions />} />
-              <Route path="/solucoes/cardapio-digital" element={<Solutions />} />
-              <Route path="/solucoes/maquininhas-cartao" element={<Solutions />} />
-              <Route path="/solucoes/controle-motoboys" element={<Solutions />} />
-              <Route path="/solucoes/integracoes" element={<Solutions />} />
-              <Route path="/solucoes/gestao-analise" element={<Solutions />} />
-              <Route path="/solucoes/robo-whatsapp" element={<Solutions />} />
-              <Route path="/solucoes/nota-fiscal" element={<Solutions />} />
-              <Route path="/solucoes/auto-atendimento" element={<Solutions />} />
-              <Route path="/solucoes/marketing-vendas" element={<Solutions />} />
-              <Route path="/solucoes/pagamento-tef" element={<Solutions />} />
-              <Route path="/solucoes/franquias-filiais" element={<Solutions />} />
-              <Route path="/solucoes/autoatendimento-tablet" element={<Solutions />} />
-              <Route path="/solucoes/sistema-revendas-gas-agua" element={<Solutions />} />
-              <Route path="/portfolio" element={<Portfolio />} />
-              <Route path="/contato" element={<Contact />} />
-              <Route path="/blog" element={<Blog />} />
-              
-              {/* Admin Routes */}
-              <Route path="/admin" element={<AdminLogin />} />
-              <Route path="/admin/dashboard" element={
-                <ProtectedRoute>
-                  <AdminDashboard />
-                </ProtectedRoute>
-              } />
-              <Route path="/admin/users" element={
-                <ProtectedRoute>
-                  <AdminUsers />
-                </ProtectedRoute>
-              } />
-              <Route path="/admin/blog" element={
-                <ProtectedRoute>
-                  <AdminBlog />
-                </ProtectedRoute>
-              } />
-              <Route path="/admin/solutions" element={
-                <ProtectedRoute>
-                  <AdminSolutions />
-                </ProtectedRoute>
-              } />
-              
-              {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-              <Route path="*" element={<NotFound />} />
-            </Routes>
-            <Toaster />
-          </BrowserRouter>
-        </AccessibilityHelper>
-      </AuthProvider>
-    </TooltipProvider>
-  </QueryClientProvider>
-);
+          <AccessibilityHelper />
+          <Routes>
+            <Route path="/" element={<Index />} />
+            <Route path="/sobre" element={<About />} />
+            <Route path="/servicos" element={<Services />} />
+            <Route path="/solucoes" element={<Solutions />} />
+            <Route path="/solucoes/:solutionKey" element={<Solutions />} />
+            <Route path="/portfolio" element={<Portfolio />} />
+            <Route path="/contato" element={<Contact />} />
+            <Route path="/blog" element={<Blog />} />
+            <Route path="/blog/:slug" element={<BlogPost />} />
+            <Route path="/admin/login" element={<AdminLogin />} />
+            <Route path="/admin" element={
+              <ProtectedRoute>
+                <AdminDashboard />
+              </ProtectedRoute>
+            } />
+            <Route path="/admin/blog" element={
+              <ProtectedRoute>
+                <AdminBlog />
+              </ProtectedRoute>
+            } />
+            <Route path="/admin/users" element={
+              <ProtectedRoute>
+                <AdminUsers />
+              </ProtectedRoute>
+            } />
+            <Route path="/admin/solutions" element={
+              <ProtectedRoute>
+                <AdminSolutions />
+              </ProtectedRoute>
+            } />
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </BrowserRouter>
+      </TooltipProvider>
+    </QueryClientProvider>
+  );
+}
 
 export default App;
