@@ -194,18 +194,46 @@ const AdminDashboard = () => {
     }
   };
 
-  const getActionText = (action: string, entityType: string) => {
+  const getEntityColor = (entityType: string) => {
+    switch (entityType.toLowerCase()) {
+      case 'users':
+      case 'user':
+      case 'usuário':
+      case 'usuários':
+      case 'admin_profiles':
+        return 'from-blue-500 to-blue-600';
+      case 'contacts':
+      case 'contact':
+      case 'contato':
+      case 'contatos':
+        return 'from-green-500 to-green-600';
+      case 'blog_posts':
+      case 'blog':
+      case 'post':
+      case 'posts':
+        return 'from-purple-500 to-purple-600';
+      case 'solutions':
+      case 'solution':
+      case 'solução':
+      case 'soluções':
+        return 'from-brand-gold to-brand-gold-dark';
+      default:
+        return 'from-gray-500 to-gray-600';
+    }
+  };
+
+  const getActionText = (action: string, entityType: string, entityTitle: string) => {
     const entity = getEntityTypeLabel(entityType);
     
     switch (action) {
       case 'create':
-        return `criou ${entity.toLowerCase()}`;
+        return `criou ${entity.toLowerCase()} "${entityTitle}"`;
       case 'update':
-        return `atualizou ${entity.toLowerCase()}`;
+        return `editou ${entity.toLowerCase()} "${entityTitle}"`;
       case 'delete':
-        return `excluiu ${entity.toLowerCase()}`;
+        return `excluiu ${entity.toLowerCase()} "${entityTitle}"`;
       default:
-        return `modificou ${entity.toLowerCase()}`;
+        return `modificou ${entity.toLowerCase()} "${entityTitle}"`;
     }
   };
 
@@ -380,19 +408,20 @@ const AdminDashboard = () => {
                   {activities.map((activity, index) => {
                     const EntityIcon = getEntityIcon(activity.entity_type);
                     const ActionIcon = getActionIcon(activity.action_type);
+                    const entityColor = getEntityColor(activity.entity_type);
                     return (
                       <div key={activity.id} className="p-4 hover:bg-brand-gold/5 transition-colors">
                         <div className="flex items-center justify-between">
                           <div className="flex items-center space-x-4">
-                            <div className="w-12 h-12 bg-brand-gold/20 rounded-full flex items-center justify-center relative">
-                              <EntityIcon className="w-6 h-6 text-brand-gold" />
-                              <div className="absolute -bottom-1 -right-1 w-5 h-5 bg-white rounded-full flex items-center justify-center border-2 border-brand-gold/20">
-                                <ActionIcon className="w-3 h-3 text-brand-gold" />
+                            <div className={`w-12 h-12 bg-gradient-to-br ${entityColor} rounded-full flex items-center justify-center relative`}>
+                              <EntityIcon className="w-6 h-6 text-white" />
+                              <div className="absolute -bottom-1 -right-1 w-5 h-5 bg-white rounded-full flex items-center justify-center border-2 border-gray-100">
+                                <ActionIcon className="w-3 h-3 text-gray-600" />
                               </div>
                             </div>
                             <div>
                               <p className="text-sm text-brand-black font-medium mb-1">
-                                <span className="font-semibold text-brand-gold">{activity.user_name}</span> {getActionText(activity.action_type, activity.entity_type)} "{activity.entity_title}"
+                                <span className="font-semibold text-brand-gold">{activity.user_name}</span> {getActionText(activity.action_type, activity.entity_type, activity.entity_title)}
                               </p>
                               <div className="flex items-center gap-3 text-xs text-gray-500">
                                 <span className="flex items-center gap-1">
