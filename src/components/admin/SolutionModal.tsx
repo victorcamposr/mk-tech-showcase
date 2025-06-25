@@ -21,7 +21,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { useForm } from 'react-hook-form';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
-import { Lightbulb, Plus, Save } from 'lucide-react';
+import { Lightbulb, Plus, Save, Eye } from 'lucide-react';
 
 interface SolutionData {
   title: string;
@@ -40,7 +40,7 @@ interface SolutionModalProps {
   onClose: () => void;
   onSuccess: () => void;
   solution?: any;
-  mode: 'create' | 'edit';
+  mode: 'create' | 'edit' | 'view';
 }
 
 const SolutionModal = ({ isOpen, onClose, onSuccess, solution, mode }: SolutionModalProps) => {
@@ -60,6 +60,8 @@ const SolutionModal = ({ isOpen, onClose, onSuccess, solution, mode }: SolutionM
       sort_order: 0,
     },
   });
+
+  const isViewMode = mode === 'view';
 
   // Função para registrar atividades
   const logActivity = async (actionType: string, entityTitle: string, entityId?: string) => {
@@ -111,6 +113,8 @@ const SolutionModal = ({ isOpen, onClose, onSuccess, solution, mode }: SolutionM
   }, [isOpen, solution, form]);
 
   const onSubmit = async (data: SolutionData) => {
+    if (isViewMode) return;
+    
     setLoading(true);
     console.log('Submitting solution data:', data);
     
@@ -178,13 +182,29 @@ const SolutionModal = ({ isOpen, onClose, onSuccess, solution, mode }: SolutionM
     }
   };
 
+  const getModalTitle = () => {
+    switch (mode) {
+      case 'create': return 'Nova Solução';
+      case 'edit': return 'Editar Solução';
+      case 'view': return 'Visualizar Solução';
+      default: return 'Solução';
+    }
+  };
+
+  const getModalIcon = () => {
+    switch (mode) {
+      case 'view': return <Eye className="w-5 h-5 text-brand-gold" />;
+      default: return <Lightbulb className="w-5 h-5 text-brand-gold" />;
+    }
+  };
+
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="sm:max-w-2xl fixed top-[50%] left-[50%] translate-x-[-50%] translate-y-[-50%] max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
-            <Lightbulb className="w-5 h-5 text-brand-gold" />
-            {mode === 'create' ? 'Nova Solução' : 'Editar Solução'}
+            {getModalIcon()}
+            {getModalTitle()}
           </DialogTitle>
         </DialogHeader>
         
@@ -198,7 +218,7 @@ const SolutionModal = ({ isOpen, onClose, onSuccess, solution, mode }: SolutionM
                   <FormItem>
                     <FormLabel>Título</FormLabel>
                     <FormControl>
-                      <Input placeholder="Nome da solução" {...field} />
+                      <Input placeholder="Nome da solução" {...field} disabled={isViewMode} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -212,7 +232,7 @@ const SolutionModal = ({ isOpen, onClose, onSuccess, solution, mode }: SolutionM
                   <FormItem>
                     <FormLabel>Chave (URL)</FormLabel>
                     <FormControl>
-                      <Input placeholder="pdv-frente-caixa" {...field} />
+                      <Input placeholder="pdv-frente-caixa" {...field} disabled={isViewMode} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -231,6 +251,7 @@ const SolutionModal = ({ isOpen, onClose, onSuccess, solution, mode }: SolutionM
                       placeholder="Descrição detalhada da solução" 
                       className="min-h-[80px]"
                       {...field} 
+                      disabled={isViewMode}
                     />
                   </FormControl>
                   <FormMessage />
@@ -249,6 +270,7 @@ const SolutionModal = ({ isOpen, onClose, onSuccess, solution, mode }: SolutionM
                       placeholder="Recurso 1&#10;Recurso 2&#10;Recurso 3"
                       className="min-h-[100px]"
                       {...field} 
+                      disabled={isViewMode}
                     />
                   </FormControl>
                   <FormMessage />
@@ -267,6 +289,7 @@ const SolutionModal = ({ isOpen, onClose, onSuccess, solution, mode }: SolutionM
                       placeholder="Benefício 1&#10;Benefício 2&#10;Benefício 3"
                       className="min-h-[100px]"
                       {...field} 
+                      disabled={isViewMode}
                     />
                   </FormControl>
                   <FormMessage />
@@ -285,6 +308,7 @@ const SolutionModal = ({ isOpen, onClose, onSuccess, solution, mode }: SolutionM
                       placeholder="Varejo&#10;Restaurantes&#10;Serviços"
                       className="min-h-[80px]"
                       {...field} 
+                      disabled={isViewMode}
                     />
                   </FormControl>
                   <FormMessage />
@@ -299,7 +323,7 @@ const SolutionModal = ({ isOpen, onClose, onSuccess, solution, mode }: SolutionM
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Ícone</FormLabel>
-                    <Select onValueChange={field.onChange} value={field.value}>
+                    <Select onValueChange={field.onChange} value={field.value} disabled={isViewMode}>
                       <FormControl>
                         <SelectTrigger>
                           <SelectValue placeholder="Selecione o ícone" />
@@ -326,7 +350,7 @@ const SolutionModal = ({ isOpen, onClose, onSuccess, solution, mode }: SolutionM
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Status</FormLabel>
-                    <Select onValueChange={field.onChange} value={field.value}>
+                    <Select onValueChange={field.onChange} value={field.value} disabled={isViewMode}>
                       <FormControl>
                         <SelectTrigger>
                           <SelectValue placeholder="Selecione o status" />
@@ -354,6 +378,7 @@ const SolutionModal = ({ isOpen, onClose, onSuccess, solution, mode }: SolutionM
                         placeholder="0" 
                         {...field}
                         onChange={(e) => field.onChange(parseInt(e.target.value) || 0)}
+                        disabled={isViewMode}
                       />
                     </FormControl>
                     <FormMessage />
@@ -370,22 +395,24 @@ const SolutionModal = ({ isOpen, onClose, onSuccess, solution, mode }: SolutionM
                 className="flex-1"
                 disabled={loading}
               >
-                Cancelar
+                {isViewMode ? 'Fechar' : 'Cancelar'}
               </Button>
-              <Button
-                type="submit"
-                disabled={loading}
-                className="flex-1 bg-gradient-to-r from-brand-gold to-brand-gold-light hover:from-brand-gold-dark hover:to-brand-gold text-brand-black"
-              >
-                {loading ? (
-                  <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-brand-black" />
-                ) : (
-                  <>
-                    {mode === 'create' ? <Plus className="w-4 h-4 mr-2" /> : <Save className="w-4 h-4 mr-2" />}
-                    {mode === 'create' ? 'Criar' : 'Salvar'}
-                  </>
-                )}
-              </Button>
+              {!isViewMode && (
+                <Button
+                  type="submit"
+                  disabled={loading}
+                  className="flex-1 bg-gradient-to-r from-brand-gold to-brand-gold-light hover:from-brand-gold-dark hover:to-brand-gold text-brand-black"
+                >
+                  {loading ? (
+                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-brand-black" />
+                  ) : (
+                    <>
+                      {mode === 'create' ? <Plus className="w-4 h-4 mr-2" /> : <Save className="w-4 h-4 mr-2" />}
+                      {mode === 'create' ? 'Criar' : 'Salvar'}
+                    </>
+                  )}
+                </Button>
+              )}
             </div>
           </form>
         </Form>
