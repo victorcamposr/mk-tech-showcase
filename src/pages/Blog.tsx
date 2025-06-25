@@ -86,10 +86,10 @@ const Blog = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-brand-black via-brand-black-light to-brand-black">
+      <div className="min-h-screen bg-white">
         <Header />
         <main className="container mx-auto px-4 py-20">
-          <div className="text-center text-white">
+          <div className="text-center text-gray-600">
             <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-brand-gold"></div>
             <p className="mt-4">Carregando posts...</p>
           </div>
@@ -100,7 +100,7 @@ const Blog = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-brand-black via-brand-black-light to-brand-black">
+    <div className="min-h-screen bg-white">
       <SEO 
         title="Blog - MK Tecnologia"
         description="Acompanhe as últimas novidades em tecnologia, dicas e insights sobre soluções para seu negócio."
@@ -110,10 +110,10 @@ const Blog = () => {
       <main className="container mx-auto px-4 py-20">
         {/* Hero Section */}
         <div className="text-center mb-16">
-          <h1 className="text-5xl md:text-6xl font-bold text-white mb-6">
+          <h1 className="text-5xl md:text-6xl font-bold text-gray-900 mb-6">
             Blog <span className="text-brand-gold">MK Tecnologia</span>
           </h1>
-          <p className="text-xl text-gray-300 max-w-3xl mx-auto">
+          <p className="text-xl text-gray-600 max-w-3xl mx-auto">
             Acompanhe as últimas novidades em tecnologia, dicas e insights 
             para impulsionar seu negócio com nossas soluções inovadoras.
           </p>
@@ -122,8 +122,8 @@ const Blog = () => {
         {/* Posts Grid */}
         {posts.length === 0 ? (
           <div className="text-center py-20">
-            <h3 className="text-2xl font-bold text-white mb-4">Em breve!</h3>
-            <p className="text-gray-300">
+            <h3 className="text-2xl font-bold text-gray-900 mb-4">Em breve!</h3>
+            <p className="text-gray-600">
               Estamos preparando conteúdos incríveis para você. Volte em breve!
             </p>
           </div>
@@ -132,7 +132,7 @@ const Blog = () => {
             {posts.map((post) => (
               <Card 
                 key={post.id}
-                className="bg-white/10 backdrop-blur-xl border-brand-gold/30 hover:border-brand-gold/50 transition-all duration-300 hover:scale-105 group"
+                className="bg-white border border-gray-200 hover:border-brand-gold/50 transition-all duration-300 hover:scale-105 group shadow-lg hover:shadow-xl"
               >
                 {post.featured_image && (
                   <div className="aspect-video overflow-hidden rounded-t-lg">
@@ -145,7 +145,7 @@ const Blog = () => {
                 )}
                 
                 <CardHeader>
-                  <div className="flex items-center gap-2 text-sm text-gray-400 mb-2">
+                  <div className="flex items-center gap-2 text-sm text-gray-500 mb-2">
                     <Calendar className="w-4 h-4" />
                     {format(new Date(post.published_at), 'dd/MM/yyyy', { locale: ptBR })}
                     <span className="mx-2">•</span>
@@ -153,13 +153,13 @@ const Blog = () => {
                     {post.author_name}
                   </div>
                   
-                  <CardTitle className="text-xl text-white group-hover:text-brand-gold transition-colors duration-300">
+                  <CardTitle className="text-xl text-gray-900 group-hover:text-brand-gold transition-colors duration-300">
                     {post.title}
                   </CardTitle>
                 </CardHeader>
                 
                 <CardContent>
-                  <p className="text-gray-300 mb-4 line-clamp-3">
+                  <p className="text-gray-600 mb-4 line-clamp-3">
                     {post.excerpt}
                   </p>
                   
