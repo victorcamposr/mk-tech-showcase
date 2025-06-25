@@ -1,5 +1,6 @@
+
 import { useState, useEffect } from 'react';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -64,9 +65,6 @@ const SolutionModal = ({ isOpen, onClose, solution, onSuccess, mode }: SolutionM
 
   useEffect(() => {
     if (isOpen) {
-      // Scroll to top when modal opens
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-      
       fetchExistingSolutions();
       if (solution && mode !== 'create') {
         setFormData({
@@ -163,7 +161,7 @@ const SolutionModal = ({ isOpen, onClose, solution, onSuccess, mode }: SolutionM
         title: formData.title.trim(),
         description: formData.description.trim(),
         key: formData.key.trim(),
-        icon_name: formData.icon_name || 'lightbulb', // Default icon
+        icon_name: formData.icon_name || 'lightbulb',
         sort_order: formData.sort_order || null,
       };
 
@@ -226,13 +224,18 @@ const SolutionModal = ({ isOpen, onClose, solution, onSuccess, mode }: SolutionM
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-4xl max-h-[95vh] overflow-y-auto fixed top-[2.5vh] left-1/2 transform -translate-x-1/2 bg-white border-0 shadow-2xl">
-        <DialogHeader className="sticky top-0 bg-white border-b border-gray-200 pb-4 mb-6">
+      <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white border-0 shadow-2xl">
+        <DialogHeader className="border-b border-gray-200 pb-4 mb-6">
           <DialogTitle className="text-xl font-semibold text-gray-900">
             {mode === 'create' && 'Nova Solução'}
             {mode === 'edit' && 'Editar Solução'}
             {mode === 'view' && 'Visualizar Solução'}
           </DialogTitle>
+          <DialogDescription className="text-gray-600">
+            {mode === 'create' && 'Crie uma nova solução para o sistema'}
+            {mode === 'edit' && 'Edite as informações da solução'}
+            {mode === 'view' && 'Visualize os detalhes da solução'}
+          </DialogDescription>
         </DialogHeader>
 
         <div className="space-y-6">
@@ -531,7 +534,7 @@ const SolutionModal = ({ isOpen, onClose, solution, onSuccess, mode }: SolutionM
           </div>
         </div>
 
-        <div className="flex justify-end gap-3 pt-6 border-t border-gray-200 mt-8 sticky bottom-0 bg-white">
+        <div className="flex justify-end gap-3 pt-6 border-t border-gray-200 mt-8">
           <Button
             variant="outline"
             onClick={onClose}

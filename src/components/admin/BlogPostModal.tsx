@@ -1,211 +1,180 @@
 
 import { useState, useEffect } from 'react';
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from '@/components/ui/dialog';
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from '@/components/ui/form';
-import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
-import { useForm } from 'react-hook-form';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Textarea } from '@/components/ui/textarea';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Badge } from '@/components/ui/badge';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
-import { FileText, Plus, Save, Eye, Trash2 } from 'lucide-react';
-import DeleteConfirmDialog from './DeleteConfirmDialog';
-
-interface BlogPostData {
-  title: string;
-  content: string;
-  excerpt: string;
-  featured_image: string;
-  meta_title: string;
-  meta_description: string;
-  tags: string;
-}
+import { useAuth } from '@/hooks/useAuth';
+import { X, Plus } from 'lucide-react';
 
 interface BlogPostModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onSuccess: () => void;
   post?: any;
+  onSuccess: () => void;
   mode: 'create' | 'edit' | 'view';
 }
 
-const BlogPostModal = ({ isOpen, onClose, onSuccess, post, mode }: BlogPostModalProps) => {
-  const [loading, setLoading] = useState(false);
-  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
-  const { toast } = useToast();
-  
-  const form = useForm<BlogPostData>({
-    defaultValues: {
-      title: '',
-      content: '',
-      excerpt: '',
-      featured_image: '',
-      meta_title: '',
-      meta_description: '',
-      tags: '',
-    },
+const BlogPostModal = ({ isOpen, onClose, post, onSuccess, mode }: BlogPostModalProps) => {
+  const [formData, setFormData] = useState({
+    title: '',
+    excerpt: '',
+    content: '',
+    status: 'draft' as 'draft' | 'published',
+    tags: [] as string[],
+    featured_image: '',
+    meta_description: '',
+    slug: '',
   });
 
-  const isViewMode = mode === 'view';
-  const isCreateMode = mode === 'create';
+  const [newTag, setNewTag] = useState('');
+  const [loading, setLoading] = useState(false);
+  const { toast } = useToast();
+  const { adminProfile } = useAuth();
 
-  // Função para registrar atividades
-  const logActivity = async (actionType: string, entityTitle: string, entityId?: string) => {
-    try {
-      await supabase
-        .from('admin_activities')
-        .insert([{
-          action_type: actionType,
-          entity_type: 'blog_post',
-          entity_id: entityId,
-          entity_title: entityTitle,
-          user_name: 'Admin',
-        }]);
-    } catch (error) {
-      console.error('Error logging activity:', error);
-    }
-  };
-
-  // Função para gerar slug
-  const generateSlug = (title: string) => {
-    return title
-      .toLowerCase()
-      .normalize('NFD')
-      .replace(/[\u0300-\u036f]/g, '')
-      .replace(/[^a-z0-9\s-]/g, '')
-      .trim()
-      .replace(/\s+/g, '-')
-      .replace(/-+/g, '-');
-  };
-
-  // Reset form when post changes or modal opens
   useEffect(() => {
     if (isOpen) {
-      if (post) {
-        form.reset({
+      if (post && mode !== 'create') {
+        setFormData({
           title: post.title || '',
-          content: post.content || '',
           excerpt: post.excerpt || '',
+          content: post.content || '',
+          status: post.status || 'draft',
+          tags: post.tags || [],
           featured_image: post.featured_image || '',
-          meta_title: post.meta_title || '',
           meta_description: post.meta_description || '',
-          tags: post.tags ? post.tags.join(', ') : '',
+          slug: post.slug || '',
         });
       } else {
-        form.reset({
-          title: '',
-          content: '',
-          excerpt: '',
-          featured_image: '',
-          meta_title: '',
-          meta_description: '',
-          tags: '',
-        });
+        resetForm();
       }
     }
-  }, [isOpen, post, form]);
+  }, [isOpen, post, mode]);
 
-  const handleDelete = async () => {
-    if (!post) return;
-    
-    setLoading(true);
-    try {
-      const { error } = await supabase
-        .from('blog_posts')
-        .delete()
-        .eq('id', post.id);
+  const resetForm = () => {
+    setFormData({
+      title: '',
+      excerpt: '',
+      content: '',
+      status: 'draft',
+      tags: [],
+      featured_image: '',
+      meta_description: '',
+      slug: '',
+    });
+    setNewTag('');
+  };
 
-      if (error) throw error;
+  const handleInputChange = (field: string, value: any) => {
+    setFormData(prev => ({
+      ...prev,
+      [field]: value
+    }));
 
-      // Registrar atividade
-      await logActivity('delete', post.title, post.id);
-      
-      toast({
-        title: "Post excluído com sucesso!",
-        description: `"${post.title}" foi removido do blog.`,
-      });
-
-      onSuccess();
-      onClose();
-      setDeleteDialogOpen(false);
-    } catch (error: any) {
-      console.error('Error deleting post:', error);
-      toast({
-        variant: "destructive",
-        title: "Erro ao excluir post",
-        description: error.message || "Tente novamente em alguns instantes.",
-      });
-    } finally {
-      setLoading(false);
+    // Auto-generate slug from title
+    if (field === 'title' && mode === 'create') {
+      const slug = value
+        .toLowerCase()
+        .replace(/[^a-z0-9\s-]/g, '')
+        .replace(/\s+/g, '-')
+        .replace(/-+/g, '-')
+        .trim();
+      setFormData(prev => ({
+        ...prev,
+        slug: slug
+      }));
     }
   };
 
-  const onSubmit = async (data: BlogPostData) => {
-    if (isViewMode) return;
-    
-    setLoading(true);
-    
-    try {
-      const slug = generateSlug(data.title);
-      const tagsArray = data.tags ? data.tags.split(',').map(tag => tag.trim()).filter(tag => tag) : [];
+  const addTag = () => {
+    if (newTag.trim() && !formData.tags.includes(newTag.trim())) {
+      setFormData(prev => ({
+        ...prev,
+        tags: [...prev.tags, newTag.trim()]
+      }));
+      setNewTag('');
+    }
+  };
 
-      const postData = {
-        title: data.title,
-        slug,
-        content: data.content,
-        excerpt: data.excerpt,
-        featured_image: data.featured_image || null,
-        meta_title: data.meta_title || null,
-        meta_description: data.meta_description || null,
-        tags: tagsArray,
-        status: 'draft', // Padrão como rascunho
+  const removeTag = (index: number) => {
+    setFormData(prev => ({
+      ...prev,
+      tags: prev.tags.filter((_, i) => i !== index)
+    }));
+  };
+
+  const handleSubmit = async () => {
+    if (!formData.title.trim() || !formData.content.trim()) {
+      toast({
+        title: "Campos obrigatórios",
+        description: "Por favor, preencha pelo menos o título e o conteúdo.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    if (!adminProfile?.id) {
+      toast({
+        title: "Erro de autenticação",
+        description: "Não foi possível identificar o usuário administrador.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setLoading(true);
+    try {
+      const dataToSave = {
+        ...formData,
+        title: formData.title.trim(),
+        content: formData.content.trim(),
+        slug: formData.slug.trim() || formData.title.toLowerCase().replace(/\s+/g, '-'),
+        author_id: adminProfile.id, // Use the admin profile ID instead of temp-author
       };
 
       if (mode === 'create') {
-        const { data: result, error } = await supabase
-          .from('blog_posts')
-          .insert([{
-            ...postData,
-            author_id: 'temp-author', // TODO: Usar ID do usuário logado
-          }])
-          .select()
-          .single();
-
-        if (error) throw error;
-
-        // Registrar atividade
-        await logActivity('create', data.title, result.id);
-        
-        toast({
-          title: "Post criado com sucesso!",
-          description: `"${data.title}" foi adicionado como rascunho.`,
-        });
-      } else {
         const { error } = await supabase
           .from('blog_posts')
-          .update(postData)
+          .insert([dataToSave]);
+
+        if (error) {
+          console.error('Database error:', error);
+          toast({
+            title: "Erro ao criar post",
+            description: error.message || "Não foi possível criar o post.",
+            variant: "destructive",
+          });
+          return;
+        }
+
+        toast({
+          title: "Post criado",
+          description: "O post foi criado com sucesso.",
+        });
+      } else if (mode === 'edit') {
+        const { error } = await supabase
+          .from('blog_posts')
+          .update(dataToSave)
           .eq('id', post.id);
 
-        if (error) throw error;
+        if (error) {
+          console.error('Database error:', error);
+          toast({
+            title: "Erro ao atualizar post",
+            description: error.message || "Não foi possível atualizar o post.",
+            variant: "destructive",
+          });
+          return;
+        }
 
-        // Registrar atividade
-        await logActivity('update', data.title, post.id);
-        
         toast({
-          title: "Post atualizado com sucesso!",
-          description: "As alterações foram salvas.",
+          title: "Post atualizado",
+          description: "O post foi atualizado com sucesso.",
         });
       }
 
@@ -214,222 +183,205 @@ const BlogPostModal = ({ isOpen, onClose, onSuccess, post, mode }: BlogPostModal
     } catch (error: any) {
       console.error('Error saving post:', error);
       toast({
+        title: "Erro inesperado",
+        description: error.message || "Ocorreu um erro inesperado.",
         variant: "destructive",
-        title: "Erro ao salvar post",
-        description: error.message || "Tente novamente em alguns instantes.",
       });
     } finally {
       setLoading(false);
     }
   };
 
-  const getModalTitle = () => {
-    switch (mode) {
-      case 'create': return 'Novo Post';
-      case 'edit': return 'Editar Post';
-      case 'view': return 'Visualizar Post';
-      default: return 'Post';
-    }
-  };
-
-  const getModalIcon = () => {
-    switch (mode) {
-      case 'view': return <Eye className="w-5 h-5 text-brand-gold" />;
-      default: return <FileText className="w-5 h-5 text-brand-gold" />;
-    }
-  };
+  const canEdit = mode === 'create' || mode === 'edit';
 
   return (
-    <>
-      <Dialog open={isOpen} onOpenChange={onClose}>
-        <DialogContent className="sm:max-w-2xl max-h-[90vh] overflow-y-auto fixed top-[50%] left-[50%] translate-x-[-50%] translate-y-[-50%]">
-          <DialogHeader>
-            <DialogTitle className="flex items-center gap-2">
-              {getModalIcon()}
-              {getModalTitle()}
-            </DialogTitle>
-          </DialogHeader>
-          
-          <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-              <FormField
-                control={form.control}
-                name="title"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Título</FormLabel>
-                    <FormControl>
-                      <Input placeholder="Título do post" {...field} disabled={isViewMode} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+    <Dialog open={isOpen} onOpenChange={onClose}>
+      <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white border-0 shadow-2xl">
+        <DialogHeader className="border-b border-gray-200 pb-4 mb-6">
+          <DialogTitle className="text-xl font-semibold text-gray-900">
+            {mode === 'create' && 'Novo Post'}
+            {mode === 'edit' && 'Editar Post'}
+            {mode === 'view' && 'Visualizar Post'}
+          </DialogTitle>
+          <DialogDescription className="text-gray-600">
+            {mode === 'create' && 'Crie um novo post para o blog'}
+            {mode === 'edit' && 'Edite as informações do post'}
+            {mode === 'view' && 'Visualize os detalhes do post'}
+          </DialogDescription>
+        </DialogHeader>
 
-              <FormField
-                control={form.control}
-                name="excerpt"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Resumo</FormLabel>
-                    <FormControl>
-                      <Textarea 
-                        placeholder="Breve descrição do post..."
-                        rows={2}
-                        {...field} 
-                        disabled={isViewMode}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name="content"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Conteúdo</FormLabel>
-                    <FormControl>
-                      <Textarea 
-                        placeholder="Conteúdo completo do post..."
-                        rows={8}
-                        {...field} 
-                        disabled={isViewMode}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name="featured_image"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Imagem Destacada (URL)</FormLabel>
-                    <FormControl>
-                      <Input 
-                        placeholder="https://exemplo.com/imagem.jpg"
-                        {...field} 
-                        disabled={isViewMode}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name="tags"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Tags (separadas por vírgula)</FormLabel>
-                    <FormControl>
-                      <Input 
-                        placeholder="tecnologia, inovação, negócios"
-                        {...field} 
-                        disabled={isViewMode}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <FormField
-                  control={form.control}
-                  name="meta_title"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Meta Título (SEO)</FormLabel>
-                      <FormControl>
-                        <Input 
-                          placeholder="Título para SEO"
-                          {...field} 
-                          disabled={isViewMode}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-
-                <FormField
-                  control={form.control}
-                  name="meta_description"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Meta Descrição (SEO)</FormLabel>
-                      <FormControl>
-                        <Input 
-                          placeholder="Descrição para SEO"
-                          {...field} 
-                          disabled={isViewMode}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
+        <div className="space-y-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="space-y-4">
+              <div>
+                <Label htmlFor="title" className="text-sm font-medium text-gray-700">
+                  Título *
+                </Label>
+                <Input
+                  id="title"
+                  value={formData.title}
+                  onChange={(e) => handleInputChange('title', e.target.value)}
+                  disabled={!canEdit}
+                  className="mt-1"
+                  placeholder="Digite o título do post"
                 />
               </div>
 
-              <div className="flex gap-3 pt-4">
-                <Button
-                  type="button"
-                  variant="outline"
-                  onClick={onClose}
-                  className="flex-1"
-                  disabled={loading}
+              <div>
+                <Label htmlFor="slug" className="text-sm font-medium text-gray-700">
+                  Slug
+                </Label>
+                <Input
+                  id="slug"
+                  value={formData.slug}
+                  onChange={(e) => handleInputChange('slug', e.target.value)}
+                  disabled={!canEdit}
+                  className="mt-1"
+                  placeholder="url-amigavel-do-post"
+                />
+              </div>
+
+              <div>
+                <Label htmlFor="status" className="text-sm font-medium text-gray-700">
+                  Status
+                </Label>
+                <Select
+                  value={formData.status}
+                  onValueChange={(value) => handleInputChange('status', value)}
+                  disabled={!canEdit}
                 >
-                  {isViewMode ? 'Fechar' : 'Cancelar'}
-                </Button>
-                {!isViewMode && (
-                  <Button
-                    type="submit"
-                    disabled={loading}
-                    className="flex-1 bg-gradient-to-r from-brand-gold to-brand-gold-light hover:from-brand-gold-dark hover:to-brand-gold text-brand-black"
-                  >
-                    {loading ? (
-                      <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-brand-black" />
-                    ) : (
-                      <>
-                        {mode === 'create' ? <Plus className="w-4 h-4 mr-2" /> : <Save className="w-4 h-4 mr-2" />}
-                        {mode === 'create' ? 'Criar' : 'Salvar'}
-                      </>
-                    )}
-                  </Button>
-                )}
-                {mode === 'edit' && post && (
-                  <Button
-                    type="button"
-                    variant="destructive"
-                    onClick={() => setDeleteDialogOpen(true)}
-                    disabled={loading}
-                    className="flex-shrink-0"
-                  >
-                    <Trash2 className="w-4 h-4" />
-                  </Button>
-                )}
+                  <SelectTrigger className="mt-1">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="draft">Rascunho</SelectItem>
+                    <SelectItem value="published">Publicado</SelectItem>
+                  </SelectContent>
+                </Select>
               </div>
-            </form>
-          </Form>
-        </DialogContent>
-      </Dialog>
+            </div>
 
-      <DeleteConfirmDialog
-        isOpen={deleteDialogOpen}
-        onClose={() => setDeleteDialogOpen(false)}
-        onConfirm={handleDelete}
-        title="Excluir Post"
-        description={`Tem certeza que deseja excluir o post "${post?.title}"? Esta ação não pode ser desfeita.`}
-        loading={loading}
-      />
-    </>
+            <div className="space-y-4">
+              <div>
+                <Label htmlFor="featured_image" className="text-sm font-medium text-gray-700">
+                  Imagem Destacada
+                </Label>
+                <Input
+                  id="featured_image"
+                  value={formData.featured_image}
+                  onChange={(e) => handleInputChange('featured_image', e.target.value)}
+                  disabled={!canEdit}
+                  className="mt-1"
+                  placeholder="https://exemplo.com/imagem.jpg"
+                />
+              </div>
+
+              <div>
+                <Label className="text-sm font-medium text-gray-700">Tags</Label>
+                {canEdit && (
+                  <div className="flex gap-2 mt-2">
+                    <Input
+                      value={newTag}
+                      onChange={(e) => setNewTag(e.target.value)}
+                      placeholder="Nova tag"
+                      className="flex-1"
+                      onKeyPress={(e) => e.key === 'Enter' && addTag()}
+                    />
+                    <Button
+                      type="button"
+                      variant="outline"
+                      onClick={addTag}
+                      size="sm"
+                    >
+                      <Plus className="w-4 h-4" />
+                    </Button>
+                  </div>
+                )}
+                <div className="flex flex-wrap gap-2 mt-2">
+                  {formData.tags.map((tag, index) => (
+                    <Badge key={index} variant="outline">
+                      {tag}
+                      {canEdit && (
+                        <button
+                          onClick={() => removeTag(index)}
+                          className="ml-2 text-gray-400 hover:text-gray-600"
+                        >
+                          <X className="w-3 h-3" />
+                        </button>
+                      )}
+                    </Badge>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div>
+            <Label htmlFor="excerpt" className="text-sm font-medium text-gray-700">
+              Resumo
+            </Label>
+            <Textarea
+              id="excerpt"
+              value={formData.excerpt}
+              onChange={(e) => handleInputChange('excerpt', e.target.value)}
+              disabled={!canEdit}
+              className="mt-1"
+              rows={3}
+              placeholder="Breve descrição do post"
+            />
+          </div>
+
+          <div>
+            <Label htmlFor="content" className="text-sm font-medium text-gray-700">
+              Conteúdo *
+            </Label>
+            <Textarea
+              id="content"
+              value={formData.content}
+              onChange={(e) => handleInputChange('content', e.target.value)}
+              disabled={!canEdit}
+              className="mt-1"
+              rows={12}
+              placeholder="Escreva o conteúdo completo do post aqui..."
+            />
+          </div>
+
+          <div>
+            <Label htmlFor="meta_description" className="text-sm font-medium text-gray-700">
+              Meta Descrição
+            </Label>
+            <Textarea
+              id="meta_description"
+              value={formData.meta_description}
+              onChange={(e) => handleInputChange('meta_description', e.target.value)}
+              disabled={!canEdit}
+              className="mt-1"
+              rows={2}
+              placeholder="Descrição para SEO (máx. 160 caracteres)"
+              maxLength={160}
+            />
+          </div>
+        </div>
+
+        <div className="flex justify-end gap-3 pt-6 border-t border-gray-200 mt-8">
+          <Button
+            variant="outline"
+            onClick={onClose}
+          >
+            {mode === 'view' ? 'Fechar' : 'Cancelar'}
+          </Button>
+          {canEdit && (
+            <Button
+              onClick={handleSubmit}
+              disabled={loading}
+              className="bg-blue-600 hover:bg-blue-700"
+            >
+              {loading ? 'Salvando...' : (mode === 'create' ? 'Criar Post' : 'Salvar Alterações')}
+            </Button>
+          )}
+        </div>
+      </DialogContent>
+    </Dialog>
   );
 };
 

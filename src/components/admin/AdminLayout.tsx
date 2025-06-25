@@ -83,14 +83,14 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
   const SidebarContent = () => (
     <>
       <div className="flex-1 h-0 pt-5 pb-4 overflow-y-auto">
-        {/* Logo section with black background */}
+        {/* Logo section with new MK Tecnologia logo */}
         <div className="bg-black mx-4 mb-8 rounded-lg p-4">
           <div className="flex items-center">
-            <div className="w-12 h-12 rounded-xl shadow-lg mr-4 bg-white p-1 flex-shrink-0">
+            <div className="w-12 h-12 rounded-xl shadow-lg mr-4 bg-black p-1 flex-shrink-0 flex items-center justify-center">
               <img 
-                src="/lovable-uploads/894786af-af73-492e-ae6a-d8a39e0ac4cb.png" 
-                alt="MK Sistemas Logo" 
-                className="w-full h-full rounded-lg object-contain"
+                src="/lovable-uploads/806a2e50-9ae7-49ba-856a-b1933b0a8dd9.png" 
+                alt="MK Tecnologia Logo" 
+                className="w-10 h-10 object-contain"
               />
             </div>
             <div>

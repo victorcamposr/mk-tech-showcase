@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import AdminLayout from '@/components/admin/AdminLayout';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -98,7 +99,6 @@ const AdminSolutions = () => {
         throw error;
       }
 
-      // Cast status to proper type
       const typedSolutions = (data || []).map(solution => ({
         ...solution,
         status: solution.status as 'active' | 'inactive'
@@ -206,32 +206,29 @@ const AdminSolutions = () => {
 
   return (
     <AdminLayout>
-      <div className="space-y-8">
+      <div className="space-y-6">
         {/* Header */}
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-3xl font-bold text-gray-900 flex items-center gap-3">
-              <div className="w-10 h-10 bg-gradient-to-r from-orange-500 to-red-500 rounded-lg flex items-center justify-center">
-                <Lightbulb className="w-6 h-6 text-white" />
-              </div>
-              Gerenciar Soluções
-            </h1>
-            <p className="text-gray-600 mt-2">
-              Gerencie as soluções e serviços da empresa
+            <h1 className="text-2xl font-bold text-gray-900">Soluções</h1>
+            <p className="text-gray-600 mt-1">
+              Gerencie as soluções disponéveis no sistema
             </p>
           </div>
-          <div className="flex items-center gap-3">
+          <div className="flex gap-3">
             <Button
               onClick={fetchSolutions}
               variant="outline"
-              className="border-gray-300 text-gray-600 hover:bg-gray-50"
+              size="sm"
+              className="border-gray-300"
             >
               <RefreshCw className="w-4 h-4 mr-2" />
               Atualizar
             </Button>
             <Button
               onClick={handleCreate}
-              className="bg-blue-600 hover:bg-blue-700 text-white font-medium shadow-lg"
+              size="sm"
+              className="bg-blue-600 hover:bg-blue-700"
             >
               <Plus className="w-4 h-4 mr-2" />
               Nova Solução
@@ -239,48 +236,48 @@ const AdminSolutions = () => {
           </div>
         </div>
 
-        {/* Filters */}
-        <Card className="shadow-lg border-0">
-          <CardHeader className="bg-gradient-to-r from-gray-50 to-gray-100 border-b border-gray-200">
-            <CardTitle className="flex items-center gap-2 text-gray-900">
-              <div className="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center">
-                <Filter className="w-4 h-4 text-blue-600" />
-              </div>
+        {/* Filters Card */}
+        <Card>
+          <CardHeader className="pb-3">
+            <CardTitle className="text-lg flex items-center gap-2">
+              <Filter className="w-5 h-5" />
               Filtros
             </CardTitle>
           </CardHeader>
-          <CardContent className="p-6">
+          <CardContent>
             <div className="flex flex-col sm:flex-row gap-4">
               <div className="flex-1">
                 <div className="relative">
                   <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
                   <Input
-                    placeholder="Buscar por título, descrição ou chave..."
+                    placeholder="Buscar soluções..."
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
-                    className="pl-10 border-gray-300 focus:border-blue-500 focus:ring-blue-500"
+                    className="pl-10"
                   />
                 </div>
               </div>
               <div className="flex gap-2">
                 <Button
                   variant={statusFilter === 'all' ? 'default' : 'outline'}
+                  size="sm"
                   onClick={() => setStatusFilter('all')}
-                  className={statusFilter === 'all' ? 'bg-blue-600 hover:bg-blue-700 text-white' : 'border-gray-300 text-gray-600 hover:bg-gray-50'}
                 >
                   Todas
                 </Button>
                 <Button
                   variant={statusFilter === 'active' ? 'default' : 'outline'}
+                  size="sm"
                   onClick={() => setStatusFilter('active')}
-                  className={statusFilter === 'active' ? 'bg-green-600 hover:bg-green-700 text-white' : 'border-gray-300 text-gray-600 hover:bg-gray-50'}
+                  className={statusFilter === 'active' ? 'bg-green-600 hover:bg-green-700' : ''}
                 >
                   Ativas
                 </Button>
                 <Button
                   variant={statusFilter === 'inactive' ? 'default' : 'outline'}
+                  size="sm"
                   onClick={() => setStatusFilter('inactive')}
-                  className={statusFilter === 'inactive' ? 'bg-red-600 hover:bg-red-700 text-white' : 'border-gray-300 text-gray-600 hover:bg-gray-50'}
+                  className={statusFilter === 'inactive' ? 'bg-red-600 hover:bg-red-700' : ''}
                 >
                   Inativas
                 </Button>
@@ -289,88 +286,82 @@ const AdminSolutions = () => {
           </CardContent>
         </Card>
 
-        {/* Solutions List */}
-        <Card className="shadow-lg border-0">
-          <CardHeader className="bg-gradient-to-r from-gray-50 to-gray-100 border-b border-gray-200">
-            <CardTitle className="flex items-center justify-between text-gray-900">
+        {/* Solutions Table */}
+        <Card>
+          <CardHeader className="pb-3">
+            <CardTitle className="text-lg flex items-center justify-between">
               <span>Soluções Cadastradas</span>
-              <Badge variant="outline" className="bg-blue-50 text-blue-700 border-blue-200">
-                {filteredSolutions.length} soluções
-              </Badge>
+              <Badge variant="secondary">{filteredSolutions.length} soluções</Badge>
             </CardTitle>
           </CardHeader>
           <CardContent className="p-0">
             {loading ? (
-              <div className="text-center py-12">
-                <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-blue-600 mx-auto"></div>
-                <p className="mt-4 text-gray-600">Carregando soluções...</p>
+              <div className="text-center py-8">
+                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto"></div>
+                <p className="mt-2 text-gray-600">Carregando soluções...</p>
               </div>
             ) : filteredSolutions.length === 0 ? (
-              <div className="text-center py-12">
-                <Lightbulb className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-                <h3 className="text-xl font-medium text-gray-900 mb-2">
+              <div className="text-center py-8">
+                <Lightbulb className="w-12 h-12 text-gray-300 mx-auto mb-4" />
+                <h3 className="text-lg font-medium text-gray-900 mb-2">
                   {searchTerm || statusFilter !== 'all' ? 'Nenhuma solução encontrada' : 'Nenhuma solução cadastrada'}
                 </h3>
-                <p className="text-gray-600 mb-6">
+                <p className="text-gray-600 mb-4">
                   {searchTerm || statusFilter !== 'all' 
                     ? 'Tente ajustar os filtros para encontrar o que procura.'
-                    : 'Comece criando sua primeira solução para o sistema.'
+                    : 'Comece criando sua primeira solução.'
                   }
                 </p>
                 {!searchTerm && statusFilter === 'all' && (
-                  <Button 
-                    onClick={handleCreate}
-                    className="bg-blue-600 hover:bg-blue-700 text-white font-medium"
-                  >
+                  <Button onClick={handleCreate} size="sm">
                     <Plus className="w-4 h-4 mr-2" />
                     Criar Primeira Solução
                   </Button>
                 )}
               </div>
             ) : (
-              <div className="divide-y divide-gray-100">
+              <div className="divide-y divide-gray-200">
                 {filteredSolutions.map((solution) => {
                   const Icon = getIcon(solution.icon_name);
                   return (
-                    <div key={solution.id} className="p-6 hover:bg-gray-50 transition-colors">
+                    <div key={solution.id} className="p-4 hover:bg-gray-50 transition-colors">
                       <div className="flex items-center justify-between">
                         <div className="flex items-center space-x-4 flex-1">
-                          <div className="w-12 h-12 bg-gradient-to-r from-blue-100 to-purple-100 rounded-lg flex items-center justify-center flex-shrink-0">
-                            <Icon className="w-6 h-6 text-blue-600" />
+                          <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                            <Icon className="w-5 h-5 text-blue-600" />
                           </div>
                           <div className="flex-1 min-w-0">
-                            <div className="flex items-center gap-3 mb-2">
-                              <h3 className="text-lg font-semibold text-gray-900 truncate">
+                            <div className="flex items-center gap-3 mb-1">
+                              <h3 className="text-base font-semibold text-gray-900 truncate">
                                 {solution.title}
                               </h3>
-                              <Badge className={`text-xs border ${
-                                solution.status === 'active' 
-                                  ? 'bg-green-100 text-green-800 border-green-200' 
-                                  : 'bg-red-100 text-red-800 border-red-200'
-                              }`}>
+                              <Badge 
+                                variant={solution.status === 'active' ? 'default' : 'secondary'}
+                                className={solution.status === 'active' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}
+                              >
                                 {solution.status === 'active' ? 'Ativa' : 'Inativa'}
                               </Badge>
                               {solution.sort_order !== null && (
-                                <Badge variant="outline" className="text-xs border-gray-300 text-gray-600">
-                                  Ordem: {solution.sort_order}
+                                <Badge variant="outline" className="text-xs">
+                                  #{solution.sort_order}
                                 </Badge>
                               )}
                             </div>
-                            <p className="text-sm text-gray-500 font-mono bg-gray-100 px-2 py-1 rounded inline-block mb-2">
+                            <p className="text-xs text-gray-500 font-mono bg-gray-100 px-2 py-1 rounded inline-block mb-1">
                               {solution.key}
                             </p>
                             <p className="text-gray-600 text-sm line-clamp-2 mb-2">
                               {solution.description}
                             </p>
                             {solution.features && solution.features.length > 0 && (
-                              <div className="flex flex-wrap gap-1 mb-2">
+                              <div className="flex flex-wrap gap-1 mb-1">
                                 {solution.features.slice(0, 3).map((feature, index) => (
-                                  <Badge key={index} variant="outline" className="text-xs border-blue-200 text-blue-700 bg-blue-50">
+                                  <Badge key={index} variant="outline" className="text-xs">
                                     {feature}
                                   </Badge>
                                 ))}
                                 {solution.features.length > 3 && (
-                                  <Badge variant="outline" className="text-xs border-gray-300 text-gray-600">
+                                  <Badge variant="outline" className="text-xs">
                                     +{solution.features.length - 3}
                                   </Badge>
                                 )}
@@ -386,25 +377,21 @@ const AdminSolutions = () => {
                             variant="outline"
                             size="sm"
                             onClick={() => handleView(solution)}
-                            className="border-blue-200 text-blue-600 hover:bg-blue-50"
                           >
-                            <Eye className="w-4 h-4 mr-1" />
-                            Ver
+                            <Eye className="w-4 h-4" />
                           </Button>
                           <Button
                             variant="outline"
                             size="sm"
                             onClick={() => handleEdit(solution)}
-                            className="border-green-200 text-green-600 hover:bg-green-50"
                           >
-                            <Edit className="w-4 h-4 mr-1" />
-                            Editar
+                            <Edit className="w-4 h-4" />
                           </Button>
                           <Button
                             variant="outline"
                             size="sm"
                             onClick={() => handleDelete(solution)}
-                            className="border-red-200 text-red-600 hover:bg-red-50"
+                            className="text-red-600 hover:text-red-700"
                           >
                             <Trash2 className="w-4 h-4" />
                           </Button>
