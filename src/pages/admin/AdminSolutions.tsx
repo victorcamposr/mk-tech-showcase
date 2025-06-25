@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import AdminLayout from '@/components/admin/AdminLayout';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -6,7 +7,6 @@ import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
-import SolutionModal from '@/components/admin/SolutionModal';
 import DeleteConfirmDialog from '@/components/admin/DeleteConfirmDialog';
 import { 
   Plus, 
@@ -61,15 +61,14 @@ interface AdminSolution {
 }
 
 const AdminSolutions = () => {
+  const navigate = useNavigate();
   const [solutions, setSolutions] = useState<AdminSolution[]>([]);
   const [filteredSolutions, setFilteredSolutions] = useState<AdminSolution[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState<'all' | 'active' | 'inactive'>('all');
-  const [modalOpen, setModalOpen] = useState(false);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [selectedSolution, setSelectedSolution] = useState<AdminSolution | null>(null);
-  const [modalMode, setModalMode] = useState<'create' | 'edit' | 'view'>('create');
   const { toast } = useToast();
 
   // Static solution icon mapping based on solution keys (same as frontend)
@@ -185,21 +184,15 @@ const AdminSolutions = () => {
   };
 
   const handleCreate = () => {
-    setSelectedSolution(null);
-    setModalMode('create');
-    setModalOpen(true);
+    navigate('/admin/solutions/create');
   };
 
   const handleView = (solution: AdminSolution) => {
-    setSelectedSolution(solution);
-    setModalMode('view');
-    setModalOpen(true);
+    navigate(`/admin/solutions/${solution.id}/view`);
   };
 
   const handleEdit = (solution: AdminSolution) => {
-    setSelectedSolution(solution);
-    setModalMode('edit');
-    setModalOpen(true);
+    navigate(`/admin/solutions/${solution.id}/edit`);
   };
 
   const handleDelete = (solution: AdminSolution) => {
@@ -237,10 +230,6 @@ const AdminSolutions = () => {
       setDeleteDialogOpen(false);
       setSelectedSolution(null);
     }
-  };
-
-  const handleModalSuccess = () => {
-    fetchSolutions();
   };
 
   const formatDate = (dateString: string) => {
@@ -507,17 +496,6 @@ const AdminSolutions = () => {
           </CardContent>
         </Card>
       </div>
-
-      <SolutionModal
-        isOpen={modalOpen}
-        onClose={() => {
-          setModalOpen(false);
-          setSelectedSolution(null);
-        }}
-        solution={selectedSolution}
-        onSuccess={handleModalSuccess}
-        mode={modalMode}
-      />
 
       <DeleteConfirmDialog
         isOpen={deleteDialogOpen}

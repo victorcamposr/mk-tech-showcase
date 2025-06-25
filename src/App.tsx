@@ -1,4 +1,3 @@
-
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -24,6 +23,7 @@ import AdminUsers from "./pages/admin/AdminUsers";
 import AdminSolutions from "./pages/admin/AdminSolutions";
 import AdminContacts from "./pages/admin/AdminContacts";
 import ProtectedRoute from "./components/admin/ProtectedRoute";
+import CreateSolution from "./components/admin/CreateSolution";
 
 const queryClient = new QueryClient();
 
@@ -74,6 +74,7 @@ function App() {
                   <AdminContacts />
                 </ProtectedRoute>
               } />
+              <Route path="/admin/solutions/create" element={<ProtectedAdminRoute><CreateSolution /></ProtectedAdminRoute>} />
               <Route path="*" element={<NotFound />} />
             </Routes>
           </BrowserRouter>

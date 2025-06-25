@@ -34,7 +34,7 @@ interface DashboardStats {
   totalPosts: number;
   totalSolutions: number;
   inactiveUsers: number;
-  readContacts: number;
+  unreadContacts: number;
   draftPosts: number;
   inactiveSolutions: number;
 }
@@ -55,7 +55,7 @@ const AdminDashboard = () => {
     totalPosts: 0,
     totalSolutions: 0,
     inactiveUsers: 0,
-    readContacts: 0,
+    unreadContacts: 0,
     draftPosts: 0,
     inactiveSolutions: 0
   });
@@ -75,13 +75,13 @@ const AdminDashboard = () => {
 
   const fetchDashboardData = async () => {
     try {
-      const [usersRes, contactsRes, postsRes, solutionsRes, inactiveUsersRes, readContactsRes, draftPostsRes, inactiveSolutionsRes] = await Promise.all([
+      const [usersRes, contactsRes, postsRes, solutionsRes, inactiveUsersRes, unreadContactsRes, draftPostsRes, inactiveSolutionsRes] = await Promise.all([
         supabase.from('admin_profiles').select('id', { count: 'exact', head: true }),
         supabase.from('contacts').select('id', { count: 'exact', head: true }),
         supabase.from('blog_posts').select('id', { count: 'exact', head: true }),
         supabase.from('solutions').select('id', { count: 'exact', head: true }),
         supabase.from('admin_profiles').select('id', { count: 'exact', head: true }).eq('is_active', false),
-        supabase.from('contacts').select('id', { count: 'exact', head: true }).eq('read', true),
+        supabase.from('contacts').select('id', { count: 'exact', head: true }).eq('read', false),
         supabase.from('blog_posts').select('id', { count: 'exact', head: true }).eq('status', 'draft'),
         supabase.from('solutions').select('id', { count: 'exact', head: true }).eq('status', 'inactive')
       ]);
@@ -92,7 +92,7 @@ const AdminDashboard = () => {
         totalPosts: postsRes.count || 0,
         totalSolutions: solutionsRes.count || 0,
         inactiveUsers: inactiveUsersRes.count || 0,
-        readContacts: readContactsRes.count || 0,
+        unreadContacts: unreadContactsRes.count || 0,
         draftPosts: draftPostsRes.count || 0,
         inactiveSolutions: inactiveSolutionsRes.count || 0
       });
@@ -181,6 +181,7 @@ const AdminDashboard = () => {
       case 'user':
       case 'usuário':
       case 'usuários':
+      case 'admin_profiles':
         return Users;
       case 'contacts':
       case 'contact':
@@ -202,6 +203,21 @@ const AdminDashboard = () => {
     }
   };
 
+  const getEntityTypeLabel = (entityType: string) => {
+    switch (entityType.toLowerCase()) {
+      case 'admin_profiles':
+        return 'Usuário';
+      case 'contacts':
+        return 'Contato';
+      case 'blog_posts':
+        return 'Post do Blog';
+      case 'solutions':
+        return 'Solução';
+      default:
+        return entityType;
+    }
+  };
+
   const totalPages = Math.ceil(totalActivities / ACTIVITIES_PER_PAGE);
 
   const statsCards = [
@@ -212,16 +228,18 @@ const AdminDashboard = () => {
       gradient: 'from-blue-500 to-blue-600',
       badgeValue: stats.inactiveUsers,
       badgeLabel: 'Inativos',
-      badgeIcon: UserX
+      badgeIcon: UserX,
+      showBadge: stats.inactiveUsers > 0
     },
     {
       title: 'Contatos Recebidos',
       value: stats.totalContacts,
       icon: MessageSquare,
       gradient: 'from-green-500 to-green-600',
-      badgeValue: stats.readContacts,
-      badgeLabel: 'Lidos',
-      badgeIcon: Eye
+      badgeValue: stats.unreadContacts,
+      badgeLabel: 'Não Lidos',
+      badgeIcon: Eye,
+      showBadge: stats.unreadContacts > 0
     },
     {
       title: 'Posts do Blog',
@@ -230,7 +248,8 @@ const AdminDashboard = () => {
       gradient: 'from-purple-500 to-purple-600',
       badgeValue: stats.draftPosts,
       badgeLabel: 'Rascunhos',
-      badgeIcon: Archive
+      badgeIcon: Archive,
+      showBadge: stats.draftPosts > 0
     },
     {
       title: 'Soluções Ativas',
@@ -239,7 +258,8 @@ const AdminDashboard = () => {
       gradient: 'from-brand-gold to-brand-gold-dark',
       badgeValue: stats.inactiveSolutions,
       badgeLabel: 'Inativas',
-      badgeIcon: ZapOff
+      badgeIcon: ZapOff,
+      showBadge: stats.inactiveSolutions > 0
     }
   ];
 
@@ -278,7 +298,7 @@ const AdminDashboard = () => {
                       <Icon className="w-6 h-6 text-white" />
                     </div>
                   </div>
-                  {stat.badgeValue > 0 && (
+                  {stat.showBadge && (
                     <div className="flex items-center gap-2">
                       <Badge variant="destructive" className="text-xs flex items-center gap-1">
                         <BadgeIcon className="w-3 h-3" />
@@ -366,17 +386,13 @@ const AdminDashboard = () => {
                                   {getActionText(activity.action_type)}
                                 </Badge>
                                 <Badge variant="outline" className="text-xs bg-gray-50 text-gray-700 border-gray-200">
-                                  {activity.entity_type}
+                                  {getEntityTypeLabel(activity.entity_type)}
                                 </Badge>
                               </div>
                               <p className="text-sm text-brand-black font-medium mb-1">
-                                "{activity.entity_title}"
+                                <span className="font-semibold text-brand-gold">{activity.user_name}</span> {getActionText(activity.action_type).toLowerCase()} {getEntityTypeLabel(activity.entity_type).toLowerCase()}: "{activity.entity_title}"
                               </p>
                               <div className="flex items-center gap-3 text-xs text-gray-500">
-                                <span className="flex items-center gap-1">
-                                  <Users className="w-3 h-3" />
-                                  {activity.user_name}
-                                </span>
                                 <span className="flex items-center gap-1">
                                   <Calendar className="w-3 h-3" />
                                   {formatDate(activity.created_at)}
