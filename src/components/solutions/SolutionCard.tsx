@@ -1,7 +1,9 @@
+
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { getServiceColors } from "@/components/ColoredServiceIcon";
 import CheckBullet from "@/components/CheckBullet";
 import { SOLUTION_IMAGES } from "@/data/solutions";
+import CardMachineOperators from "./CardMachineOperators";
 
 interface SolutionCardProps {
   solutionKey: string;
@@ -38,28 +40,11 @@ const SolutionCard = ({ solutionKey, solution }: SolutionCardProps) => {
             <IconComponent className="w-5 h-5 text-brand-black" />
           </div>
           
-          {/* Ícones flutuantes para maquininhas de cartão */}
+          {/* Seção especial para maquininhas de cartão */}
           {solutionKey === 'maquininhas-cartao' && (
-            <>
-              <div className="absolute bottom-3 left-3 p-0.5 rounded group/tooltip">
-                <img src="/lovable-uploads/a8ecfad8-8626-44ee-a7eb-afcfd88ca462.png" alt="Stone" className="w-8 h-8 object-contain" />
-                <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-1 px-1.5 py-0.5 bg-gray-900 text-white text-xs rounded opacity-0 group-hover/tooltip:opacity-100 transition-opacity whitespace-nowrap z-10">
-                  Integrado com Stone
-                </div>
-              </div>
-              <div className="absolute bottom-3 left-14 p-0.5 rounded group/tooltip">
-                <img src="/lovable-uploads/76fb354f-89fa-4163-9772-a8f1fdb94668.png" alt="Cielo" className="w-8 h-8 object-contain" />
-                <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-1 px-1.5 py-0.5 bg-gray-900 text-white text-xs rounded opacity-0 group-hover/tooltip:opacity-100 transition-opacity whitespace-nowrap z-10">
-                  Integrado com Cielo
-                </div>
-              </div>
-              <div className="absolute bottom-3 left-24 p-0.5 rounded group/tooltip">
-                <img src="/lovable-uploads/2a8e6032-1804-4f62-aa10-ae0ad095cab8.png" alt="PagBank" className="w-8 h-8 object-contain" />
-                <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-1 px-1.5 py-0.5 bg-gray-900 text-white text-xs rounded opacity-0 group-hover/tooltip:opacity-100 transition-opacity whitespace-nowrap z-10">
-                  Integrado com PagBank
-                </div>
-              </div>
-            </>
+            <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/60 via-black/30 to-transparent p-4">
+              <CardMachineOperators isCompact={true} maxVisible={3} />
+            </div>
           )}
         </div>
         
