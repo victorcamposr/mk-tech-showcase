@@ -72,7 +72,13 @@ const AdminSolutions = () => {
 
       if (error) throw error;
 
-      setSolutions(data || []);
+      // Type cast the status property to match our interface
+      const typedSolutions = (data || []).map(solution => ({
+        ...solution,
+        status: solution.status as 'active' | 'inactive'
+      }));
+
+      setSolutions(typedSolutions);
     } catch (error) {
       console.error('Error fetching solutions:', error);
       toast({
@@ -265,6 +271,8 @@ const AdminSolutions = () => {
         isOpen={isModalOpen}
         onClose={handleModalClose}
         solution={selectedSolution}
+        onSuccess={handleModalClose}
+        mode={selectedSolution ? 'edit' : 'create'}
       />
 
       <DeleteConfirmDialog
