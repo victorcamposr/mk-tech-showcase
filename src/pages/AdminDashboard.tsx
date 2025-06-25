@@ -11,7 +11,8 @@ import {
   Activity,
   TrendingUp,
   Calendar,
-  Clock
+  Clock,
+  Mail
 } from 'lucide-react';
 
 interface RecentActivity {
@@ -23,28 +24,97 @@ interface RecentActivity {
   created_at: string;
 }
 
+interface DashboardStats {
+  totalUsers: number;
+  activeUsers: number;
+  totalPosts: number;
+  publishedPosts: number;
+  totalSolutions: number;
+  activeSolutions: number;
+  totalContacts: number;
+  unreadContacts: number;
+}
+
 const AdminDashboard = () => {
   const [recentActivities, setRecentActivities] = useState<RecentActivity[]>([]);
+  const [stats, setStats] = useState<DashboardStats>({
+    totalUsers: 0,
+    activeUsers: 0,
+    totalPosts: 0,
+    publishedPosts: 0,
+    totalSolutions: 0,
+    activeSolutions: 0,
+    totalContacts: 0,
+    unreadContacts: 0,
+  });
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetchRecentActivities();
+    fetchDashboardData();
   }, []);
 
-  const fetchRecentActivities = async () => {
+  const fetchDashboardData = async () => {
     try {
-      const { data: activities, error } = await supabase
-        .from('admin_activities')
-        .select('*')
-        .order('created_at', { ascending: false })
-        .limit(10);
+      // Buscar estatísticas em paralelo
+      const [
+        activitiesResult,
+        usersResult,
+        postsResult,
+        solutionsResult,
+        contactsResult
+      ] = await Promise.all([
+        supabase
+          .from('admin_activities')
+          .select('*')
+          .order('created_at', { ascending: false })
+          .limit(10),
+        supabase
+          .from('admin_profiles')
+          .select('is_active'),
+        supabase
+          .from('blog_posts')
+          .select('status'),
+        supabase
+          .from('solutions')
+          .select('status'),
+        supabase
+          .from('contacts')
+          .select('read')
+          .catch(() => ({ data: [] })) // Tabela pode não existir ainda
+      ]);
 
-      if (error) {
-        console.error('Error fetching activities:', error);
-      } else {
-        console.log('Recent activities:', activities);
-        setRecentActivities(activities || []);
+      // Processar atividades
+      if (activitiesResult.data) {
+        setRecentActivities(activitiesResult.data);
       }
+
+      // Processar estatísticas de usuários
+      const users = usersResult.data || [];
+      const activeUsers = users.filter(user => user.is_active).length;
+
+      // Processar estatísticas de posts
+      const posts = postsResult.data || [];
+      const publishedPosts = posts.filter(post => post.status === 'published').length;
+
+      // Processar estatísticas de soluções
+      const solutions = solutionsResult.data || [];
+      const activeSolutions = solutions.filter(solution => solution.status === 'active').length;
+
+      // Processar estatísticas de contatos
+      const contacts = contactsResult.data || [];
+      const unreadContacts = contacts.filter(contact => !contact.read).length;
+
+      setStats({
+        totalUsers: users.length,
+        activeUsers,
+        totalPosts: posts.length,
+        publishedPosts,
+        totalSolutions: solutions.length,
+        activeSolutions,
+        totalContacts: contacts.length,
+        unreadContacts,
+      });
+
     } catch (error) {
       console.error('Error fetching dashboard data:', error);
     } finally {
@@ -85,6 +155,7 @@ const AdminDashboard = () => {
       case 'user': return <Users className="w-4 h-4" />;
       case 'blog_post': return <FileText className="w-4 h-4" />;
       case 'solution': return <Lightbulb className="w-4 h-4" />;
+      case 'contact': return <Mail className="w-4 h-4" />;
       default: return <Activity className="w-4 h-4" />;
     }
   };
@@ -103,8 +174,8 @@ const AdminDashboard = () => {
           </p>
         </div>
 
-        {/* Stats Cards - Estáticas como antes */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {/* Stats Cards - Agora com dados reais */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           <Card className="shadow-lg border-0 hover:shadow-xl transition-shadow">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium text-gray-600">
@@ -113,9 +184,9 @@ const AdminDashboard = () => {
               <Users className="h-5 w-5 text-brand-gold" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold text-gray-900">5</div>
+              <div className="text-2xl font-bold text-gray-900">{stats.totalUsers}</div>
               <p className="text-xs text-green-600 mt-1">
-                4 ativos
+                {stats.activeUsers} ativos
               </p>
             </CardContent>
           </Card>
@@ -128,9 +199,9 @@ const AdminDashboard = () => {
               <FileText className="h-5 w-5 text-brand-gold" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold text-gray-900">12</div>
+              <div className="text-2xl font-bold text-gray-900">{stats.totalPosts}</div>
               <p className="text-xs text-green-600 mt-1">
-                8 publicados
+                {stats.publishedPosts} publicados
               </p>
             </CardContent>
           </Card>
@@ -143,9 +214,24 @@ const AdminDashboard = () => {
               <Lightbulb className="h-5 w-5 text-brand-gold" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold text-gray-900">6</div>
+              <div className="text-2xl font-bold text-gray-900">{stats.totalSolutions}</div>
               <p className="text-xs text-green-600 mt-1">
-                Todas ativas
+                {stats.activeSolutions} ativas
+              </p>
+            </CardContent>
+          </Card>
+
+          <Card className="shadow-lg border-0 hover:shadow-xl transition-shadow">
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium text-gray-600">
+                Mensagens de Contato
+              </CardTitle>
+              <Mail className="h-5 w-5 text-brand-gold" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold text-gray-900">{stats.totalContacts}</div>
+              <p className="text-xs text-orange-600 mt-1">
+                {stats.unreadContacts} não lidas
               </p>
             </CardContent>
           </Card>
@@ -196,6 +282,7 @@ const AdminDashboard = () => {
                           {activity.entity_type === 'user' && 'Usuário'}
                           {activity.entity_type === 'blog_post' && 'Post do blog'}
                           {activity.entity_type === 'solution' && 'Solução'}
+                          {activity.entity_type === 'contact' && 'Mensagem de contato'}
                           {' • '}por {activity.user_name || 'Admin'}
                         </p>
                       </div>

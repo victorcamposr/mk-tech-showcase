@@ -20,7 +20,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { useForm } from 'react-hook-form';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
-import { User, Plus, Save, Eye, EyeOff } from 'lucide-react';
+import { User, Plus, Save, Eye, EyeOff, Trash2 } from 'lucide-react';
+import DeleteConfirmDialog from './DeleteConfirmDialog';
 
 interface UserData {
   name: string;
@@ -41,6 +42,7 @@ interface UserModalProps {
 const UserModal = ({ isOpen, onClose, onSuccess, user, mode }: UserModalProps) => {
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const { toast } = useToast();
   
   const form = useForm<UserData>({
@@ -97,6 +99,51 @@ const UserModal = ({ isOpen, onClose, onSuccess, user, mode }: UserModalProps) =
     }
   }, [isOpen, user, form]);
 
+  const handleDelete = async () => {
+    if (!user) return;
+    
+    setLoading(true);
+    try {
+      // Primeiro, deletar o perfil de admin
+      const { error: profileError } = await supabase
+        .from('admin_profiles')
+        .delete()
+        .eq('id', user.id);
+
+      if (profileError) throw profileError;
+
+      // Se houver user_id, tentar deletar o usuário da auth também
+      if (user.user_id) {
+        const { error: authError } = await supabase.auth.admin.deleteUser(user.user_id);
+        if (authError) {
+          console.warn('Could not delete auth user:', authError);
+          // Não falhar completamente se não conseguir deletar da auth
+        }
+      }
+
+      // Registrar atividade
+      await logActivity('delete', user.name, user.id);
+      
+      toast({
+        title: "Usuário excluído com sucesso!",
+        description: `${user.name} foi removido do sistema.`,
+      });
+
+      onSuccess();
+      onClose();
+      setDeleteDialogOpen(false);
+    } catch (error: any) {
+      console.error('Error deleting user:', error);
+      toast({
+        variant: "destructive",
+        title: "Erro ao excluir usuário",
+        description: error.message || "Tente novamente em alguns instantes.",
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const onSubmit = async (data: UserData) => {
     if (isViewMode) return;
     
@@ -118,7 +165,18 @@ const UserModal = ({ isOpen, onClose, onSuccess, user, mode }: UserModalProps) =
 
         if (authError) {
           console.error('Auth error:', authError);
-          throw new Error(authError.message);
+          
+          // Mostrar mensagens de erro mais específicas
+          let errorMessage = "Tente novamente em alguns instantes.";
+          if (authError.message.includes('Password')) {
+            errorMessage = "A senha deve ter pelo menos 6 caracteres.";
+          } else if (authError.message.includes('email')) {
+            errorMessage = "Email inválido ou já está em uso.";
+          } else if (authError.message.includes('weak')) {
+            errorMessage = "Senha muito fraca. Use pelo menos 6 caracteres com letras e números.";
+          }
+          
+          throw new Error(errorMessage);
         }
 
         if (!authData.user) {
@@ -152,7 +210,7 @@ const UserModal = ({ isOpen, onClose, onSuccess, user, mode }: UserModalProps) =
         
         toast({
           title: "Usuário criado com sucesso!",
-          description: `${data.name} foi adicionado ao sistema. Senha: ${data.password}`,
+          description: `${data.name} foi adicionado ao sistema.`,
         });
       } else {
         // Atualizar perfil existente
@@ -229,106 +287,46 @@ const UserModal = ({ isOpen, onClose, onSuccess, user, mode }: UserModalProps) =
   };
 
   return (
-    <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-md">
-        <DialogHeader>
-          <DialogTitle className="flex items-center gap-2">
-            {getModalIcon()}
-            {getModalTitle()}
-          </DialogTitle>
-        </DialogHeader>
-        
-        <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-            <FormField
-              control={form.control}
-              name="name"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Nome</FormLabel>
-                  <FormControl>
-                    <Input placeholder="Nome completo" {...field} disabled={isViewMode} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+    <>
+      <Dialog open={isOpen} onOpenChange={onClose}>
+        <DialogContent className="sm:max-w-md max-h-[90vh] overflow-y-auto fixed top-[50%] left-[50%] translate-x-[-50%] translate-y-[-50%]">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              {getModalIcon()}
+              {getModalTitle()}
+            </DialogTitle>
+          </DialogHeader>
+          
+          <Form {...form}>
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+              <FormField
+                control={form.control}
+                name="name"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Nome</FormLabel>
+                    <FormControl>
+                      <Input placeholder="Nome completo" {...field} disabled={isViewMode} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
 
-            <FormField
-              control={form.control}
-              name="email"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Email</FormLabel>
-                  <FormControl>
-                    <Input 
-                      placeholder="email@exemplo.com" 
-                      type="email" 
-                      {...field} 
-                      disabled={isViewMode}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="password"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>
-                    {isCreateMode ? 'Senha' : 'Nova Senha (deixe em branco para manter a atual)'}
-                  </FormLabel>
-                  <FormControl>
-                    <div className="relative">
+              <FormField
+                control={form.control}
+                name="email"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Email</FormLabel>
+                    <FormControl>
                       <Input 
-                        placeholder={isCreateMode ? "Digite uma senha segura" : "Digite a nova senha"}
-                        type={showPassword ? "text" : "password"}
+                        placeholder="email@exemplo.com" 
+                        type="email" 
                         {...field} 
                         disabled={isViewMode}
                       />
-                      {!isViewMode && (
-                        <Button
-                          type="button"
-                          variant="ghost"
-                          size="sm"
-                          className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
-                          onClick={() => setShowPassword(!showPassword)}
-                        >
-                          {showPassword ? (
-                            <EyeOff className="h-4 w-4 text-gray-400" />
-                          ) : (
-                            <Eye className="h-4 w-4 text-gray-400" />
-                          )}
-                        </Button>
-                      )}
-                    </div>
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <div className="grid grid-cols-2 gap-4">
-              <FormField
-                control={form.control}
-                name="role"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Função</FormLabel>
-                    <Select onValueChange={field.onChange} value={field.value} disabled={isViewMode}>
-                      <FormControl>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Selecione a função" />
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent>
-                        <SelectItem value="admin">Admin</SelectItem>
-                        <SelectItem value="super_admin">Super Admin</SelectItem>
-                      </SelectContent>
-                    </Select>
+                    </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}
@@ -336,62 +334,149 @@ const UserModal = ({ isOpen, onClose, onSuccess, user, mode }: UserModalProps) =
 
               <FormField
                 control={form.control}
-                name="is_active"
+                name="password"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Status</FormLabel>
-                    <Select 
-                      onValueChange={(value) => field.onChange(value === 'true')} 
-                      value={field.value ? 'true' : 'false'} 
-                      disabled={isViewMode}
-                    >
-                      <FormControl>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Selecione o status" />
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent>
-                        <SelectItem value="true">Ativo</SelectItem>
-                        <SelectItem value="false">Inativo</SelectItem>
-                      </SelectContent>
-                    </Select>
+                    <FormLabel>
+                      {isCreateMode ? 'Senha' : 'Nova Senha (deixe em branco para manter a atual)'}
+                    </FormLabel>
+                    <FormControl>
+                      <div className="relative">
+                        <Input 
+                          placeholder={isCreateMode ? "Digite uma senha segura" : "Digite a nova senha"}
+                          type={showPassword ? "text" : "password"}
+                          {...field} 
+                          disabled={isViewMode}
+                        />
+                        {!isViewMode && (
+                          <Button
+                            type="button"
+                            variant="ghost"
+                            size="sm"
+                            className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
+                            onClick={() => setShowPassword(!showPassword)}
+                          >
+                            {showPassword ? (
+                              <EyeOff className="h-4 w-4 text-gray-400" />
+                            ) : (
+                              <Eye className="h-4 w-4 text-gray-400" />
+                            )}
+                          </Button>
+                        )}
+                      </div>
+                    </FormControl>
                     <FormMessage />
+                    {isCreateMode && (
+                      <p className="text-xs text-gray-500">
+                        A senha deve ter pelo menos 6 caracteres
+                      </p>
+                    )}
                   </FormItem>
                 )}
               />
-            </div>
 
-            <div className="flex gap-3 pt-4">
-              <Button
-                type="button"
-                variant="outline"
-                onClick={onClose}
-                className="flex-1"
-                disabled={loading}
-              >
-                {isViewMode ? 'Fechar' : 'Cancelar'}
-              </Button>
-              {!isViewMode && (
-                <Button
-                  type="submit"
-                  disabled={loading}
-                  className="flex-1 bg-gradient-to-r from-brand-gold to-brand-gold-light hover:from-brand-gold-dark hover:to-brand-gold text-brand-black"
-                >
-                  {loading ? (
-                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-brand-black" />
-                  ) : (
-                    <>
-                      {mode === 'create' ? <Plus className="w-4 h-4 mr-2" /> : <Save className="w-4 h-4 mr-2" />}
-                      {mode === 'create' ? 'Criar' : 'Salvar'}
-                    </>
+              <div className="grid grid-cols-2 gap-4">
+                <FormField
+                  control={form.control}
+                  name="role"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Função</FormLabel>
+                      <Select onValueChange={field.onChange} value={field.value} disabled={isViewMode}>
+                        <FormControl>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Selecione a função" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          <SelectItem value="admin">Admin</SelectItem>
+                          <SelectItem value="super_admin">Super Admin</SelectItem>
+                        </SelectContent>
+                      </Select>
+                      <FormMessage />
+                    </FormItem>
                   )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="is_active"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Status</FormLabel>
+                      <Select 
+                        onValueChange={(value) => field.onChange(value === 'true')} 
+                        value={field.value ? 'true' : 'false'} 
+                        disabled={isViewMode}
+                      >
+                        <FormControl>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Selecione o status" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          <SelectItem value="true">Ativo</SelectItem>
+                          <SelectItem value="false">Inativo</SelectItem>
+                        </SelectContent>
+                      </Select>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+
+              <div className="flex gap-3 pt-4">
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={onClose}
+                  className="flex-1"
+                  disabled={loading}
+                >
+                  {isViewMode ? 'Fechar' : 'Cancelar'}
                 </Button>
-              )}
-            </div>
-          </form>
-        </Form>
-      </DialogContent>
-    </Dialog>
+                {!isViewMode && (
+                  <Button
+                    type="submit"
+                    disabled={loading}
+                    className="flex-1 bg-gradient-to-r from-brand-gold to-brand-gold-light hover:from-brand-gold-dark hover:to-brand-gold text-brand-black"
+                  >
+                    {loading ? (
+                      <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-brand-black" />
+                    ) : (
+                      <>
+                        {mode === 'create' ? <Plus className="w-4 h-4 mr-2" /> : <Save className="w-4 h-4 mr-2" />}
+                        {mode === 'create' ? 'Criar' : 'Salvar'}
+                      </>
+                    )}
+                  </Button>
+                )}
+                {mode === 'edit' && user && (
+                  <Button
+                    type="button"
+                    variant="destructive"
+                    onClick={() => setDeleteDialogOpen(true)}
+                    disabled={loading}
+                    className="flex-shrink-0"
+                  >
+                    <Trash2 className="w-4 h-4" />
+                  </Button>
+                )}
+              </div>
+            </form>
+          </Form>
+        </DialogContent>
+      </Dialog>
+
+      <DeleteConfirmDialog
+        isOpen={deleteDialogOpen}
+        onClose={() => setDeleteDialogOpen(false)}
+        onConfirm={handleDelete}
+        title="Excluir Usuário"
+        description={`Tem certeza que deseja excluir o usuário "${user?.name}"? Esta ação não pode ser desfeita.`}
+        loading={loading}
+      />
+    </>
   );
 };
 
