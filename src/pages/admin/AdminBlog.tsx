@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import AdminLayout from '@/components/admin/AdminLayout';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -87,6 +86,34 @@ const AdminBlog = () => {
     }
   };
 
+  const logActivity = async (actionType: string, entityTitle: string, entityId: string) => {
+    try {
+      // Get current user profile
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return;
+
+      const { data: profile } = await supabase
+        .from('admin_profiles')
+        .select('name')
+        .eq('user_id', user.id)
+        .single();
+
+      if (profile) {
+        await supabase
+          .from('admin_activities')
+          .insert({
+            action_type: actionType,
+            entity_type: 'blog_posts',
+            entity_title: entityTitle,
+            entity_id: entityId,
+            user_name: profile.name
+          });
+      }
+    } catch (error) {
+      console.error('Error logging activity:', error);
+    }
+  };
+
   const filterPosts = () => {
     let filtered = posts;
 
@@ -141,6 +168,9 @@ const AdminBlog = () => {
         throw error;
       }
 
+      // Log delete activity
+      await logActivity('delete', selectedPost.title, selectedPost.id);
+
       toast({
         title: "Post excluído",
         description: "O post foi excluído com sucesso.",
@@ -160,7 +190,11 @@ const AdminBlog = () => {
     }
   };
 
-  const handleModalSuccess = () => {
+  const handleModalSuccess = async (postData?: any, isNew?: boolean) => {
+    if (postData && postData.title) {
+      const actionType = isNew ? 'create' : 'update';
+      await logActivity(actionType, postData.title, postData.id || 'new');
+    }
     fetchPosts();
   };
 

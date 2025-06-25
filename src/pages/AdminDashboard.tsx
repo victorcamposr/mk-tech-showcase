@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import AdminLayout from '@/components/admin/AdminLayout';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -194,18 +193,24 @@ const AdminDashboard = () => {
     }
   };
 
-  const getActionText = (action: string, entityType: string) => {
+  const getActionText = (action: string, entityType: string, entityTitle: string) => {
+    // If entity_title already contains the action description (like "atualizou o usuário João")
+    if (entityTitle && (entityTitle.includes('criou') || entityTitle.includes('atualizou') || entityTitle.includes('excluiu') || entityTitle.includes('ativou') || entityTitle.includes('desativou'))) {
+      return entityTitle;
+    }
+
+    // Default behavior for simple entity titles
     const entity = getEntityTypeLabel(entityType);
     
     switch (action) {
       case 'create':
-        return `criou ${entity.toLowerCase()}`;
+        return `criou ${entity.toLowerCase()} "${entityTitle}"`;
       case 'update':
-        return `atualizou ${entity.toLowerCase()}`;
+        return `atualizou ${entity.toLowerCase()} "${entityTitle}"`;
       case 'delete':
-        return `excluiu ${entity.toLowerCase()}`;
+        return `excluiu ${entity.toLowerCase()} "${entityTitle}"`;
       default:
-        return `modificou ${entity.toLowerCase()}`;
+        return `modificou ${entity.toLowerCase()} "${entityTitle}"`;
     }
   };
 
@@ -392,7 +397,7 @@ const AdminDashboard = () => {
                             </div>
                             <div>
                               <p className="text-sm text-brand-black font-medium mb-1">
-                                <span className="font-semibold text-brand-gold">{activity.user_name}</span> {getActionText(activity.action_type, activity.entity_type)} "{activity.entity_title}"
+                                <span className="font-semibold text-brand-gold">{activity.user_name}</span> {getActionText(activity.action_type, activity.entity_type, activity.entity_title)}
                               </p>
                               <div className="flex items-center gap-3 text-xs text-gray-500">
                                 <span className="flex items-center gap-1">

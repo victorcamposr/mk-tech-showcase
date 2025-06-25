@@ -65,14 +65,49 @@ const AdminUsers = () => {
     }
   };
 
+  const logActivity = async (actionType: string, entityTitle: string, entityId: string) => {
+    try {
+      // Get current user profile
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return;
+
+      const { data: profile } = await supabase
+        .from('admin_profiles')
+        .select('name')
+        .eq('user_id', user.id)
+        .single();
+
+      if (profile) {
+        await supabase
+          .from('admin_activities')
+          .insert({
+            action_type: actionType,
+            entity_type: 'admin_profiles',
+            entity_title: entityTitle,
+            entity_id: entityId,
+            user_name: profile.name
+          });
+      }
+    } catch (error) {
+      console.error('Error logging activity:', error);
+    }
+  };
+
   const toggleUserStatus = async (userId: string, currentStatus: boolean) => {
     try {
+      const user = users.find(u => u.id === userId);
+      if (!user) return;
+
       const { error } = await supabase
         .from('admin_profiles')
         .update({ is_active: !currentStatus })
         .eq('id', userId);
 
       if (error) throw error;
+
+      // Log activity
+      const actionText = !currentStatus ? 'ativou' : 'desativou';
+      await logActivity('update', `${actionText} o usuário ${user.name}`, userId);
 
       await fetchUsers();
       toast({
@@ -98,6 +133,15 @@ const AdminUsers = () => {
     setSelectedUser(user);
     setModalMode('edit');
     setModalOpen(true);
+  };
+
+  const handleModalSuccess = async (userData?: any, isNew?: boolean) => {
+    if (userData && userData.name) {
+      const actionType = isNew ? 'create' : 'update';
+      const actionText = isNew ? 'criou' : 'atualizou';
+      await logActivity(actionType, `${actionText} o usuário ${userData.name}`, userData.id || 'new');
+    }
+    await fetchUsers();
   };
 
   const filteredUsers = users.filter(user =>
@@ -302,7 +346,7 @@ const AdminUsers = () => {
         <UserModal
           isOpen={modalOpen}
           onClose={() => setModalOpen(false)}
-          onSuccess={fetchUsers}
+          onSuccess={handleModalSuccess}
           user={selectedUser}
           mode={modalMode}
         />
