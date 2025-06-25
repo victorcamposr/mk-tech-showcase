@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Menu, X, Calculator, Users, BarChart3, Shield, Zap, Settings, FileText, Database, Globe, Smartphone, Lightbulb } from 'lucide-react';
@@ -56,7 +55,13 @@ const Header = () => {
         return;
       }
 
-      setSolutions(data || []);
+      // Type assertion to ensure status field matches our interface
+      const typedSolutions = (data || []).map(solution => ({
+        ...solution,
+        status: solution.status as 'active' | 'inactive'
+      }));
+
+      setSolutions(typedSolutions);
     } catch (error) {
       console.error('Error fetching solutions:', error);
     }
