@@ -1,10 +1,7 @@
+
 import { useEffect } from 'react';
 
-interface AccessibilityHelperProps {
-  children: React.ReactNode;
-}
-
-const AccessibilityHelper = ({ children }: AccessibilityHelperProps) => {
+const AccessibilityHelper = () => {
   useEffect(() => {
     // Add skip navigation link
     const addSkipLink = () => {
@@ -86,7 +83,7 @@ const AccessibilityHelper = ({ children }: AccessibilityHelperProps) => {
 
   }, []);
 
-  return <>{children}</>;
+  return null;
 };
 
 export default AccessibilityHelper;
