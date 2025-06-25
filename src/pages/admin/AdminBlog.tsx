@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import AdminLayout from '@/components/admin/AdminLayout';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -68,7 +67,13 @@ const AdminBlog = () => {
         throw error;
       }
 
-      setPosts(data || []);
+      // Type assertion to ensure proper typing
+      const typedPosts = (data || []).map(post => ({
+        ...post,
+        status: post.status as 'published' | 'draft'
+      })) as BlogPost[];
+
+      setPosts(typedPosts);
     } catch (error: any) {
       console.error('Error fetching posts:', error);
       toast({
@@ -175,7 +180,7 @@ const AdminBlog = () => {
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-3xl font-bold text-brand-black flex items-center gap-3">
-              <div className="w-10 h-10 bg-gradient-to-r from-blue-500 to-blue-600 rounded-lg flex items-center justify-center">
+              <div className="w-10 h-10 bg-gradient-to-r from-blue-500 to-blue-600 rounded-lg flex items-center justify-center shadow-lg">
                 <FileText className="w-6 h-6 text-white" />
               </div>
               Blog
@@ -189,7 +194,7 @@ const AdminBlog = () => {
               onClick={fetchPosts}
               variant="outline"
               size="sm"
-              className="border-brand-gold/30 text-brand-gold hover:bg-brand-gold/10"
+              className="border-brand-gold/30 text-brand-gold hover:bg-brand-gold/10 transition-all duration-300"
             >
               <RefreshCw className="w-4 h-4 mr-2" />
               Atualizar
@@ -197,7 +202,7 @@ const AdminBlog = () => {
             <Button
               onClick={handleCreate}
               size="sm"
-              className="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-semibold"
+              className="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-semibold shadow-lg hover:shadow-xl transition-all duration-300"
             >
               <Plus className="w-4 h-4 mr-2" />
               Novo Post
@@ -206,14 +211,14 @@ const AdminBlog = () => {
         </div>
 
         {/* Filters Card */}
-        <Card className="border-brand-gold/20">
-          <CardHeader className="pb-3 bg-gradient-to-r from-brand-gold/5 to-brand-gold/10">
+        <Card className="border-brand-gold/20 shadow-lg">
+          <CardHeader className="pb-3 bg-gradient-to-r from-brand-gold/5 to-brand-gold/10 border-b border-brand-gold/20">
             <CardTitle className="text-lg flex items-center gap-2 text-brand-black">
               <Filter className="w-5 h-5 text-brand-gold" />
               Filtros
             </CardTitle>
           </CardHeader>
-          <CardContent>
+          <CardContent className="p-6">
             <div className="flex flex-col sm:flex-row gap-4">
               <div className="flex-1">
                 <div className="relative">
@@ -222,7 +227,7 @@ const AdminBlog = () => {
                     placeholder="Buscar posts..."
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
-                    className="pl-10 border-brand-gold/30 focus:border-brand-gold focus:ring-brand-gold/20"
+                    className="pl-10 border-brand-gold/30 focus:border-brand-gold focus:ring-brand-gold/20 transition-all duration-300"
                   />
                 </div>
               </div>
@@ -231,7 +236,10 @@ const AdminBlog = () => {
                   variant={statusFilter === 'all' ? 'default' : 'outline'}
                   size="sm"
                   onClick={() => setStatusFilter('all')}
-                  className={statusFilter === 'all' ? 'bg-brand-gold hover:bg-brand-gold-dark text-brand-black' : 'border-brand-gold/30 text-brand-gold hover:bg-brand-gold/10'}
+                  className={statusFilter === 'all' 
+                    ? 'bg-gradient-to-r from-brand-gold to-brand-gold-dark hover:from-brand-gold-dark hover:to-brand-gold text-brand-black shadow-lg' 
+                    : 'border-brand-gold/30 text-brand-gold hover:bg-brand-gold/10 transition-all duration-300'
+                  }
                 >
                   Todos
                 </Button>
@@ -239,7 +247,10 @@ const AdminBlog = () => {
                   variant={statusFilter === 'published' ? 'default' : 'outline'}
                   size="sm"
                   onClick={() => setStatusFilter('published')}
-                  className={statusFilter === 'published' ? 'bg-green-600 hover:bg-green-700 text-white' : 'border-green-300 text-green-600 hover:bg-green-50'}
+                  className={statusFilter === 'published' 
+                    ? 'bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white shadow-lg' 
+                    : 'border-green-300 text-green-600 hover:bg-green-50 transition-all duration-300'
+                  }
                 >
                   Publicados
                 </Button>
@@ -247,7 +258,10 @@ const AdminBlog = () => {
                   variant={statusFilter === 'draft' ? 'default' : 'outline'}
                   size="sm"
                   onClick={() => setStatusFilter('draft')}
-                  className={statusFilter === 'draft' ? 'bg-yellow-600 hover:bg-yellow-700 text-white' : 'border-yellow-300 text-yellow-600 hover:bg-yellow-50'}
+                  className={statusFilter === 'draft' 
+                    ? 'bg-gradient-to-r from-yellow-500 to-yellow-600 hover:from-yellow-600 hover:to-yellow-700 text-white shadow-lg' 
+                    : 'border-yellow-300 text-yellow-600 hover:bg-yellow-50 transition-all duration-300'
+                  }
                 >
                   Rascunhos
                 </Button>
@@ -257,74 +271,86 @@ const AdminBlog = () => {
         </Card>
 
         {/* Posts Table */}
-        <Card className="border-brand-gold/20">
-          <CardHeader className="pb-3 bg-gradient-to-r from-brand-gold/5 to-brand-gold/10">
+        <Card className="border-brand-gold/20 shadow-lg">
+          <CardHeader className="pb-3 bg-gradient-to-r from-brand-gold/5 to-brand-gold/10 border-b border-brand-gold/20">
             <CardTitle className="text-lg flex items-center justify-between text-brand-black">
-              <span>Posts do Blog</span>
-              <Badge variant="outline" className="bg-brand-gold/10 text-brand-gold border-brand-gold/30">{filteredPosts.length} posts</Badge>
+              <span className="flex items-center gap-2">
+                <FileText className="w-5 h-5 text-brand-gold" />
+                Posts do Blog
+              </span>
+              <Badge variant="outline" className="bg-brand-gold/10 text-brand-gold border-brand-gold/30 shadow-sm">
+                {filteredPosts.length} posts
+              </Badge>
             </CardTitle>
           </CardHeader>
           <CardContent className="p-0">
             {loading ? (
-              <div className="text-center py-8">
+              <div className="text-center py-12">
                 <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-brand-gold mx-auto"></div>
-                <p className="mt-2 text-gray-600">Carregando posts...</p>
+                <p className="mt-4 text-gray-600">Carregando posts...</p>
               </div>
             ) : filteredPosts.length === 0 ? (
-              <div className="text-center py-8">
-                <FileText className="w-12 h-12 text-gray-300 mx-auto mb-4" />
-                <h3 className="text-lg font-medium text-brand-black mb-2">
+              <div className="text-center py-12">
+                <FileText className="w-16 h-16 text-gray-300 mx-auto mb-4" />
+                <h3 className="text-xl font-semibold text-brand-black mb-2">
                   {searchTerm || statusFilter !== 'all' ? 'Nenhum post encontrado' : 'Nenhum post cadastrado'}
                 </h3>
-                <p className="text-gray-600 mb-4">
+                <p className="text-gray-600 mb-6">
                   {searchTerm || statusFilter !== 'all' 
                     ? 'Tente ajustar os filtros para encontrar o que procura.'
                     : 'Comece criando seu primeiro post.'
                   }
                 </p>
                 {!searchTerm && statusFilter === 'all' && (
-                  <Button onClick={handleCreate} size="sm" className="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-semibold">
+                  <Button 
+                    onClick={handleCreate} 
+                    size="sm" 
+                    className="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-semibold shadow-lg"
+                  >
                     <Plus className="w-4 h-4 mr-2" />
                     Criar Primeiro Post
                   </Button>
                 )}
               </div>
             ) : (
-              <div className="divide-y divide-gray-200">
+              <div className="divide-y divide-gray-100">
                 {filteredPosts.map((post) => (
-                  <div key={post.id} className="p-4 hover:bg-brand-gold/5 transition-colors">
+                  <div key={post.id} className="p-6 hover:bg-brand-gold/5 transition-all duration-300">
                     <div className="flex items-center justify-between">
                       <div className="flex items-center space-x-4 flex-1">
-                        <div className="w-10 h-10 bg-gradient-to-br from-blue-500/20 to-blue-600/30 rounded-lg flex items-center justify-center flex-shrink-0">
-                          <FileText className="w-5 h-5 text-blue-600" />
+                        <div className="w-12 h-12 bg-gradient-to-br from-blue-500/20 to-blue-600/30 rounded-lg flex items-center justify-center flex-shrink-0 shadow-sm">
+                          <FileText className="w-6 h-6 text-blue-600" />
                         </div>
                         <div className="flex-1 min-w-0">
-                          <div className="flex items-center gap-3 mb-1">
-                            <h3 className="text-base font-semibold text-brand-black truncate">
+                          <div className="flex items-center gap-3 mb-2">
+                            <h3 className="text-lg font-semibold text-brand-black truncate">
                               {post.title}
                             </h3>
                             <Badge 
                               variant={post.status === 'published' ? 'default' : 'secondary'}
-                              className={post.status === 'published' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'}
+                              className={post.status === 'published' 
+                                ? 'bg-green-100 text-green-800 border-green-200 shadow-sm' 
+                                : 'bg-yellow-100 text-yellow-800 border-yellow-200 shadow-sm'
+                              }
                             >
                               {post.status === 'published' ? 'Publicado' : 'Rascunho'}
                             </Badge>
                           </div>
-                          <p className="text-xs text-gray-500 font-mono bg-brand-gold/10 px-2 py-1 rounded inline-block mb-1">
+                          <p className="text-xs text-gray-500 font-mono bg-brand-gold/10 px-3 py-1 rounded-md inline-block mb-2">
                             {post.slug}
                           </p>
-                          <p className="text-gray-600 text-sm line-clamp-2 mb-2">
+                          <p className="text-gray-600 text-sm line-clamp-2 mb-3">
                             {post.excerpt}
                           </p>
                           {post.tags && post.tags.length > 0 && (
-                            <div className="flex flex-wrap gap-1 mb-1">
+                            <div className="flex flex-wrap gap-1 mb-2">
                               {post.tags.slice(0, 3).map((tag, index) => (
-                                <Badge key={index} variant="outline" className="text-xs border-purple-200 text-purple-700">
+                                <Badge key={index} variant="outline" className="text-xs border-purple-200 text-purple-700 bg-purple-50">
                                   {tag}
                                 </Badge>
                               ))}
                               {post.tags.length > 3 && (
-                                <Badge variant="outline" className="text-xs border-brand-gold/30 text-brand-gold">
+                                <Badge variant="outline" className="text-xs border-brand-gold/30 text-brand-gold bg-brand-gold/10">
                                   +{post.tags.length - 3}
                                 </Badge>
                               )}
@@ -349,7 +375,7 @@ const AdminBlog = () => {
                           variant="outline"
                           size="sm"
                           onClick={() => handleView(post)}
-                          className="border-brand-gold/30 text-brand-gold hover:bg-brand-gold/10"
+                          className="border-brand-gold/30 text-brand-gold hover:bg-brand-gold/10 transition-all duration-300 shadow-sm"
                         >
                           <Eye className="w-4 h-4" />
                         </Button>
@@ -357,7 +383,7 @@ const AdminBlog = () => {
                           variant="outline"
                           size="sm"
                           onClick={() => handleEdit(post)}
-                          className="border-blue-300 text-blue-600 hover:bg-blue-50"
+                          className="border-blue-300 text-blue-600 hover:bg-blue-50 transition-all duration-300 shadow-sm"
                         >
                           <Edit className="w-4 h-4" />
                         </Button>
@@ -365,7 +391,7 @@ const AdminBlog = () => {
                           variant="outline"
                           size="sm"
                           onClick={() => handleDelete(post)}
-                          className="border-red-300 text-red-600 hover:bg-red-50"
+                          className="border-red-300 text-red-600 hover:bg-red-50 transition-all duration-300 shadow-sm"
                         >
                           <Trash2 className="w-4 h-4" />
                         </Button>
