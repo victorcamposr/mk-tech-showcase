@@ -22,6 +22,7 @@ import {
   FormLabel,
   FormMessage,
 } from '@/components/ui/form';
+import { ImageUpload } from '@/components/ui/image-upload';
 
 const solutionSchema = z.object({
   title: z.string().min(1, 'Título é obrigatório'),
@@ -439,6 +440,7 @@ const EditSolution = () => {
                   )}
                 />
 
+                {/* Features */}
                 <div>
                   <Label className="text-sm font-semibold text-gray-900 mb-3 block">Características</Label>
                   <div className="flex gap-3 mb-4">
@@ -474,6 +476,7 @@ const EditSolution = () => {
                   </div>
                 </div>
 
+                {/* Benefits */}
                 <div>
                   <Label className="text-sm font-semibold text-gray-900 mb-3 block">Benefícios</Label>
                   <div className="flex gap-3 mb-4">
@@ -509,6 +512,7 @@ const EditSolution = () => {
                   </div>
                 </div>
 
+                {/* Industries */}
                 <div>
                   <Label className="text-sm font-semibold text-gray-900 mb-3 block">Segmentos</Label>
                   <div className="flex gap-3 mb-4">
@@ -544,45 +548,18 @@ const EditSolution = () => {
                   </div>
                 </div>
 
+                {/* Images */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <FormField
-                    control={form.control}
-                    name="card_image_url"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel className="text-sm font-semibold text-gray-900">
-                          URL da Imagem do Card
-                        </FormLabel>
-                        <FormControl>
-                          <Input
-                            {...field}
-                            className="h-12 border-gray-300 focus:border-brand-gold focus:ring-brand-gold shadow-sm"
-                            placeholder="https://exemplo.com/imagem.jpg"
-                          />
-                        </FormControl>
-                        <FormMessage className="text-red-500" />
-                      </FormItem>
-                    )}
+                  <ImageUpload
+                    label="Imagem do Card"
+                    value={form.watch('card_image_url')}
+                    onChange={(url) => form.setValue('card_image_url', url)}
                   />
 
-                  <FormField
-                    control={form.control}
-                    name="hero_image_url"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel className="text-sm font-semibold text-gray-900">
-                          URL da Imagem Hero
-                        </FormLabel>
-                        <FormControl>
-                          <Input
-                            {...field}
-                            className="h-12 border-gray-300 focus:border-brand-gold focus:ring-brand-gold shadow-sm"
-                            placeholder="https://exemplo.com/hero.jpg"
-                          />
-                        </FormControl>
-                        <FormMessage className="text-red-500" />
-                      </FormItem>
-                    )}
+                  <ImageUpload
+                    label="Imagem Hero"
+                    value={form.watch('hero_image_url')}
+                    onChange={(url) => form.setValue('hero_image_url', url)}
                   />
                 </div>
 
