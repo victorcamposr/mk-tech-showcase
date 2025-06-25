@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import AdminLayout from '@/components/admin/AdminLayout';
@@ -22,6 +23,7 @@ import {
   FormLabel,
   FormMessage,
 } from '@/components/ui/form';
+import { ImageUpload } from '@/components/ui/image-upload';
 
 const solutionSchema = z.object({
   title: z.string().min(1, 'Título é obrigatório'),
@@ -502,44 +504,16 @@ const CreateSolution = () => {
 
                 {/* Images */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <FormField
-                    control={form.control}
-                    name="card_image_url"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel className="text-sm font-semibold text-gray-900">
-                          URL da Imagem do Card
-                        </FormLabel>
-                        <FormControl>
-                          <Input
-                            {...field}
-                            className="h-12 border-gray-300 focus:border-brand-gold focus:ring-brand-gold shadow-sm"
-                            placeholder="https://exemplo.com/imagem.jpg"
-                          />
-                        </FormControl>
-                        <FormMessage className="text-red-500" />
-                      </FormItem>
-                    )}
+                  <ImageUpload
+                    label="Imagem do Card"
+                    value={form.watch('card_image_url')}
+                    onChange={(url) => form.setValue('card_image_url', url)}
                   />
 
-                  <FormField
-                    control={form.control}
-                    name="hero_image_url"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel className="text-sm font-semibold text-gray-900">
-                          URL da Imagem Hero
-                        </FormLabel>
-                        <FormControl>
-                          <Input
-                            {...field}
-                            className="h-12 border-gray-300 focus:border-brand-gold focus:ring-brand-gold shadow-sm"
-                            placeholder="https://exemplo.com/hero.jpg"
-                          />
-                        </FormControl>
-                        <FormMessage className="text-red-500" />
-                      </FormItem>
-                    )}
+                  <ImageUpload
+                    label="Imagem Hero"
+                    value={form.watch('hero_image_url')}
+                    onChange={(url) => form.setValue('hero_image_url', url)}
                   />
                 </div>
 
@@ -570,3 +544,4 @@ const CreateSolution = () => {
 };
 
 export default CreateSolution;
+
