@@ -9,6 +9,7 @@ import { Badge } from '@/components/ui/badge';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import { X, Plus, Calculator, Users, BarChart3, Shield, Zap, Settings, FileText, Database, Globe, Smartphone, Lightbulb, CreditCard, Coffee, QrCode, Truck, Link2, Bot, Monitor, TrendingUp, Banknote, Building2, Tablet, Fuel, Receipt } from 'lucide-react';
+import { ImageUpload } from '@/components/ui/image-upload';
 
 interface SolutionModalProps {
   isOpen: boolean;
@@ -525,33 +526,19 @@ const SolutionModal = ({ isOpen, onClose, solution, onSuccess, mode }: SolutionM
 
           {/* Images */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div>
-              <Label htmlFor="card_image_url" className="text-sm font-semibold text-gray-900 mb-2 block">
-                URL da Imagem do Card
-              </Label>
-              <Input
-                id="card_image_url"
-                value={formData.card_image_url}
-                onChange={(e) => handleInputChange('card_image_url', e.target.value)}
-                disabled={!canEdit}
-                className="h-12 border-gray-300 focus:border-brand-gold focus:ring-brand-gold shadow-sm"
-                placeholder="https://exemplo.com/imagem.jpg"
-              />
-            </div>
+            <ImageUpload
+              label="Imagem do Card"
+              value={formData.card_image_url}
+              onChange={(url) => handleInputChange('card_image_url', url)}
+              disabled={!canEdit}
+            />
 
-            <div>
-              <Label htmlFor="hero_image_url" className="text-sm font-semibold text-gray-900 mb-2 block">
-                URL da Imagem Hero
-              </Label>
-              <Input
-                id="hero_image_url"
-                value={formData.hero_image_url}
-                onChange={(e) => handleInputChange('hero_image_url', e.target.value)}
-                disabled={!canEdit}
-                className="h-12 border-gray-300 focus:border-brand-gold focus:ring-brand-gold shadow-sm"
-                placeholder="https://exemplo.com/hero.jpg"
-              />
-            </div>
+            <ImageUpload
+              label="Imagem Hero"
+              value={formData.hero_image_url}
+              onChange={(url) => handleInputChange('hero_image_url', url)}
+              disabled={!canEdit}
+            />
           </div>
         </div>
 

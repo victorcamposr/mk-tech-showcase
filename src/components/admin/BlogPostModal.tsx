@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
@@ -22,6 +21,7 @@ import {
   FormLabel,
   FormMessage,
 } from '@/components/ui/form';
+import { ImageUpload } from '@/components/ui/image-upload';
 
 const blogPostSchema = z.object({
   title: z.string().min(1, 'Título é obrigatório'),
@@ -327,16 +327,12 @@ const BlogPostModal = ({ isOpen, onClose, post, onSuccess, mode }: BlogPostModal
                   name="featured_image"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel className="text-sm font-medium text-gray-700">
-                        Imagem Destacada
-                      </FormLabel>
-                      <FormControl>
-                        <Input
-                          {...field}
-                          disabled={!canEdit}
-                          placeholder="https://exemplo.com/imagem.jpg"
-                        />
-                      </FormControl>
+                      <ImageUpload
+                        label="Imagem Destacada" 
+                        value={field.value}
+                        onChange={field.onChange}
+                        disabled={!canEdit}
+                      />
                       <FormMessage className="text-red-500" />
                     </FormItem>
                   )}
@@ -460,7 +456,7 @@ const BlogPostModal = ({ isOpen, onClose, post, onSuccess, mode }: BlogPostModal
                 <Button
                   type="submit"
                   disabled={loading}
-                  className="bg-blue-600 hover:bg-blue-700"
+                  className="bg-gradient-to-r from-brand-gold to-brand-gold-light hover:from-brand-gold-dark hover:to-brand-gold text-white font-semibold shadow-lg hover:shadow-xl transition-all duration-200"
                 >
                   {loading ? 'Salvando...' : (mode === 'create' ? 'Criar Post' : 'Salvar Alterações')}
                 </Button>
