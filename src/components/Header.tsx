@@ -41,7 +41,7 @@ const Header = () => {
   return (
     <header className={cn(
       "fixed top-0 w-full z-50 transition-all duration-300",
-      isScrolled ? "bg-white/95 backdrop-blur-md shadow-lg" : "bg-white"
+      isScrolled ? "bg-brand-black/95 backdrop-blur-md shadow-lg" : "bg-brand-black"
     )}>
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
@@ -50,8 +50,8 @@ const Header = () => {
               <span className="text-brand-black font-bold text-lg">MK</span>
             </div>
             <div className="hidden sm:block">
-              <div className="text-brand-black font-bold text-xl">MK Tecnologia</div>
-              <div className="text-xs text-gray-600 -mt-1">Automação Comercial</div>
+              <div className="text-white font-bold text-xl">MK Tecnologia</div>
+              <div className="text-xs text-gray-300 -mt-1">Automação Comercial</div>
             </div>
           </Link>
 
@@ -60,25 +60,32 @@ const Header = () => {
             <NavigationMenu>
               <NavigationMenuList>
                 <NavigationMenuLink className={navigationMenuTriggerStyle()} asChild>
-                  <Link to="/" className={cn(isActivePath("/") && "text-brand-gold")}>
+                  <Link to="/" className={cn(
+                    "text-white hover:text-brand-gold transition-colors",
+                    isActivePath("/") && "text-brand-gold"
+                  )}>
                     Início
                   </Link>
                 </NavigationMenuLink>
 
                 <NavigationMenuLink className={navigationMenuTriggerStyle()} asChild>
-                  <Link to="/sobre" className={cn(isActivePath("/sobre") && "text-brand-gold")}>
+                  <Link to="/sobre" className={cn(
+                    "text-white hover:text-brand-gold transition-colors",
+                    isActivePath("/sobre") && "text-brand-gold"
+                  )}>
                     Sobre
                   </Link>
                 </NavigationMenuLink>
 
                 <NavigationMenuItem>
                   <NavigationMenuTrigger className={cn(
+                    "text-white hover:text-brand-gold transition-colors",
                     location.pathname.startsWith("/solucoes") && "text-brand-gold"
                   )}>
                     Soluções
                   </NavigationMenuTrigger>
                   <NavigationMenuContent>
-                    <div className="grid gap-3 p-6 w-[500px] lg:w-[600px] lg:grid-cols-2">
+                    <div className="grid gap-3 p-6 w-[500px] lg:w-[600px] lg:grid-cols-2 bg-white">
                       {Object.entries(specificSolutions).map(([key, solution]) => {
                         const IconComponent = solution.icon;
                         return (
@@ -107,25 +114,37 @@ const Header = () => {
                 </NavigationMenuItem>
 
                 <NavigationMenuLink className={navigationMenuTriggerStyle()} asChild>
-                  <Link to="/servicos" className={cn(isActivePath("/servicos") && "text-brand-gold")}>
+                  <Link to="/servicos" className={cn(
+                    "text-white hover:text-brand-gold transition-colors",
+                    isActivePath("/servicos") && "text-brand-gold"
+                  )}>
                     Serviços
                   </Link>
                 </NavigationMenuLink>
 
                 <NavigationMenuLink className={navigationMenuTriggerStyle()} asChild>
-                  <Link to="/blog" className={cn(isActivePath("/blog") && "text-brand-gold")}>
+                  <Link to="/blog" className={cn(
+                    "text-white hover:text-brand-gold transition-colors",
+                    isActivePath("/blog") && "text-brand-gold"
+                  )}>
                     Blog
                   </Link>
                 </NavigationMenuLink>
 
                 <NavigationMenuLink className={navigationMenuTriggerStyle()} asChild>
-                  <Link to="/portfolio" className={cn(isActivePath("/portfolio") && "text-brand-gold")}>
+                  <Link to="/portfolio" className={cn(
+                    "text-white hover:text-brand-gold transition-colors",
+                    isActivePath("/portfolio") && "text-brand-gold"
+                  )}>
                     Portfólio
                   </Link>
                 </NavigationMenuLink>
 
                 <NavigationMenuLink className={navigationMenuTriggerStyle()} asChild>
-                  <Link to="/contato" className={cn(isActivePath("/contato") && "text-brand-gold")}>
+                  <Link to="/contato" className={cn(
+                    "text-white hover:text-brand-gold transition-colors",
+                    isActivePath("/contato") && "text-brand-gold"
+                  )}>
                     Contato
                   </Link>
                 </NavigationMenuLink>
@@ -149,7 +168,7 @@ const Header = () => {
           {/* Mobile menu button */}
           <button
             onClick={() => setIsMenuOpen(!isMenuOpen)}
-            className="lg:hidden p-2 rounded-md text-brand-black hover:bg-gray-100 transition-colors"
+            className="lg:hidden p-2 rounded-md text-white hover:bg-white/10 transition-colors"
             aria-label="Toggle menu"
           >
             {isMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
@@ -158,7 +177,7 @@ const Header = () => {
 
         {/* Mobile Navigation */}
         {isMenuOpen && (
-          <div className="lg:hidden absolute top-full left-0 w-full bg-white border-t shadow-lg">
+          <div className="lg:hidden absolute top-full left-0 w-full bg-brand-black border-t border-white/10 shadow-lg">
             <div className="px-4 py-2 space-y-1">
               <Link
                 to="/"
@@ -166,7 +185,7 @@ const Header = () => {
                   "block px-3 py-2 rounded-md text-base font-medium transition-colors",
                   isActivePath("/") 
                     ? "text-brand-gold bg-brand-gold/10" 
-                    : "text-gray-700 hover:text-brand-gold hover:bg-gray-50"
+                    : "text-white hover:text-brand-gold hover:bg-white/5"
                 )}
               >
                 Início
@@ -178,20 +197,20 @@ const Header = () => {
                   "block px-3 py-2 rounded-md text-base font-medium transition-colors",
                   isActivePath("/sobre") 
                     ? "text-brand-gold bg-brand-gold/10" 
-                    : "text-gray-700 hover:text-brand-gold hover:bg-gray-50"
+                    : "text-white hover:text-brand-gold hover:bg-white/5"
                 )}
               >
                 Sobre
               </Link>
 
               <div className="px-3 py-2">
-                <div className="text-base font-medium text-gray-700 mb-2">Soluções</div>
+                <div className="text-base font-medium text-white mb-2">Soluções</div>
                 <div className="pl-4 space-y-1">
                   {Object.entries(specificSolutions).slice(0, 5).map(([key, solution]) => (
                     <Link
                       key={key}
                       to={`/solucoes/${key}`}
-                      className="block px-2 py-1 text-sm text-gray-600 hover:text-brand-gold transition-colors"
+                      className="block px-2 py-1 text-sm text-gray-300 hover:text-brand-gold transition-colors"
                     >
                       {solution.title}
                     </Link>
@@ -205,7 +224,7 @@ const Header = () => {
                   "block px-3 py-2 rounded-md text-base font-medium transition-colors",
                   isActivePath("/servicos") 
                     ? "text-brand-gold bg-brand-gold/10" 
-                    : "text-gray-700 hover:text-brand-gold hover:bg-gray-50"
+                    : "text-white hover:text-brand-gold hover:bg-white/5"
                 )}
               >
                 Serviços
@@ -217,7 +236,7 @@ const Header = () => {
                   "block px-3 py-2 rounded-md text-base font-medium transition-colors",
                   isActivePath("/blog") 
                     ? "text-brand-gold bg-brand-gold/10" 
-                    : "text-gray-700 hover:text-brand-gold hover:bg-gray-50"
+                    : "text-white hover:text-brand-gold hover:bg-white/5"
                 )}
               >
                 Blog
@@ -229,7 +248,7 @@ const Header = () => {
                   "block px-3 py-2 rounded-md text-base font-medium transition-colors",
                   isActivePath("/portfolio") 
                     ? "text-brand-gold bg-brand-gold/10" 
-                    : "text-gray-700 hover:text-brand-gold hover:bg-gray-50"
+                    : "text-white hover:text-brand-gold hover:bg-white/5"
                 )}
               >
                 Portfólio
@@ -241,7 +260,7 @@ const Header = () => {
                   "block px-3 py-2 rounded-md text-base font-medium transition-colors",
                   isActivePath("/contato") 
                     ? "text-brand-gold bg-brand-gold/10" 
-                    : "text-gray-700 hover:text-brand-gold hover:bg-gray-50"
+                    : "text-white hover:text-brand-gold hover:bg-white/5"
                 )}
               >
                 Contato
