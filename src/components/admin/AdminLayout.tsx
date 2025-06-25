@@ -89,26 +89,29 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
   const SidebarContent = () => (
     <>
       <div className="flex-1 h-0 pt-5 pb-4 overflow-y-auto">
-        {/* Logo section with enhanced design */}
-        <div className="bg-gradient-to-r from-brand-black to-brand-black-light mx-4 mb-8 rounded-xl p-6 shadow-xl border border-brand-gold/20">
-          <div className="flex items-center">
-            <div className="w-16 h-16 rounded-xl shadow-2xl mr-4 bg-gradient-to-br from-brand-gold via-brand-gold-light to-brand-gold-dark p-2 flex-shrink-0 flex items-center justify-center">
+        {/* Logo section com nova estrutura */}
+        <div className="mx-4 mb-8">
+          {/* Logo solta */}
+          <div className="flex justify-center mb-4">
+            <div className="w-20 h-20 rounded-xl shadow-2xl bg-gradient-to-br from-brand-black via-brand-black-light to-brand-black p-3 flex items-center justify-center border-2 border-brand-gold/20">
               <img 
                 src="/lovable-uploads/806a2e50-9ae7-49ba-856a-b1933b0a8dd9.png" 
                 alt="MK Tecnologia Logo" 
-                className="w-12 h-12 object-contain filter brightness-0 invert"
+                className="w-full h-full object-contain filter brightness-0 invert"
               />
             </div>
-            <div>
-              <h1 className="text-2xl font-bold text-white mb-1">
-                MK Admin
-              </h1>
-              <div className="flex items-center gap-2">
-                <Sparkles className="w-3 h-3 text-brand-gold" />
-                <p className="text-xs text-brand-gold font-semibold uppercase tracking-wider">
-                  Painel Administrativo
-                </p>
-              </div>
+          </div>
+          
+          {/* Texto MK Admin */}
+          <div className="text-center">
+            <h1 className="text-2xl font-bold text-brand-black mb-1">
+              MK Admin
+            </h1>
+            <div className="flex items-center justify-center gap-2">
+              <Sparkles className="w-3 h-3 text-brand-gold" />
+              <p className="text-xs text-brand-gold font-semibold uppercase tracking-wider">
+                Painel Administrativo
+              </p>
             </div>
           </div>
         </div>
@@ -124,17 +127,21 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
                 to={item.href}
                 className={`group flex items-center px-4 py-4 text-sm font-medium rounded-xl transition-all duration-300 ${
                   active
-                    ? 'bg-gradient-to-r from-brand-gold/10 to-brand-gold/20 text-brand-black border border-brand-gold/30 shadow-lg'
-                    : 'text-gray-600 hover:bg-gradient-to-r hover:from-gray-50 hover:to-gray-100 hover:text-brand-black hover:shadow-md'
+                    ? 'bg-gradient-to-r from-brand-gold/20 to-brand-gold/30 text-brand-black border border-brand-gold/30 shadow-lg'
+                    : 'text-gray-600 hover:bg-gradient-to-r hover:from-brand-gold/5 hover:to-brand-gold/10 hover:text-brand-black hover:shadow-md'
                 }`}
                 onClick={() => setSidebarOpen(false)}
               >
                 <div className={`mr-4 w-10 h-10 rounded-lg flex items-center justify-center transition-all duration-300 ${
                   active 
                     ? `bg-gradient-to-br ${item.color} shadow-lg` 
-                    : 'bg-gray-100 group-hover:bg-gradient-to-br group-hover:' + item.color + ' group-hover:shadow-md'
+                    : 'bg-gray-100 group-hover:bg-gradient-to-br group-hover:from-brand-gold group-hover:to-brand-gold-dark group-hover:shadow-md'
                 }`}>
-                  <Icon className={`h-5 w-5 ${active ? 'text-white' : 'text-gray-600 group-hover:text-white'}`} />
+                  <Icon className={`h-5 w-5 ${
+                    active 
+                      ? 'text-white' 
+                      : 'text-gray-600 group-hover:text-white'
+                  }`} />
                 </div>
                 <span className="flex-1">{item.name}</span>
                 {active && (

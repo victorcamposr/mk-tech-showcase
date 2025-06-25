@@ -4,6 +4,7 @@ import AdminLayout from '@/components/admin/AdminLayout';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import { Input } from '@/components/ui/input';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import { 
@@ -11,12 +12,13 @@ import {
   MessageSquare, 
   FileText, 
   Lightbulb,
-  TrendingUp,
   Activity,
   Calendar,
   ArrowRight,
   ChevronLeft,
-  ChevronRight
+  ChevronRight,
+  Filter,
+  CalendarIcon
 } from 'lucide-react';
 
 interface DashboardStats {
@@ -46,6 +48,7 @@ const AdminDashboard = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [totalActivities, setTotalActivities] = useState(0);
   const [loading, setLoading] = useState(true);
+  const [dateFilter, setDateFilter] = useState('');
   const { toast } = useToast();
 
   const ACTIVITIES_PER_PAGE = 10;
@@ -53,7 +56,7 @@ const AdminDashboard = () => {
   useEffect(() => {
     fetchDashboardData();
     fetchActivities();
-  }, [currentPage]);
+  }, [currentPage, dateFilter]);
 
   const fetchDashboardData = async () => {
     try {
@@ -86,11 +89,23 @@ const AdminDashboard = () => {
       const from = (currentPage - 1) * ACTIVITIES_PER_PAGE;
       const to = from + ACTIVITIES_PER_PAGE - 1;
 
-      const { data, error, count } = await supabase
+      let query = supabase
         .from('admin_activities')
         .select('*', { count: 'exact' })
         .order('created_at', { ascending: false })
         .range(from, to);
+
+      if (dateFilter) {
+        const startDate = new Date(dateFilter);
+        const endDate = new Date(dateFilter);
+        endDate.setDate(endDate.getDate() + 1);
+        
+        query = query
+          .gte('created_at', startDate.toISOString())
+          .lt('created_at', endDate.toISOString());
+      }
+
+      const { data, error, count } = await query;
 
       if (error) throw error;
 
@@ -144,33 +159,25 @@ const AdminDashboard = () => {
       title: 'Total de Usuários',
       value: stats.totalUsers,
       icon: Users,
-      color: 'bg-blue-500',
-      change: '+12%',
-      changeType: 'positive'
+      gradient: 'from-blue-500 to-blue-600'
     },
     {
       title: 'Contatos Recebidos',
       value: stats.totalContacts,
       icon: MessageSquare,
-      color: 'bg-green-500',
-      change: '+18%',
-      changeType: 'positive'
+      gradient: 'from-green-500 to-green-600'
     },
     {
       title: 'Posts do Blog',
       value: stats.totalPosts,
       icon: FileText,
-      color: 'bg-purple-500',
-      change: '+5%',
-      changeType: 'positive'
+      gradient: 'from-purple-500 to-purple-600'
     },
     {
       title: 'Soluções Ativas',
       value: stats.totalSolutions,
       icon: Lightbulb,
-      color: 'bg-orange-500',
-      change: '+8%',
-      changeType: 'positive'
+      gradient: 'from-brand-gold to-brand-gold-dark'
     }
   ];
 
@@ -180,9 +187,9 @@ const AdminDashboard = () => {
         {/* Header */}
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-3xl font-bold text-gray-900 flex items-center gap-3">
-              <div className="w-10 h-10 bg-gradient-to-r from-blue-500 to-purple-600 rounded-lg flex items-center justify-center">
-                <TrendingUp className="w-6 h-6 text-white" />
+            <h1 className="text-3xl font-bold text-brand-black flex items-center gap-3">
+              <div className="w-10 h-10 bg-gradient-to-r from-brand-gold to-brand-gold-dark rounded-lg flex items-center justify-center">
+                <Activity className="w-6 h-6 text-white" />
               </div>
               Dashboard
             </h1>
@@ -197,19 +204,14 @@ const AdminDashboard = () => {
           {statsCards.map((stat, index) => {
             const Icon = stat.icon;
             return (
-              <Card key={index} className="relative overflow-hidden border-0 shadow-lg hover:shadow-xl transition-all duration-300 bg-white">
+              <Card key={index} className="relative overflow-hidden border-brand-gold/20 shadow-lg hover:shadow-xl transition-all duration-300 bg-white hover:-translate-y-1">
                 <CardContent className="p-6">
                   <div className="flex items-center justify-between">
                     <div>
                       <p className="text-sm font-medium text-gray-600 mb-1">{stat.title}</p>
-                      <p className="text-3xl font-bold text-gray-900">{stat.value}</p>
-                      <div className="flex items-center mt-2">
-                        <TrendingUp className="w-4 h-4 text-green-500 mr-1" />
-                        <span className="text-sm font-medium text-green-600">{stat.change}</span>
-                        <span className="text-sm text-gray-500 ml-1">vs mês anterior</span>
-                      </div>
+                      <p className="text-3xl font-bold text-brand-black">{stat.value}</p>
                     </div>
-                    <div className={`w-12 h-12 rounded-lg ${stat.color} flex items-center justify-center shadow-lg`}>
+                    <div className={`w-12 h-12 rounded-lg bg-gradient-to-br ${stat.gradient} flex items-center justify-center shadow-lg`}>
                       <Icon className="w-6 h-6 text-white" />
                     </div>
                   </div>
@@ -220,22 +222,54 @@ const AdminDashboard = () => {
         </div>
 
         {/* Recent Activities */}
-        <Card className="shadow-lg border-0">
-          <CardHeader className="bg-gradient-to-r from-gray-50 to-gray-100 border-b border-gray-200">
-            <CardTitle className="flex items-center gap-3 text-gray-900">
-              <div className="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center">
-                <Activity className="w-4 h-4 text-blue-600" />
+        <Card className="shadow-lg border-brand-gold/20">
+          <CardHeader className="bg-gradient-to-r from-brand-gold/5 to-brand-gold/10 border-b border-brand-gold/20">
+            <div className="flex items-center justify-between">
+              <CardTitle className="flex items-center gap-3 text-brand-black">
+                <div className="w-8 h-8 bg-brand-gold/20 rounded-lg flex items-center justify-center">
+                  <Activity className="w-4 h-4 text-brand-gold" />
+                </div>
+                Atividades Recentes
+                <Badge variant="outline" className="ml-auto bg-brand-gold/10 text-brand-gold border-brand-gold/30">
+                  {totalActivities} total
+                </Badge>
+              </CardTitle>
+            </div>
+            
+            {/* Date Filter */}
+            <div className="flex items-center gap-4 mt-4">
+              <div className="flex items-center gap-2">
+                <CalendarIcon className="w-4 h-4 text-brand-gold" />
+                <label className="text-sm font-medium text-brand-black">Filtrar por data:</label>
               </div>
-              Atividades Recentes
-              <Badge variant="outline" className="ml-auto bg-blue-50 text-blue-700 border-blue-200">
-                {totalActivities} total
-              </Badge>
-            </CardTitle>
+              <Input
+                type="date"
+                value={dateFilter}
+                onChange={(e) => {
+                  setDateFilter(e.target.value);
+                  setCurrentPage(1);
+                }}
+                className="w-auto border-brand-gold/30 focus:border-brand-gold focus:ring-brand-gold/20"
+              />
+              {dateFilter && (
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => {
+                    setDateFilter('');
+                    setCurrentPage(1);
+                  }}
+                  className="border-brand-gold/30 text-brand-gold hover:bg-brand-gold/10"
+                >
+                  Limpar
+                </Button>
+              )}
+            </div>
           </CardHeader>
           <CardContent className="p-0">
             {loading ? (
               <div className="p-8 text-center">
-                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500 mx-auto"></div>
+                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-brand-gold mx-auto"></div>
                 <p className="mt-4 text-gray-600">Carregando atividades...</p>
               </div>
             ) : activities.length === 0 ? (
@@ -247,30 +281,30 @@ const AdminDashboard = () => {
               <>
                 <div className="divide-y divide-gray-100">
                   {activities.map((activity, index) => (
-                    <div key={activity.id} className="p-4 hover:bg-gray-50 transition-colors">
+                    <div key={activity.id} className="p-4 hover:bg-brand-gold/5 transition-colors">
                       <div className="flex items-center justify-between">
                         <div className="flex items-center space-x-4">
-                          <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
-                            <Calendar className="w-5 h-5 text-blue-600" />
+                          <div className="w-10 h-10 bg-brand-gold/20 rounded-full flex items-center justify-center">
+                            <Calendar className="w-5 h-5 text-brand-gold" />
                           </div>
                           <div>
                             <div className="flex items-center gap-2 mb-1">
                               <Badge className={`text-xs border ${getActionColor(activity.action_type)}`}>
                                 {getActionText(activity.action_type)}
                               </Badge>
-                              <span className="text-sm font-medium text-gray-900">
+                              <span className="text-sm font-medium text-brand-black">
                                 {activity.entity_type}
                               </span>
                             </div>
                             <p className="text-sm text-gray-600">
-                              <span className="font-medium">{activity.user_name}</span> {getActionText(activity.action_type).toLowerCase()} "{activity.entity_title}"
+                              <span className="font-medium text-brand-gold">{activity.user_name}</span> {getActionText(activity.action_type).toLowerCase()} "{activity.entity_title}"
                             </p>
                             <p className="text-xs text-gray-400 mt-1">
                               {formatDate(activity.created_at)}
                             </p>
                           </div>
                         </div>
-                        <ArrowRight className="w-4 h-4 text-gray-400" />
+                        <ArrowRight className="w-4 h-4 text-brand-gold" />
                       </div>
                     </div>
                   ))}
@@ -278,9 +312,9 @@ const AdminDashboard = () => {
 
                 {/* Pagination */}
                 {totalPages > 1 && (
-                  <div className="p-4 border-t border-gray-100 bg-gray-50">
+                  <div className="p-4 border-t border-brand-gold/20 bg-brand-gold/5">
                     <div className="flex items-center justify-between">
-                      <p className="text-sm text-gray-700">
+                      <p className="text-sm text-brand-black">
                         Página {currentPage} de {totalPages} ({totalActivities} atividades)
                       </p>
                       <div className="flex gap-2">
@@ -289,7 +323,7 @@ const AdminDashboard = () => {
                           size="sm"
                           onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
                           disabled={currentPage === 1}
-                          className="border-gray-300"
+                          className="border-brand-gold/30 text-brand-gold hover:bg-brand-gold/10"
                         >
                           <ChevronLeft className="w-4 h-4 mr-1" />
                           Anterior
@@ -299,7 +333,7 @@ const AdminDashboard = () => {
                           size="sm"
                           onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
                           disabled={currentPage === totalPages}
-                          className="border-gray-300"
+                          className="border-brand-gold/30 text-brand-gold hover:bg-brand-gold/10"
                         >
                           Próxima
                           <ChevronRight className="w-4 h-4 ml-1" />

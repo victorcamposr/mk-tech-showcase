@@ -210,8 +210,13 @@ const AdminSolutions = () => {
         {/* Header */}
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-2xl font-bold text-gray-900">Soluções</h1>
-            <p className="text-gray-600 mt-1">
+            <h1 className="text-3xl font-bold text-brand-black flex items-center gap-3">
+              <div className="w-10 h-10 bg-gradient-to-r from-brand-gold to-brand-gold-dark rounded-lg flex items-center justify-center">
+                <Lightbulb className="w-6 h-6 text-white" />
+              </div>
+              Soluções
+            </h1>
+            <p className="text-gray-600 mt-2">
               Gerencie as soluções disponéveis no sistema
             </p>
           </div>
@@ -220,7 +225,7 @@ const AdminSolutions = () => {
               onClick={fetchSolutions}
               variant="outline"
               size="sm"
-              className="border-gray-300"
+              className="border-brand-gold/30 text-brand-gold hover:bg-brand-gold/10"
             >
               <RefreshCw className="w-4 h-4 mr-2" />
               Atualizar
@@ -228,7 +233,7 @@ const AdminSolutions = () => {
             <Button
               onClick={handleCreate}
               size="sm"
-              className="bg-blue-600 hover:bg-blue-700"
+              className="bg-gradient-to-r from-brand-gold to-brand-gold-dark hover:from-brand-gold-dark hover:to-brand-gold text-brand-black font-semibold"
             >
               <Plus className="w-4 h-4 mr-2" />
               Nova Solução
@@ -237,10 +242,10 @@ const AdminSolutions = () => {
         </div>
 
         {/* Filters Card */}
-        <Card>
-          <CardHeader className="pb-3">
-            <CardTitle className="text-lg flex items-center gap-2">
-              <Filter className="w-5 h-5" />
+        <Card className="border-brand-gold/20">
+          <CardHeader className="pb-3 bg-gradient-to-r from-brand-gold/5 to-brand-gold/10">
+            <CardTitle className="text-lg flex items-center gap-2 text-brand-black">
+              <Filter className="w-5 h-5 text-brand-gold" />
               Filtros
             </CardTitle>
           </CardHeader>
@@ -248,12 +253,12 @@ const AdminSolutions = () => {
             <div className="flex flex-col sm:flex-row gap-4">
               <div className="flex-1">
                 <div className="relative">
-                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-brand-gold w-4 h-4" />
                   <Input
                     placeholder="Buscar soluções..."
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
-                    className="pl-10"
+                    className="pl-10 border-brand-gold/30 focus:border-brand-gold focus:ring-brand-gold/20"
                   />
                 </div>
               </div>
@@ -262,6 +267,7 @@ const AdminSolutions = () => {
                   variant={statusFilter === 'all' ? 'default' : 'outline'}
                   size="sm"
                   onClick={() => setStatusFilter('all')}
+                  className={statusFilter === 'all' ? 'bg-brand-gold hover:bg-brand-gold-dark text-brand-black' : 'border-brand-gold/30 text-brand-gold hover:bg-brand-gold/10'}
                 >
                   Todas
                 </Button>
@@ -269,7 +275,7 @@ const AdminSolutions = () => {
                   variant={statusFilter === 'active' ? 'default' : 'outline'}
                   size="sm"
                   onClick={() => setStatusFilter('active')}
-                  className={statusFilter === 'active' ? 'bg-green-600 hover:bg-green-700' : ''}
+                  className={statusFilter === 'active' ? 'bg-green-600 hover:bg-green-700 text-white' : 'border-green-300 text-green-600 hover:bg-green-50'}
                 >
                   Ativas
                 </Button>
@@ -277,7 +283,7 @@ const AdminSolutions = () => {
                   variant={statusFilter === 'inactive' ? 'default' : 'outline'}
                   size="sm"
                   onClick={() => setStatusFilter('inactive')}
-                  className={statusFilter === 'inactive' ? 'bg-red-600 hover:bg-red-700' : ''}
+                  className={statusFilter === 'inactive' ? 'bg-red-600 hover:bg-red-700 text-white' : 'border-red-300 text-red-600 hover:bg-red-50'}
                 >
                   Inativas
                 </Button>
@@ -287,23 +293,23 @@ const AdminSolutions = () => {
         </Card>
 
         {/* Solutions Table */}
-        <Card>
-          <CardHeader className="pb-3">
-            <CardTitle className="text-lg flex items-center justify-between">
+        <Card className="border-brand-gold/20">
+          <CardHeader className="pb-3 bg-gradient-to-r from-brand-gold/5 to-brand-gold/10">
+            <CardTitle className="text-lg flex items-center justify-between text-brand-black">
               <span>Soluções Cadastradas</span>
-              <Badge variant="secondary">{filteredSolutions.length} soluções</Badge>
+              <Badge variant="outline" className="bg-brand-gold/10 text-brand-gold border-brand-gold/30">{filteredSolutions.length} soluções</Badge>
             </CardTitle>
           </CardHeader>
           <CardContent className="p-0">
             {loading ? (
               <div className="text-center py-8">
-                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto"></div>
+                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-brand-gold mx-auto"></div>
                 <p className="mt-2 text-gray-600">Carregando soluções...</p>
               </div>
             ) : filteredSolutions.length === 0 ? (
               <div className="text-center py-8">
                 <Lightbulb className="w-12 h-12 text-gray-300 mx-auto mb-4" />
-                <h3 className="text-lg font-medium text-gray-900 mb-2">
+                <h3 className="text-lg font-medium text-brand-black mb-2">
                   {searchTerm || statusFilter !== 'all' ? 'Nenhuma solução encontrada' : 'Nenhuma solução cadastrada'}
                 </h3>
                 <p className="text-gray-600 mb-4">
@@ -313,7 +319,7 @@ const AdminSolutions = () => {
                   }
                 </p>
                 {!searchTerm && statusFilter === 'all' && (
-                  <Button onClick={handleCreate} size="sm">
+                  <Button onClick={handleCreate} size="sm" className="bg-gradient-to-r from-brand-gold to-brand-gold-dark hover:from-brand-gold-dark hover:to-brand-gold text-brand-black font-semibold">
                     <Plus className="w-4 h-4 mr-2" />
                     Criar Primeira Solução
                   </Button>
@@ -324,15 +330,15 @@ const AdminSolutions = () => {
                 {filteredSolutions.map((solution) => {
                   const Icon = getIcon(solution.icon_name);
                   return (
-                    <div key={solution.id} className="p-4 hover:bg-gray-50 transition-colors">
+                    <div key={solution.id} className="p-4 hover:bg-brand-gold/5 transition-colors">
                       <div className="flex items-center justify-between">
                         <div className="flex items-center space-x-4 flex-1">
-                          <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center flex-shrink-0">
-                            <Icon className="w-5 h-5 text-blue-600" />
+                          <div className="w-10 h-10 bg-gradient-to-br from-brand-gold/20 to-brand-gold/30 rounded-lg flex items-center justify-center flex-shrink-0">
+                            <Icon className="w-5 h-5 text-brand-gold" />
                           </div>
                           <div className="flex-1 min-w-0">
                             <div className="flex items-center gap-3 mb-1">
-                              <h3 className="text-base font-semibold text-gray-900 truncate">
+                              <h3 className="text-base font-semibold text-brand-black truncate">
                                 {solution.title}
                               </h3>
                               <Badge 
@@ -342,12 +348,12 @@ const AdminSolutions = () => {
                                 {solution.status === 'active' ? 'Ativa' : 'Inativa'}
                               </Badge>
                               {solution.sort_order !== null && (
-                                <Badge variant="outline" className="text-xs">
+                                <Badge variant="outline" className="text-xs border-brand-gold/30 text-brand-gold">
                                   #{solution.sort_order}
                                 </Badge>
                               )}
                             </div>
-                            <p className="text-xs text-gray-500 font-mono bg-gray-100 px-2 py-1 rounded inline-block mb-1">
+                            <p className="text-xs text-gray-500 font-mono bg-brand-gold/10 px-2 py-1 rounded inline-block mb-1">
                               {solution.key}
                             </p>
                             <p className="text-gray-600 text-sm line-clamp-2 mb-2">
@@ -356,12 +362,12 @@ const AdminSolutions = () => {
                             {solution.features && solution.features.length > 0 && (
                               <div className="flex flex-wrap gap-1 mb-1">
                                 {solution.features.slice(0, 3).map((feature, index) => (
-                                  <Badge key={index} variant="outline" className="text-xs">
+                                  <Badge key={index} variant="outline" className="text-xs border-blue-200 text-blue-700">
                                     {feature}
                                   </Badge>
                                 ))}
                                 {solution.features.length > 3 && (
-                                  <Badge variant="outline" className="text-xs">
+                                  <Badge variant="outline" className="text-xs border-brand-gold/30 text-brand-gold">
                                     +{solution.features.length - 3}
                                   </Badge>
                                 )}
@@ -377,6 +383,7 @@ const AdminSolutions = () => {
                             variant="outline"
                             size="sm"
                             onClick={() => handleView(solution)}
+                            className="border-brand-gold/30 text-brand-gold hover:bg-brand-gold/10"
                           >
                             <Eye className="w-4 h-4" />
                           </Button>
@@ -384,6 +391,7 @@ const AdminSolutions = () => {
                             variant="outline"
                             size="sm"
                             onClick={() => handleEdit(solution)}
+                            className="border-blue-300 text-blue-600 hover:bg-blue-50"
                           >
                             <Edit className="w-4 h-4" />
                           </Button>
@@ -391,7 +399,7 @@ const AdminSolutions = () => {
                             variant="outline"
                             size="sm"
                             onClick={() => handleDelete(solution)}
-                            className="text-red-600 hover:text-red-700"
+                            className="border-red-300 text-red-600 hover:bg-red-50"
                           >
                             <Trash2 className="w-4 h-4" />
                           </Button>
