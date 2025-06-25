@@ -63,14 +63,14 @@ const CardMachineOperators = ({ variant = 'compact', className = '' }: CardMachi
       <div className={`flex flex-wrap gap-3 ${className}`}>
         {CARD_OPERATORS.map((operator, index) => (
           <div key={index} className="group/tooltip relative">
-            <div className="w-10 h-10 rounded-lg bg-white/80 backdrop-blur-sm flex items-center justify-center shadow-sm hover:shadow-md transition-all duration-300 hover:scale-110">
+            <div className="w-10 h-10 rounded-lg flex items-center justify-center hover:scale-110 transition-all duration-300">
               <img 
                 src={operator.icon} 
                 alt={operator.alt}
                 className="w-8 h-8 object-contain"
               />
             </div>
-            <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-2 py-1 bg-gray-900 text-white text-xs rounded opacity-0 group-hover/tooltip:opacity-100 transition-opacity whitespace-nowrap z-10">
+            <div className="absolute top-full left-1/2 transform -translate-x-1/2 mt-2 px-2 py-1 bg-gray-900 text-white text-xs rounded opacity-0 group-hover/tooltip:opacity-100 transition-opacity whitespace-nowrap z-10">
               Integrado com {operator.name}
             </div>
           </div>
@@ -87,14 +87,14 @@ const CardMachineOperators = ({ variant = 'compact', className = '' }: CardMachi
     <div className={`flex items-center gap-2 ${className}`}>
       {visibleOperators.map((operator, index) => (
         <div key={index} className="group/tooltip relative">
-          <div className="w-8 h-8 rounded bg-white/80 backdrop-blur-sm flex items-center justify-center shadow-sm hover:shadow-md transition-all duration-300 hover:scale-110">
+          <div className="w-8 h-8 rounded flex items-center justify-center hover:scale-110 transition-all duration-300">
             <img 
               src={operator.icon} 
               alt={operator.alt}
               className="w-6 h-6 object-contain"
             />
           </div>
-          <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-1 px-1.5 py-0.5 bg-gray-900 text-white text-xs rounded opacity-0 group-hover/tooltip:opacity-100 transition-opacity whitespace-nowrap z-10">
+          <div className="absolute top-full left-1/2 transform -translate-x-1/2 mt-1 px-1.5 py-0.5 bg-gray-900 text-white text-xs rounded opacity-0 group-hover/tooltip:opacity-100 transition-opacity whitespace-nowrap z-10">
             Integrado com {operator.name}
           </div>
         </div>
@@ -103,11 +103,11 @@ const CardMachineOperators = ({ variant = 'compact', className = '' }: CardMachi
       {remainingOperators.length > 0 && (
         <HoverCard>
           <HoverCardTrigger asChild>
-            <div className="w-8 h-8 rounded bg-brand-gold/20 backdrop-blur-sm flex items-center justify-center shadow-sm hover:shadow-md transition-all duration-300 hover:scale-110 cursor-pointer">
+            <div className="w-8 h-8 rounded bg-brand-gold/80 flex items-center justify-center hover:scale-110 transition-all duration-300 cursor-pointer relative">
               <span className="text-xs font-medium text-brand-black">+{remainingOperators.length}</span>
             </div>
           </HoverCardTrigger>
-          <HoverCardContent className="w-80 p-3">
+          <HoverCardContent className="w-80 p-3" side="top" align="center">
             <div className="space-y-2">
               <h4 className="text-sm font-semibold text-brand-black">Outras integrações:</h4>
               <div className="grid grid-cols-2 gap-2">
