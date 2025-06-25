@@ -107,7 +107,7 @@ const CardMachineOperators = ({ variant = 'compact', className = '' }: CardMachi
               <span className="text-xs font-medium text-brand-black">+{remainingOperators.length}</span>
             </div>
           </HoverCardTrigger>
-          <HoverCardContent className="w-60 p-2" side="top" align="center">
+          <HoverCardContent className="w-72 p-2" side="top" align="center">
             <div className="space-y-2">
               <h4 className="text-sm font-semibold text-brand-black">Outras integrações:</h4>
               <div className="grid grid-cols-1 gap-1">
