@@ -1,8 +1,9 @@
 
 import { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Menu, X, Calculator, Users, BarChart3, Shield, Zap, Settings, FileText, Database, Globe, Smartphone, Lightbulb } from 'lucide-react';
+import { Menu, X, Calculator, Users, BarChart3, Shield, Zap, Settings, FileText, Database, Globe, Smartphone, Lightbulb, CreditCard, Coffee, QrCode, Truck, Link2, Bot, Receipt, Monitor, TrendingUp, Banknote, Building2, Tablet, Fuel } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
+import WhatsAppIcon from './WhatsAppIcon';
 
 interface Solution {
   id: string;
@@ -19,7 +20,7 @@ const Header = () => {
   const [solutions, setSolutions] = useState<Solution[]>([]);
   const location = useLocation();
 
-  // Icon mapping
+  // Icon mapping using the static solution icons
   const iconMap: Record<string, any> = {
     calculator: Calculator,
     users: Users,
@@ -32,10 +33,47 @@ const Header = () => {
     globe: Globe,
     smartphone: Smartphone,
     lightbulb: Lightbulb,
+    'credit-card': CreditCard,
+    coffee: Coffee,
+    'qr-code': QrCode,
+    truck: Truck,
+    link2: Link2,
+    bot: Bot,
+    receipt: Receipt,
+    monitor: Monitor,
+    'trending-up': TrendingUp,
+    banknote: Banknote,
+    building2: Building2,
+    tablet: Tablet,
+    fuel: Fuel,
   };
 
-  const getIcon = (iconName: string) => {
-    return iconMap[iconName] || Lightbulb;
+  // Static solution icon mapping based on solution keys
+  const staticSolutionIcons: Record<string, any> = {
+    'pdv-frente-caixa': Calculator,
+    'mesas-comandas': Coffee,
+    'cardapio-digital': QrCode,
+    'maquininhas-cartao': CreditCard,
+    'controle-motoboys': Truck,
+    'integracoes': Link2,
+    'gestao-analise': BarChart3,
+    'robo-whatsapp': Bot,
+    'nota-fiscal': Receipt,
+    'auto-atendimento': Monitor,
+    'marketing-vendas': TrendingUp,
+    'pagamento-tef': Banknote,
+    'franquias-filiais': Building2,
+    'autoatendimento-tablet': Tablet,
+    'sistema-revendas-gas-agua': Fuel,
+  };
+
+  const getIcon = (solution: Solution) => {
+    // First try to get icon from static mapping based on solution key
+    if (staticSolutionIcons[solution.key]) {
+      return staticSolutionIcons[solution.key];
+    }
+    // Fallback to icon mapping by icon_name
+    return iconMap[solution.icon_name] || Lightbulb;
   };
 
   useEffect(() => {
@@ -81,38 +119,36 @@ const Header = () => {
     setIsSolutionsOpen(!isSolutionsOpen);
   };
 
+  const whatsappUrl = "https://api.whatsapp.com/send?phone=5565999833097&text=Olá! Gostaria de saber mais sobre as soluções da MK Tecnologia.";
+
   return (
     <header className="bg-black shadow-2xl sticky top-0 z-50 border-b border-brand-gold/20">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center py-4">
           {/* Logo */}
           <div className="flex-shrink-0">
-            <Link to="/" className="flex items-center group">
-              <div className="relative">
-                <img
-                  className="h-14 w-auto transition-all duration-300 group-hover:scale-105"
-                  src="/lovable-uploads/37dd0949-c4e9-4ce4-82ef-a91cc9c4a887.png"
-                  alt="MK Tecnologia"
-                />
-                <div className="absolute -inset-2 bg-gradient-to-r from-brand-gold/20 to-brand-gold-light/20 rounded-full blur-xl opacity-0 group-hover:opacity-100 transition-all duration-500"></div>
-              </div>
+            <Link to="/" className="flex items-center">
+              <img
+                className="h-16 w-auto"
+                src="/lovable-uploads/37dd0949-c4e9-4ce4-82ef-a91cc9c4a887.png"
+                alt="MK Tecnologia"
+              />
             </Link>
           </div>
 
-          {/* Desktop Navigation */}
-          <nav className="hidden md:flex space-x-8">
+          {/* Desktop Navigation - Centralizada */}
+          <nav className="hidden md:flex space-x-8 flex-1 justify-center">
             {menuItems.map((item) => (
               <Link
                 key={item.name}
                 to={item.href}
                 className={`${
                   item.current
-                    ? 'text-brand-gold border-b-2 border-brand-gold shadow-lg shadow-brand-gold/20'
-                    : 'text-white hover:text-brand-gold hover:shadow-md hover:shadow-brand-gold/10'
-                } px-4 py-3 text-sm font-semibold transition-all duration-300 relative group`}
+                    ? 'text-brand-gold border-b-2 border-brand-gold'
+                    : 'text-white hover:text-brand-gold'
+                } px-4 py-3 text-sm font-semibold transition-all duration-300`}
               >
-                <span className="relative z-10">{item.name}</span>
-                <div className="absolute inset-0 bg-gradient-to-r from-brand-gold/10 to-transparent rounded-lg opacity-0 group-hover:opacity-100 transition-all duration-300"></div>
+                {item.name}
               </Link>
             ))}
             
@@ -122,11 +158,11 @@ const Header = () => {
                 onClick={handleSolutionsToggle}
                 className={`${
                   location.pathname.startsWith('/solucoes')
-                    ? 'text-brand-gold border-b-2 border-brand-gold shadow-lg shadow-brand-gold/20'
-                    : 'text-white hover:text-brand-gold hover:shadow-md hover:shadow-brand-gold/10'
-                } px-4 py-3 text-sm font-semibold transition-all duration-300 flex items-center gap-2 relative group`}
+                    ? 'text-brand-gold border-b-2 border-brand-gold'
+                    : 'text-white hover:text-brand-gold'
+                } px-4 py-3 text-sm font-semibold transition-all duration-300 flex items-center gap-2`}
               >
-                <span className="relative z-10">Soluções</span>
+                Soluções
                 <svg
                   className={`w-4 h-4 transition-transform duration-300 ${
                     isSolutionsOpen ? 'rotate-180' : ''
@@ -137,7 +173,6 @@ const Header = () => {
                 >
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                 </svg>
-                <div className="absolute inset-0 bg-gradient-to-r from-brand-gold/10 to-transparent rounded-lg opacity-0 group-hover:opacity-100 transition-all duration-300"></div>
               </button>
               
               {isSolutionsOpen && (
@@ -150,7 +185,7 @@ const Header = () => {
                     </div>
                     <div className="max-h-96 overflow-y-auto">
                       {solutions.map((solution) => {
-                        const Icon = getIcon(solution.icon_name);
+                        const Icon = getIcon(solution);
                         return (
                           <Link
                             key={solution.id}
@@ -186,6 +221,19 @@ const Header = () => {
               )}
             </div>
           </nav>
+
+          {/* WhatsApp Button - Desktop */}
+          <div className="hidden md:flex">
+            <a
+              href={whatsappUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="bg-brand-gold hover:bg-brand-gold-light text-brand-black px-6 py-3 rounded-full font-semibold transition-all duration-300 flex items-center gap-2 shadow-lg hover:shadow-xl hover:scale-105"
+            >
+              <WhatsAppIcon className="w-5 h-5" />
+              Falar no WhatsApp
+            </a>
+          </div>
 
           {/* Mobile menu button */}
           <div className="md:hidden">
@@ -238,7 +286,7 @@ const Header = () => {
                 {isSolutionsOpen && (
                   <div className="mt-3 pl-4 space-y-2">
                     {solutions.map((solution) => {
-                      const Icon = getIcon(solution.icon_name);
+                      const Icon = getIcon(solution);
                       return (
                         <Link
                           key={solution.id}
@@ -266,6 +314,20 @@ const Header = () => {
                     </Link>
                   </div>
                 )}
+              </div>
+
+              {/* Mobile WhatsApp Button */}
+              <div className="px-4 py-3">
+                <a
+                  href={whatsappUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="bg-brand-gold hover:bg-brand-gold-light text-brand-black px-6 py-3 rounded-full font-semibold transition-all duration-300 flex items-center justify-center gap-2 w-full"
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  <WhatsAppIcon className="w-5 h-5" />
+                  Falar no WhatsApp
+                </a>
               </div>
             </div>
           </div>

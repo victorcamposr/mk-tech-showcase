@@ -1,4 +1,3 @@
-
 import { useLocation } from "react-router-dom";
 import { useEffect, useState } from "react";
 import Header from "@/components/Header";
@@ -9,7 +8,7 @@ import InteractiveDashboard from "@/components/InteractiveDashboard";
 import SEO from "@/components/SEO";
 import StructuredData from "@/components/StructuredData";
 import { ScrollReveal } from "@/components/ScrollReveal";
-import { Award, Calculator, Users, BarChart3, Shield, Zap, Settings, FileText, Database, Globe, Smartphone, Lightbulb, Package, Receipt, DollarSign, Headphones, CreditCard } from "lucide-react";
+import { Award, Calculator, Users, BarChart3, Shield, Zap, Settings, FileText, Database, Globe, Smartphone, Lightbulb, Package, Receipt, DollarSign, Headphones, CreditCard, Coffee, QrCode, Truck, Link2, Bot, Monitor, TrendingUp, Banknote, Building2, Tablet, Fuel } from "lucide-react";
 import { specificSolutions, SOLUTION_IMAGES } from "@/data/solutions";
 import { getWhatsAppMessage } from "@/utils/whatsapp";
 import { supabase } from "@/integrations/supabase/client";
@@ -33,7 +32,26 @@ interface DatabaseSolution {
   status: string;
 }
 
-// Mapeamento de ícones para as soluções
+// Mapeamento de ícones para as soluções baseado nos dados estáticos
+const staticSolutionIcons: Record<string, any> = {
+  'pdv-frente-caixa': Calculator,
+  'mesas-comandas': Coffee,
+  'cardapio-digital': QrCode,
+  'maquininhas-cartao': CreditCard,
+  'controle-motoboys': Truck,
+  'integracoes': Link2,
+  'gestao-analise': BarChart3,
+  'robo-whatsapp': Bot,
+  'nota-fiscal': Receipt,
+  'auto-atendimento': Monitor,
+  'marketing-vendas': TrendingUp,
+  'pagamento-tef': Banknote,
+  'franquias-filiais': Building2,
+  'autoatendimento-tablet': Tablet,
+  'sistema-revendas-gas-agua': Fuel,
+};
+
+// Fallback icon mapping
 const iconMap: Record<string, any> = {
   calculator: Calculator,
   users: Users,
@@ -51,10 +69,26 @@ const iconMap: Record<string, any> = {
   'dollar-sign': DollarSign,
   headphones: Headphones,
   'credit-card': CreditCard,
+  coffee: Coffee,
+  'qr-code': QrCode,
+  truck: Truck,
+  link2: Link2,
+  bot: Bot,
+  monitor: Monitor,
+  'trending-up': TrendingUp,
+  banknote: Banknote,
+  building2: Building2,
+  tablet: Tablet,
+  fuel: Fuel,
 };
 
-const getIconComponent = (iconName: string) => {
-  return iconMap[iconName] || Lightbulb;
+const getIconComponent = (solution: DatabaseSolution) => {
+  // First try to get icon from static mapping based on solution key
+  if (staticSolutionIcons[solution.key]) {
+    return staticSolutionIcons[solution.key];
+  }
+  // Fallback to icon mapping by icon_name
+  return iconMap[solution.icon_name] || Lightbulb;
 };
 
 const Solutions = () => {
@@ -101,9 +135,9 @@ const Solutions = () => {
   let IconComponent = Award;
 
   if (currentDbSolution) {
-    // Usar dados do banco
+    // Usar dados do banco com ícone correto
     currentSolution = currentDbSolution;
-    IconComponent = getIconComponent(currentDbSolution.icon_name);
+    IconComponent = getIconComponent(currentDbSolution);
   } else if (currentStaticSolution) {
     // Usar dados estáticos
     currentSolution = currentStaticSolution;
@@ -293,7 +327,7 @@ const Solutions = () => {
                       solutionKey={solution.key} 
                       solution={{
                         title: solution.title,
-                        icon: getIconComponent(solution.icon_name),
+                        icon: getIconComponent(solution),
                         description: solution.description,
                         features: solution.features,
                         industries: solution.industries,
