@@ -1,231 +1,278 @@
 
-import { useEffect, useState } from 'react';
+import { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import AdminLayout from '@/components/admin/AdminLayout';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
 import { supabase } from '@/integrations/supabase/client';
-import { Users, FileText, Lightbulb, TrendingUp, BarChart3, Settings } from 'lucide-react';
+import { 
+  Users, 
+  FileText, 
+  Lightbulb, 
+  TrendingUp, 
+  Calendar,
+  BarChart3,
+  ArrowRight,
+  Plus,
+  Settings
+} from 'lucide-react';
 
 const AdminDashboard = () => {
   const [stats, setStats] = useState({
-    totalUsers: 0,
-    totalPosts: 0,
-    publishedPosts: 0,
-    totalSolutions: 0
+    users: 0,
+    posts: 0,
+    solutions: 0,
+    activeSolutions: 0,
   });
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const fetchStats = async () => {
-      // Get users count
-      const { count: usersCount } = await supabase
-        .from('admin_profiles')
-        .select('*', { count: 'exact', head: true })
-        .eq('is_active', true);
-
-      // Get posts count
-      const { count: postsCount } = await supabase
-        .from('blog_posts')
-        .select('*', { count: 'exact', head: true });
-
-      // Get published posts count
-      const { count: publishedCount } = await supabase
-        .from('blog_posts')
-        .select('*', { count: 'exact', head: true })
-        .eq('status', 'published');
-
-      // Get solutions count
-      const { count: solutionsCount } = await supabase
-        .from('solutions')
-        .select('*', { count: 'exact', head: true })
-        .eq('status', 'active');
-
-      setStats({
-        totalUsers: usersCount || 0,
-        totalPosts: postsCount || 0,
-        publishedPosts: publishedCount || 0,
-        totalSolutions: solutionsCount || 0
-      });
-    };
-
     fetchStats();
   }, []);
 
-  const statCards = [
-    {
-      title: 'Usuários Administrativos',
-      value: stats.totalUsers,
-      icon: Users,
-      gradient: 'from-blue-500 to-blue-600',
-      iconBg: 'bg-blue-100',
-      iconColor: 'text-blue-600'
-    },
-    {
-      title: 'Posts do Blog',
-      value: stats.totalPosts,
-      icon: FileText,
-      gradient: 'from-green-500 to-green-600',
-      iconBg: 'bg-green-100',
-      iconColor: 'text-green-600'
-    },
-    {
-      title: 'Posts Publicados',
-      value: stats.publishedPosts,
-      icon: TrendingUp,
-      gradient: 'from-purple-500 to-purple-600',
-      iconBg: 'bg-purple-100',
-      iconColor: 'text-purple-600'
-    },
-    {
-      title: 'Soluções Ativas',
-      value: stats.totalSolutions,
-      icon: Lightbulb,
-      gradient: 'from-brand-gold to-brand-gold-light',
-      iconBg: 'bg-brand-gold/10',
-      iconColor: 'text-brand-gold'
+  const fetchStats = async () => {
+    try {
+      const [usersResult, postsResult, solutionsResult] = await Promise.all([
+        supabase.from('admin_profiles').select('id', { count: 'exact' }),
+        supabase.from('blog_posts').select('id', { count: 'exact' }),
+        supabase.from('solutions').select('id, status', { count: 'exact' }),
+      ]);
+
+      const activeSolutions = solutionsResult.data?.filter(s => s.status === 'active').length || 0;
+
+      setStats({
+        users: usersResult.count || 0,
+        posts: postsResult.count || 0,
+        solutions: solutionsResult.count || 0,
+        activeSolutions,
+      });
+    } catch (error) {
+      console.error('Error fetching stats:', error);
+    } finally {
+      setLoading(false);
     }
-  ];
+  };
 
   const quickActions = [
     {
-      title: 'Gerenciar Usuários',
-      description: 'Adicionar e gerenciar usuários administrativos',
+      title: "Gerenciar Usuários",
+      description: "Criar e gerenciar administradores do sistema",
       icon: Users,
-      href: '/admin/users',
-      color: 'blue'
+      link: "/admin/users",
+      color: "from-blue-500 to-blue-600",
+      count: stats.users,
     },
     {
-      title: 'Criar Post',
-      description: 'Escrever novo artigo para o blog',
+      title: "Criar Post",
+      description: "Adicionar novo artigo ao blog",
       icon: FileText,
-      href: '/admin/blog',
-      color: 'green'
+      link: "/admin/blog",
+      color: "from-green-500 to-green-600",
+      count: stats.posts,
     },
     {
-      title: 'Gerenciar Soluções',
-      description: 'Atualizar catálogo de soluções',
+      title: "Gerenciar Soluções",
+      description: "Administrar catálogo de soluções",
       icon: Lightbulb,
-      href: '/admin/solutions',
-      color: 'purple'
-    }
+      link: "/admin/solutions",
+      color: "from-purple-500 to-purple-600",
+      count: stats.solutions,
+    },
   ];
+
+  const recentActivities = [
+    {
+      type: "user",
+      message: "Novo administrador cadastrado",
+      time: "2 horas atrás",
+      icon: Users,
+    },
+    {
+      type: "post",
+      message: "Post 'Tecnologia no Varejo' publicado",
+      time: "5 horas atrás",
+      icon: FileText,
+    },
+    {
+      type: "solution",
+      message: "Solução 'PDV Frente de Caixa' atualizada",
+      time: "1 dia atrás",
+      icon: Lightbulb,
+    },
+  ];
+
+  if (loading) {
+    return (
+      <AdminLayout>
+        <div className="flex items-center justify-center h-64">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-brand-gold mx-auto"></div>
+            <p className="mt-4 text-gray-600">Carregando dashboard...</p>
+          </div>
+        </div>
+      </AdminLayout>
+    );
+  }
 
   return (
     <AdminLayout>
       <div className="space-y-8">
-        {/* Header com gradiente */}
-        <div className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-brand-gold via-brand-gold-light to-brand-gold p-8">
-          <div className="relative z-10">
-            <h1 className="text-4xl font-bold text-brand-black mb-3">
+        {/* Header */}
+        <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+          <div>
+            <h1 className="text-3xl font-bold text-gray-900 flex items-center gap-3">
+              <BarChart3 className="w-8 h-8 text-brand-gold" />
               Dashboard Administrativo
             </h1>
-            <p className="text-brand-black/80 text-lg">
+            <p className="text-gray-600 mt-2">
               Bem-vindo ao painel de controle da MK Tecnologia
             </p>
           </div>
-          <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full -translate-y-32 translate-x-32"></div>
-          <div className="absolute bottom-0 left-0 w-48 h-48 bg-white/5 rounded-full translate-y-24 -translate-x-24"></div>
+          <div className="flex items-center gap-2 text-sm text-gray-500">
+            <Calendar className="w-4 h-4" />
+            {new Date().toLocaleDateString('pt-BR', {
+              weekday: 'long',
+              year: 'numeric',
+              month: 'long',
+              day: 'numeric'
+            })}
+          </div>
         </div>
 
-        {/* Stats Grid */}
+        {/* Stats Cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          {statCards.map((stat, index) => {
-            const IconComponent = stat.icon;
-            return (
-              <Card key={index} className="relative overflow-hidden border-0 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
-                <div className={`absolute inset-0 bg-gradient-to-br ${stat.gradient} opacity-[0.02]`}></div>
-                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium text-gray-600">
-                    {stat.title}
-                  </CardTitle>
-                  <div className={`p-2 rounded-xl ${stat.iconBg}`}>
-                    <IconComponent className={`w-5 h-5 ${stat.iconColor}`} />
-                  </div>
-                </CardHeader>
-                <CardContent>
-                  <div className="text-3xl font-bold text-gray-900 mb-1">
-                    {stat.value}
-                  </div>
-                  <div className={`w-full h-1 bg-gradient-to-r ${stat.gradient} rounded-full opacity-20`}></div>
-                </CardContent>
-              </Card>
-            );
-          })}
+          <Card className="shadow-lg border-0 bg-gradient-to-br from-blue-50 to-blue-100 border-l-4 border-l-blue-500">
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-blue-600 text-sm font-medium">Administradores</p>
+                  <p className="text-3xl font-bold text-gray-900">{stats.users}</p>
+                </div>
+                <Users className="w-8 h-8 text-blue-500" />
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card className="shadow-lg border-0 bg-gradient-to-br from-green-50 to-green-100 border-l-4 border-l-green-500">
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-green-600 text-sm font-medium">Posts do Blog</p>
+                  <p className="text-3xl font-bold text-gray-900">{stats.posts}</p>
+                </div>
+                <FileText className="w-8 h-8 text-green-500" />
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card className="shadow-lg border-0 bg-gradient-to-br from-purple-50 to-purple-100 border-l-4 border-l-purple-500">
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-purple-600 text-sm font-medium">Soluções Total</p>
+                  <p className="text-3xl font-bold text-gray-900">{stats.solutions}</p>
+                </div>
+                <Lightbulb className="w-8 h-8 text-purple-500" />
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card className="shadow-lg border-0 bg-gradient-to-br from-brand-gold/20 to-brand-gold-light/20 border-l-4 border-l-brand-gold">
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-brand-gold-dark text-sm font-medium">Soluções Ativas</p>
+                  <p className="text-3xl font-bold text-gray-900">{stats.activeSolutions}</p>
+                </div>
+                <TrendingUp className="w-8 h-8 text-brand-gold" />
+              </div>
+            </CardContent>
+          </Card>
         </div>
 
         {/* Quick Actions */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {quickActions.map((action, index) => {
-            const IconComponent = action.icon;
-            const colorMap = {
-              blue: { bg: 'bg-blue-50', border: 'border-blue-200', icon: 'text-blue-600', hover: 'hover:bg-blue-100' },
-              green: { bg: 'bg-green-50', border: 'border-green-200', icon: 'text-green-600', hover: 'hover:bg-green-100' },
-              purple: { bg: 'bg-purple-50', border: 'border-purple-200', icon: 'text-purple-600', hover: 'hover:bg-purple-100' }
-            };
-            const colors = colorMap[action.color as keyof typeof colorMap];
-            
-            return (
-              <Card key={index} className={`${colors.bg} ${colors.border} border-2 ${colors.hover} transition-all duration-200 cursor-pointer hover:shadow-md`}>
-                <CardHeader>
-                  <div className="flex items-center space-x-3">
-                    <IconComponent className={`w-8 h-8 ${colors.icon}`} />
-                    <div>
-                      <CardTitle className="text-lg text-gray-900">{action.title}</CardTitle>
-                      <p className="text-sm text-gray-600 mt-1">{action.description}</p>
+        <Card className="shadow-xl border-0">
+          <CardHeader className="bg-gradient-to-r from-brand-gold/10 to-brand-gold-light/10">
+            <CardTitle className="flex items-center gap-2 text-xl">
+              <Settings className="w-6 h-6 text-brand-gold" />
+              Ações Rápidas
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="p-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {quickActions.map((action, index) => {
+                const IconComponent = action.icon;
+                return (
+                  <Link key={index} to={action.link} className="group">
+                    <div className={`p-6 rounded-xl bg-gradient-to-br ${action.color} text-white shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200`}>
+                      <div className="flex items-center justify-between mb-4">
+                        <IconComponent className="w-8 h-8" />
+                        <ArrowRight className="w-5 h-5 opacity-0 group-hover:opacity-100 transform translate-x-2 group-hover:translate-x-0 transition-all duration-200" />
+                      </div>
+                      <h3 className="text-lg font-semibold mb-2">{action.title}</h3>
+                      <p className="text-sm opacity-90 mb-3">{action.description}</p>
+                      <div className="flex items-center justify-between">
+                        <span className="text-2xl font-bold">{action.count}</span>
+                        <Plus className="w-5 h-5 opacity-75" />
+                      </div>
                     </div>
-                  </div>
-                </CardHeader>
-              </Card>
-            );
-          })}
-        </div>
+                  </Link>
+                );
+              })}
+            </div>
+          </CardContent>
+        </Card>
 
-        {/* Analytics Overview */}
+        {/* Recent Activities */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           <Card className="shadow-lg border-0">
             <CardHeader>
-              <CardTitle className="flex items-center gap-2 text-gray-900">
-                <BarChart3 className="w-5 h-5 text-brand-gold" />
-                Visão Geral do Sistema
+              <CardTitle className="flex items-center gap-2">
+                <TrendingUp className="w-5 h-5 text-brand-gold" />
+                Atividades Recentes
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
-              <div className="space-y-3">
-                <div className="flex justify-between items-center">
-                  <span className="text-gray-600">Conteúdo Publicado</span>
-                  <span className="font-semibold text-gray-900">{stats.publishedPosts} posts</span>
-                </div>
-                <div className="flex justify-between items-center">
-                  <span className="text-gray-600">Soluções Disponíveis</span>
-                  <span className="font-semibold text-gray-900">{stats.totalSolutions} soluções</span>
-                </div>
-                <div className="flex justify-between items-center">
-                  <span className="text-gray-600">Administradores Ativos</span>
-                  <span className="font-semibold text-gray-900">{stats.totalUsers} usuários</span>
-                </div>
-              </div>
+              {recentActivities.map((activity, index) => {
+                const IconComponent = activity.icon;
+                return (
+                  <div key={index} className="flex items-center gap-4 p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
+                    <div className="p-2 bg-white rounded-full shadow-sm">
+                      <IconComponent className="w-4 h-4 text-brand-gold" />
+                    </div>
+                    <div className="flex-1">
+                      <p className="text-sm font-medium text-gray-900">{activity.message}</p>
+                      <p className="text-xs text-gray-500">{activity.time}</p>
+                    </div>
+                  </div>
+                );
+              })}
             </CardContent>
           </Card>
 
           <Card className="shadow-lg border-0">
             <CardHeader>
-              <CardTitle className="flex items-center gap-2 text-gray-900">
-                <Settings className="w-5 h-5 text-brand-gold" />
-                Ações Rápidas
+              <CardTitle className="flex items-center gap-2">
+                <BarChart3 className="w-5 h-5 text-brand-gold" />
+                Resumo do Sistema
               </CardTitle>
             </CardHeader>
-            <CardContent>
+            <CardContent className="space-y-4">
               <div className="space-y-3">
-                <button className="w-full text-left p-3 rounded-lg bg-gray-50 hover:bg-gray-100 transition-colors">
-                  <div className="font-medium text-gray-900">Backup do Sistema</div>
-                  <div className="text-sm text-gray-600">Fazer backup dos dados</div>
-                </button>
-                <button className="w-full text-left p-3 rounded-lg bg-gray-50 hover:bg-gray-100 transition-colors">
-                  <div className="font-medium text-gray-900">Relatórios</div>
-                  <div className="text-sm text-gray-600">Gerar relatórios de uso</div>
-                </button>
-                <button className="w-full text-left p-3 rounded-lg bg-gray-50 hover:bg-gray-100 transition-colors">
-                  <div className="font-medium text-gray-900">Configurações</div>
-                  <div className="text-sm text-gray-600">Ajustar configurações do sistema</div>
-                </button>
+                <div className="flex items-center justify-between p-3 bg-blue-50 rounded-lg">
+                  <span className="text-sm font-medium text-gray-700">Taxa de Soluções Ativas</span>
+                  <span className="text-lg font-bold text-blue-600">
+                    {stats.solutions > 0 ? Math.round((stats.activeSolutions / stats.solutions) * 100) : 0}%
+                  </span>
+                </div>
+                <div className="flex items-center justify-between p-3 bg-green-50 rounded-lg">
+                  <span className="text-sm font-medium text-gray-700">Total de Conteúdo</span>
+                  <span className="text-lg font-bold text-green-600">{stats.posts + stats.solutions}</span>
+                </div>
+                <div className="flex items-center justify-between p-3 bg-purple-50 rounded-lg">
+                  <span className="text-sm font-medium text-gray-700">Administradores Ativos</span>
+                  <span className="text-lg font-bold text-purple-600">{stats.users}</span>
+                </div>
               </div>
             </CardContent>
           </Card>

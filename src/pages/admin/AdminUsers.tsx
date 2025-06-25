@@ -1,6 +1,7 @@
 
 import { useState, useEffect } from 'react';
 import AdminLayout from '@/components/admin/AdminLayout';
+import UserModal from '@/components/admin/UserModal';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -11,26 +12,33 @@ import {
   Users, 
   Plus, 
   Search, 
-  Mail, 
-  Calendar,
+  Edit,
   Shield,
-  UserCheck,
-  UserX
+  Calendar,
+  Mail,
+  CheckCircle,
+  XCircle,
+  UserCheck
 } from 'lucide-react';
 
-interface AdminProfile {
+interface AdminUser {
   id: string;
-  email: string;
   name: string;
+  email: string;
   role: string;
   is_active: boolean;
   created_at: string;
+  updated_at: string;
+  user_id: string;
 }
 
 const AdminUsers = () => {
-  const [users, setUsers] = useState<AdminProfile[]>([]);
+  const [users, setUsers] = useState<AdminUser[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
+  const [modalOpen, setModalOpen] = useState(false);
+  const [selectedUser, setSelectedUser] = useState<AdminUser | null>(null);
+  const [modalMode, setModalMode] = useState<'create' | 'edit'>('create');
   const { toast } = useToast();
 
   useEffect(() => {
@@ -50,7 +58,7 @@ const AdminUsers = () => {
       toast({
         variant: "destructive",
         title: "Erro ao carregar usuários",
-        description: "Não foi possível carregar a lista de usuários.",
+        description: "Não foi possível carregar a lista de administradores.",
       });
     } finally {
       setLoading(false);
@@ -80,10 +88,25 @@ const AdminUsers = () => {
     }
   };
 
+  const handleNewUser = () => {
+    setSelectedUser(null);
+    setModalMode('create');
+    setModalOpen(true);
+  };
+
+  const handleEditUser = (user: AdminUser) => {
+    setSelectedUser(user);
+    setModalMode('edit');
+    setModalOpen(true);
+  };
+
   const filteredUsers = users.filter(user =>
-    user.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    user.name.toLowerCase().includes(searchTerm.toLowerCase())
+    user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    user.email.toLowerCase().includes(searchTerm.toLowerCase())
   );
+
+  const activeCount = users.filter(user => user.is_active).length;
+  const inactiveCount = users.filter(user => !user.is_active).length;
 
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString('pt-BR', {
@@ -91,6 +114,28 @@ const AdminUsers = () => {
       month: '2-digit',
       year: 'numeric'
     });
+  };
+
+  const getRoleLabel = (role: string) => {
+    switch (role) {
+      case 'super_admin':
+        return 'Super Admin';
+      case 'admin':
+        return 'Administrador';
+      default:
+        return role;
+    }
+  };
+
+  const getRoleColor = (role: string) => {
+    switch (role) {
+      case 'super_admin':
+        return 'bg-red-100 text-red-800';
+      case 'admin':
+        return 'bg-blue-100 text-blue-800';
+      default:
+        return 'bg-gray-100 text-gray-800';
+    }
   };
 
   if (loading) {
@@ -117,22 +162,25 @@ const AdminUsers = () => {
               Gerenciar Usuários
             </h1>
             <p className="text-gray-600 mt-2">
-              Gerencie usuários administrativos do sistema
+              Administre os usuários do sistema administrativo
             </p>
           </div>
-          <Button className="bg-gradient-to-r from-brand-gold to-brand-gold-light hover:from-brand-gold-dark hover:to-brand-gold text-brand-black font-semibold shadow-lg hover:shadow-xl transition-all duration-200">
+          <Button 
+            onClick={handleNewUser}
+            className="bg-gradient-to-r from-brand-gold to-brand-gold-light hover:from-brand-gold-dark hover:to-brand-gold text-brand-black font-semibold shadow-lg hover:shadow-xl transition-all duration-200"
+          >
             <Plus className="w-4 h-4 mr-2" />
             Novo Usuário
           </Button>
         </div>
 
         {/* Search and Stats */}
-        <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
-          <div className="lg:col-span-3">
+        <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-4 gap-6">
+          <div className="lg:col-span-2">
             <div className="relative">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
               <Input
-                placeholder="Buscar por email ou nome..."
+                placeholder="Buscar usuários..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className="pl-10 bg-white border-gray-300 focus:border-brand-gold focus:ring-brand-gold"
@@ -142,8 +190,16 @@ const AdminUsers = () => {
           <Card className="shadow-lg border-0">
             <CardContent className="p-4">
               <div className="text-center">
-                <div className="text-2xl font-bold text-gray-900">{users.length}</div>
-                <div className="text-sm text-gray-600">Total de usuários</div>
+                <div className="text-2xl font-bold text-green-600">{activeCount}</div>
+                <div className="text-sm text-gray-600">Ativos</div>
+              </div>
+            </CardContent>
+          </Card>
+          <Card className="shadow-lg border-0">
+            <CardContent className="p-4">
+              <div className="text-center">
+                <div className="text-2xl font-bold text-red-600">{inactiveCount}</div>
+                <div className="text-sm text-gray-600">Inativos</div>
               </div>
             </CardContent>
           </Card>
@@ -153,8 +209,8 @@ const AdminUsers = () => {
         <Card className="shadow-lg border-0">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              <Shield className="w-5 h-5 text-brand-gold" />
-              Usuários Administrativos
+              <UserCheck className="w-5 h-5 text-brand-gold" />
+              Administradores do Sistema
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -167,51 +223,73 @@ const AdminUsers = () => {
                 <p className="text-gray-600">
                   {searchTerm 
                     ? 'Tente usar outros termos de busca.' 
-                    : 'Adicione o primeiro usuário administrativo.'}
+                    : 'Adicione o primeiro administrador ao sistema.'}
                 </p>
               </div>
             ) : (
-              <div className="space-y-4">
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 {filteredUsers.map((user) => (
                   <div
                     key={user.id}
-                    className="flex items-center justify-between p-4 bg-gray-50 rounded-xl hover:bg-gray-100 transition-colors"
+                    className="p-6 bg-gray-50 rounded-xl hover:bg-gray-100 transition-colors border-l-4 border-brand-gold"
                   >
-                    <div className="flex items-center space-x-4">
-                      <div className={`p-3 rounded-full ${user.is_active ? 'bg-green-100' : 'bg-red-100'}`}>
-                        {user.is_active ? (
-                          <UserCheck className={`w-5 h-5 text-green-600`} />
-                        ) : (
-                          <UserX className={`w-5 h-5 text-red-600`} />
-                        )}
-                      </div>
-                      <div>
-                        <h3 className="font-semibold text-gray-900">{user.name}</h3>
-                        <div className="flex items-center gap-2 text-sm text-gray-600">
-                          <Mail className="w-4 h-4" />
-                          {user.email}
+                    <div className="flex items-start justify-between mb-4">
+                      <div className="flex items-center gap-3">
+                        <div className="p-2 bg-white rounded-full shadow-sm">
+                          {user.is_active ? (
+                            <CheckCircle className="w-5 h-5 text-green-600" />
+                          ) : (
+                            <XCircle className="w-5 h-5 text-red-600" />
+                          )}
                         </div>
-                        <div className="flex items-center gap-2 text-sm text-gray-600 mt-1">
-                          <Calendar className="w-4 h-4" />
-                          Criado em {formatDate(user.created_at)}
+                        <div>
+                          <h3 className="text-lg font-semibold text-gray-900">{user.name}</h3>
+                          <div className="flex items-center gap-2 mt-1">
+                            <Mail className="w-4 h-4 text-gray-400" />
+                            <span className="text-sm text-gray-600">{user.email}</span>
+                          </div>
                         </div>
                       </div>
-                    </div>
-                    <div className="flex items-center space-x-3">
-                      <Badge variant={user.role === 'admin' ? 'default' : 'secondary'}>
-                        {user.role === 'admin' ? 'Administrador' : 'Usuário'}
-                      </Badge>
-                      <Badge variant={user.is_active ? 'default' : 'destructive'}>
+                      <Badge 
+                        variant={user.is_active ? 'default' : 'destructive'}
+                        className="text-xs"
+                      >
                         {user.is_active ? 'Ativo' : 'Inativo'}
                       </Badge>
-                      <Button
-                        size="sm"
-                        variant={user.is_active ? 'destructive' : 'default'}
-                        onClick={() => toggleUserStatus(user.id, user.is_active)}
-                        className="shadow-md hover:shadow-lg transition-all duration-200"
-                      >
-                        {user.is_active ? 'Desativar' : 'Ativar'}
-                      </Button>
+                    </div>
+                    
+                    <div className="mb-4">
+                      <div className="flex items-center gap-2">
+                        <Shield className="w-4 h-4 text-brand-gold" />
+                        <span className={`text-xs px-2 py-1 rounded-full font-medium ${getRoleColor(user.role)}`}>
+                          {getRoleLabel(user.role)}
+                        </span>
+                      </div>
+                    </div>
+
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-1 text-sm text-gray-500">
+                        <Calendar className="w-4 h-4" />
+                        {formatDate(user.created_at)}
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <Button 
+                          size="sm" 
+                          variant="outline" 
+                          onClick={() => handleEditUser(user)}
+                          className="shadow-md hover:shadow-lg transition-all duration-200"
+                        >
+                          <Edit className="w-4 h-4" />
+                        </Button>
+                        <Button
+                          size="sm"
+                          variant={user.is_active ? 'destructive' : 'default'}
+                          onClick={() => toggleUserStatus(user.id, user.is_active)}
+                          className="shadow-md hover:shadow-lg transition-all duration-200"
+                        >
+                          {user.is_active ? 'Desativar' : 'Ativar'}
+                        </Button>
+                      </div>
                     </div>
                   </div>
                 ))}
@@ -219,6 +297,15 @@ const AdminUsers = () => {
             )}
           </CardContent>
         </Card>
+
+        {/* User Modal */}
+        <UserModal
+          isOpen={modalOpen}
+          onClose={() => setModalOpen(false)}
+          onSuccess={fetchUsers}
+          user={selectedUser}
+          mode={modalMode}
+        />
       </div>
     </AdminLayout>
   );

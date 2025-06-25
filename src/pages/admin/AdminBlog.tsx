@@ -1,5 +1,7 @@
+
 import { useState, useEffect } from 'react';
 import AdminLayout from '@/components/admin/AdminLayout';
+import BlogPostModal from '@/components/admin/BlogPostModal';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -38,6 +40,9 @@ const AdminBlog = () => {
   const [posts, setPosts] = useState<BlogPost[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
+  const [modalOpen, setModalOpen] = useState(false);
+  const [selectedPost, setSelectedPost] = useState<BlogPost | null>(null);
+  const [modalMode, setModalMode] = useState<'create' | 'edit' | 'view'>('create');
   const { toast } = useToast();
 
   useEffect(() => {
@@ -89,6 +94,24 @@ const AdminBlog = () => {
     }
   };
 
+  const handleNewPost = () => {
+    setSelectedPost(null);
+    setModalMode('create');
+    setModalOpen(true);
+  };
+
+  const handleViewPost = (post: BlogPost) => {
+    setSelectedPost(post);
+    setModalMode('view');
+    setModalOpen(true);
+  };
+
+  const handleEditPost = (post: BlogPost) => {
+    setSelectedPost(post);
+    setModalMode('edit');
+    setModalOpen(true);
+  };
+
   const filteredPosts = posts.filter(post =>
     post.title.toLowerCase().includes(searchTerm.toLowerCase())
   );
@@ -138,7 +161,10 @@ const AdminBlog = () => {
               Crie e gerencie artigos do blog
             </p>
           </div>
-          <Button className="bg-gradient-to-r from-brand-gold to-brand-gold-light hover:from-brand-gold-dark hover:to-brand-gold text-brand-black font-semibold shadow-lg hover:shadow-xl transition-all duration-200">
+          <Button 
+            onClick={handleNewPost}
+            className="bg-gradient-to-r from-brand-gold to-brand-gold-light hover:from-brand-gold-dark hover:to-brand-gold text-brand-black font-semibold shadow-lg hover:shadow-xl transition-all duration-200"
+          >
             <Plus className="w-4 h-4 mr-2" />
             Novo Post
           </Button>
@@ -224,11 +250,21 @@ const AdminBlog = () => {
                         </div>
                       </div>
                       <div className="flex items-center space-x-2">
-                        <Button size="sm" variant="outline" className="shadow-md hover:shadow-lg transition-all duration-200">
+                        <Button 
+                          size="sm" 
+                          variant="outline" 
+                          onClick={() => handleViewPost(post)}
+                          className="shadow-md hover:shadow-lg transition-all duration-200"
+                        >
                           <Eye className="w-4 h-4 mr-1" />
                           Ver
                         </Button>
-                        <Button size="sm" variant="outline" className="shadow-md hover:shadow-lg transition-all duration-200">
+                        <Button 
+                          size="sm" 
+                          variant="outline" 
+                          onClick={() => handleEditPost(post)}
+                          className="shadow-md hover:shadow-lg transition-all duration-200"
+                        >
                           <Edit className="w-4 h-4 mr-1" />
                           Editar
                         </Button>
@@ -248,6 +284,15 @@ const AdminBlog = () => {
             )}
           </CardContent>
         </Card>
+
+        {/* Blog Post Modal */}
+        <BlogPostModal
+          isOpen={modalOpen}
+          onClose={() => setModalOpen(false)}
+          onSuccess={fetchPosts}
+          post={selectedPost}
+          mode={modalMode}
+        />
       </div>
     </AdminLayout>
   );

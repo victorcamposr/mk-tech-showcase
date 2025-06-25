@@ -1,5 +1,7 @@
+
 import { useState, useEffect } from 'react';
 import AdminLayout from '@/components/admin/AdminLayout';
+import SolutionModal from '@/components/admin/SolutionModal';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -39,6 +41,9 @@ const AdminSolutions = () => {
   const [solutions, setSolutions] = useState<Solution[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
+  const [modalOpen, setModalOpen] = useState(false);
+  const [selectedSolution, setSelectedSolution] = useState<Solution | null>(null);
+  const [modalMode, setModalMode] = useState<'create' | 'edit' | 'view'>('create');
   const { toast } = useToast();
 
   useEffect(() => {
@@ -90,6 +95,24 @@ const AdminSolutions = () => {
     }
   };
 
+  const handleNewSolution = () => {
+    setSelectedSolution(null);
+    setModalMode('create');
+    setModalOpen(true);
+  };
+
+  const handleViewSolution = (solution: Solution) => {
+    setSelectedSolution(solution);
+    setModalMode('view');
+    setModalOpen(true);
+  };
+
+  const handleEditSolution = (solution: Solution) => {
+    setSelectedSolution(solution);
+    setModalMode('edit');
+    setModalOpen(true);
+  };
+
   const filteredSolutions = solutions.filter(solution =>
     solution.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
     solution.key.toLowerCase().includes(searchTerm.toLowerCase())
@@ -138,7 +161,10 @@ const AdminSolutions = () => {
               Gerencie o catálogo de soluções da empresa
             </p>
           </div>
-          <Button className="bg-gradient-to-r from-brand-gold to-brand-gold-light hover:from-brand-gold-dark hover:to-brand-gold text-brand-black font-semibold shadow-lg hover:shadow-xl transition-all duration-200">
+          <Button 
+            onClick={handleNewSolution}
+            className="bg-gradient-to-r from-brand-gold to-brand-gold-light hover:from-brand-gold-dark hover:to-brand-gold text-brand-black font-semibold shadow-lg hover:shadow-xl transition-all duration-200"
+          >
             <Plus className="w-4 h-4 mr-2" />
             Nova Solução
           </Button>
@@ -249,10 +275,20 @@ const AdminSolutions = () => {
                         {formatDate(solution.created_at)}
                       </div>
                       <div className="flex items-center space-x-2">
-                        <Button size="sm" variant="outline" className="shadow-md hover:shadow-lg transition-all duration-200">
+                        <Button 
+                          size="sm" 
+                          variant="outline" 
+                          onClick={() => handleViewSolution(solution)}
+                          className="shadow-md hover:shadow-lg transition-all duration-200"
+                        >
                           <Eye className="w-4 h-4" />
                         </Button>
-                        <Button size="sm" variant="outline" className="shadow-md hover:shadow-lg transition-all duration-200">
+                        <Button 
+                          size="sm" 
+                          variant="outline" 
+                          onClick={() => handleEditSolution(solution)}
+                          className="shadow-md hover:shadow-lg transition-all duration-200"
+                        >
                           <Edit className="w-4 h-4" />
                         </Button>
                         <Button
@@ -271,6 +307,15 @@ const AdminSolutions = () => {
             )}
           </CardContent>
         </Card>
+
+        {/* Solution Modal */}
+        <SolutionModal
+          isOpen={modalOpen}
+          onClose={() => setModalOpen(false)}
+          onSuccess={fetchSolutions}
+          solution={selectedSolution}
+          mode={modalMode}
+        />
       </div>
     </AdminLayout>
   );
