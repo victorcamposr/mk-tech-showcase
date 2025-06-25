@@ -7,21 +7,21 @@ export const SOLUTION_IMAGES = {
   
   // Imagens dos cards das soluções na página principal
   cards: {
-    'pdv-frente-caixa': 'https://media.discordapp.net/attachments/1383147272442744954/1385703039301849158/df8aa13f-f327-44cd-a2f7-dcb05da3ae90.png?ex=68570805&is=6855b685&hm=5d0b5aa92f60247f9695a224633991a2904da267aebce5179cf3d93b783c10e2&=&format=webp&quality=lossless&width=1376&height=917',
-    'mesas-comandas': 'https://media.discordapp.net/attachments/1383147272442744954/1385660144771141683/ChatGPT_Image_20_de_jun._de_2025_13_37_47.png?ex=6856e012&is=68558e92&hm=aa64526918f6004b6c6f93f9ce1c09c0a6a4c228b429e0f18bb78b2badc13252&=&format=webp&quality=lossless&width=1376&height=917',
-    'cardapio-digital': 'https://media.discordapp.net/attachments/1383147272442744954/1385658129722769448/Screenshot_19.png?ex=6856de32&is=68558cb2&hm=b673c16367892300f41b9de26b7bbb583014971ccf24b8ef908100db2d978605&=&format=webp&quality=lossless&width=1872&height=769',
-    'maquininhas-cartao': 'https://media.discordapp.net/attachments/1383147272442744954/1385726446844117083/ChatGPT_Image_20_de_jun._de_2025_18_02_02.png?ex=68571dd2&is=6855cc52&hm=573d77523cec2a384e9691e7268cb7800e944153c00713da84f0fc6c6905cabe&=&format=webp&quality=lossless&width=1376&height=917',
-    'controle-motoboys': 'https://media.discordapp.net/attachments/1383147272442744954/1385729208592109820/SISFOOD-Gestao-Motoboys.jpg?ex=68572064&is=6855cee4&hm=b629d57f05372dc0a46333b991ba85b7b417dc7f2b47eda4099719eb867f319e&=&format=webp',
-    'integracoes': 'https://plus.unsplash.com/premium_photo-1683492749168-ee69f4d90193?q=80&w=784&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
-    'gestao-analise': 'https://images.unsplash.com/photo-1556155092-490a1ba16284?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
-    'robo-whatsapp': 'https://media.discordapp.net/attachments/1383147272442744954/1385710369183629322/eyestetix-studio-Gj3OsJseh9c-unsplash.jpg?ex=68570ed9&is=6855bd59&hm=d0df4d057e151faae35e447f583d9de628a55d4e0e855e8e61308836d187796f&=&format=webp&width=960&height=960',
-    'nota-fiscal': 'https://www.tagplus.com.br/assets/pages/nota_fiscal_eletronica/nfe-icn-c2461c11f3235898d3d43449c301e6250f88fd43d427e117c419136ec1fb63c9.png',
-    'auto-atendimento': 'https://media.discordapp.net/attachments/1383147272442744954/1385768146820136987/image.png?ex=685744a8&is=6855f328&hm=74dd5e8f821706ea214e0b2a15f2eaf6ceafbb0fe8c50fcb08f6078671652e30&=&format=webp&quality=lossless&width=396&height=350',
-    'marketing-vendas': 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?q=80&w=1115&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
-    'pagamento-tef': 'https://images.unsplash.com/photo-1556740714-a8395b3bf30f?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
-    'franquias-filiais': 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
-    'autoatendimento-tablet': 'https://media.discordapp.net/attachments/1383147272442744954/1385727954843205844/ChatGPT_Image_20_de_jun._de_2025_18_08_00.png?ex=68571f3a&is=6855cdba&hm=2a4bcc2da747a04cbbec281a736c8034ae5ff34cfdb8b8ebc76319479e34e41f&=&format=webp&quality=lossless&width=1376&height=917',
-    'sistema-revendas-gas-agua': 'https://media.discordapp.net/attachments/1344495704176984086/1386689110361505864/491496857_18124165051440724_545604413030646109_na.jpg?ex=685a9e5f&is=68594cdf&hm=b69958d5cd6776a640ff27ddc474ee8b8b76e728936c57831eb23eee2e22a8b1&=&format=webp&width=685&height=856',
+    'pdv-frente-caixa': '/lovable-uploads/onpdv.png',
+    'mesas-comandas': '/lovable-uploads/gestaomesa.png',
+    'cardapio-digital': '/lovable-uploads/cardapio.png',
+    'maquininhas-cartao': '/lovable-uploads/maquina.png',
+    'controle-motoboys': '/lovable-uploads/gestaomotoboy.jpg',
+    'integracoes': '/lovable-uploads/integracoes.jpeg',
+    'gestao-analise': '/lovable-uploads/gestaoanalikse.jpeg',
+    'robo-whatsapp': '/lovable-uploads/whatsapp.jpg',
+    'nota-fiscal': '/lovable-uploads/nfe.png',
+    'auto-atendimento': '/lovable-uploads/qualseupedido.jpg',
+    'marketing-vendas': '/lovable-uploads/marketing.jpeg',
+    'pagamento-tef': '/lovable-uploads/tef.jpeg',
+    'franquias-filiais': '/lovable-uploads/franquias.jpeg',
+    'autoatendimento-tablet': '/lovable-uploads/tabletmesa.png',
+    'sistema-revendas-gas-agua': '/lovable-uploads/maia.jpg',
   }
 };
 
