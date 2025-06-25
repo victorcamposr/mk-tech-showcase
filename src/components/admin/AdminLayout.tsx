@@ -83,16 +83,17 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
   const SidebarContent = () => (
     <>
       <div className="flex-1 h-0 pt-5 pb-4 overflow-y-auto">
-        <div className="flex-shrink-0 flex items-center px-4 mb-8">
+        {/* Logo section with black background */}
+        <div className="bg-black mx-4 mb-8 rounded-lg p-4">
           <div className="flex items-center">
-            <div className="w-12 h-12 rounded-xl shadow-lg mr-4 bg-white p-1">
+            <div className="w-12 h-12 rounded-xl shadow-lg mr-4 bg-white p-1 flex-shrink-0">
               <img 
                 src="/lovable-uploads/894786af-af73-492e-ae6a-d8a39e0ac4cb.png" 
                 alt="MK Sistemas Logo" 
                 className="w-full h-full rounded-lg object-contain"
               />
             </div>
-            <div className="bg-black px-3 py-2 rounded-lg">
+            <div>
               <h1 className="text-xl font-bold text-white">
                 MK Admin
               </h1>
@@ -100,6 +101,8 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
             </div>
           </div>
         </div>
+
+        {/* Navigation */}
         <nav className="flex-1 px-4 space-y-2">
           {navigation.map((item) => {
             const Icon = item.icon;
@@ -110,36 +113,37 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
                 to={item.href}
                 className={`group flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-all duration-200 ${
                   active
-                    ? 'bg-gray-100 text-gray-900 border border-gray-200 shadow-sm'
+                    ? 'bg-blue-50 text-blue-700 border border-blue-200 shadow-sm'
                     : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
                 }`}
                 onClick={() => setSidebarOpen(false)}
               >
                 <div className={`mr-3 w-7 h-7 rounded-md flex items-center justify-center ${
-                  active ? 'bg-gray-200' : 'bg-gray-100'
+                  active ? 'bg-blue-100' : 'bg-gray-100'
                 }`}>
                   <Icon className="h-4 w-4" />
                 </div>
                 {item.name}
                 {active && (
-                  <div className="ml-auto w-2 h-2 bg-gray-400 rounded-full"></div>
+                  <div className="ml-auto w-2 h-2 bg-blue-500 rounded-full"></div>
                 )}
               </Link>
             );
           })}
         </nav>
       </div>
+
+      {/* User Profile Section */}
       <div className="flex-shrink-0 border-t border-gray-100 p-4 space-y-3">
-        {/* User Profile Section */}
         <div className="flex items-center space-x-3 p-3 bg-gray-50 rounded-lg">
-          <div className="w-10 h-10 bg-gray-200 rounded-full flex items-center justify-center">
-            <User className="h-5 w-5 text-gray-600" />
+          <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
+            <User className="h-5 w-5 text-blue-600" />
           </div>
           <div className="flex-1 min-w-0">
             <p className="text-sm font-semibold text-gray-900 truncate">
               {adminProfile?.name || 'Administrador'}
             </p>
-            <p className="text-xs text-gray-500 uppercase tracking-wide font-medium">
+            <p className="text-xs text-blue-600 uppercase tracking-wide font-medium">
               {adminProfile?.role === 'super_admin' ? 'Super Admin' : 'Administrador'}
             </p>
           </div>

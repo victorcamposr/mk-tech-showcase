@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import AdminLayout from '@/components/admin/AdminLayout';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -212,8 +211,8 @@ const AdminSolutions = () => {
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-3xl font-bold text-gray-900 flex items-center gap-3">
-              <div className="w-10 h-10 bg-gray-100 rounded-lg flex items-center justify-center">
-                <Lightbulb className="w-6 h-6 text-gray-600" />
+              <div className="w-10 h-10 bg-gradient-to-r from-orange-500 to-red-500 rounded-lg flex items-center justify-center">
+                <Lightbulb className="w-6 h-6 text-white" />
               </div>
               Gerenciar Soluções
             </h1>
@@ -232,7 +231,7 @@ const AdminSolutions = () => {
             </Button>
             <Button
               onClick={handleCreate}
-              className="bg-gray-900 hover:bg-gray-800 text-white font-medium"
+              className="bg-blue-600 hover:bg-blue-700 text-white font-medium shadow-lg"
             >
               <Plus className="w-4 h-4 mr-2" />
               Nova Solução
@@ -241,16 +240,16 @@ const AdminSolutions = () => {
         </div>
 
         {/* Filters */}
-        <Card className="shadow-sm border border-gray-200">
-          <CardHeader>
+        <Card className="shadow-lg border-0">
+          <CardHeader className="bg-gradient-to-r from-gray-50 to-gray-100 border-b border-gray-200">
             <CardTitle className="flex items-center gap-2 text-gray-900">
-              <div className="w-8 h-8 bg-gray-100 rounded-lg flex items-center justify-center">
-                <Filter className="w-4 h-4 text-gray-600" />
+              <div className="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center">
+                <Filter className="w-4 h-4 text-blue-600" />
               </div>
               Filtros
             </CardTitle>
           </CardHeader>
-          <CardContent>
+          <CardContent className="p-6">
             <div className="flex flex-col sm:flex-row gap-4">
               <div className="flex-1">
                 <div className="relative">
@@ -259,7 +258,7 @@ const AdminSolutions = () => {
                     placeholder="Buscar por título, descrição ou chave..."
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
-                    className="pl-10 border-gray-300 focus:border-gray-500 focus:ring-gray-500"
+                    className="pl-10 border-gray-300 focus:border-blue-500 focus:ring-blue-500"
                   />
                 </div>
               </div>
@@ -267,7 +266,7 @@ const AdminSolutions = () => {
                 <Button
                   variant={statusFilter === 'all' ? 'default' : 'outline'}
                   onClick={() => setStatusFilter('all')}
-                  className={statusFilter === 'all' ? 'bg-gray-900 hover:bg-gray-800 text-white' : 'border-gray-300 text-gray-600 hover:bg-gray-50'}
+                  className={statusFilter === 'all' ? 'bg-blue-600 hover:bg-blue-700 text-white' : 'border-gray-300 text-gray-600 hover:bg-gray-50'}
                 >
                   Todas
                 </Button>
@@ -290,135 +289,134 @@ const AdminSolutions = () => {
           </CardContent>
         </Card>
 
-        {/* Solutions Grid */}
-        <div>
-          {loading ? (
-            <div className="text-center py-12">
-              <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-gray-900 mx-auto"></div>
-              <p className="mt-4 text-gray-600">Carregando soluções...</p>
-            </div>
-          ) : filteredSolutions.length === 0 ? (
-            <div className="text-center py-12">
-              <Lightbulb className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-              <h3 className="text-xl font-medium text-gray-900 mb-2">
-                {searchTerm || statusFilter !== 'all' ? 'Nenhuma solução encontrada' : 'Nenhuma solução cadastrada'}
-              </h3>
-              <p className="text-gray-600 mb-6">
-                {searchTerm || statusFilter !== 'all' 
-                  ? 'Tente ajustar os filtros para encontrar o que procura.'
-                  : 'Comece criando sua primeira solução para o sistema.'
-                }
-              </p>
-              {!searchTerm && statusFilter === 'all' && (
-                <Button 
-                  onClick={handleCreate}
-                  className="bg-gray-900 hover:bg-gray-800 text-white font-medium"
-                >
-                  <Plus className="w-4 h-4 mr-2" />
-                  Criar Primeira Solução
-                </Button>
-              )}
-            </div>
-          ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {filteredSolutions.map((solution) => {
-                const Icon = getIcon(solution.icon_name);
-                return (
-                  <Card key={solution.id} className="relative overflow-hidden hover:shadow-md transition-shadow border border-gray-200">
-                    <CardContent className="p-6">
-                      {/* Status Badge */}
-                      <div className="absolute top-4 right-4">
-                        <Badge className={`${
-                          solution.status === 'active' 
-                            ? 'bg-green-100 text-green-800 border-green-200' 
-                            : 'bg-red-100 text-red-800 border-red-200'
-                        } border font-medium text-xs`}>
-                          {solution.status === 'active' ? 'Ativa' : 'Inativa'}
-                        </Badge>
-                      </div>
-
-                      {/* Icon and Title */}
-                      <div className="flex items-start gap-4 mb-4">
-                        <div className="w-12 h-12 bg-gray-100 rounded-lg flex items-center justify-center flex-shrink-0">
-                          <Icon className="w-6 h-6 text-gray-600" />
+        {/* Solutions List */}
+        <Card className="shadow-lg border-0">
+          <CardHeader className="bg-gradient-to-r from-gray-50 to-gray-100 border-b border-gray-200">
+            <CardTitle className="flex items-center justify-between text-gray-900">
+              <span>Soluções Cadastradas</span>
+              <Badge variant="outline" className="bg-blue-50 text-blue-700 border-blue-200">
+                {filteredSolutions.length} soluções
+              </Badge>
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="p-0">
+            {loading ? (
+              <div className="text-center py-12">
+                <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-blue-600 mx-auto"></div>
+                <p className="mt-4 text-gray-600">Carregando soluções...</p>
+              </div>
+            ) : filteredSolutions.length === 0 ? (
+              <div className="text-center py-12">
+                <Lightbulb className="w-16 h-16 text-gray-300 mx-auto mb-4" />
+                <h3 className="text-xl font-medium text-gray-900 mb-2">
+                  {searchTerm || statusFilter !== 'all' ? 'Nenhuma solução encontrada' : 'Nenhuma solução cadastrada'}
+                </h3>
+                <p className="text-gray-600 mb-6">
+                  {searchTerm || statusFilter !== 'all' 
+                    ? 'Tente ajustar os filtros para encontrar o que procura.'
+                    : 'Comece criando sua primeira solução para o sistema.'
+                  }
+                </p>
+                {!searchTerm && statusFilter === 'all' && (
+                  <Button 
+                    onClick={handleCreate}
+                    className="bg-blue-600 hover:bg-blue-700 text-white font-medium"
+                  >
+                    <Plus className="w-4 h-4 mr-2" />
+                    Criar Primeira Solução
+                  </Button>
+                )}
+              </div>
+            ) : (
+              <div className="divide-y divide-gray-100">
+                {filteredSolutions.map((solution) => {
+                  const Icon = getIcon(solution.icon_name);
+                  return (
+                    <div key={solution.id} className="p-6 hover:bg-gray-50 transition-colors">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center space-x-4 flex-1">
+                          <div className="w-12 h-12 bg-gradient-to-r from-blue-100 to-purple-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                            <Icon className="w-6 h-6 text-blue-600" />
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <div className="flex items-center gap-3 mb-2">
+                              <h3 className="text-lg font-semibold text-gray-900 truncate">
+                                {solution.title}
+                              </h3>
+                              <Badge className={`text-xs border ${
+                                solution.status === 'active' 
+                                  ? 'bg-green-100 text-green-800 border-green-200' 
+                                  : 'bg-red-100 text-red-800 border-red-200'
+                              }`}>
+                                {solution.status === 'active' ? 'Ativa' : 'Inativa'}
+                              </Badge>
+                              {solution.sort_order !== null && (
+                                <Badge variant="outline" className="text-xs border-gray-300 text-gray-600">
+                                  Ordem: {solution.sort_order}
+                                </Badge>
+                              )}
+                            </div>
+                            <p className="text-sm text-gray-500 font-mono bg-gray-100 px-2 py-1 rounded inline-block mb-2">
+                              {solution.key}
+                            </p>
+                            <p className="text-gray-600 text-sm line-clamp-2 mb-2">
+                              {solution.description}
+                            </p>
+                            {solution.features && solution.features.length > 0 && (
+                              <div className="flex flex-wrap gap-1 mb-2">
+                                {solution.features.slice(0, 3).map((feature, index) => (
+                                  <Badge key={index} variant="outline" className="text-xs border-blue-200 text-blue-700 bg-blue-50">
+                                    {feature}
+                                  </Badge>
+                                ))}
+                                {solution.features.length > 3 && (
+                                  <Badge variant="outline" className="text-xs border-gray-300 text-gray-600">
+                                    +{solution.features.length - 3}
+                                  </Badge>
+                                )}
+                              </div>
+                            )}
+                            <p className="text-xs text-gray-400">
+                              Criado em: {formatDate(solution.created_at)}
+                            </p>
+                          </div>
                         </div>
-                        <div className="flex-1 min-w-0">
-                          <h3 className="text-lg font-semibold text-gray-900 truncate mb-1">
-                            {solution.title}
-                          </h3>
-                          <p className="text-sm text-gray-500 font-mono bg-gray-50 px-2 py-1 rounded">
-                            {solution.key}
-                          </p>
+                        <div className="flex items-center gap-2 ml-4">
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => handleView(solution)}
+                            className="border-blue-200 text-blue-600 hover:bg-blue-50"
+                          >
+                            <Eye className="w-4 h-4 mr-1" />
+                            Ver
+                          </Button>
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => handleEdit(solution)}
+                            className="border-green-200 text-green-600 hover:bg-green-50"
+                          >
+                            <Edit className="w-4 h-4 mr-1" />
+                            Editar
+                          </Button>
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => handleDelete(solution)}
+                            className="border-red-200 text-red-600 hover:bg-red-50"
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </Button>
                         </div>
                       </div>
-
-                      {/* Description */}
-                      <p className="text-gray-600 text-sm mb-4 line-clamp-2">
-                        {solution.description}
-                      </p>
-
-                      {/* Features Tags */}
-                      {solution.features && solution.features.length > 0 && (
-                        <div className="flex flex-wrap gap-1 mb-4">
-                          {solution.features.slice(0, 3).map((feature, index) => (
-                            <Badge key={index} variant="outline" className="text-xs border-gray-300 text-gray-600">
-                              {feature}
-                            </Badge>
-                          ))}
-                          {solution.features.length > 3 && (
-                            <Badge variant="outline" className="text-xs border-gray-300 text-gray-600">
-                              +{solution.features.length - 3}
-                            </Badge>
-                          )}
-                        </div>
-                      )}
-
-                      {/* Action Buttons */}
-                      <div className="flex items-center gap-2 pt-4 border-t border-gray-100">
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={() => handleView(solution)}
-                          className="flex-1 border-gray-300 text-gray-600 hover:bg-gray-50"
-                        >
-                          <Eye className="w-4 h-4 mr-1" />
-                          Ver
-                        </Button>
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={() => handleEdit(solution)}
-                          className="flex-1 border-gray-300 text-gray-600 hover:bg-gray-50"
-                        >
-                          <Edit className="w-4 h-4 mr-1" />
-                          Editar
-                        </Button>
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={() => handleDelete(solution)}
-                          className="border-red-300 text-red-600 hover:bg-red-50"
-                        >
-                          <Trash2 className="w-4 h-4" />
-                        </Button>
-                      </div>
-
-                      {/* Metadata */}
-                      <div className="mt-4 pt-4 border-t border-gray-100">
-                        <div className="flex justify-between items-center text-xs text-gray-500">
-                          <span>Criado em: {formatDate(solution.created_at)}</span>
-                          {solution.sort_order !== null && (
-                            <span>Ordem: {solution.sort_order}</span>
-                          )}
-                        </div>
-                      </div>
-                    </CardContent>
-                  </Card>
-                );
-              })}
-            </div>
-          )}
-        </div>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+          </CardContent>
+        </Card>
       </div>
 
       <SolutionModal

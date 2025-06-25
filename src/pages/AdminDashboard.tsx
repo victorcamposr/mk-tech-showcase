@@ -2,27 +2,29 @@
 import { useState, useEffect } from 'react';
 import AdminLayout from '@/components/admin/AdminLayout';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
+import { Badge } from '@/components/ui/badge';
+import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import { 
   Users, 
+  MessageSquare, 
   FileText, 
-  Lightbulb, 
-  Activity,
+  Lightbulb,
   TrendingUp,
+  Activity,
   Calendar,
-  Clock,
-  Mail,
-  Filter,
-  RefreshCw,
+  ArrowRight,
   ChevronLeft,
   ChevronRight
 } from 'lucide-react';
-import { format, startOfDay, endOfDay } from 'date-fns';
-import { ptBR } from 'date-fns/locale';
+
+interface DashboardStats {
+  totalUsers: number;
+  totalContacts: number;
+  totalPosts: number;
+  totalSolutions: number;
+}
 
 interface RecentActivity {
   id: string;
@@ -33,162 +35,87 @@ interface RecentActivity {
   created_at: string;
 }
 
-interface DashboardStats {
-  totalUsers: number;
-  activeUsers: number;
-  totalPosts: number;
-  publishedPosts: number;
-  totalSolutions: number;
-  activeSolutions: number;
-  totalContacts: number;
-  unreadContacts: number;
-}
-
-const ITEMS_PER_PAGE = 10;
-
 const AdminDashboard = () => {
-  const [recentActivities, setRecentActivities] = useState<RecentActivity[]>([]);
-  const [filteredActivities, setFilteredActivities] = useState<RecentActivity[]>([]);
   const [stats, setStats] = useState<DashboardStats>({
     totalUsers: 0,
-    activeUsers: 0,
-    totalPosts: 0,
-    publishedPosts: 0,
-    totalSolutions: 0,
-    activeSolutions: 0,
     totalContacts: 0,
-    unreadContacts: 0,
+    totalPosts: 0,
+    totalSolutions: 0
   });
-  const [loading, setLoading] = useState(true);
-  const [refreshing, setRefreshing] = useState(false);
+  const [activities, setActivities] = useState<RecentActivity[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
-  const [dateFilter, setDateFilter] = useState({
-    startDate: '',
-    endDate: ''
-  });
+  const [totalActivities, setTotalActivities] = useState(0);
+  const [loading, setLoading] = useState(true);
+  const { toast } = useToast();
 
-  // Pagination calculations
-  const totalPages = Math.ceil(filteredActivities.length / ITEMS_PER_PAGE);
-  const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
-  const endIndex = startIndex + ITEMS_PER_PAGE;
-  const paginatedActivities = filteredActivities.slice(startIndex, endIndex);
+  const ACTIVITIES_PER_PAGE = 10;
 
   useEffect(() => {
     fetchDashboardData();
-  }, []);
-
-  useEffect(() => {
-    applyDateFilter();
-  }, [dateFilter, recentActivities]);
-
-  useEffect(() => {
-    setCurrentPage(1);
-  }, [filteredActivities]);
+    fetchActivities();
+  }, [currentPage]);
 
   const fetchDashboardData = async () => {
-    setLoading(true);
     try {
-      // Buscar estatísticas em paralelo
-      const [
-        activitiesResult,
-        usersResult,
-        postsResult,
-        solutionsResult,
-        contactsResult
-      ] = await Promise.all([
-        supabase
-          .from('admin_activities')
-          .select('*')
-          .order('created_at', { ascending: false })
-          .limit(50),
-        supabase
-          .from('admin_profiles')
-          .select('is_active'),
-        supabase
-          .from('blog_posts')
-          .select('status'),
-        supabase
-          .from('solutions')
-          .select('status'),
-        supabase
-          .from('contacts')
-          .select('read')
+      const [usersRes, contactsRes, postsRes, solutionsRes] = await Promise.all([
+        supabase.from('admin_profiles').select('id', { count: 'exact', head: true }),
+        supabase.from('contacts').select('id', { count: 'exact', head: true }),
+        supabase.from('blog_posts').select('id', { count: 'exact', head: true }),
+        supabase.from('solutions').select('id', { count: 'exact', head: true })
       ]);
 
-      if (activitiesResult.data) {
-        setRecentActivities(activitiesResult.data);
-      }
-
-      const users = usersResult.data || [];
-      const activeUsers = users.filter(user => user.is_active).length;
-
-      const posts = postsResult.data || [];
-      const publishedPosts = posts.filter(post => post.status === 'published').length;
-
-      const solutions = solutionsResult.data || [];
-      const activeSolutions = solutions.filter(solution => solution.status === 'active').length;
-
-      const contacts = contactsResult.data || [];
-      const unreadContacts = contacts.filter(contact => !contact.read).length;
-
       setStats({
-        totalUsers: users.length,
-        activeUsers,
-        totalPosts: posts.length,
-        publishedPosts,
-        totalSolutions: solutions.length,
-        activeSolutions,
-        totalContacts: contacts.length,
-        unreadContacts,
+        totalUsers: usersRes.count || 0,
+        totalContacts: contactsRes.count || 0,
+        totalPosts: postsRes.count || 0,
+        totalSolutions: solutionsRes.count || 0
       });
-
     } catch (error) {
-      console.error('Error fetching dashboard data:', error);
+      console.error('Error fetching dashboard stats:', error);
+      toast({
+        title: "Erro ao carregar estatísticas",
+        description: "Não foi possível carregar os dados do dashboard.",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const fetchActivities = async () => {
+    setLoading(true);
+    try {
+      const from = (currentPage - 1) * ACTIVITIES_PER_PAGE;
+      const to = from + ACTIVITIES_PER_PAGE - 1;
+
+      const { data, error, count } = await supabase
+        .from('admin_activities')
+        .select('*', { count: 'exact' })
+        .order('created_at', { ascending: false })
+        .range(from, to);
+
+      if (error) throw error;
+
+      setActivities(data || []);
+      setTotalActivities(count || 0);
+    } catch (error) {
+      console.error('Error fetching activities:', error);
+      toast({
+        title: "Erro ao carregar atividades",
+        description: "Não foi possível carregar as atividades recentes.",
+        variant: "destructive",
+      });
     } finally {
       setLoading(false);
     }
   };
 
-  const refreshData = async () => {
-    setRefreshing(true);
-    await fetchDashboardData();
-    setRefreshing(false);
-  };
-
-  const applyDateFilter = () => {
-    if (!dateFilter.startDate && !dateFilter.endDate) {
-      setFilteredActivities(recentActivities);
-      return;
-    }
-
-    const filtered = recentActivities.filter(activity => {
-      const activityDate = new Date(activity.created_at);
-      
-      if (dateFilter.startDate && dateFilter.endDate) {
-        const start = startOfDay(new Date(dateFilter.startDate));
-        const end = endOfDay(new Date(dateFilter.endDate));
-        return activityDate >= start && activityDate <= end;
-      } else if (dateFilter.startDate) {
-        const start = startOfDay(new Date(dateFilter.startDate));
-        return activityDate >= start;
-      } else if (dateFilter.endDate) {
-        const end = endOfDay(new Date(dateFilter.endDate));
-        return activityDate <= end;
-      }
-      
-      return true;
-    });
-
-    setFilteredActivities(filtered);
-  };
-
-  const clearDateFilter = () => {
-    setDateFilter({ startDate: '', endDate: '' });
-  };
-
   const formatDate = (dateString: string) => {
-    return format(new Date(dateString), "dd/MM/yyyy 'às' HH:mm", {
-      locale: ptBR
+    const date = new Date(dateString);
+    return date.toLocaleDateString('pt-BR', {
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
     });
   };
 
@@ -203,48 +130,49 @@ const AdminDashboard = () => {
 
   const getActionText = (action: string) => {
     switch (action) {
-      case 'create': return 'Criado';
-      case 'update': return 'Atualizado';  
-      case 'delete': return 'Excluído';
+      case 'create': return 'Criou';
+      case 'update': return 'Atualizou';
+      case 'delete': return 'Excluiu';
       default: return action;
     }
   };
 
-  const getEntityIcon = (entityType: string) => {
-    switch (entityType) {
-      case 'user': return <Users className="w-4 h-4" />;
-      case 'blog_post': return <FileText className="w-4 h-4" />;
-      case 'solution': return <Lightbulb className="w-4 h-4" />;
-      case 'contact': return <Mail className="w-4 h-4" />;
-      default: return <Activity className="w-4 h-4" />;
-    }
-  };
+  const totalPages = Math.ceil(totalActivities / ACTIVITIES_PER_PAGE);
 
-  const getEntityName = (entityType: string) => {
-    switch (entityType) {
-      case 'user': return 'Usuário';
-      case 'blog_post': return 'Post do blog';
-      case 'solution': return 'Solução';
-      case 'contact': return 'Mensagem de contato';
-      default: return entityType;
+  const statsCards = [
+    {
+      title: 'Total de Usuários',
+      value: stats.totalUsers,
+      icon: Users,
+      color: 'bg-blue-500',
+      change: '+12%',
+      changeType: 'positive'
+    },
+    {
+      title: 'Contatos Recebidos',
+      value: stats.totalContacts,
+      icon: MessageSquare,
+      color: 'bg-green-500',
+      change: '+18%',
+      changeType: 'positive'
+    },
+    {
+      title: 'Posts do Blog',
+      value: stats.totalPosts,
+      icon: FileText,
+      color: 'bg-purple-500',
+      change: '+5%',
+      changeType: 'positive'
+    },
+    {
+      title: 'Soluções Ativas',
+      value: stats.totalSolutions,
+      icon: Lightbulb,
+      color: 'bg-orange-500',
+      change: '+8%',
+      changeType: 'positive'
     }
-  };
-
-  const goToPage = (page: number) => {
-    setCurrentPage(page);
-  };
-
-  const goToPreviousPage = () => {
-    if (currentPage > 1) {
-      setCurrentPage(currentPage - 1);
-    }
-  };
-
-  const goToNextPage = () => {
-    if (currentPage < totalPages) {
-      setCurrentPage(currentPage + 1);
-    }
-  };
+  ];
 
   return (
     <AdminLayout>
@@ -253,190 +181,96 @@ const AdminDashboard = () => {
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-3xl font-bold text-gray-900 flex items-center gap-3">
-              <div className="w-10 h-10 bg-gray-100 rounded-lg flex items-center justify-center">
-                <TrendingUp className="w-6 h-6 text-gray-600" />
+              <div className="w-10 h-10 bg-gradient-to-r from-blue-500 to-purple-600 rounded-lg flex items-center justify-center">
+                <TrendingUp className="w-6 h-6 text-white" />
               </div>
-              Dashboard Administrativo
+              Dashboard
             </h1>
             <p className="text-gray-600 mt-2">
               Visão geral do sistema e atividades recentes
             </p>
           </div>
-          <Button
-            onClick={refreshData}
-            disabled={refreshing}
-            variant="outline"
-            className="border-gray-300 text-gray-600 hover:bg-gray-50"
-          >
-            <RefreshCw className={`w-4 h-4 mr-2 ${refreshing ? 'animate-spin' : ''}`} />
-            Atualizar
-          </Button>
         </div>
 
         {/* Stats Cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          <Card className="shadow-sm border border-gray-200 hover:shadow-md transition-shadow">
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium text-gray-600">
-                Usuários Administrativos
-              </CardTitle>
-              <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
-                <Users className="h-5 w-5 text-blue-600" />
-              </div>
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold text-gray-900">{stats.totalUsers}</div>
-              <p className="text-sm text-green-600 mt-1 font-medium">
-                {stats.activeUsers} ativos
-              </p>
-            </CardContent>
-          </Card>
-
-          <Card className="shadow-sm border border-gray-200 hover:shadow-md transition-shadow">
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium text-gray-600">
-                Posts do Blog
-              </CardTitle>
-              <div className="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center">
-                <FileText className="h-5 w-5 text-green-600" />
-              </div>
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold text-gray-900">{stats.totalPosts}</div>
-              <p className="text-sm text-green-600 mt-1 font-medium">
-                {stats.publishedPosts} publicados
-              </p>
-            </CardContent>
-          </Card>
-
-          <Card className="shadow-sm border border-gray-200 hover:shadow-md transition-shadow">
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium text-gray-600">
-                Soluções Ativas
-              </CardTitle>
-              <div className="w-10 h-10 bg-yellow-100 rounded-lg flex items-center justify-center">
-                <Lightbulb className="h-5 w-5 text-yellow-600" />
-              </div>
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold text-gray-900">{stats.totalSolutions}</div>
-              <p className="text-sm text-green-600 mt-1 font-medium">
-                {stats.activeSolutions} ativas
-              </p>
-            </CardContent>
-          </Card>
-
-          <Card className="shadow-sm border border-gray-200 hover:shadow-md transition-shadow">
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium text-gray-600">
-                Mensagens de Contato
-              </CardTitle>
-              <div className="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center">
-                <Mail className="h-5 w-5 text-purple-600" />
-              </div>
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold text-gray-900">{stats.totalContacts}</div>
-              <p className="text-sm text-orange-600 mt-1 font-medium">
-                {stats.unreadContacts} não lidas
-              </p>
-            </CardContent>
-          </Card>
+          {statsCards.map((stat, index) => {
+            const Icon = stat.icon;
+            return (
+              <Card key={index} className="relative overflow-hidden border-0 shadow-lg hover:shadow-xl transition-all duration-300 bg-white">
+                <CardContent className="p-6">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-sm font-medium text-gray-600 mb-1">{stat.title}</p>
+                      <p className="text-3xl font-bold text-gray-900">{stat.value}</p>
+                      <div className="flex items-center mt-2">
+                        <TrendingUp className="w-4 h-4 text-green-500 mr-1" />
+                        <span className="text-sm font-medium text-green-600">{stat.change}</span>
+                        <span className="text-sm text-gray-500 ml-1">vs mês anterior</span>
+                      </div>
+                    </div>
+                    <div className={`w-12 h-12 rounded-lg ${stat.color} flex items-center justify-center shadow-lg`}>
+                      <Icon className="w-6 h-6 text-white" />
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            );
+          })}
         </div>
 
         {/* Recent Activities */}
-        <Card className="shadow-sm border border-gray-200">
-          <CardHeader>
-            <div className="flex items-center justify-between">
-              <CardTitle className="flex items-center gap-2 text-gray-900">
-                <div className="w-8 h-8 bg-gray-100 rounded-lg flex items-center justify-center">
-                  <Activity className="w-4 h-4 text-gray-600" />
-                </div>
-                Atividades Recentes
-              </CardTitle>
-              <div className="flex items-center gap-4">
-                <div className="flex items-center gap-2">
-                  <Label htmlFor="startDate" className="text-sm font-medium">De:</Label>
-                  <Input
-                    id="startDate"
-                    type="date"
-                    value={dateFilter.startDate}
-                    onChange={(e) => setDateFilter(prev => ({ ...prev, startDate: e.target.value }))}
-                    className="w-auto border-gray-300"
-                  />
-                </div>
-                <div className="flex items-center gap-2">
-                  <Label htmlFor="endDate" className="text-sm font-medium">Até:</Label>
-                  <Input
-                    id="endDate"
-                    type="date"
-                    value={dateFilter.endDate}
-                    onChange={(e) => setDateFilter(prev => ({ ...prev, endDate: e.target.value }))}
-                    className="w-auto border-gray-300"
-                  />
-                </div>
-                {(dateFilter.startDate || dateFilter.endDate) && (
-                  <Button
-                    onClick={clearDateFilter}
-                    variant="outline"
-                    size="sm"
-                    className="text-gray-600 hover:text-gray-900 border-gray-300"
-                  >
-                    <Filter className="w-4 h-4 mr-1" />
-                    Limpar
-                  </Button>
-                )}
+        <Card className="shadow-lg border-0">
+          <CardHeader className="bg-gradient-to-r from-gray-50 to-gray-100 border-b border-gray-200">
+            <CardTitle className="flex items-center gap-3 text-gray-900">
+              <div className="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center">
+                <Activity className="w-4 h-4 text-blue-600" />
               </div>
-            </div>
+              Atividades Recentes
+              <Badge variant="outline" className="ml-auto bg-blue-50 text-blue-700 border-blue-200">
+                {totalActivities} total
+              </Badge>
+            </CardTitle>
           </CardHeader>
-          <CardContent>
+          <CardContent className="p-0">
             {loading ? (
-              <div className="text-center py-12">
-                <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-gray-900 mx-auto"></div>
+              <div className="p-8 text-center">
+                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500 mx-auto"></div>
                 <p className="mt-4 text-gray-600">Carregando atividades...</p>
               </div>
-            ) : filteredActivities.length === 0 ? (
-              <div className="text-center py-12">
-                <Clock className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-                <h3 className="text-xl font-medium text-gray-900 mb-2">
-                  {dateFilter.startDate || dateFilter.endDate 
-                    ? 'Nenhuma atividade encontrada no período' 
-                    : 'Nenhuma atividade recente'
-                  }
-                </h3>
-                <p className="text-gray-600">
-                  {dateFilter.startDate || dateFilter.endDate
-                    ? 'Tente ajustar o filtro de data para ver mais atividades.'
-                    : 'As atividades do sistema aparecerão aqui conforme forem realizadas.'
-                  }
-                </p>
+            ) : activities.length === 0 ? (
+              <div className="p-8 text-center">
+                <Activity className="w-12 h-12 text-gray-300 mx-auto mb-4" />
+                <p className="text-gray-500">Nenhuma atividade encontrada</p>
               </div>
             ) : (
               <>
-                <div className="space-y-4">
-                  {paginatedActivities.map((activity) => (
-                    <div key={activity.id} className="flex items-center justify-between p-4 bg-gray-50 rounded-lg border border-gray-200">
-                      <div className="flex items-center space-x-4">
-                        <div className="p-3 bg-white rounded-lg border border-gray-200">
-                          {getEntityIcon(activity.entity_type)}
-                        </div>
-                        <div>
-                          <div className="flex items-center gap-3 mb-1">
-                            <span className="font-semibold text-gray-900">
-                              {activity.entity_title}
-                            </span>
-                            <Badge className={`${getActionColor(activity.action_type)} border font-medium text-xs`}>
-                              {getActionText(activity.action_type)}
-                            </Badge>
+                <div className="divide-y divide-gray-100">
+                  {activities.map((activity, index) => (
+                    <div key={activity.id} className="p-4 hover:bg-gray-50 transition-colors">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center space-x-4">
+                          <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
+                            <Calendar className="w-5 h-5 text-blue-600" />
                           </div>
-                          <p className="text-sm text-gray-600">
-                            {getEntityName(activity.entity_type)} • por {activity.user_name || 'Admin'}
-                          </p>
+                          <div>
+                            <div className="flex items-center gap-2 mb-1">
+                              <Badge className={`text-xs border ${getActionColor(activity.action_type)}`}>
+                                {getActionText(activity.action_type)}
+                              </Badge>
+                              <span className="text-sm font-medium text-gray-900">
+                                {activity.entity_type}
+                              </span>
+                            </div>
+                            <p className="text-sm text-gray-600">
+                              <span className="font-medium">{activity.user_name}</span> {getActionText(activity.action_type).toLowerCase()} "{activity.entity_title}"
+                            </p>
+                            <p className="text-xs text-gray-400 mt-1">
+                              {formatDate(activity.created_at)}
+                            </p>
+                          </div>
                         </div>
-                      </div>
-                      <div className="flex items-center text-sm text-gray-500 bg-white px-3 py-2 rounded-lg border border-gray-200">
-                        <Calendar className="w-4 h-4 mr-2" />
-                        {formatDate(activity.created_at)}
+                        <ArrowRight className="w-4 h-4 text-gray-400" />
                       </div>
                     </div>
                   ))}
@@ -444,63 +278,33 @@ const AdminDashboard = () => {
 
                 {/* Pagination */}
                 {totalPages > 1 && (
-                  <div className="flex items-center justify-between mt-6 pt-6 border-t border-gray-200">
-                    <div className="text-sm text-gray-600">
-                      Mostrando {startIndex + 1} a {Math.min(endIndex, filteredActivities.length)} de {filteredActivities.length} atividades
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={goToPreviousPage}
-                        disabled={currentPage === 1}
-                        className="border-gray-300 text-gray-600 hover:bg-gray-50"
-                      >
-                        <ChevronLeft className="w-4 h-4 mr-1" />
-                        Anterior
-                      </Button>
-                      
-                      <div className="flex items-center gap-1">
-                        {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
-                          let pageNumber;
-                          if (totalPages <= 5) {
-                            pageNumber = i + 1;
-                          } else if (currentPage <= 3) {
-                            pageNumber = i + 1;
-                          } else if (currentPage >= totalPages - 2) {
-                            pageNumber = totalPages - 4 + i;
-                          } else {
-                            pageNumber = currentPage - 2 + i;
-                          }
-                          
-                          return (
-                            <Button
-                              key={pageNumber}
-                              variant={currentPage === pageNumber ? "default" : "outline"}
-                              size="sm"
-                              onClick={() => goToPage(pageNumber)}
-                              className={`w-8 h-8 p-0 ${
-                                currentPage === pageNumber 
-                                  ? 'bg-gray-900 text-white' 
-                                  : 'border-gray-300 text-gray-600 hover:bg-gray-50'
-                              }`}
-                            >
-                              {pageNumber}
-                            </Button>
-                          );
-                        })}
+                  <div className="p-4 border-t border-gray-100 bg-gray-50">
+                    <div className="flex items-center justify-between">
+                      <p className="text-sm text-gray-700">
+                        Página {currentPage} de {totalPages} ({totalActivities} atividades)
+                      </p>
+                      <div className="flex gap-2">
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+                          disabled={currentPage === 1}
+                          className="border-gray-300"
+                        >
+                          <ChevronLeft className="w-4 h-4 mr-1" />
+                          Anterior
+                        </Button>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
+                          disabled={currentPage === totalPages}
+                          className="border-gray-300"
+                        >
+                          Próxima
+                          <ChevronRight className="w-4 h-4 ml-1" />
+                        </Button>
                       </div>
-
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={goToNextPage}
-                        disabled={currentPage === totalPages}
-                        className="border-gray-300 text-gray-600 hover:bg-gray-50"
-                      >
-                        Próxima
-                        <ChevronRight className="w-4 h-4 ml-1" />
-                      </Button>
                     </div>
                   </div>
                 )}
