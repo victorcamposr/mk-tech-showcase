@@ -20,9 +20,7 @@ interface BlogPost {
   tags: string[];
   published_at: string;
   author_id: string;
-  admin_profiles: {
-    name: string;
-  };
+  author_name: string;
 }
 
 const Blog = () => {
@@ -31,20 +29,55 @@ const Blog = () => {
 
   useEffect(() => {
     const fetchPosts = async () => {
-      const { data, error } = await supabase
+      console.log('Fetching blog posts...');
+      
+      // Primeiro buscar os posts
+      const { data: postsData, error: postsError } = await supabase
         .from('blog_posts')
-        .select(`
-          *,
-          admin_profiles!inner(name)
-        `)
+        .select('*')
         .eq('status', 'published')
         .order('published_at', { ascending: false });
 
-      if (error) {
-        console.error('Error fetching blog posts:', error);
-      } else {
-        setPosts(data || []);
+      if (postsError) {
+        console.error('Error fetching blog posts:', postsError);
+        setLoading(false);
+        return;
       }
+
+      if (!postsData || postsData.length === 0) {
+        console.log('No blog posts found');
+        setPosts([]);
+        setLoading(false);
+        return;
+      }
+
+      // Buscar perfis dos autores separadamente
+      const authorIds = [...new Set(postsData.map(post => post.author_id))];
+      const { data: authorsData, error: authorsError } = await supabase
+        .from('admin_profiles')
+        .select('user_id, name')
+        .in('user_id', authorIds);
+
+      if (authorsError) {
+        console.error('Error fetching authors:', authorsError);
+        setLoading(false);
+        return;
+      }
+
+      // Combinar dados dos posts com nomes dos autores
+      const postsWithAuthors: BlogPost[] = postsData.map(post => ({
+        id: post.id,
+        title: post.title,
+        slug: post.slug,
+        excerpt: post.excerpt || '',
+        featured_image: post.featured_image || '',
+        tags: post.tags || [],
+        published_at: post.published_at || post.created_at,
+        author_id: post.author_id,
+        author_name: authorsData?.find(author => author.user_id === post.author_id)?.name || 'Autor Desconhecido'
+      }));
+
+      setPosts(postsWithAuthors);
       setLoading(false);
     };
 
@@ -117,7 +150,7 @@ const Blog = () => {
                     {format(new Date(post.published_at), 'dd/MM/yyyy', { locale: ptBR })}
                     <span className="mx-2">•</span>
                     <User className="w-4 h-4" />
-                    {post.admin_profiles.name}
+                    {post.author_name}
                   </div>
                   
                   <CardTitle className="text-xl text-white group-hover:text-brand-gold transition-colors duration-300">
