@@ -7,6 +7,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import PerformanceOptimizer from "./components/PerformanceOptimizer";
 import AccessibilityHelper from "./components/AccessibilityHelper";
 import ScrollToTop from "./components/ScrollToTop";
+import { AuthProvider } from "./hooks/useAuth";
 import Index from "./pages/Index";
 import About from "./pages/About";
 import Services from "./pages/Services";
@@ -28,48 +29,50 @@ const queryClient = new QueryClient();
 function App() {
   return (
     <QueryClientProvider client={queryClient}>
-      <TooltipProvider>
-        <Toaster />
-        <Sonner />
-        <BrowserRouter>
-          <ScrollToTop />
-          <PerformanceOptimizer />
-          <AccessibilityHelper />
-          <Routes>
-            <Route path="/" element={<Index />} />
-            <Route path="/sobre" element={<About />} />
-            <Route path="/servicos" element={<Services />} />
-            <Route path="/solucoes" element={<Solutions />} />
-            <Route path="/solucoes/:solutionKey" element={<Solutions />} />
-            <Route path="/portfolio" element={<Portfolio />} />
-            <Route path="/contato" element={<Contact />} />
-            <Route path="/blog" element={<Blog />} />
-            <Route path="/blog/:slug" element={<BlogPost />} />
-            <Route path="/admin/login" element={<AdminLogin />} />
-            <Route path="/admin" element={
-              <ProtectedRoute>
-                <AdminDashboard />
-              </ProtectedRoute>
-            } />
-            <Route path="/admin/blog" element={
-              <ProtectedRoute>
-                <AdminBlog />
-              </ProtectedRoute>
-            } />
-            <Route path="/admin/users" element={
-              <ProtectedRoute>
-                <AdminUsers />
-              </ProtectedRoute>
-            } />
-            <Route path="/admin/solutions" element={
-              <ProtectedRoute>
-                <AdminSolutions />
-              </ProtectedRoute>
-            } />
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-        </BrowserRouter>
-      </TooltipProvider>
+      <AuthProvider>
+        <TooltipProvider>
+          <Toaster />
+          <Sonner />
+          <BrowserRouter>
+            <ScrollToTop />
+            <PerformanceOptimizer />
+            <AccessibilityHelper />
+            <Routes>
+              <Route path="/" element={<Index />} />
+              <Route path="/sobre" element={<About />} />
+              <Route path="/servicos" element={<Services />} />
+              <Route path="/solucoes" element={<Solutions />} />
+              <Route path="/solucoes/:solutionKey" element={<Solutions />} />
+              <Route path="/portfolio" element={<Portfolio />} />
+              <Route path="/contato" element={<Contact />} />
+              <Route path="/blog" element={<Blog />} />
+              <Route path="/blog/:slug" element={<BlogPost />} />
+              <Route path="/admin" element={<AdminLogin />} />
+              <Route path="/admin/dashboard" element={
+                <ProtectedRoute>
+                  <AdminDashboard />
+                </ProtectedRoute>
+              } />
+              <Route path="/admin/blog" element={
+                <ProtectedRoute>
+                  <AdminBlog />
+                </ProtectedRoute>
+              } />
+              <Route path="/admin/users" element={
+                <ProtectedRoute>
+                  <AdminUsers />
+                </ProtectedRoute>
+              } />
+              <Route path="/admin/solutions" element={
+                <ProtectedRoute>
+                  <AdminSolutions />
+                </ProtectedRoute>
+              } />
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+          </BrowserRouter>
+        </TooltipProvider>
+      </AuthProvider>
     </QueryClientProvider>
   );
 }
