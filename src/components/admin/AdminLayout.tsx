@@ -73,6 +73,12 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
       color: 'from-brand-gold to-brand-gold-dark'
     },
     { 
+      name: 'Cards Serviços', 
+      href: '/admin/service-cards', 
+      icon: Briefcase,
+      color: 'from-teal-500 to-teal-600'
+    },
+    { 
       name: 'Portfólio', 
       href: '/admin/portfolio', 
       icon: Briefcase,

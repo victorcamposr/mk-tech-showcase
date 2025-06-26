@@ -1,4 +1,3 @@
-
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -22,6 +21,7 @@ import AdminDashboard from "./pages/AdminDashboard";
 import AdminBlog from "./pages/admin/AdminBlog";
 import AdminUsers from "./pages/admin/AdminUsers";
 import AdminSolutions from "./pages/admin/AdminSolutions";
+import AdminServiceCards from "./pages/admin/AdminServiceCards";
 import AdminContacts from "./pages/admin/AdminContacts";
 import AdminPortfolio from "./pages/admin/AdminPortfolio";
 import AdminHomeBanners from "./pages/admin/AdminHomeBanners";
@@ -71,6 +71,11 @@ function App() {
               <Route path="/admin/solutions" element={
                 <ProtectedRoute>
                   <AdminSolutions />
+                </ProtectedRoute>
+              } />
+              <Route path="/admin/service-cards" element={
+                <ProtectedRoute>
+                  <AdminServiceCards />
                 </ProtectedRoute>
               } />
               <Route path="/admin/portfolio" element={
