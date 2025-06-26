@@ -34,6 +34,7 @@ const ServiceCategoryModal = ({ isOpen, onClose, onSuccess, category }: ServiceC
     status: 'active',
   });
   const [loading, setLoading] = useState(false);
+  const [errors, setErrors] = useState<{[key: string]: string}>({});
   const { toast } = useToast();
 
   useEffect(() => {
@@ -54,6 +55,7 @@ const ServiceCategoryModal = ({ isOpen, onClose, onSuccess, category }: ServiceC
         status: 'active',
       });
     }
+    setErrors({});
   }, [category, isOpen]);
 
   const generateSlug = (name: string) => {
@@ -73,15 +75,40 @@ const ServiceCategoryModal = ({ isOpen, onClose, onSuccess, category }: ServiceC
       name: value,
       slug: generateSlug(value)
     }));
+    if (errors.name) {
+      setErrors(prev => ({ ...prev, name: '' }));
+    }
+  };
+
+  const handleSlugChange = (value: string) => {
+    setFormData(prev => ({ ...prev, slug: value }));
+    if (errors.slug) {
+      setErrors(prev => ({ ...prev, slug: '' }));
+    }
+  };
+
+  const validateForm = () => {
+    const newErrors: {[key: string]: string} = {};
+    
+    if (!formData.name.trim()) {
+      newErrors.name = 'Nome é obrigatório';
+    }
+    
+    if (!formData.slug.trim()) {
+      newErrors.slug = 'Slug é obrigatório';
+    }
+    
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!formData.name || !formData.slug) {
+    if (!validateForm()) {
       toast({
         title: "Erro",
-        description: "Nome e slug são obrigatórios.",
+        description: "Por favor, preencha todos os campos obrigatórios.",
         variant: "destructive",
       });
       return;
@@ -148,8 +175,11 @@ const ServiceCategoryModal = ({ isOpen, onClose, onSuccess, category }: ServiceC
               value={formData.name}
               onChange={(e) => handleNameChange(e.target.value)}
               placeholder="Nome da categoria..."
-              className="mt-2"
+              className={`mt-2 ${errors.name ? 'border-red-500 focus:border-red-500' : ''}`}
             />
+            {errors.name && (
+              <p className="text-red-500 text-sm mt-1">{errors.name}</p>
+            )}
           </div>
 
           <div>
@@ -157,10 +187,13 @@ const ServiceCategoryModal = ({ isOpen, onClose, onSuccess, category }: ServiceC
             <Input
               id="slug"
               value={formData.slug}
-              onChange={(e) => setFormData({ ...formData, slug: e.target.value })}
+              onChange={(e) => handleSlugChange(e.target.value)}
               placeholder="slug-da-categoria"
-              className="mt-2"
+              className={`mt-2 ${errors.slug ? 'border-red-500 focus:border-red-500' : ''}`}
             />
+            {errors.slug && (
+              <p className="text-red-500 text-sm mt-1">{errors.slug}</p>
+            )}
           </div>
 
           <div>

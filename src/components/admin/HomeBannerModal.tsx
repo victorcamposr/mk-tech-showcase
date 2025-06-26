@@ -44,6 +44,7 @@ const HomeBannerModal = ({ isOpen, onClose, banner, onSuccess }: HomeBannerModal
   });
   const [categories, setCategories] = useState<ServiceCategory[]>([]);
   const [loading, setLoading] = useState(false);
+  const [errors, setErrors] = useState<{[key: string]: string}>({});
   const { toast } = useToast();
 
   useEffect(() => {
@@ -66,6 +67,7 @@ const HomeBannerModal = ({ isOpen, onClose, banner, onSuccess }: HomeBannerModal
         category_id: '',
       });
     }
+    setErrors({});
   }, [banner, isOpen]);
 
   const fetchCategories = async () => {
@@ -84,8 +86,39 @@ const HomeBannerModal = ({ isOpen, onClose, banner, onSuccess }: HomeBannerModal
     }
   };
 
+  const validateForm = () => {
+    const newErrors: {[key: string]: string} = {};
+    
+    if (!formData.title.trim()) {
+      newErrors.title = 'Título é obrigatório';
+    }
+    
+    if (!formData.image_url.trim()) {
+      newErrors.image_url = 'Imagem é obrigatória';
+    }
+    
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  const clearFieldError = (fieldName: string) => {
+    if (errors[fieldName]) {
+      setErrors(prev => ({ ...prev, [fieldName]: '' }));
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    if (!validateForm()) {
+      toast({
+        title: "Erro",
+        description: "Por favor, preencha todos os campos obrigatórios.",
+        variant: "destructive",
+      });
+      return;
+    }
+
     setLoading(true);
 
     try {
@@ -117,7 +150,6 @@ const HomeBannerModal = ({ isOpen, onClose, banner, onSuccess }: HomeBannerModal
         throw error;
       }
 
-      // Registrar atividade
       await logAdminActivity(
         banner?.id ? 'update' : 'create',
         'home_banners',
@@ -154,13 +186,20 @@ const HomeBannerModal = ({ isOpen, onClose, banner, onSuccess }: HomeBannerModal
         
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <Label htmlFor="title">Título</Label>
+            <Label htmlFor="title">Título *</Label>
             <Input
               id="title"
               value={formData.title}
-              onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-              required
+              onChange={(e) => {
+                setFormData({ ...formData, title: e.target.value });
+                clearFieldError('title');
+              }}
+              placeholder="Título do banner..."
+              className={`mt-2 ${errors.title ? 'border-red-500 focus:border-red-500' : ''}`}
             />
+            {errors.title && (
+              <p className="text-red-500 text-sm mt-1">{errors.title}</p>
+            )}
           </div>
 
           <div>
@@ -181,13 +220,19 @@ const HomeBannerModal = ({ isOpen, onClose, banner, onSuccess }: HomeBannerModal
           </div>
 
           <div>
-            <Label htmlFor="image">Imagem do Banner</Label>
+            <Label htmlFor="image">Imagem do Banner *</Label>
             <ImageUpload
               label="Imagem do Banner"
               value={formData.image_url}
-              onChange={(url) => setFormData({ ...formData, image_url: url })}
-              className="mt-2"
+              onChange={(url) => {
+                setFormData({ ...formData, image_url: url });
+                clearFieldError('image_url');
+              }}
+              className={`mt-2 ${errors.image_url ? 'border-red-500' : ''}`}
             />
+            {errors.image_url && (
+              <p className="text-red-500 text-sm mt-1">{errors.image_url}</p>
+            )}
           </div>
 
           <div>
@@ -198,6 +243,7 @@ const HomeBannerModal = ({ isOpen, onClose, banner, onSuccess }: HomeBannerModal
               placeholder="https://exemplo.com"
               value={formData.link_url}
               onChange={(e) => setFormData({ ...formData, link_url: e.target.value })}
+              className="mt-2"
             />
           </div>
 
@@ -209,6 +255,7 @@ const HomeBannerModal = ({ isOpen, onClose, banner, onSuccess }: HomeBannerModal
               min="0"
               value={formData.sort_order}
               onChange={(e) => setFormData({ ...formData, sort_order: parseInt(e.target.value) || 0 })}
+              className="mt-2"
             />
           </div>
 
@@ -223,11 +270,11 @@ const HomeBannerModal = ({ isOpen, onClose, banner, onSuccess }: HomeBannerModal
             <Label htmlFor="status">Banner Ativo</Label>
           </div>
 
-          <div className="flex justify-end space-x-2">
+          <div className="flex justify-end space-x-2 pt-4">
             <Button type="button" variant="outline" onClick={onClose}>
               Cancelar
             </Button>
-            <Button type="submit" disabled={loading || !formData.title || !formData.image_url}>
+            <Button type="submit" disabled={loading}>
               {loading ? 'Salvando...' : (banner?.id ? 'Atualizar' : 'Criar')}
             </Button>
           </div>

@@ -2,13 +2,26 @@
 import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { Badge } from '@/components/ui/badge';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import { logAdminActivity } from '@/utils/adminActivity';
 import AdminLayout from '@/components/admin/AdminLayout';
 import ServiceCategoryModal from '@/components/admin/ServiceCategoryModal';
 import DeleteConfirmDialog from '@/components/admin/DeleteConfirmDialog';
-import { Plus, Edit, Trash2, Eye, EyeOff, Search } from 'lucide-react';
+import { 
+  Plus, 
+  Edit, 
+  Trash2, 
+  Search, 
+  Filter, 
+  RefreshCw, 
+  Tags,
+  Calendar,
+  Check,
+  X
+} from 'lucide-react';
 
 interface ServiceCategory {
   id: string;
@@ -30,7 +43,8 @@ const AdminServiceCategories = () => {
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   const [categoryToDelete, setCategoryToDelete] = useState<ServiceCategory | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
-  const [statusFilter, setStatusFilter] = useState('all');
+  const [statusFilter, setStatusFilter] = useState<'all' | 'active' | 'inactive'>('all');
+  const [deleteConfirmId, setDeleteConfirmId] = useState<string | null>(null);
   const { toast } = useToast();
 
   useEffect(() => {
@@ -42,16 +56,16 @@ const AdminServiceCategories = () => {
   }, [categories, searchTerm, statusFilter]);
 
   const fetchCategories = async () => {
+    setLoading(true);
     try {
       const { data, error } = await supabase
         .from('service_categories')
         .select('*')
-        .order('sort_order', { ascending: true })
+        .order('sort_order', { ascending: true, nullsFirst: false })
         .order('created_at', { ascending: false });
 
       if (error) throw error;
       
-      // Type assertion to ensure proper typing
       const typedCategories = (data || []).map(category => ({
         ...category,
         status: category.status as 'active' | 'inactive'
@@ -61,8 +75,8 @@ const AdminServiceCategories = () => {
     } catch (error) {
       console.error('Error fetching service categories:', error);
       toast({
-        title: "Erro",
-        description: "Erro ao carregar as categorias.",
+        title: "Erro ao carregar categorias",
+        description: "Não foi possível carregar as categorias.",
         variant: "destructive",
       });
     } finally {
@@ -73,10 +87,6 @@ const AdminServiceCategories = () => {
   const filterCategories = () => {
     let filtered = categories;
 
-    if (statusFilter !== 'all') {
-      filtered = filtered.filter(category => category.status === statusFilter);
-    }
-
     if (searchTerm) {
       filtered = filtered.filter(category =>
         category.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -85,7 +95,16 @@ const AdminServiceCategories = () => {
       );
     }
 
+    if (statusFilter !== 'all') {
+      filtered = filtered.filter(category => category.status === statusFilter);
+    }
+
     setFilteredCategories(filtered);
+  };
+
+  const handleCreate = () => {
+    setEditingCategory(null);
+    setModalOpen(true);
   };
 
   const handleEdit = (category: ServiceCategory) => {
@@ -93,77 +112,42 @@ const AdminServiceCategories = () => {
     setModalOpen(true);
   };
 
-  const handleDelete = (category: ServiceCategory) => {
-    setCategoryToDelete(category);
-    setDeleteModalOpen(true);
+  const handleDeleteClick = (category: ServiceCategory) => {
+    setDeleteConfirmId(category.id);
   };
 
-  const confirmDelete = async () => {
-    if (!categoryToDelete) return;
-
+  const confirmDelete = async (categoryId: string) => {
     try {
+      const categoryData = categories.find(c => c.id === categoryId);
+      
       const { error } = await supabase
         .from('service_categories')
         .delete()
-        .eq('id', categoryToDelete.id);
+        .eq('id', categoryId);
 
       if (error) throw error;
 
       await logAdminActivity(
         'delete',
         'service_categories',
-        categoryToDelete.name
+        categoryData?.name || 'Categoria'
       );
 
       toast({
-        title: "Sucesso",
-        description: "Categoria excluída com sucesso!",
+        title: "Categoria excluída",
+        description: "A categoria foi excluída com sucesso.",
       });
 
       fetchCategories();
     } catch (error) {
       console.error('Error deleting service category:', error);
       toast({
-        title: "Erro",
-        description: "Erro ao excluir a categoria.",
+        title: "Erro ao excluir categoria",
+        description: "Não foi possível excluir a categoria.",
         variant: "destructive",
       });
     } finally {
-      setDeleteModalOpen(false);
-      setCategoryToDelete(null);
-    }
-  };
-
-  const toggleStatus = async (category: ServiceCategory) => {
-    try {
-      const newStatus = category.status === 'active' ? 'inactive' : 'active';
-      
-      const { error } = await supabase
-        .from('service_categories')
-        .update({ status: newStatus })
-        .eq('id', category.id);
-
-      if (error) throw error;
-
-      await logAdminActivity(
-        'update',
-        'service_categories',
-        `${newStatus === 'active' ? 'ativou' : 'desativou'} a categoria "${category.name}"`
-      );
-
-      toast({
-        title: "Sucesso",
-        description: `Categoria ${newStatus === 'active' ? 'ativada' : 'desativada'} com sucesso!`,
-      });
-
-      fetchCategories();
-    } catch (error) {
-      console.error('Error updating service category status:', error);
-      toast({
-        title: "Erro",
-        description: "Erro ao alterar status da categoria.",
-        variant: "destructive",
-      });
+      setDeleteConfirmId(null);
     }
   };
 
@@ -176,130 +160,270 @@ const AdminServiceCategories = () => {
     fetchCategories();
   };
 
-  if (loading) {
-    return (
-      <AdminLayout>
-        <div className="flex items-center justify-center h-64">
-          <div className="text-lg">Carregando...</div>
-        </div>
-      </AdminLayout>
-    );
-  }
+  const formatDate = (dateString: string) => {
+    return new Date(dateString).toLocaleDateString('pt-BR', {
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
+    });
+  };
 
   return (
     <AdminLayout>
-      <div className="space-y-6">
-        <div className="flex justify-between items-center">
+      <div className="space-y-8">
+        {/* Header */}
+        <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
           <div>
-            <h1 className="text-3xl font-bold text-gray-900">Categorias de Serviços</h1>
-            <p className="text-gray-600 mt-2">Gerencie as categorias dos serviços</p>
+            <h1 className="text-3xl font-bold text-gray-900 flex items-center gap-3">
+              <Tags className="w-8 h-8 text-brand-gold" />
+              Gerenciar Categorias de Serviços
+            </h1>
+            <p className="text-gray-600 mt-2">
+              Gerencie as categorias dos serviços disponíveis no sistema
+            </p>
           </div>
-          <Button onClick={() => setModalOpen(true)} className="flex items-center gap-2">
-            <Plus className="h-4 w-4" />
-            Nova Categoria
-          </Button>
+          <div className="flex gap-3">
+            <Button
+              onClick={fetchCategories}
+              variant="outline"
+              size="sm"
+              className="shadow-md hover:shadow-lg transition-all duration-200"
+            >
+              <RefreshCw className="w-4 h-4 mr-2" />
+              Atualizar
+            </Button>
+            <Button
+              onClick={handleCreate}
+              className="bg-gradient-to-r from-brand-gold to-brand-gold-light hover:from-brand-gold-dark hover:to-brand-gold text-white font-semibold shadow-lg hover:shadow-xl transition-all duration-200"
+            >
+              <Plus className="w-4 h-4 mr-2" />
+              Nova Categoria
+            </Button>
+          </div>
         </div>
 
-        {/* Filters */}
-        <div className="flex flex-col sm:flex-row gap-4 bg-white p-4 rounded-lg border border-gray-200">
-          <div className="flex-1">
+        {/* Search and Stats */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-4 gap-6">
+          <div className="lg:col-span-2">
             <div className="relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
               <Input
-                placeholder="Buscar por nome, slug ou descrição..."
+                placeholder="Buscar categorias..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-10"
+                className="pl-10 bg-white border-gray-300 focus:border-brand-gold focus:ring-brand-gold shadow-sm"
               />
             </div>
           </div>
-          <div className="sm:w-48">
-            <select
-              value={statusFilter}
-              onChange={(e) => setStatusFilter(e.target.value)}
-              className="w-full p-2 border border-gray-300 rounded-md"
-            >
-              <option value="all">Todos os Status</option>
-              <option value="active">Apenas Ativos</option>
-              <option value="inactive">Apenas Inativos</option>
-            </select>
-          </div>
+          <Card className="shadow-lg border-0">
+            <CardContent className="p-4">
+              <div className="text-center">
+                <div className="text-2xl font-bold text-green-600">
+                  {categories.filter(c => c.status === 'active').length}
+                </div>
+                <div className="text-sm text-gray-600">Ativas</div>
+              </div>
+            </CardContent>
+          </Card>
+          <Card className="shadow-lg border-0">
+            <CardContent className="p-4">
+              <div className="text-center">
+                <div className="text-2xl font-bold text-red-600">
+                  {categories.filter(c => c.status === 'inactive').length}
+                </div>
+                <div className="text-sm text-gray-600">Inativas</div>
+              </div>
+            </CardContent>
+          </Card>
         </div>
 
-        {filteredCategories.length === 0 ? (
-          <div className="text-center py-12 bg-white rounded-lg border border-gray-200">
-            <div className="text-gray-400 text-lg mb-4">
-              {categories.length === 0 ? 'Nenhuma categoria encontrada' : 'Nenhuma categoria corresponde aos filtros'}
-            </div>
-            {categories.length === 0 ? (
-              <Button onClick={() => setModalOpen(true)} className="flex items-center gap-2 mx-auto">
-                <Plus className="h-4 w-4" />
-                Criar primeira categoria
+        {/* Filters */}
+        <Card className="shadow-lg border-0">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Filter className="w-5 h-5 text-brand-gold" />
+              Filtros
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="flex gap-2">
+              <Button
+                variant={statusFilter === 'all' ? 'default' : 'outline'}
+                size="sm"
+                onClick={() => setStatusFilter('all')}
+                className={statusFilter === 'all' 
+                  ? 'bg-brand-gold hover:bg-brand-gold-dark text-white shadow-md' 
+                  : 'shadow-md hover:shadow-lg transition-all duration-200'
+                }
+              >
+                Todas
               </Button>
-            ) : (
-              <p className="text-gray-500">Tente ajustar os filtros de busca</p>
-            )}
-          </div>
-        ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {filteredCategories.map((category) => (
-              <div key={category.id} className="bg-white rounded-lg border border-gray-200 p-6 hover:shadow-lg transition-shadow">
-                <div className="flex justify-between items-start mb-4">
-                  <div className="flex items-center gap-2">
-                    <span className={`px-2 py-1 rounded-full text-xs font-medium ${
-                      category.status === 'active' 
-                        ? 'bg-green-100 text-green-800' 
-                        : 'bg-red-100 text-red-800'
-                    }`}>
-                      {category.status === 'active' ? 'Ativo' : 'Inativo'}
-                    </span>
-                    <span className="text-xs text-gray-500">#{category.sort_order}</span>
-                  </div>
-                  <div className="flex gap-2">
-                    <Button
-                      size="sm"
-                      variant="ghost"
-                      onClick={() => toggleStatus(category)}
-                      className="h-8 w-8 p-0"
-                    >
-                      {category.status === 'active' ? (
-                        <EyeOff className="h-4 w-4" />
-                      ) : (
-                        <Eye className="h-4 w-4" />
-                      )}
-                    </Button>
-                    <Button
-                      size="sm"
-                      variant="ghost"
-                      onClick={() => handleEdit(category)}
-                      className="h-8 w-8 p-0"
-                    >
-                      <Edit className="h-4 w-4" />
-                    </Button>
-                    <Button
-                      size="sm"
-                      variant="ghost"
-                      onClick={() => handleDelete(category)}
-                      className="h-8 w-8 p-0 text-red-600 hover:text-red-800"
-                    >
-                      <Trash2 className="h-4 w-4" />
-                    </Button>
-                  </div>
-                </div>
+              <Button
+                variant={statusFilter === 'active' ? 'default' : 'outline'}
+                size="sm"
+                onClick={() => setStatusFilter('active')}
+                className={statusFilter === 'active' 
+                  ? 'bg-green-600 hover:bg-green-700 text-white shadow-md' 
+                  : 'shadow-md hover:shadow-lg transition-all duration-200'
+                }
+              >
+                Ativas
+              </Button>
+              <Button
+                variant={statusFilter === 'inactive' ? 'default' : 'outline'}
+                size="sm"
+                onClick={() => setStatusFilter('inactive')}
+                className={statusFilter === 'inactive' 
+                  ? 'bg-red-600 hover:bg-red-700 text-white shadow-md' 
+                  : 'shadow-md hover:shadow-lg transition-all duration-200'
+                }
+              >
+                Inativas
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
 
-                <div className="space-y-2">
-                  <h3 className="font-semibold text-gray-900">{category.name}</h3>
-                  <p className="text-sm text-gray-600">/{category.slug}</p>
-                  {category.description && (
-                    <p className="text-sm text-gray-500 line-clamp-2">
-                      {category.description}
-                    </p>
-                  )}
+        {/* Categories List */}
+        <Card className="shadow-lg border-0">
+          <CardHeader>
+            <CardTitle className="flex items-center justify-between">
+              <span className="flex items-center gap-2">
+                <Tags className="w-5 h-5 text-brand-gold" />
+                Categorias Cadastradas
+              </span>
+              <Badge variant="outline" className="bg-brand-gold/10 text-brand-gold border-brand-gold/30">
+                {filteredCategories.length} categorias
+              </Badge>
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            {loading ? (
+              <div className="flex items-center justify-center h-64">
+                <div className="text-center">
+                  <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-brand-gold mx-auto"></div>
+                  <p className="mt-4 text-gray-600">Carregando categorias...</p>
                 </div>
               </div>
-            ))}
-          </div>
-        )}
+            ) : filteredCategories.length === 0 ? (
+              <div className="text-center py-12">
+                <Tags className="w-16 h-16 text-gray-300 mx-auto mb-4" />
+                <h3 className="text-lg font-medium text-gray-900 mb-2">
+                  {searchTerm || statusFilter !== 'all' ? 'Nenhuma categoria encontrada' : 'Nenhuma categoria cadastrada'}
+                </h3>
+                <p className="text-gray-600 mb-4">
+                  {searchTerm || statusFilter !== 'all' 
+                    ? 'Tente ajustar os filtros para encontrar o que procura.'
+                    : 'Comece criando sua primeira categoria.'
+                  }
+                </p>
+                {!searchTerm && statusFilter === 'all' && (
+                  <Button 
+                    onClick={handleCreate} 
+                    className="bg-gradient-to-r from-brand-gold to-brand-gold-light hover:from-brand-gold-dark hover:to-brand-gold text-white font-semibold shadow-lg"
+                  >
+                    <Plus className="w-4 h-4 mr-2" />
+                    Criar Primeira Categoria
+                  </Button>
+                )}
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                {filteredCategories.map((category) => (
+                  <div
+                    key={category.id}
+                    className="p-6 bg-gray-50 rounded-xl hover:bg-gray-100 transition-colors border-l-4 border-brand-gold"
+                  >
+                    <div className="flex items-start justify-between mb-4">
+                      <div className="flex items-center gap-3">
+                        <div className="p-2 bg-white rounded-full shadow-sm">
+                          <Tags className="w-6 h-6 text-brand-gold" />
+                        </div>
+                        <div>
+                          <h3 className="text-lg font-semibold text-gray-900">{category.name}</h3>
+                          <div className="flex items-center gap-2 mt-1">
+                            <span className="text-xs text-gray-500 font-mono bg-brand-gold/10 px-2 py-1 rounded">
+                              {category.slug}
+                            </span>
+                            <Badge variant="outline" className="text-xs border-brand-gold/30 text-brand-gold">
+                              #{category.sort_order}
+                            </Badge>
+                          </div>
+                        </div>
+                      </div>
+                      <Badge 
+                        variant={category.status === 'active' ? 'default' : 'destructive'}
+                        className="text-xs"
+                      >
+                        {category.status === 'active' ? 'Ativa' : 'Inativa'}
+                      </Badge>
+                    </div>
+                    
+                    {category.description && (
+                      <p className="text-gray-600 text-sm line-clamp-2 mb-4">
+                        {category.description}
+                      </p>
+                    )}
+
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-1 text-sm text-gray-500">
+                        <Calendar className="w-4 h-4" />
+                        {formatDate(category.created_at)}
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={() => handleEdit(category)}
+                          className="shadow-md hover:shadow-lg transition-all duration-200"
+                        >
+                          <Edit className="w-4 h-4" />
+                        </Button>
+                        <div className="relative">
+                          <Button
+                            size="sm"
+                            variant="destructive"
+                            onClick={() => handleDeleteClick(category)}
+                            className="shadow-md hover:shadow-lg transition-all duration-200"
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </Button>
+                          {deleteConfirmId === category.id && (
+                            <div className="absolute bottom-full right-0 mb-2 bg-white border border-gray-200 rounded-lg shadow-lg p-3 z-10 min-w-48">
+                              <p className="text-sm text-gray-700 mb-3">Excluir esta categoria?</p>
+                              <div className="flex gap-2">
+                                <Button
+                                  size="sm"
+                                  variant="outline"
+                                  onClick={() => setDeleteConfirmId(null)}
+                                  className="flex-1"
+                                >
+                                  <X className="w-3 h-3 mr-1" />
+                                  Cancelar
+                                </Button>
+                                <Button
+                                  size="sm"
+                                  variant="destructive"
+                                  onClick={() => confirmDelete(category.id)}
+                                  className="flex-1"
+                                >
+                                  <Check className="w-3 h-3 mr-1" />
+                                  Confirmar
+                                </Button>
+                              </div>
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </CardContent>
+        </Card>
       </div>
 
       <ServiceCategoryModal

@@ -48,6 +48,7 @@ const ServiceCardModal = ({ isOpen, onClose, onSuccess, serviceCard }: ServiceCa
   });
   const [categories, setCategories] = useState<ServiceCategory[]>([]);
   const [loading, setLoading] = useState(false);
+  const [errors, setErrors] = useState<{[key: string]: string}>({});
   const { toast } = useToast();
 
   useEffect(() => {
@@ -78,6 +79,7 @@ const ServiceCardModal = ({ isOpen, onClose, onSuccess, serviceCard }: ServiceCa
         category_id: '',
       });
     }
+    setErrors({});
   }, [serviceCard, isOpen]);
 
   const fetchCategories = async () => {
@@ -96,13 +98,46 @@ const ServiceCardModal = ({ isOpen, onClose, onSuccess, serviceCard }: ServiceCa
     }
   };
 
+  const validateForm = () => {
+    const newErrors: {[key: string]: string} = {};
+    
+    if (!formData.title.trim()) {
+      newErrors.title = 'Título é obrigatório';
+    }
+    
+    if (!formData.logo_url.trim()) {
+      newErrors.logo_url = 'Logo é obrigatória';
+    }
+    
+    if (!formData.description.trim()) {
+      newErrors.description = 'Descrição é obrigatória';
+    }
+    
+    if (!formData.phone.trim()) {
+      newErrors.phone = 'Telefone é obrigatório';
+    }
+    
+    if (!formData.email.trim()) {
+      newErrors.email = 'E-mail é obrigatório';
+    }
+    
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  const clearFieldError = (fieldName: string) => {
+    if (errors[fieldName]) {
+      setErrors(prev => ({ ...prev, [fieldName]: '' }));
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!formData.title || !formData.logo_url || !formData.description || !formData.phone || !formData.email) {
+    if (!validateForm()) {
       toast({
         title: "Erro",
-        description: "Todos os campos são obrigatórios.",
+        description: "Por favor, preencha todos os campos obrigatórios.",
         variant: "destructive",
       });
       return;
@@ -132,7 +167,6 @@ const ServiceCardModal = ({ isOpen, onClose, onSuccess, serviceCard }: ServiceCa
 
       if (result.error) throw result.error;
 
-      // Log admin activity
       await logAdminActivity(
         actionType,
         'service_cards',
@@ -173,10 +207,16 @@ const ServiceCardModal = ({ isOpen, onClose, onSuccess, serviceCard }: ServiceCa
             <Input
               id="title"
               value={formData.title}
-              onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+              onChange={(e) => {
+                setFormData({ ...formData, title: e.target.value });
+                clearFieldError('title');
+              }}
               placeholder="Título do serviço..."
-              className="mt-2"
+              className={`mt-2 ${errors.title ? 'border-red-500 focus:border-red-500' : ''}`}
             />
+            {errors.title && (
+              <p className="text-red-500 text-sm mt-1">{errors.title}</p>
+            )}
           </div>
 
           <div>
@@ -200,9 +240,15 @@ const ServiceCardModal = ({ isOpen, onClose, onSuccess, serviceCard }: ServiceCa
             <ImageUpload
               label="Logo *"
               value={formData.logo_url}
-              onChange={(url) => setFormData({ ...formData, logo_url: url })}
-              className="mt-2"
+              onChange={(url) => {
+                setFormData({ ...formData, logo_url: url });
+                clearFieldError('logo_url');
+              }}
+              className={`mt-2 ${errors.logo_url ? 'border-red-500' : ''}`}
             />
+            {errors.logo_url && (
+              <p className="text-red-500 text-sm mt-1">{errors.logo_url}</p>
+            )}
           </div>
 
           <div>
@@ -210,11 +256,17 @@ const ServiceCardModal = ({ isOpen, onClose, onSuccess, serviceCard }: ServiceCa
             <Textarea
               id="description"
               value={formData.description}
-              onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+              onChange={(e) => {
+                setFormData({ ...formData, description: e.target.value });
+                clearFieldError('description');
+              }}
               placeholder="Descrição do serviço..."
-              className="mt-2"
+              className={`mt-2 ${errors.description ? 'border-red-500 focus:border-red-500' : ''}`}
               rows={4}
             />
+            {errors.description && (
+              <p className="text-red-500 text-sm mt-1">{errors.description}</p>
+            )}
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -224,10 +276,16 @@ const ServiceCardModal = ({ isOpen, onClose, onSuccess, serviceCard }: ServiceCa
                 id="phone"
                 type="tel"
                 value={formData.phone}
-                onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                onChange={(e) => {
+                  setFormData({ ...formData, phone: e.target.value });
+                  clearFieldError('phone');
+                }}
                 placeholder="(65) 99999-9999"
-                className="mt-2"
+                className={`mt-2 ${errors.phone ? 'border-red-500 focus:border-red-500' : ''}`}
               />
+              {errors.phone && (
+                <p className="text-red-500 text-sm mt-1">{errors.phone}</p>
+              )}
             </div>
 
             <div>
@@ -236,10 +294,16 @@ const ServiceCardModal = ({ isOpen, onClose, onSuccess, serviceCard }: ServiceCa
                 id="email"
                 type="email"
                 value={formData.email}
-                onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                onChange={(e) => {
+                  setFormData({ ...formData, email: e.target.value });
+                  clearFieldError('email');
+                }}
                 placeholder="contato@exemplo.com"
-                className="mt-2"
+                className={`mt-2 ${errors.email ? 'border-red-500 focus:border-red-500' : ''}`}
               />
+              {errors.email && (
+                <p className="text-red-500 text-sm mt-1">{errors.email}</p>
+              )}
             </div>
           </div>
 

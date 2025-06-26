@@ -1,52 +1,38 @@
 
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import AdminLayout from '@/components/admin/AdminLayout';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Input } from '@/components/ui/input';
 import { useToast } from '@/hooks/use-toast';
-import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
-import { 
-  Users, 
-  MessageSquare, 
-  FileText, 
+import {
+  Users,
+  FileText,
   Lightbulb,
-  Activity,
-  Calendar,
-  ArrowRight,
-  ChevronLeft,
-  ChevronRight,
-  CalendarIcon,
-  UserX,
-  BookOpen,
-  Zap,
-  ZapOff,
-  Plus,
-  Edit,
-  Trash2,
-  UserCheck,
+  MessageSquare,
   Briefcase,
+  Star,
+  TrendingUp,
+  Eye,
+  Calendar,
+  Activity,
   Image,
-  Layers
+  Tags,
+  CreditCard
 } from 'lucide-react';
 
 interface DashboardStats {
-  totalUsers: number;
-  totalContacts: number;
-  totalPosts: number;
-  totalSolutions: number;
-  totalPortfolioProjects: number;
-  totalHomeBanners: number;
-  totalServiceCards: number;
-  inactiveUsers: number;
-  unreadContacts: number;
-  draftPosts: number;
-  inactiveSolutions: number;
-  inactivePortfolioProjects: number;
-  inactiveHomeBanners: number;
-  inactiveServiceCards: number;
+  users: number;
+  blogPosts: { total: number; published: number; draft: number };
+  solutions: { total: number; active: number; inactive: number };
+  contacts: { total: number; unread: number };
+  portfolioProjects: number;
+  portfolioTestimonials: number;
+  portfolioStats: number;
+  homeBanners: { total: number; active: number; inactive: number };
+  serviceCategories: { total: number; active: number; inactive: number };
+  serviceCards: { total: number; active: number; inactive: number };
 }
 
 interface RecentActivity {
@@ -59,188 +45,138 @@ interface RecentActivity {
 }
 
 const AdminDashboard = () => {
-  const [currentPage, setCurrentPage] = useState(1);
-  const [dateFilter, setDateFilter] = useState('');
+  const navigate = useNavigate();
+  const [stats, setStats] = useState<DashboardStats>({
+    users: 0,
+    blogPosts: { total: 0, published: 0, draft: 0 },
+    solutions: { total: 0, active: 0, inactive: 0 },
+    contacts: { total: 0, unread: 0 },
+    portfolioProjects: 0,
+    portfolioTestimonials: 0,
+    portfolioStats: 0,
+    homeBanners: { total: 0, active: 0, inactive: 0 },
+    serviceCategories: { total: 0, active: 0, inactive: 0 },
+    serviceCards: { total: 0, active: 0, inactive: 0 },
+  });
+  const [recentActivities, setRecentActivities] = useState<RecentActivity[]>([]);
+  const [loading, setLoading] = useState(true);
   const { toast } = useToast();
-  const queryClient = useQueryClient();
 
-  const ACTIVITIES_PER_PAGE = 10;
-
-  // Force fresh data on every page visit by removing caching
-  const { data: stats = {
-    totalUsers: 0,
-    totalContacts: 0,
-    totalPosts: 0,
-    totalSolutions: 0,
-    totalPortfolioProjects: 0,
-    totalHomeBanners: 0,
-    totalServiceCards: 0,
-    inactiveUsers: 0,
-    unreadContacts: 0,
-    draftPosts: 0,
-    inactiveSolutions: 0,
-    inactivePortfolioProjects: 0,
-    inactiveHomeBanners: 0,
-    inactiveServiceCards: 0
-  }, isLoading: statsLoading } = useQuery({
-    queryKey: ['dashboard-stats'],
-    queryFn: async (): Promise<DashboardStats> => {
-      console.log('Fetching dashboard stats with React Query...');
-      try {
-        const [
-          usersRes, 
-          contactsRes, 
-          postsRes, 
-          solutionsRes, 
-          portfolioProjectsRes,
-          homeBannersRes,
-          serviceCardsRes,
-          inactiveUsersRes, 
-          unreadContactsRes, 
-          draftPostsRes, 
-          inactiveSolutionsRes,
-          inactivePortfolioProjectsRes,
-          inactiveHomeBannersRes,
-          inactiveServiceCardsRes
-        ] = await Promise.all([
-          supabase.from('admin_profiles').select('id', { count: 'exact', head: true }),
-          supabase.from('contacts').select('id', { count: 'exact', head: true }),
-          supabase.from('blog_posts').select('id', { count: 'exact', head: true }),
-          supabase.from('solutions').select('id', { count: 'exact', head: true }),
-          supabase.from('portfolio_projects').select('id', { count: 'exact', head: true }),
-          supabase.from('home_banners').select('id', { count: 'exact', head: true }),
-          supabase.from('service_cards').select('id', { count: 'exact', head: true }),
-          supabase.from('admin_profiles').select('id', { count: 'exact', head: true }).eq('is_active', false),
-          supabase.from('contacts').select('id', { count: 'exact', head: true }).eq('read', false),
-          supabase.from('blog_posts').select('id', { count: 'exact', head: true }).eq('status', 'draft'),
-          supabase.from('solutions').select('id', { count: 'exact', head: true }).eq('status', 'inactive'),
-          supabase.from('portfolio_projects').select('id', { count: 'exact', head: true }).eq('status', 'inactive'),
-          supabase.from('home_banners').select('id', { count: 'exact', head: true }).eq('status', 'inactive'),
-          supabase.from('service_cards').select('id', { count: 'exact', head: true }).eq('status', 'inactive')
-        ]);
-
-        const dashboardStats = {
-          totalUsers: usersRes.count || 0,
-          totalContacts: contactsRes.count || 0,
-          totalPosts: postsRes.count || 0,
-          totalSolutions: solutionsRes.count || 0,
-          totalPortfolioProjects: portfolioProjectsRes.count || 0,
-          totalHomeBanners: homeBannersRes.count || 0,
-          totalServiceCards: serviceCardsRes.count || 0,
-          inactiveUsers: inactiveUsersRes.count || 0,
-          unreadContacts: unreadContactsRes.count || 0,
-          draftPosts: draftPostsRes.count || 0,
-          inactiveSolutions: inactiveSolutionsRes.count || 0,
-          inactivePortfolioProjects: inactivePortfolioProjectsRes.count || 0,
-          inactiveHomeBanners: inactiveHomeBannersRes.count || 0,
-          inactiveServiceCards: inactiveServiceCardsRes.count || 0
-        };
-
-        console.log('Dashboard stats updated via React Query:', dashboardStats);
-        return dashboardStats;
-      } catch (error) {
-        console.error('Error fetching dashboard stats:', error);
-        throw error;
-      }
-    },
-    staleTime: 0, // Always consider data stale to force fresh fetch
-    gcTime: 0, // Don't cache data
-    refetchOnMount: true, // Always refetch when component mounts
-    refetchOnWindowFocus: true, // Refetch when window gains focus
-    refetchInterval: false // Disable automatic refetching
-  });
-
-  // Activities query with fresh data fetching
-  const { data: activitiesData, isLoading: activitiesLoading } = useQuery({
-    queryKey: ['admin-activities', currentPage, dateFilter],
-    queryFn: async () => {
-      const from = (currentPage - 1) * ACTIVITIES_PER_PAGE;
-      const to = from + ACTIVITIES_PER_PAGE - 1;
-
-      let query = supabase
-        .from('admin_activities')
-        .select('*', { count: 'exact' })
-        .order('created_at', { ascending: false })
-        .range(from, to);
-
-      if (dateFilter) {
-        const startDate = new Date(dateFilter);
-        const endDate = new Date(dateFilter);
-        endDate.setDate(endDate.getDate() + 1);
-        
-        query = query
-          .gte('created_at', startDate.toISOString())
-          .lt('created_at', endDate.toISOString());
-      }
-
-      const { data, error, count } = await query;
-      if (error) throw error;
-
-      return {
-        activities: data || [],
-        totalActivities: count || 0
-      };
-    },
-    staleTime: 0, // Always consider data stale
-    gcTime: 0, // Don't cache data
-    refetchOnMount: true // Always refetch when component mounts
-  });
-
-  const activities = activitiesData?.activities || [];
-  const totalActivities = activitiesData?.totalActivities || 0;
-
-  // Listen for portfolio changes and invalidate dashboard stats
   useEffect(() => {
-    console.log('Setting up real-time subscription for portfolio changes...');
-    
-    const channel = supabase
-      .channel('portfolio-changes')
-      .on('postgres_changes', 
-        { event: '*', schema: 'public', table: 'portfolio_projects' },
-        () => {
-          console.log('Portfolio projects changed, invalidating dashboard stats...');
-          queryClient.invalidateQueries({ queryKey: ['dashboard-stats'] });
-        }
-      )
-      .on('postgres_changes', 
-        { event: '*', schema: 'public', table: 'portfolio_stats' },
-        () => {
-          console.log('Portfolio stats changed, invalidating dashboard stats...');
-          queryClient.invalidateQueries({ queryKey: ['dashboard-stats'] });
-        }
-      )
-      .on('postgres_changes', 
-        { event: '*', schema: 'public', table: 'portfolio_testimonials' },
-        () => {
-          console.log('Portfolio testimonials changed, invalidating dashboard stats...');
-          queryClient.invalidateQueries({ queryKey: ['dashboard-stats'] });
-        }
-      )
-      .on('postgres_changes', 
-        { event: '*', schema: 'public', table: 'home_banners' },
-        () => {
-          console.log('Home banners changed, invalidating dashboard stats...');
-          queryClient.invalidateQueries({ queryKey: ['dashboard-stats'] });
-        }
-      )
-      .on('postgres_changes', 
-        { event: '*', schema: 'public', table: 'service_cards' },
-        () => {
-          console.log('Service cards changed, invalidating dashboard stats...');
-          queryClient.invalidateQueries({ queryKey: ['dashboard-stats'] });
-        }
-      )
-      .subscribe();
+    fetchDashboardData();
+  }, []);
 
-    return () => {
-      console.log('Cleaning up portfolio changes subscription...');
-      supabase.removeChannel(channel);
-    };
-  }, [queryClient]);
+  const fetchDashboardData = async () => {
+    setLoading(true);
+    try {
+      // Fetch all stats in parallel
+      const [
+        usersResponse,
+        blogPostsResponse,
+        solutionsResponse,
+        contactsResponse,
+        portfolioProjectsResponse,
+        portfolioTestimonialsResponse,
+        portfolioStatsResponse,
+        activitiesResponse,
+        homeBannersResponse,
+        serviceCategoriesResponse,
+        serviceCardsResponse,
+      ] = await Promise.all([
+        supabase.from('admin_profiles').select('id', { count: 'exact' }),
+        supabase.from('blog_posts').select('status', { count: 'exact' }),
+        supabase.from('solutions').select('status', { count: 'exact' }),
+        supabase.from('contacts').select('read', { count: 'exact' }),
+        supabase.from('portfolio_projects').select('id', { count: 'exact' }),
+        supabase.from('portfolio_testimonials').select('id', { count: 'exact' }),
+        supabase.from('portfolio_stats').select('id', { count: 'exact' }),
+        supabase.from('admin_activities').select('*').order('created_at', { ascending: false }).limit(10),
+        supabase.from('home_banners').select('status', { count: 'exact' }),
+        supabase.from('service_categories').select('status', { count: 'exact' }),
+        supabase.from('service_cards').select('status', { count: 'exact' }),
+      ]);
+
+      // Process blog posts stats
+      const blogPosts = blogPostsResponse.data || [];
+      const publishedPosts = blogPosts.filter(post => post.status === 'published').length;
+      const draftPosts = blogPosts.filter(post => post.status === 'draft').length;
+
+      // Process solutions stats
+      const solutions = solutionsResponse.data || [];
+      const activeSolutions = solutions.filter(solution => solution.status === 'active').length;
+      const inactiveSolutions = solutions.filter(solution => solution.status === 'inactive').length;
+
+      // Process contacts stats
+      const contacts = contactsResponse.data || [];
+      const unreadContacts = contacts.filter(contact => !contact.read).length;
+
+      // Process home banners stats
+      const homeBanners = homeBannersResponse.data || [];
+      const activeHomeBanners = homeBanners.filter(banner => banner.status === 'active').length;
+      const inactiveHomeBanners = homeBanners.filter(banner => banner.status === 'inactive').length;
+
+      // Process service categories stats
+      const serviceCategories = serviceCategoriesResponse.data || [];
+      const activeServiceCategories = serviceCategories.filter(category => category.status === 'active').length;
+      const inactiveServiceCategories = serviceCategories.filter(category => category.status === 'inactive').length;
+
+      // Process service cards stats
+      const serviceCards = serviceCardsResponse.data || [];
+      const activeServiceCards = serviceCards.filter(card => card.status === 'active').length;
+      const inactiveServiceCards = serviceCards.filter(card => card.status === 'inactive').length;
+
+      setStats({
+        users: usersResponse.count || 0,
+        blogPosts: {
+          total: blogPosts.length,
+          published: publishedPosts,
+          draft: draftPosts
+        },
+        solutions: {
+          total: solutions.length,
+          active: activeSolutions,
+          inactive: inactiveSolutions
+        },
+        contacts: {
+          total: contacts.length,
+          unread: unreadContacts
+        },
+        portfolioProjects: portfolioProjectsResponse.count || 0,
+        portfolioTestimonials: portfolioTestimonialsResponse.count || 0,
+        portfolioStats: portfolioStatsResponse.count || 0,
+        homeBanners: {
+          total: homeBanners.length,
+          active: activeHomeBanners,
+          inactive: inactiveHomeBanners
+        },
+        serviceCategories: {
+          total: serviceCategories.length,
+          active: activeServiceCategories,
+          inactive: inactiveServiceCategories
+        },
+        serviceCards: {
+          total: serviceCards.length,
+          active: activeServiceCards,
+          inactive: inactiveServiceCards
+        },
+      });
+
+      setRecentActivities(activitiesResponse.data || []);
+
+    } catch (error) {
+      console.error('Error fetching dashboard data:', error);
+      toast({
+        title: "Erro ao carregar dados",
+        description: "Não foi possível carregar os dados do dashboard.",
+        variant: "destructive",
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const formatDate = (dateString: string) => {
-    const date = new Date(dateString);
-    return date.toLocaleDateString('pt-BR', {
+    return new Date(dateString).toLocaleDateString('pt-BR', {
       day: '2-digit',
       month: '2-digit',
       year: 'numeric',
@@ -249,358 +185,328 @@ const AdminDashboard = () => {
     });
   };
 
-  const getActionIcon = (action: string) => {
-    switch (action) {
-      case 'create': return Plus;
-      case 'update': return Edit;
-      case 'delete': return Trash2;
-      default: return Activity;
-    }
-  };
-
-  const getEntityIcon = (entityType: string) => {
-    switch (entityType.toLowerCase()) {
-      case 'users':
-      case 'user':
-      case 'usuário':
-      case 'usuários':
-      case 'admin_profiles':
-        return Users;
-      case 'contacts':
-      case 'contact':
-      case 'contato':
-      case 'contatos':
-        return MessageSquare;
-      case 'blog_posts':
-      case 'blog':
-      case 'post':
-      case 'posts':
-        return FileText;
-      case 'solutions':
-      case 'solution':
-      case 'solução':
-      case 'soluções':
-        return Lightbulb;
-      case 'portfolio_projects':
-      case 'portfolio_stats':
-      case 'portfolio_testimonials':
-      case 'portfolio':
-        return Briefcase;
-      case 'home_banners':
-      case 'banner':
-      case 'banners':
-        return Image;
-      case 'service_cards':
-      case 'cards':
-        return Layers;
-      default:
-        return Activity;
-    }
-  };
-
-  const getActionText = (action: string, entityType: string, entityTitle: string) => {
-    // If entity_title already contains the action description (like "atualizou o usuário João")
-    if (entityTitle && (entityTitle.includes('criou') || entityTitle.includes('atualizou') || entityTitle.includes('excluiu') || entityTitle.includes('ativou') || entityTitle.includes('desativou'))) {
-      return entityTitle;
-    }
-
-    // Default behavior for simple entity titles
-    const entity = getEntityTypeLabel(entityType);
-    
-    switch (action) {
-      case 'create':
-        return `criou ${entity.toLowerCase()} "${entityTitle}"`;
-      case 'update':
-        return `atualizou ${entity.toLowerCase()} "${entityTitle}"`;
-      case 'delete':
-        return `excluiu ${entity.toLowerCase()} "${entityTitle}"`;
-      default:
-        return `modificou ${entity.toLowerCase()} "${entityTitle}"`;
-    }
+  const getActionTypeLabel = (actionType: string) => {
+    const labels: Record<string, string> = {
+      'create': 'Criou',
+      'update': 'Atualizou',
+      'delete': 'Excluiu'
+    };
+    return labels[actionType] || actionType;
   };
 
   const getEntityTypeLabel = (entityType: string) => {
-    switch (entityType.toLowerCase()) {
-      case 'admin_profiles':
-        return 'usuário';
-      case 'contacts':
-        return 'contato';
-      case 'blog_posts':
-        return 'post do blog';
-      case 'solutions':
-        return 'solução';
-      case 'portfolio_projects':
-        return 'projeto do portfólio';
-      case 'portfolio_stats':
-        return 'estatística do portfólio';
-      case 'portfolio_testimonials':
-        return 'depoimento do portfólio';
-      case 'home_banners':
-        return 'banner';
-      case 'service_cards':
-        return 'card de serviço';
-      default:
-        return entityType;
-    }
+    const labels: Record<string, string> = {
+      'blog_posts': 'Post do Blog',
+      'solutions': 'Solução',
+      'portfolio_projects': 'Projeto do Portfólio',
+      'portfolio_testimonials': 'Depoimento',
+      'portfolio_stats': 'Estatística',
+      'home_banners': 'Banner',
+      'service_categories': 'Categoria de Serviço',
+      'service_cards': 'Card de Serviço',
+    };
+    return labels[entityType] || entityType;
   };
 
-  const totalPages = Math.ceil(totalActivities / ACTIVITIES_PER_PAGE);
-
-  const statsCards = [
-    {
-      title: 'Total de Usuários',
-      value: stats.totalUsers,
-      icon: Users,
-      gradient: 'from-green-500 to-green-600',
-      badgeValue: stats.inactiveUsers,
-      badgeLabel: 'Inativos',
-      badgeIcon: UserX,
-      showBadge: stats.inactiveUsers > 0
-    },
-    {
-      title: 'Contatos Recebidos',
-      value: stats.totalContacts,
-      icon: MessageSquare,
-      gradient: 'from-red-500 to-red-600',
-      badgeValue: stats.unreadContacts,
-      badgeLabel: 'Não Lidos',
-      badgeIcon: MessageSquare,
-      showBadge: stats.unreadContacts > 0
-    },
-    {
-      title: 'Posts do Blog',
-      value: stats.totalPosts,
-      icon: FileText,
-      gradient: 'from-blue-500 to-blue-600',
-      badgeValue: stats.draftPosts,
-      badgeLabel: 'Rascunhos',
-      badgeIcon: BookOpen,
-      showBadge: stats.draftPosts > 0
-    },
-    {
-      title: 'Soluções Ativas',
-      value: stats.totalSolutions,
-      icon: Lightbulb,
-      gradient: 'from-brand-gold to-brand-gold-dark',
-      badgeValue: stats.inactiveSolutions,
-      badgeLabel: 'Inativas',
-      badgeIcon: ZapOff,
-      showBadge: stats.inactiveSolutions > 0
-    },
-    {
-      title: 'Cards de Serviços',
-      value: stats.totalServiceCards,
-      icon: Layers,
-      gradient: 'from-teal-500 to-teal-600',
-      badgeValue: stats.inactiveServiceCards,
-      badgeLabel: 'Inativos',
-      badgeIcon: ZapOff,
-      showBadge: stats.inactiveServiceCards > 0
-    },
-    {
-      title: 'Projetos Portfólio',
-      value: stats.totalPortfolioProjects,
-      icon: Briefcase,
-      gradient: 'from-orange-500 to-orange-600',
-      badgeValue: stats.inactivePortfolioProjects,
-      badgeLabel: 'Inativos',
-      badgeIcon: ZapOff,
-      showBadge: stats.inactivePortfolioProjects > 0
-    },
-    {
-      title: 'Banners',
-      value: stats.totalHomeBanners,
-      icon: Image,
-      gradient: 'from-pink-500 to-pink-600',
-      badgeValue: stats.inactiveHomeBanners,
-      badgeLabel: 'Inativos',
-      badgeIcon: ZapOff,
-      showBadge: stats.inactiveHomeBanners > 0
-    }
-  ];
+  if (loading) {
+    return (
+      <AdminLayout>
+        <div className="flex items-center justify-center h-64">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-brand-gold mx-auto"></div>
+            <p className="mt-4 text-gray-600">Carregando dashboard...</p>
+          </div>
+        </div>
+      </AdminLayout>
+    );
+  }
 
   return (
     <AdminLayout>
       <div className="space-y-8">
-        {/* Header sem botão de atualizar */}
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-3xl font-bold text-brand-black flex items-center gap-3">
-              <div className="w-10 h-10 bg-gradient-to-r from-brand-gold to-brand-gold-dark rounded-lg flex items-center justify-center">
-                <Activity className="w-6 h-6 text-white" />
-              </div>
-              Dashboard
-            </h1>
-            <p className="text-gray-600 mt-2">
-              Visão geral do sistema e atividades recentes
-            </p>
-          </div>
+        {/* Header */}
+        <div>
+          <h1 className="text-3xl font-bold text-gray-900 flex items-center gap-3">
+            <Activity className="w-8 h-8 text-brand-gold" />
+            Dashboard Administrativo
+          </h1>
+          <p className="text-gray-600 mt-2">
+            Visão geral do sistema e atividades recentes
+          </p>
         </div>
 
-        {/* Stats Cards com hierarquia visual melhorada */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-7 gap-6">
-          {statsCards.map((stat, index) => {
-            const Icon = stat.icon;
-            const BadgeIcon = stat.badgeIcon;
-            return (
-              <Card key={index} className="relative overflow-hidden border-brand-gold/20 shadow-lg hover:shadow-xl transition-all duration-300 bg-white hover:-translate-y-1">
-                <CardContent className="p-6">
-                  {/* Ícone e valor em destaque */}
-                  <div className="flex items-center justify-between mb-4">
-                    <div className={`w-14 h-14 rounded-2xl bg-gradient-to-br ${stat.gradient} flex items-center justify-center shadow-lg flex-shrink-0`}>
-                      <Icon className="w-7 h-7 text-white" />
-                    </div>
-                    <div className="text-right">
-                      <div className="text-3xl font-bold text-brand-black leading-none">
-                        {statsLoading ? '...' : stat.value}
-                      </div>
-                    </div>
+        {/* Main Stats Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          {/* Users Card */}
+          <Card 
+            className="shadow-lg border-0 cursor-pointer hover:shadow-xl transition-all duration-200"
+            onClick={() => navigate('/admin/users')}
+          >
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium text-gray-600">
+                Usuários Admins
+              </CardTitle>
+              <Users className="h-4 w-4 text-blue-600" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold text-blue-600">{stats.users}</div>
+              <p className="text-xs text-gray-500 mt-1">
+                Total de administradores
+              </p>
+            </CardContent>
+          </Card>
+
+          {/* Blog Posts Card */}
+          <Card 
+            className="shadow-lg border-0 cursor-pointer hover:shadow-xl transition-all duration-200"
+            onClick={() => navigate('/admin/blog')}
+          >
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium text-gray-600">
+                Posts do Blog
+              </CardTitle>
+              <FileText className="h-4 w-4 text-green-600" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold text-green-600">{stats.blogPosts.total}</div>
+              <div className="flex gap-4 mt-2">
+                <div className="text-xs text-gray-500">
+                  <span className="text-green-700 font-medium">{stats.blogPosts.published}</span> publicados
+                </div>
+                <div className="text-xs text-gray-500">
+                  <span className="text-orange-600 font-medium">{stats.blogPosts.draft}</span> rascunhos
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Solutions Card */}
+          <Card 
+            className="shadow-lg border-0 cursor-pointer hover:shadow-xl transition-all duration-200"
+            onClick={() => navigate('/admin/solutions')}
+          >
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium text-gray-600">
+                Soluções
+              </CardTitle>
+              <Lightbulb className="h-4 w-4 text-brand-gold" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold text-brand-gold">{stats.solutions.total}</div>
+              <div className="flex gap-4 mt-2">
+                <div className="text-xs text-gray-500">
+                  <span className="text-green-700 font-medium">{stats.solutions.active}</span> ativas
+                </div>
+                {stats.solutions.inactive > 0 && (
+                  <div className="text-xs text-gray-500">
+                    <span className="text-red-600 font-medium">{stats.solutions.inactive}</span> inativas
                   </div>
-                  
-                  {/* Título abaixo */}
-                  <div className="mb-3">
-                    <h3 className="text-sm font-semibold text-gray-700 leading-tight">{stat.title}</h3>
+                )}
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Contacts Card */}
+          <Card 
+            className="shadow-lg border-0 cursor-pointer hover:shadow-xl transition-all duration-200"
+            onClick={() => navigate('/admin/contacts')}
+          >
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium text-gray-600">
+                Contatos
+              </CardTitle>
+              <MessageSquare className="h-4 w-4 text-purple-600" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold text-purple-600">{stats.contacts.total}</div>
+              {stats.contacts.unread > 0 && (
+                <p className="text-xs text-red-600 mt-1">
+                  <span className="font-medium">{stats.contacts.unread}</span> não lidos
+                </p>
+              )}
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* Secondary Stats Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {/* Portfolio Projects Card */}
+          <Card 
+            className="shadow-lg border-0 cursor-pointer hover:shadow-xl transition-all duration-200"
+            onClick={() => navigate('/admin/portfolio')}
+          >
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium text-gray-600">
+                Projetos Portfólio
+              </CardTitle>
+              <Briefcase className="h-4 w-4 text-indigo-600" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold text-indigo-600">{stats.portfolioProjects}</div>
+              <p className="text-xs text-gray-500 mt-1">
+                Total de projetos
+              </p>
+            </CardContent>
+          </Card>
+
+          {/* Home Banners Card */}
+          <Card 
+            className="shadow-lg border-0 cursor-pointer hover:shadow-xl transition-all duration-200"
+            onClick={() => navigate('/admin/home-banners')}
+          >
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium text-gray-600">
+                Banners Home
+              </CardTitle>
+              <Image className="h-4 w-4 text-pink-600" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold text-pink-600">{stats.homeBanners.total}</div>
+              <div className="flex gap-4 mt-2">
+                <div className="text-xs text-gray-500">
+                  <span className="text-green-700 font-medium">{stats.homeBanners.active}</span> ativos
+                </div>
+                {stats.homeBanners.inactive > 0 && (
+                  <div className="text-xs text-gray-500">
+                    <span className="text-red-600 font-medium">{stats.homeBanners.inactive}</span> inativos
                   </div>
-                  
-                  {/* Badge de alerta se houver */}
-                  {stat.showBadge && (
-                    <div className="flex items-center gap-2">
-                      <Badge variant="destructive" className="text-xs flex items-center gap-1">
-                        <BadgeIcon className="w-3 h-3" />
-                        {stat.badgeValue} {stat.badgeLabel}
-                      </Badge>
-                    </div>
-                  )}
-                </CardContent>
-              </Card>
-            );
-          })}
+                )}
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Service Categories Card */}
+          <Card 
+            className="shadow-lg border-0 cursor-pointer hover:shadow-xl transition-all duration-200"
+            onClick={() => navigate('/admin/service-categories')}
+          >
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium text-gray-600">
+                Categorias Serviços
+              </CardTitle>
+              <Tags className="h-4 w-4 text-teal-600" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold text-teal-600">{stats.serviceCategories.total}</div>
+              <div className="flex gap-4 mt-2">
+                <div className="text-xs text-gray-500">
+                  <span className="text-green-700 font-medium">{stats.serviceCategories.active}</span> ativas
+                </div>
+                {stats.serviceCategories.inactive > 0 && (
+                  <div className="text-xs text-gray-500">
+                    <span className="text-red-600 font-medium">{stats.serviceCategories.inactive}</span> inativas
+                  </div>
+                )}
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Service Cards Card */}
+          <Card 
+            className="shadow-lg border-0 cursor-pointer hover:shadow-xl transition-all duration-200"
+            onClick={() => navigate('/admin/service-cards')}
+          >
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium text-gray-600">
+                Cards Serviços
+              </CardTitle>
+              <CreditCard className="h-4 w-4 text-orange-600" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold text-orange-600">{stats.serviceCards.total}</div>
+              <div className="flex gap-4 mt-2">
+                <div className="text-xs text-gray-500">
+                  <span className="text-green-700 font-medium">{stats.serviceCards.active}</span> ativos
+                </div>
+                {stats.serviceCards.inactive > 0 && (
+                  <div className="text-xs text-gray-500">
+                    <span className="text-red-600 font-medium">{stats.serviceCards.inactive}</span> inativos
+                  </div>
+                )}
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Portfolio Testimonials Card */}
+          <Card className="shadow-lg border-0">
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium text-gray-600">
+                Depoimentos
+              </CardTitle>
+              <Star className="h-4 w-4 text-yellow-600" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold text-yellow-600">{stats.portfolioTestimonials}</div>
+              <p className="text-xs text-gray-500 mt-1">
+                Total de depoimentos
+              </p>
+            </CardContent>
+          </Card>
+
+          {/* Portfolio Stats Card */}
+          <Card className="shadow-lg border-0">
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium text-gray-600">
+                Estatísticas
+              </CardTitle>
+              <TrendingUp className="h-4 w-4 text-emerald-600" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold text-emerald-600">{stats.portfolioStats}</div>
+              <p className="text-xs text-gray-500 mt-1">
+                Métricas cadastradas
+              </p>
+            </CardContent>
+          </Card>
         </div>
 
         {/* Recent Activities */}
-        <Card className="shadow-lg border-brand-gold/20">
-          <CardHeader className="bg-gradient-to-r from-brand-gold/5 to-brand-gold/10 border-b border-brand-gold/20">
-            <div className="flex items-center justify-between">
-              <CardTitle className="flex items-center gap-3 text-brand-black">
-                <div className="w-8 h-8 bg-brand-gold/20 rounded-lg flex items-center justify-center">
-                  <Activity className="w-4 h-4 text-brand-gold" />
-                </div>
-                Atividades Recentes
-                <Badge variant="outline" className="ml-auto bg-brand-gold/10 text-brand-gold border-brand-gold/30">
-                  {totalActivities} total
-                </Badge>
-              </CardTitle>
-            </div>
-            
-            {/* Date Filter */}
-            <div className="flex items-center gap-4 mt-4">
-              <div className="flex items-center gap-2">
-                <CalendarIcon className="w-4 h-4 text-brand-gold" />
-                <label className="text-sm font-medium text-brand-black">Filtrar por data:</label>
-              </div>
-              <Input
-                type="date"
-                value={dateFilter}
-                onChange={(e) => {
-                  setDateFilter(e.target.value);
-                  setCurrentPage(1);
-                }}
-                className="w-auto border-brand-gold/30 focus:border-brand-gold focus:ring-brand-gold/20"
-              />
-              {dateFilter && (
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => {
-                    setDateFilter('');
-                    setCurrentPage(1);
-                  }}
-                  className="border-brand-gold/30 text-brand-gold hover:bg-brand-gold/10"
-                >
-                  Limpar
-                </Button>
-              )}
-            </div>
+        <Card className="shadow-lg border-0">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Activity className="w-5 h-5 text-brand-gold" />
+              Atividades Recentes
+            </CardTitle>
+            <CardDescription>
+              Últimas ações realizadas no sistema
+            </CardDescription>
           </CardHeader>
-          <CardContent className="p-0">
-            {activitiesLoading ? (
-              <div className="p-8 text-center">
-                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-brand-gold mx-auto"></div>
-                <p className="mt-4 text-gray-600">Carregando atividades...</p>
-              </div>
-            ) : activities.length === 0 ? (
-              <div className="p-8 text-center">
+          <CardContent>
+            {recentActivities.length === 0 ? (
+              <div className="text-center py-8">
                 <Activity className="w-12 h-12 text-gray-300 mx-auto mb-4" />
-                <p className="text-gray-500">Nenhuma atividade encontrada</p>
+                <p className="text-gray-500">Nenhuma atividade recente</p>
               </div>
             ) : (
-              <>
-                <div className="divide-y divide-gray-100">
-                  {activities.map((activity, index) => {
-                    const EntityIcon = getEntityIcon(activity.entity_type);
-                    const ActionIcon = getActionIcon(activity.action_type);
-                    return (
-                      <div key={activity.id} className="p-4 hover:bg-brand-gold/5 transition-colors">
-                        <div className="flex items-center justify-between">
-                          <div className="flex items-center space-x-4">
-                            <div className="w-12 h-12 bg-brand-gold/20 rounded-full flex items-center justify-center relative">
-                              <EntityIcon className="w-6 h-6 text-brand-gold" />
-                              <div className="absolute -bottom-1 -right-1 w-5 h-5 bg-white rounded-full flex items-center justify-center border-2 border-brand-gold/20">
-                                <ActionIcon className="w-3 h-3 text-brand-gold" />
-                              </div>
-                            </div>
-                            <div>
-                              <p className="text-sm text-brand-black font-medium mb-1">
-                                <span className="font-semibold text-brand-gold">{activity.user_name}</span> {getActionText(activity.action_type, activity.entity_type, activity.entity_title)}
-                              </p>
-                              <div className="flex items-center gap-3 text-xs text-gray-500">
-                                <span className="flex items-center gap-1">
-                                  <Calendar className="w-3 h-3" />
-                                  {formatDate(activity.created_at)}
-                                </span>
-                              </div>
-                            </div>
-                          </div>
-                          <ArrowRight className="w-4 h-4 text-brand-gold flex-shrink-0" />
-                        </div>
+              <div className="space-y-4">
+                {recentActivities.map((activity) => (
+                  <div
+                    key={activity.id}
+                    className="flex items-center justify-between p-4 bg-gray-50 rounded-lg"
+                  >
+                    <div className="flex items-center gap-3">
+                      <div className="p-2 bg-white rounded-full shadow-sm">
+                        <Activity className="w-4 h-4 text-brand-gold" />
                       </div>
-                    );
-                  })}
-                </div>
-
-                {/* Pagination */}
-                {totalPages > 1 && (
-                  <div className="p-4 border-t border-brand-gold/20 bg-brand-gold/5">
-                    <div className="flex items-center justify-between">
-                      <p className="text-sm text-brand-black">
-                        Página {currentPage} de {totalPages} ({totalActivities} atividades)
-                      </p>
-                      <div className="flex gap-2">
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
-                          disabled={currentPage === 1}
-                          className="border-brand-gold/30 text-brand-gold hover:bg-brand-gold/10"
-                        >
-                          <ChevronLeft className="w-4 h-4 mr-1" />
-                          Anterior
-                        </Button>
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
-                          disabled={currentPage === totalPages}
-                          className="border-brand-gold/30 text-brand-gold hover:bg-brand-gold/10"
-                        >
-                          Próxima
-                          <ChevronRight className="w-4 h-4 ml-1" />
-                        </Button>
+                      <div>
+                        <p className="text-sm font-medium text-gray-900">
+                          {activity.user_name} {getActionTypeLabel(activity.action_type).toLowerCase()}{' '}
+                          {getEntityTypeLabel(activity.entity_type).toLowerCase()}
+                          {activity.entity_title && (
+                            <span className="text-brand-gold font-semibold">
+                              {' '}{activity.entity_title}
+                            </span>
+                          )}
+                        </p>
+                        <p className="text-xs text-gray-500">
+                          <Calendar className="w-3 h-3 inline mr-1" />
+                          {formatDate(activity.created_at)}
+                        </p>
                       </div>
                     </div>
                   </div>
-                )}
-              </>
+                ))}
+              </div>
             )}
           </CardContent>
         </Card>
