@@ -6,7 +6,6 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { ImageUpload } from '@/components/ui/image-upload';
 import { useToast } from '@/hooks/use-toast';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
@@ -67,40 +66,15 @@ const PortfolioProjectModal = ({ open, onClose, editingItem }: PortfolioProjectM
           .update(submitData)
           .eq('id', editingItem.id);
         if (error) throw error;
-
-        // Registrar atividade
-        await supabase
-          .from('admin_activities')
-          .insert([{
-            entity_type: 'portfolio_projects',
-            entity_id: editingItem.id,
-            entity_title: data.title,
-            action_type: 'update',
-            user_name: 'Admin'
-          }]);
       } else {
-        const { data: newProject, error } = await supabase
+        const { error } = await supabase
           .from('portfolio_projects')
-          .insert([submitData])
-          .select()
-          .single();
+          .insert([submitData]);
         if (error) throw error;
-
-        // Registrar atividade
-        await supabase
-          .from('admin_activities')
-          .insert([{
-            entity_type: 'portfolio_projects',
-            entity_id: newProject.id,
-            entity_title: data.title,
-            action_type: 'create',
-            user_name: 'Admin'
-          }]);
       }
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['admin-portfolio-projects'] });
-      queryClient.invalidateQueries({ queryKey: ['admin-activities'] });
       toast({
         title: editingItem ? "Projeto atualizado!" : "Projeto criado!",
         description: "As alterações foram salvas com sucesso.",
@@ -181,12 +155,15 @@ const PortfolioProjectModal = ({ open, onClose, editingItem }: PortfolioProjectM
             />
           </div>
 
-          <ImageUpload
-            label="Imagem do Projeto"
-            value={formData.image_url}
-            onChange={(url) => setFormData({ ...formData, image_url: url })}
-            className="space-y-2"
-          />
+          <div className="space-y-2">
+            <Label htmlFor="image_url">URL da Imagem</Label>
+            <Input
+              id="image_url"
+              value={formData.image_url}
+              onChange={(e) => setFormData({ ...formData, image_url: e.target.value })}
+              placeholder="https://exemplo.com/imagem.jpg"
+            />
+          </div>
 
           <div className="space-y-2">
             <div className="flex items-center justify-between">

@@ -59,40 +59,16 @@ const PortfolioTestimonialModal = ({ open, onClose, editingItem }: PortfolioTest
           .update(data)
           .eq('id', editingItem.id);
         if (error) throw error;
-
-        // Registrar atividade
-        await supabase
-          .from('admin_activities')
-          .insert([{
-            entity_type: 'portfolio_testimonials',
-            entity_id: editingItem.id,
-            entity_title: data.author,
-            action_type: 'update',
-            user_name: 'Admin'
-          }]);
       } else {
-        const { data: newTestimonial, error } = await supabase
+        const { error } = await supabase
           .from('portfolio_testimonials')
-          .insert([data])
-          .select()
-          .single();
+          .insert([data]);
         if (error) throw error;
-
-        // Registrar atividade
-        await supabase
-          .from('admin_activities')
-          .insert([{
-            entity_type: 'portfolio_testimonials',
-            entity_id: newTestimonial.id,
-            entity_title: data.author,
-            action_type: 'create',
-            user_name: 'Admin'
-          }]);
       }
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['admin-portfolio-testimonials'] });
-      queryClient.invalidateQueries({ queryKey: ['admin-activities'] });
+      queryClient.invalidateQueries({ queryKey: ['portfolio-testimonials'] });
       toast({
         title: editingItem ? "Depoimento atualizado!" : "Depoimento criado!",
         description: "As alterações foram salvas com sucesso.",
@@ -116,7 +92,7 @@ const PortfolioTestimonialModal = ({ open, onClose, editingItem }: PortfolioTest
 
   return (
     <Dialog open={open} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-[500px]">
+      <DialogContent className="sm:max-w-[600px]">
         <DialogHeader>
           <DialogTitle>
             {editingItem ? 'Editar Depoimento' : 'Novo Depoimento'}
@@ -124,18 +100,6 @@ const PortfolioTestimonialModal = ({ open, onClose, editingItem }: PortfolioTest
         </DialogHeader>
 
         <form onSubmit={handleSubmit} className="space-y-4">
-          <div className="space-y-2">
-            <Label htmlFor="content">Conteúdo do Depoimento</Label>
-            <Textarea
-              id="content"
-              value={formData.content}
-              onChange={(e) => setFormData({ ...formData, content: e.target.value })}
-              placeholder="Digite o depoimento..."
-              rows={4}
-              required
-            />
-          </div>
-
           <div className="space-y-2">
             <Label htmlFor="author">Nome do Cliente</Label>
             <Input
@@ -159,7 +123,19 @@ const PortfolioTestimonialModal = ({ open, onClose, editingItem }: PortfolioTest
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="rating">Avaliação</Label>
+            <Label htmlFor="content">Depoimento</Label>
+            <Textarea
+              id="content"
+              value={formData.content}
+              onChange={(e) => setFormData({ ...formData, content: e.target.value })}
+              placeholder="Digite o depoimento do cliente..."
+              rows={4}
+              required
+            />
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="rating">Avaliação (estrelas)</Label>
             <Select
               value={formData.rating.toString()}
               onValueChange={(value) => setFormData({ ...formData, rating: parseInt(value) })}
@@ -168,11 +144,11 @@ const PortfolioTestimonialModal = ({ open, onClose, editingItem }: PortfolioTest
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="5">5 estrelas</SelectItem>
-                <SelectItem value="4">4 estrelas</SelectItem>
-                <SelectItem value="3">3 estrelas</SelectItem>
-                <SelectItem value="2">2 estrelas</SelectItem>
-                <SelectItem value="1">1 estrela</SelectItem>
+                <SelectItem value="1">⭐ (1 estrela)</SelectItem>
+                <SelectItem value="2">⭐⭐ (2 estrelas)</SelectItem>
+                <SelectItem value="3">⭐⭐⭐ (3 estrelas)</SelectItem>
+                <SelectItem value="4">⭐⭐⭐⭐ (4 estrelas)</SelectItem>
+                <SelectItem value="5">⭐⭐⭐⭐⭐ (5 estrelas)</SelectItem>
               </SelectContent>
             </Select>
           </div>

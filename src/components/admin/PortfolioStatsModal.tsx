@@ -4,6 +4,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/u
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useToast } from '@/hooks/use-toast';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
@@ -16,7 +17,11 @@ interface PortfolioStatsModalProps {
 
 const PortfolioStatsModal = ({ open, onClose, editingItem }: PortfolioStatsModalProps) => {
   const [formData, setFormData] = useState({
+    key: '',
+    label: '',
     value: 0,
+    suffix: '',
+    status: 'active' as 'active' | 'inactive',
     sort_order: 0
   });
 
@@ -26,12 +31,20 @@ const PortfolioStatsModal = ({ open, onClose, editingItem }: PortfolioStatsModal
   useEffect(() => {
     if (editingItem) {
       setFormData({
+        key: editingItem.key || '',
+        label: editingItem.label || '',
         value: editingItem.value || 0,
+        suffix: editingItem.suffix || '',
+        status: editingItem.status || 'active',
         sort_order: editingItem.sort_order || 0
       });
     } else {
       setFormData({
+        key: '',
+        label: '',
         value: 0,
+        suffix: '',
+        status: 'active',
         sort_order: 0
       });
     }
@@ -45,23 +58,17 @@ const PortfolioStatsModal = ({ open, onClose, editingItem }: PortfolioStatsModal
           .update(data)
           .eq('id', editingItem.id);
         if (error) throw error;
-
-        // Registrar atividade
-        await supabase
-          .from('admin_activities')
-          .insert([{
-            entity_type: 'portfolio_stats',
-            entity_id: editingItem.id,
-            entity_title: editingItem.label,
-            action_type: 'update',
-            user_name: 'Admin'
-          }]);
+      } else {
+        const { error } = await supabase
+          .from('portfolio_stats')
+          .insert([data]);
+        if (error) throw error;
       }
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['admin-portfolio-stats'] });
       toast({
-        title: "Estatística atualizada!",
+        title: editingItem ? "Estatística atualizada!" : "Estatística criada!",
         description: "As alterações foram salvas com sucesso.",
       });
       onClose();
@@ -81,18 +88,38 @@ const PortfolioStatsModal = ({ open, onClose, editingItem }: PortfolioStatsModal
     mutation.mutate(formData);
   };
 
-  if (!editingItem) {
-    return null;
-  }
-
   return (
     <Dialog open={open} onOpenChange={onClose}>
       <DialogContent className="sm:max-w-[500px]">
         <DialogHeader>
-          <DialogTitle>Editar Estatística: {editingItem.label}</DialogTitle>
+          <DialogTitle>
+            {editingItem ? 'Editar Estatística' : 'Nova Estatística'}
+          </DialogTitle>
         </DialogHeader>
 
         <form onSubmit={handleSubmit} className="space-y-4">
+          <div className="space-y-2">
+            <Label htmlFor="key">Chave (identificador único)</Label>
+            <Input
+              id="key"
+              value={formData.key}
+              onChange={(e) => setFormData({ ...formData, key: e.target.value })}
+              placeholder="ex: companies, segments"
+              required
+            />
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="label">Nome da Estatística</Label>
+            <Input
+              id="label"
+              value={formData.label}
+              onChange={(e) => setFormData({ ...formData, label: e.target.value })}
+              placeholder="ex: Empresas Atendidas"
+              required
+            />
+          </div>
+
           <div className="space-y-2">
             <Label htmlFor="value">Valor</Label>
             <Input
@@ -106,6 +133,16 @@ const PortfolioStatsModal = ({ open, onClose, editingItem }: PortfolioStatsModal
           </div>
 
           <div className="space-y-2">
+            <Label htmlFor="suffix">Sufixo</Label>
+            <Input
+              id="suffix"
+              value={formData.suffix}
+              onChange={(e) => setFormData({ ...formData, suffix: e.target.value })}
+              placeholder="ex: +, %, etc"
+            />
+          </div>
+
+          <div className="space-y-2">
             <Label htmlFor="sort_order">Ordem de Exibição</Label>
             <Input
               id="sort_order"
@@ -114,6 +151,22 @@ const PortfolioStatsModal = ({ open, onClose, editingItem }: PortfolioStatsModal
               onChange={(e) => setFormData({ ...formData, sort_order: parseInt(e.target.value) || 0 })}
               placeholder="0"
             />
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="status">Status</Label>
+            <Select
+              value={formData.status}
+              onValueChange={(value: 'active' | 'inactive') => setFormData({ ...formData, status: value })}
+            >
+              <SelectTrigger>
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="active">Ativo</SelectItem>
+                <SelectItem value="inactive">Inativo</SelectItem>
+              </SelectContent>
+            </Select>
           </div>
 
           <div className="flex gap-3 pt-4">

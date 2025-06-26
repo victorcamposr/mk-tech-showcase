@@ -99,7 +99,7 @@ const AdminPortfolio = () => {
 
   // Mutações para deletar
   const deleteMutation = useMutation({
-    mutationFn: async ({ type, id, title }: { type: string; id: string; title: string }) => {
+    mutationFn: async ({ type, id }: { type: string; id: string }) => {
       let query;
       if (type === 'stats') {
         query = supabase.from('portfolio_stats').delete().eq('id', id);
@@ -113,21 +113,9 @@ const AdminPortfolio = () => {
       
       const { error } = await query;
       if (error) throw error;
-
-      // Registrar atividade
-      await supabase
-        .from('admin_activities')
-        .insert([{
-          entity_type: `portfolio_${type}`,
-          entity_id: id,
-          entity_title: title,
-          action_type: 'delete',
-          user_name: 'Admin'
-        }]);
     },
     onSuccess: (_, { type }) => {
       queryClient.invalidateQueries({ queryKey: [`admin-portfolio-${type}`] });
-      queryClient.invalidateQueries({ queryKey: ['admin-activities'] });
       toast({
         title: "Item excluído com sucesso!",
         description: "O item foi removido do portfólio.",
@@ -156,11 +144,7 @@ const AdminPortfolio = () => {
   };
 
   const confirmDelete = () => {
-    deleteMutation.mutate({ 
-      type: deleteDialog.type, 
-      id: deleteDialog.id, 
-      title: deleteDialog.title 
-    });
+    deleteMutation.mutate({ type: deleteDialog.type, id: deleteDialog.id });
   };
 
   const handleCloseModal = () => {
@@ -200,13 +184,16 @@ const AdminPortfolio = () => {
           <TabsContent value="stats" className="space-y-6">
             <div className="flex justify-between items-center">
               <h2 className="text-2xl font-semibold">Estatísticas do Portfólio</h2>
-              <p className="text-sm text-gray-600">Apenas valor e ordem podem ser editados</p>
+              <Button onClick={() => setStatsModalOpen(true)} className="bg-brand-gold hover:bg-brand-gold-dark text-brand-black">
+                <Plus className="w-4 h-4 mr-2" />
+                Nova Estatística
+              </Button>
             </div>
 
             {statsLoading ? (
               <div>Carregando...</div>
             ) : (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {stats.map((stat) => (
                   <Card key={stat.id}>
                     <CardHeader className="pb-3">
@@ -228,6 +215,13 @@ const AdminPortfolio = () => {
                           onClick={() => handleEdit('stats', stat)}
                         >
                           <Edit className="w-4 h-4" />
+                        </Button>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => handleDelete('stats', stat.id, stat.label)}
+                        >
+                          <Trash2 className="w-4 h-4" />
                         </Button>
                       </div>
                     </CardContent>
@@ -253,15 +247,6 @@ const AdminPortfolio = () => {
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {projects.map((project) => (
                   <Card key={project.id}>
-                    {project.image_url && (
-                      <div className="aspect-video w-full overflow-hidden rounded-t-lg">
-                        <img
-                          src={project.image_url}
-                          alt={project.title}
-                          className="w-full h-full object-cover"
-                        />
-                      </div>
-                    )}
                     <CardHeader className="pb-3">
                       <div className="flex items-center justify-between">
                         <div>
