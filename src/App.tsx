@@ -1,9 +1,9 @@
-
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { AuthProvider } from "@/hooks/useAuth";
 import Index from "./pages/Index";
 import About from "./pages/About";
 import Contact from "./pages/Contact";
@@ -36,84 +36,86 @@ const queryClient = new QueryClient();
 function App() {
   return (
     <QueryClientProvider client={queryClient}>
-      <TooltipProvider>
-        <Toaster />
-        <Sonner />
-        <BrowserRouter>
-          <ScrollToTop />
-          <AccessibilityHelper />
-          <PerformanceOptimizer />
-          <Routes>
-            <Route path="/" element={<Index />} />
-            <Route path="/sobre" element={<About />} />
-            <Route path="/contato" element={<Contact />} />
-            <Route path="/servicos" element={<Services />} />
-            <Route path="/servicos/:categorySlug" element={<ServicesByCategory />} />
-            <Route path="/portfolio" element={<Portfolio />} />
-            <Route path="/blog" element={<Blog />} />
-            <Route path="/blog/:slug" element={<BlogPost />} />
-            <Route path="/solucoes" element={<Solutions />} />
-            <Route path="/solucoes/:solutionKey" element={<Solutions />} />
-            <Route path="/admin" element={<AdminLogin />} />
-            <Route path="/admin/dashboard" element={
-              <ProtectedRoute>
-                <AdminDashboard />
-              </ProtectedRoute>
-            } />
-            <Route path="/admin/blog" element={
-              <ProtectedRoute>
-                <AdminBlog />
-              </ProtectedRoute>
-            } />
-            <Route path="/admin/users" element={
-              <ProtectedRoute>
-                <AdminUsers />
-              </ProtectedRoute>
-            } />
-            <Route path="/admin/solutions" element={
-              <ProtectedRoute>
-                <AdminSolutions />
-              </ProtectedRoute>
-            } />
-            <Route path="/admin/service-categories" element={
-              <ProtectedRoute>
-                <AdminServiceCategories />
-              </ProtectedRoute>
-            } />
-            <Route path="/admin/service-cards" element={
-              <ProtectedRoute>
-                <AdminServiceCards />
-              </ProtectedRoute>
-            } />
-            <Route path="/admin/home-banners" element={
-              <ProtectedRoute>
-                <AdminHomeBanners />
-              </ProtectedRoute>
-            } />
-            <Route path="/admin/portfolio" element={
-              <ProtectedRoute>
-                <AdminPortfolio />
-              </ProtectedRoute>
-            } />
-            <Route path="/admin/contacts" element={
-              <ProtectedRoute>
-                <AdminContacts />
-              </ProtectedRoute>
-            } />
-            <Route path="/admin/solutions/create" element={
-              <ProtectedRoute>
-                <CreateSolution />
-              </ProtectedRoute>
-            } />
-            <Route path="/admin/solutions/:id/edit" element={
-              <ProtectedRoute>
-                <EditSolution />
-              </ProtectedRoute>
-            } />
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-        </BrowserRouter>
-      </TooltipProvider>
+      <AuthProvider>
+        <TooltipProvider>
+          <Toaster />
+          <Sonner />
+          <BrowserRouter>
+            <ScrollToTop />
+            <AccessibilityHelper />
+            <PerformanceOptimizer />
+            <Routes>
+              <Route path="/" element={<Index />} />
+              <Route path="/sobre" element={<About />} />
+              <Route path="/contato" element={<Contact />} />
+              <Route path="/servicos" element={<Services />} />
+              <Route path="/servicos/:categorySlug" element={<ServicesByCategory />} />
+              <Route path="/portfolio" element={<Portfolio />} />
+              <Route path="/blog" element={<Blog />} />
+              <Route path="/blog/:slug" element={<BlogPost />} />
+              <Route path="/solucoes" element={<Solutions />} />
+              <Route path="/solucoes/:solutionKey" element={<Solutions />} />
+              <Route path="/admin" element={<AdminLogin />} />
+              <Route path="/admin/dashboard" element={
+                <ProtectedRoute>
+                  <AdminDashboard />
+                </ProtectedRoute>
+              } />
+              <Route path="/admin/blog" element={
+                <ProtectedRoute>
+                  <AdminBlog />
+                </ProtectedRoute>
+              } />
+              <Route path="/admin/users" element={
+                <ProtectedRoute>
+                  <AdminUsers />
+                </ProtectedRoute>
+              } />
+              <Route path="/admin/solutions" element={
+                <ProtectedRoute>
+                  <AdminSolutions />
+                </ProtectedRoute>
+              } />
+              <Route path="/admin/service-categories" element={
+                <ProtectedRoute>
+                  <AdminServiceCategories />
+                </ProtectedRoute>
+              } />
+              <Route path="/admin/service-cards" element={
+                <ProtectedRoute>
+                  <AdminServiceCards />
+                </ProtectedRoute>
+              } />
+              <Route path="/admin/home-banners" element={
+                <ProtectedRoute>
+                  <AdminHomeBanners />
+                </ProtectedRoute>
+              } />
+              <Route path="/admin/portfolio" element={
+                <ProtectedRoute>
+                  <AdminPortfolio />
+                </ProtectedRoute>
+              } />
+              <Route path="/admin/contacts" element={
+                <ProtectedRoute>
+                  <AdminContacts />
+                </ProtectedRoute>
+              } />
+              <Route path="/admin/solutions/create" element={
+                <ProtectedRoute>
+                  <CreateSolution />
+                </ProtectedRoute>
+              } />
+              <Route path="/admin/solutions/:id/edit" element={
+                <ProtectedRoute>
+                  <EditSolution />
+                </ProtectedRoute>
+              } />
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+          </BrowserRouter>
+        </TooltipProvider>
+      </AuthProvider>
     </QueryClientProvider>
   );
 }
