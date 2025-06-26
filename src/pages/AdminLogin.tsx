@@ -26,7 +26,7 @@ const AdminLogin = () => {
 
   useEffect(() => {
     if (user && isAdmin) {
-      navigate('/admin');
+      navigate('/admin/dashboard');
       toast({
         title: "Login realizado com sucesso!",
         description: "Bem-vindo ao painel administrativo.",
