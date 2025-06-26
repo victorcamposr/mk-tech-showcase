@@ -5,9 +5,11 @@ import AdminLayout from '@/components/admin/AdminLayout';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import { Input } from '@/components/ui/input';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
-import { Plus, Edit, Trash2, Eye, EyeOff } from 'lucide-react';
+import { Plus, Edit, Trash2, Eye, EyeOff, Search } from 'lucide-react';
 import HomeBannerModal from '@/components/admin/HomeBannerModal';
 import DeleteConfirmDialog from '@/components/admin/DeleteConfirmDialog';
 import { logAdminActivity } from '@/utils/adminActivity';
@@ -29,6 +31,8 @@ const AdminHomeBanners = () => {
   const [deleteDialog, setDeleteDialog] = useState<{ isOpen: boolean; banner?: HomeBanner }>({
     isOpen: false
   });
+  const [searchTerm, setSearchTerm] = useState('');
+  const [statusFilter, setStatusFilter] = useState<'all' | 'active' | 'inactive'>('all');
   const queryClient = useQueryClient();
   const { toast } = useToast();
 
@@ -44,6 +48,17 @@ const AdminHomeBanners = () => {
       return data as HomeBanner[];
     }
   });
+
+  // Filtrar banners baseado na busca e status
+  const filteredBanners = banners.filter(banner => {
+    const matchesSearch = banner.title.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesStatus = statusFilter === 'all' || banner.status === statusFilter;
+    return matchesSearch && matchesStatus;
+  });
+
+  // Contar banners ativos e inativos
+  const activeBanners = banners.filter(banner => banner.status === 'active').length;
+  const inactiveBanners = banners.filter(banner => banner.status === 'inactive').length;
 
   const handleCreate = () => {
     setSelectedBanner(undefined);
@@ -149,20 +164,106 @@ const AdminHomeBanners = () => {
           </Button>
         </div>
 
+        {/* Filtros e Estatísticas */}
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+          <Card className="border-pink-200">
+            <CardContent className="p-4">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-medium text-gray-600">Total de Banners</p>
+                  <p className="text-2xl font-bold text-pink-600">{banners.length}</p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+          
+          <Card className="border-green-200">
+            <CardContent className="p-4">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-medium text-gray-600">Banners Ativos</p>
+                  <p className="text-2xl font-bold text-green-600">{activeBanners}</p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+          
+          <Card className="border-red-200">
+            <CardContent className="p-4">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-medium text-gray-600">Banners Inativos</p>
+                  <p className="text-2xl font-bold text-red-600">{inactiveBanners}</p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+          
+          <Card className="border-blue-200">
+            <CardContent className="p-4">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-medium text-gray-600">Filtrados</p>
+                  <p className="text-2xl font-bold text-blue-600">{filteredBanners.length}</p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* Filtros de Busca */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-lg">Filtros</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="flex flex-col md:flex-row gap-4">
+              <div className="flex-1">
+                <div className="relative">
+                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+                  <Input
+                    placeholder="Buscar por título..."
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    className="pl-10"
+                  />
+                </div>
+              </div>
+              <div className="w-full md:w-48">
+                <Select value={statusFilter} onValueChange={(value: 'all' | 'active' | 'inactive') => setStatusFilter(value)}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Status" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">Todos</SelectItem>
+                    <SelectItem value="active">Ativos</SelectItem>
+                    <SelectItem value="inactive">Inativos</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
         {isLoading ? (
           <div className="flex justify-center py-8">
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-brand-gold"></div>
           </div>
         ) : (
           <div className="grid gap-6">
-            {banners.length === 0 ? (
+            {filteredBanners.length === 0 ? (
               <Card>
                 <CardContent className="text-center py-8">
-                  <p className="text-gray-500">Nenhum banner cadastrado</p>
+                  <p className="text-gray-500">
+                    {searchTerm || statusFilter !== 'all' 
+                      ? 'Nenhum banner encontrado com os filtros aplicados' 
+                      : 'Nenhum banner cadastrado'
+                    }
+                  </p>
                 </CardContent>
               </Card>
             ) : (
-              banners.map((banner) => (
+              filteredBanners.map((banner) => (
                 <Card key={banner.id} className="overflow-hidden">
                   <div className="flex">
                     <div className="w-48 h-32 flex-shrink-0">
