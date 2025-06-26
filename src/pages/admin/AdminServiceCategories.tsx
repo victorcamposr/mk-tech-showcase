@@ -125,7 +125,41 @@ const AdminServiceCategories = () => {
         .delete()
         .eq('id', categoryToDelete.id);
 
-      if (error) throw error;
+      if (error) {
+        // Se o erro for de chave estrangeira, mostrar mensagem mais amigável
+        if (error.code === '23503') {
+          // Verificar onde a categoria está sendo usada
+          const [bannersResult, cardsResult] = await Promise.all([
+            supabase.from('home_banners').select('id').eq('category_id', categoryToDelete.id),
+            supabase.from('service_cards').select('id').eq('category_id', categoryToDelete.id)
+          ]);
+          
+          const bannersCount = bannersResult.data?.length || 0;
+          const cardsCount = cardsResult.data?.length || 0;
+          
+          let usageMessage = `A categoria "${categoryToDelete.name}" não pode ser excluída pois está sendo utilizada em:`;
+          
+          if (bannersCount > 0) {
+            usageMessage += `\n• ${bannersCount} banner(s) da home`;
+          }
+          if (cardsCount > 0) {
+            usageMessage += `\n• ${cardsCount} card(s) de serviço`;
+          }
+          
+          usageMessage += '\n\nRemova primeiro estas referências para poder excluir a categoria.';
+          
+          toast({
+            title: "Categoria em uso",
+            description: usageMessage,
+            variant: "destructive",
+          });
+          
+          setDeleteModalOpen(false);
+          setCategoryToDelete(null);
+          return;
+        }
+        throw error;
+      }
 
       await logAdminActivity(
         'delete',

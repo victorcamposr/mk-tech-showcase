@@ -27,12 +27,28 @@ export const logAdminActivity = async (
       }
     }
 
+    // Ajustar o título da entidade para atividades de usuário
+    let finalEntityTitle = entityTitle;
+    if (entityType === 'admin_profiles') {
+      switch (actionType) {
+        case 'create':
+          finalEntityTitle = `usuário ${entityTitle}`;
+          break;
+        case 'update':
+          finalEntityTitle = `usuário ${entityTitle}`;
+          break;
+        case 'delete':
+          finalEntityTitle = `usuário ${entityTitle}`;
+          break;
+      }
+    }
+
     const { error } = await supabase
       .from('admin_activities')
       .insert([{
         action_type: actionType,
         entity_type: entityType,
-        entity_title: entityTitle,
+        entity_title: finalEntityTitle,
         user_name: finalUserName
       }]);
     

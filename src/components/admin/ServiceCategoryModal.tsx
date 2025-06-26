@@ -102,6 +102,29 @@ const ServiceCategoryModal = ({ isOpen, onClose, onSuccess, category }: ServiceC
     return Object.keys(newErrors).length === 0;
   };
 
+  const checkCategoryUsage = async (categoryId: string) => {
+    // Verificar se a categoria está sendo usada em home_banners
+    const { data: banners, error: bannersError } = await supabase
+      .from('home_banners')
+      .select('id')
+      .eq('category_id', categoryId);
+    
+    if (bannersError) throw bannersError;
+    
+    // Verificar se a categoria está sendo usada em service_cards
+    const { data: cards, error: cardsError } = await supabase
+      .from('service_cards')
+      .select('id')
+      .eq('category_id', categoryId);
+    
+    if (cardsError) throw cardsError;
+    
+    return {
+      bannersCount: banners?.length || 0,
+      cardsCount: cards?.length || 0
+    };
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
@@ -131,7 +154,30 @@ const ServiceCategoryModal = ({ isOpen, onClose, onSuccess, category }: ServiceC
           .insert([formData]);
       }
 
-      if (result.error) throw result.error;
+      if (result.error) {
+        // Se o erro for de chave estrangeira, mostrar mensagem mais amigável
+        if (result.error.code === '23503') {
+          const usage = await checkCategoryUsage(category?.id || '');
+          let usageMessage = 'Esta categoria não pode ser excluída pois está sendo utilizada em:';
+          
+          if (usage.bannersCount > 0) {
+            usageMessage += `\n• ${usage.bannersCount} banner(s) da home`;
+          }
+          if (usage.cardsCount > 0) {
+            usageMessage += `\n• ${usage.cardsCount} card(s) de serviço`;
+          }
+          
+          usageMessage += '\n\nRemova primeiro estas referências para poder excluir a categoria.';
+          
+          toast({
+            title: "Categoria em uso",
+            description: usageMessage,
+            variant: "destructive",
+          });
+          return;
+        }
+        throw result.error;
+      }
 
       await logAdminActivity(
         actionType,

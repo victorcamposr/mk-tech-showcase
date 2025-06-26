@@ -393,17 +393,26 @@ const UserModal = ({ isOpen, onClose, onSuccess, user, mode }: UserModalProps) =
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>Função</FormLabel>
-                      <Select onValueChange={field.onChange} value={field.value} disabled={isViewMode}>
+                      <Select 
+                        onValueChange={field.onChange} 
+                        value={field.value} 
+                        disabled={isViewMode || isCreateMode}
+                      >
                         <FormControl>
-                          <SelectTrigger>
+                          <SelectTrigger className={isCreateMode ? "opacity-50 cursor-not-allowed" : ""}>
                             <SelectValue placeholder="Selecione a função" />
                           </SelectTrigger>
                         </FormControl>
                         <SelectContent>
                           <SelectItem value="admin">Admin</SelectItem>
-                          <SelectItem value="super_admin">Super Admin</SelectItem>
+                          {!isCreateMode && <SelectItem value="super_admin">Super Admin</SelectItem>}
                         </SelectContent>
                       </Select>
+                      {isCreateMode && (
+                        <p className="text-xs text-gray-500">
+                          Novos usuários são criados apenas como Admin
+                        </p>
+                      )}
                       <FormMessage />
                     </FormItem>
                   )}
