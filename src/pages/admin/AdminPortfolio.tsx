@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
@@ -6,7 +7,9 @@ import AdminLayout from '@/components/admin/AdminLayout';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Plus, Edit, Trash2, BarChart3, Briefcase, MessageSquare, Star } from 'lucide-react';
+import { Input } from '@/components/ui/input';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Plus, Edit, Trash2, BarChart3, Briefcase, MessageSquare, Star, Search } from 'lucide-react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import PortfolioStatsModal from '@/components/admin/PortfolioStatsModal';
 import PortfolioProjectModal from '@/components/admin/PortfolioProjectModal';
@@ -57,6 +60,12 @@ const AdminPortfolio = () => {
     title: ''
   });
 
+  // Estados para filtros e busca
+  const [projectSearch, setProjectSearch] = useState('');
+  const [projectFilter, setProjectFilter] = useState('all');
+  const [testimonialSearch, setTestimonialSearch] = useState('');
+  const [testimonialFilter, setTestimonialFilter] = useState('all');
+
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
@@ -96,6 +105,34 @@ const AdminPortfolio = () => {
       return data as PortfolioTestimonial[];
     }
   });
+
+  // Filtrar dados
+  const filteredProjects = projects.filter(project => {
+    const matchesSearch = project.title.toLowerCase().includes(projectSearch.toLowerCase()) ||
+                         project.category.toLowerCase().includes(projectSearch.toLowerCase());
+    const matchesFilter = projectFilter === 'all' || project.status === projectFilter;
+    return matchesSearch && matchesFilter;
+  });
+
+  const filteredTestimonials = testimonials.filter(testimonial => {
+    const matchesSearch = testimonial.author.toLowerCase().includes(testimonialSearch.toLowerCase()) ||
+                         testimonial.company.toLowerCase().includes(testimonialSearch.toLowerCase());
+    const matchesFilter = testimonialFilter === 'all' || testimonial.status === testimonialFilter;
+    return matchesSearch && matchesFilter;
+  });
+
+  // Contar estatísticas
+  const projectStats = {
+    total: projects.length,
+    active: projects.filter(p => p.status === 'active').length,
+    inactive: projects.filter(p => p.status === 'inactive').length
+  };
+
+  const testimonialStats = {
+    total: testimonials.length,
+    active: testimonials.filter(t => t.status === 'active').length,
+    inactive: testimonials.filter(t => t.status === 'inactive').length
+  };
 
   // Mutações para deletar
   const deleteMutation = useMutation({
@@ -187,18 +224,27 @@ const AdminPortfolio = () => {
 
           <Tabs defaultValue="stats" className="space-y-8">
             <div className="flex justify-center">
-              <TabsList className="grid w-full max-w-md grid-cols-3 bg-white shadow-lg border-2 border-brand-gold/20">
-                <TabsTrigger value="stats" className="flex items-center gap-2 data-[state=active]:bg-brand-gold data-[state=active]:text-brand-black">
+              <TabsList className="grid w-full max-w-md grid-cols-3 bg-white shadow-xl border-2 border-brand-gold/30 rounded-2xl p-1 h-14">
+                <TabsTrigger 
+                  value="stats" 
+                  className="flex items-center gap-2 data-[state=active]:bg-gradient-to-r data-[state=active]:from-brand-gold data-[state=active]:to-brand-gold-light data-[state=active]:text-brand-black data-[state=active]:shadow-lg rounded-xl font-semibold transition-all duration-300 hover:bg-brand-gold/10"
+                >
                   <BarChart3 className="w-4 h-4" />
-                  Estatísticas
+                  <span className="hidden sm:inline">Estatísticas</span>
                 </TabsTrigger>
-                <TabsTrigger value="projects" className="flex items-center gap-2 data-[state=active]:bg-brand-gold data-[state=active]:text-brand-black">
+                <TabsTrigger 
+                  value="projects" 
+                  className="flex items-center gap-2 data-[state=active]:bg-gradient-to-r data-[state=active]:from-brand-gold data-[state=active]:to-brand-gold-light data-[state=active]:text-brand-black data-[state=active]:shadow-lg rounded-xl font-semibold transition-all duration-300 hover:bg-brand-gold/10"
+                >
                   <Briefcase className="w-4 h-4" />
-                  Projetos
+                  <span className="hidden sm:inline">Projetos</span>
                 </TabsTrigger>
-                <TabsTrigger value="testimonials" className="flex items-center gap-2 data-[state=active]:bg-brand-gold data-[state=active]:text-brand-black">
+                <TabsTrigger 
+                  value="testimonials" 
+                  className="flex items-center gap-2 data-[state=active]:bg-gradient-to-r data-[state=active]:from-brand-gold data-[state=active]:to-brand-gold-light data-[state=active]:text-brand-black data-[state=active]:shadow-lg rounded-xl font-semibold transition-all duration-300 hover:bg-brand-gold/10"
+                >
                   <MessageSquare className="w-4 h-4" />
-                  Depoimentos
+                  <span className="hidden sm:inline">Depoimentos</span>
                 </TabsTrigger>
               </TabsList>
             </div>
@@ -216,7 +262,7 @@ const AdminPortfolio = () => {
                 </div>
               ) : (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                  {stats.map((stat) => (
+                  {stats.filter(stat => stat.key !== 'support').map((stat) => (
                     <Card key={stat.id} className="border-brand-gold/20 hover:shadow-2xl hover:shadow-brand-gold/10 transition-all duration-500 hover:-translate-y-2 group bg-gradient-to-br from-white to-gray-50/50">
                       <CardHeader className="pb-4">
                         <div className="flex items-center justify-between mb-4">
@@ -253,18 +299,57 @@ const AdminPortfolio = () => {
 
             {/* Projetos */}
             <TabsContent value="projects" className="space-y-8">
-              <div className="flex justify-between items-center">
-                <div className="text-center flex-1">
+              <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4">
+                <div className="text-center lg:text-left flex-1">
                   <h2 className="text-3xl font-bold text-brand-black mb-2">Projetos em Destaque</h2>
-                  <p className="text-gray-600">Showcase dos seus melhores projetos e resultados</p>
+                  <p className="text-gray-600 mb-4">Showcase dos seus melhores projetos e resultados</p>
+                  
+                  {/* Estatísticas dos projetos */}
+                  <div className="flex flex-wrap gap-4 text-sm text-gray-600">
+                    <span className="bg-blue-50 text-blue-700 px-3 py-1 rounded-full">
+                      Total: {projectStats.total}
+                    </span>
+                    <span className="bg-green-50 text-green-700 px-3 py-1 rounded-full">
+                      Ativos: {projectStats.active}
+                    </span>
+                    <span className="bg-gray-50 text-gray-700 px-3 py-1 rounded-full">
+                      Inativos: {projectStats.inactive}
+                    </span>
+                  </div>
                 </div>
-                <Button 
-                  onClick={() => setProjectModalOpen(true)} 
-                  className="bg-gradient-to-r from-brand-gold to-brand-gold-light hover:from-brand-gold-dark hover:to-brand-gold text-brand-black font-semibold shadow-lg"
-                >
-                  <Plus className="w-4 h-4 mr-2" />
-                  Novo Projeto
-                </Button>
+                
+                <div className="flex flex-col sm:flex-row gap-4 w-full lg:w-auto">
+                  {/* Barra de pesquisa */}
+                  <div className="relative flex-1 lg:w-64">
+                    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+                    <Input
+                      placeholder="Buscar projetos..."
+                      value={projectSearch}
+                      onChange={(e) => setProjectSearch(e.target.value)}
+                      className="pl-10 border-brand-gold/30 focus:border-brand-gold"
+                    />
+                  </div>
+                  
+                  {/* Filtro de status */}
+                  <Select value={projectFilter} onValueChange={setProjectFilter}>
+                    <SelectTrigger className="w-full sm:w-48 border-brand-gold/30 focus:border-brand-gold">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">Todos</SelectItem>
+                      <SelectItem value="active">Ativos</SelectItem>
+                      <SelectItem value="inactive">Inativos</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  
+                  <Button 
+                    onClick={() => setProjectModalOpen(true)} 
+                    className="bg-gradient-to-r from-brand-gold to-brand-gold-light hover:from-brand-gold-dark hover:to-brand-gold text-brand-black font-semibold shadow-lg"
+                  >
+                    <Plus className="w-4 h-4 mr-2" />
+                    Novo Projeto
+                  </Button>
+                </div>
               </div>
 
               {projectsLoading ? (
@@ -273,7 +358,7 @@ const AdminPortfolio = () => {
                 </div>
               ) : (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                  {projects.map((project) => (
+                  {filteredProjects.map((project) => (
                     <Card key={project.id} className="border-brand-gold/20 hover:shadow-2xl hover:shadow-brand-gold/10 transition-all duration-500 hover:-translate-y-2 group bg-gradient-to-br from-white to-gray-50/50 overflow-hidden">
                       {/* Banner de imagem */}
                       <div className="h-40 overflow-hidden relative">
@@ -338,18 +423,57 @@ const AdminPortfolio = () => {
 
             {/* Depoimentos */}
             <TabsContent value="testimonials" className="space-y-8">
-              <div className="flex justify-between items-center">
-                <div className="text-center flex-1">
+              <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4">
+                <div className="text-center lg:text-left flex-1">
                   <h2 className="text-3xl font-bold text-brand-black mb-2">Depoimentos de Clientes</h2>
-                  <p className="text-gray-600">Feedbacks que comprovam a qualidade do seu trabalho</p>
+                  <p className="text-gray-600 mb-4">Feedbacks que comprovam a qualidade do seu trabalho</p>
+                  
+                  {/* Estatísticas dos depoimentos */}
+                  <div className="flex flex-wrap gap-4 text-sm text-gray-600">
+                    <span className="bg-blue-50 text-blue-700 px-3 py-1 rounded-full">
+                      Total: {testimonialStats.total}
+                    </span>
+                    <span className="bg-green-50 text-green-700 px-3 py-1 rounded-full">
+                      Ativos: {testimonialStats.active}
+                    </span>
+                    <span className="bg-gray-50 text-gray-700 px-3 py-1 rounded-full">
+                      Inativos: {testimonialStats.inactive}
+                    </span>
+                  </div>
                 </div>
-                <Button 
-                  onClick={() => setTestimonialModalOpen(true)} 
-                  className="bg-gradient-to-r from-brand-gold to-brand-gold-light hover:from-brand-gold-dark hover:to-brand-gold text-brand-black font-semibold shadow-lg"
-                >
-                  <Plus className="w-4 h-4 mr-2" />
-                  Novo Depoimento
-                </Button>
+                
+                <div className="flex flex-col sm:flex-row gap-4 w-full lg:w-auto">
+                  {/* Barra de pesquisa */}
+                  <div className="relative flex-1 lg:w-64">
+                    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+                    <Input
+                      placeholder="Buscar depoimentos..."
+                      value={testimonialSearch}
+                      onChange={(e) => setTestimonialSearch(e.target.value)}
+                      className="pl-10 border-brand-gold/30 focus:border-brand-gold"
+                    />
+                  </div>
+                  
+                  {/* Filtro de status */}
+                  <Select value={testimonialFilter} onValueChange={setTestimonialFilter}>
+                    <SelectTrigger className="w-full sm:w-48 border-brand-gold/30 focus:border-brand-gold">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">Todos</SelectItem>
+                      <SelectItem value="active">Ativos</SelectItem>
+                      <SelectItem value="inactive">Inativos</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  
+                  <Button 
+                    onClick={() => setTestimonialModalOpen(true)} 
+                    className="bg-gradient-to-r from-brand-gold to-brand-gold-light hover:from-brand-gold-dark hover:to-brand-gold text-brand-black font-semibold shadow-lg"
+                  >
+                    <Plus className="w-4 h-4 mr-2" />
+                    Novo Depoimento
+                  </Button>
+                </div>
               </div>
 
               {testimonialsLoading ? (
@@ -358,7 +482,7 @@ const AdminPortfolio = () => {
                 </div>
               ) : (
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                  {testimonials.map((testimonial) => (
+                  {filteredTestimonials.map((testimonial) => (
                     <Card key={testimonial.id} className="border-brand-gold/20 hover:shadow-2xl hover:shadow-brand-gold/10 transition-all duration-500 hover:-translate-y-2 group bg-gradient-to-br from-white to-gray-50/50">
                       <CardHeader className="pb-4">
                         <div className="flex items-center justify-between mb-4">

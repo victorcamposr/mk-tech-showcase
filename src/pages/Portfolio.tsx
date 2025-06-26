@@ -177,7 +177,7 @@ const Portfolio = () => {
                       <div className="space-y-3">
                         <h4 className="font-semibold text-brand-black text-sm">Resultados Alcançados:</h4>
                         <ul className="space-y-2">
-                          {project.results.slice(0, 3).map((result, resultIndex) => (
+                          {project.results.map((result, resultIndex) => (
                             <li key={resultIndex} className="flex items-start text-sm text-gray-600">
                               <div className="w-1.5 h-1.5 bg-brand-gold rounded-full mt-2 mr-3 flex-shrink-0 group-hover:scale-125 transition-transform"></div>
                               <span className="group-hover:text-gray-700 transition-colors duration-300">
@@ -185,11 +185,6 @@ const Portfolio = () => {
                               </span>
                             </li>
                           ))}
-                          {project.results.length > 3 && (
-                            <li className="text-xs text-brand-gold font-medium ml-5">
-                              +{project.results.length - 3} resultados adicionais
-                            </li>
-                          )}
                         </ul>
                       </div>
                     </CardContent>
