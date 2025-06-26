@@ -341,12 +341,12 @@ const AdminDashboard = () => {
             return (
               <Card key={index} className="relative overflow-hidden border-brand-gold/20 shadow-lg hover:shadow-xl transition-all duration-300 bg-white hover:-translate-y-1">
                 <CardContent className="p-6">
-                  <div className="flex items-center justify-between mb-4">
-                    <div>
+                  <div className="flex items-start justify-between mb-4">
+                    <div className="flex-1">
                       <p className="text-sm font-medium text-gray-600 mb-1">{stat.title}</p>
                       <p className="text-3xl font-bold text-brand-black">{stat.value}</p>
                     </div>
-                    <div className={`w-12 h-12 rounded-lg bg-gradient-to-br ${stat.gradient} flex items-center justify-center shadow-lg`}>
+                    <div className={`w-12 h-12 rounded-lg bg-gradient-to-br ${stat.gradient} flex items-center justify-center shadow-lg flex-shrink-0`}>
                       <Icon className="w-6 h-6 text-white" />
                     </div>
                   </div>

@@ -68,6 +68,7 @@ const PortfolioTestimonialModal = ({ open, onClose, editingItem }: PortfolioTest
       }
     },
     onSuccess: async () => {
+      // Invalidar todas as queries relacionadas
       await queryClient.invalidateQueries({ queryKey: ['admin-portfolio-testimonials'] });
       await queryClient.invalidateQueries({ queryKey: ['portfolio-testimonials'] });
       

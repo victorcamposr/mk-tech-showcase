@@ -112,6 +112,7 @@ const AdminPortfolio = () => {
       }
     },
     onSuccess: async (_, { type }) => {
+      // Invalidar queries específicas
       await queryClient.invalidateQueries({ queryKey: [`admin-portfolio-${type}`] });
       
       // Log admin activity

@@ -50,6 +50,7 @@ const PortfolioStatsModal = ({ open, onClose, editingItem }: PortfolioStatsModal
       if (error) throw error;
     },
     onSuccess: async () => {
+      // Invalidar todas as queries relacionadas
       await queryClient.invalidateQueries({ queryKey: ['admin-portfolio-stats'] });
       await queryClient.invalidateQueries({ queryKey: ['portfolio-stats'] });
       

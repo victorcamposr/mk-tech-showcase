@@ -76,6 +76,7 @@ const PortfolioProjectModal = ({ open, onClose, editingItem }: PortfolioProjectM
       }
     },
     onSuccess: async () => {
+      // Invalidar todas as queries relacionadas
       await queryClient.invalidateQueries({ queryKey: ['admin-portfolio-projects'] });
       await queryClient.invalidateQueries({ queryKey: ['portfolio-projects'] });
       
