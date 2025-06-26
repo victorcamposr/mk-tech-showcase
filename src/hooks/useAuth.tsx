@@ -17,11 +17,9 @@ interface AuthContextType {
   isAdmin: boolean;
   adminProfile: AdminProfile | null;
   loading: boolean;
-  isLoggedIn: boolean;
   signIn: (email: string, password: string) => Promise<{ error: any }>;
   signUp: (email: string, password: string, name: string) => Promise<{ error: any }>;
   signOut: () => Promise<void>;
-  logout: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -32,8 +30,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [isAdmin, setIsAdmin] = useState(false);
   const [adminProfile, setAdminProfile] = useState<AdminProfile | null>(null);
   const [loading, setLoading] = useState(true);
-
-  const isLoggedIn = !!user;
 
   useEffect(() => {
     // Set up auth state listener FIRST
@@ -113,10 +109,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     await supabase.auth.signOut();
   };
 
-  const logout = async () => {
-    await supabase.auth.signOut();
-  };
-
   return (
     <AuthContext.Provider value={{
       user,
@@ -124,11 +116,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       isAdmin,
       adminProfile,
       loading,
-      isLoggedIn,
       signIn,
       signUp,
-      signOut,
-      logout
+      signOut
     }}>
       {children}
     </AuthContext.Provider>

@@ -1,3 +1,4 @@
+
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -27,7 +28,6 @@ import AdminHomeBanners from "./pages/admin/AdminHomeBanners";
 import ProtectedRoute from "./components/admin/ProtectedRoute";
 import CreateSolution from "./pages/admin/CreateSolution";
 import EditSolution from "./pages/admin/EditSolution";
-import AdminServiceCards from "./pages/admin/AdminServiceCards";
 
 const queryClient = new QueryClient();
 
@@ -96,11 +96,6 @@ function App() {
               <Route path="/admin/solutions/edit/:id" element={
                 <ProtectedRoute>
                   <EditSolution />
-                </ProtectedRoute>
-              } />
-              <Route path="/admin/service-cards" element={
-                <ProtectedRoute>
-                  <AdminServiceCards />
                 </ProtectedRoute>
               } />
               <Route path="*" element={<NotFound />} />

@@ -303,42 +303,6 @@ export type Database = {
         }
         Relationships: []
       }
-      service_cards: {
-        Row: {
-          created_at: string
-          description: string
-          email: string
-          id: string
-          logo_url: string
-          phone: string
-          sort_order: number | null
-          status: string
-          updated_at: string
-        }
-        Insert: {
-          created_at?: string
-          description: string
-          email: string
-          id?: string
-          logo_url: string
-          phone: string
-          sort_order?: number | null
-          status?: string
-          updated_at?: string
-        }
-        Update: {
-          created_at?: string
-          description?: string
-          email?: string
-          id?: string
-          logo_url?: string
-          phone?: string
-          sort_order?: number | null
-          status?: string
-          updated_at?: string
-        }
-        Relationships: []
-      }
       solutions: {
         Row: {
           benefits: string[]
