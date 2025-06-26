@@ -79,6 +79,7 @@ const AdminDashboard = () => {
 
   const fetchDashboardData = async () => {
     try {
+      console.log('Fetching dashboard data...');
       const [
         usersRes, 
         contactsRes, 
@@ -103,7 +104,7 @@ const AdminDashboard = () => {
         supabase.from('portfolio_projects').select('id', { count: 'exact', head: true }).eq('status', 'inactive')
       ]);
 
-      setStats({
+      const newStats = {
         totalUsers: usersRes.count || 0,
         totalContacts: contactsRes.count || 0,
         totalPosts: postsRes.count || 0,
@@ -114,7 +115,10 @@ const AdminDashboard = () => {
         draftPosts: draftPostsRes.count || 0,
         inactiveSolutions: inactiveSolutionsRes.count || 0,
         inactivePortfolioProjects: inactivePortfolioProjectsRes.count || 0
-      });
+      };
+
+      console.log('Dashboard stats updated:', newStats);
+      setStats(newStats);
     } catch (error) {
       console.error('Error fetching dashboard stats:', error);
       toast({

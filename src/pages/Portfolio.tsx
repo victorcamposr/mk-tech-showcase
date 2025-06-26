@@ -10,7 +10,6 @@ import { ScrollReveal } from "@/components/ScrollReveal";
 import { Card, CardContent } from "@/components/ui/card";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { useEffect, useState } from "react";
 
 interface PortfolioStat {
   id: string;
@@ -41,14 +40,11 @@ interface PortfolioTestimonial {
 }
 
 const Portfolio = () => {
-  const [stats, setStats] = useState<PortfolioStat[]>([]);
-  const [projects, setProjects] = useState<PortfolioProject[]>([]);
-  const [testimonials, setTestimonials] = useState<PortfolioTestimonial[]>([]);
-
-  // Carregar estatísticas
-  const { data: statsData } = useQuery({
+  // Carregar estatísticas - usar mesma query key do admin
+  const { data: stats = [] } = useQuery({
     queryKey: ['portfolio-stats'],
     queryFn: async () => {
+      console.log('Loading portfolio stats...');
       const { data, error } = await supabase
         .from('portfolio_stats')
         .select('*')
@@ -56,14 +52,16 @@ const Portfolio = () => {
         .order('sort_order');
       
       if (error) throw error;
-      return data;
+      console.log('Portfolio stats loaded:', data);
+      return data as PortfolioStat[];
     }
   });
 
-  // Carregar projetos
-  const { data: projectsData } = useQuery({
+  // Carregar projetos - usar mesma query key do admin
+  const { data: projects = [] } = useQuery({
     queryKey: ['portfolio-projects'],
     queryFn: async () => {
+      console.log('Loading portfolio projects...');
       const { data, error } = await supabase
         .from('portfolio_projects')
         .select('*')
@@ -71,14 +69,16 @@ const Portfolio = () => {
         .order('sort_order');
       
       if (error) throw error;
-      return data;
+      console.log('Portfolio projects loaded:', data);
+      return data as PortfolioProject[];
     }
   });
 
-  // Carregar depoimentos
-  const { data: testimonialsData } = useQuery({
+  // Carregar depoimentos - usar mesma query key do admin
+  const { data: testimonials = [] } = useQuery({
     queryKey: ['portfolio-testimonials'],
     queryFn: async () => {
+      console.log('Loading portfolio testimonials...');
       const { data, error } = await supabase
         .from('portfolio_testimonials')
         .select('*')
@@ -86,15 +86,10 @@ const Portfolio = () => {
         .order('sort_order');
       
       if (error) throw error;
-      return data;
+      console.log('Portfolio testimonials loaded:', data);
+      return data as PortfolioTestimonial[];
     }
   });
-
-  useEffect(() => {
-    if (statsData) setStats(statsData);
-    if (projectsData) setProjects(projectsData);
-    if (testimonialsData) setTestimonials(testimonialsData);
-  }, [statsData, projectsData, testimonialsData]);
 
   return (
     <div className="min-h-screen bg-background">

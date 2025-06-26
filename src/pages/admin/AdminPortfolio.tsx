@@ -112,8 +112,13 @@ const AdminPortfolio = () => {
       }
     },
     onSuccess: async (_, { type }) => {
+      console.log(`Portfolio ${type} deleted, invalidating queries...`);
       // Invalidar queries específicas
       await queryClient.invalidateQueries({ queryKey: [`admin-portfolio-${type}`] });
+      await queryClient.invalidateQueries({ queryKey: [`portfolio-${type}`] });
+      
+      // Invalidar também as queries do dashboard para atualizar os cards
+      await queryClient.invalidateQueries({ queryKey: ['dashboard-stats'] });
       
       // Log admin activity
       await logAdminActivity(

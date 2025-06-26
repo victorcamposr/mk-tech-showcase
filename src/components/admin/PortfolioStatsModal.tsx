@@ -50,9 +50,13 @@ const PortfolioStatsModal = ({ open, onClose, editingItem }: PortfolioStatsModal
       if (error) throw error;
     },
     onSuccess: async () => {
-      // Invalidar todas as queries relacionadas
+      console.log('Portfolio stats updated, invalidating queries...');
+      // Invalidar todas as queries relacionadas ao portfólio
       await queryClient.invalidateQueries({ queryKey: ['admin-portfolio-stats'] });
       await queryClient.invalidateQueries({ queryKey: ['portfolio-stats'] });
+      
+      // Invalidar também as queries do dashboard para atualizar os cards
+      await queryClient.invalidateQueries({ queryKey: ['dashboard-stats'] });
       
       // Log admin activity
       await logAdminActivity(

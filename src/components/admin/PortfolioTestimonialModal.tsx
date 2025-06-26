@@ -68,9 +68,13 @@ const PortfolioTestimonialModal = ({ open, onClose, editingItem }: PortfolioTest
       }
     },
     onSuccess: async () => {
-      // Invalidar todas as queries relacionadas
+      console.log('Portfolio testimonial updated, invalidating queries...');
+      // Invalidar todas as queries relacionadas ao portfólio
       await queryClient.invalidateQueries({ queryKey: ['admin-portfolio-testimonials'] });
       await queryClient.invalidateQueries({ queryKey: ['portfolio-testimonials'] });
+      
+      // Invalidar também as queries do dashboard para atualizar os cards
+      await queryClient.invalidateQueries({ queryKey: ['dashboard-stats'] });
       
       // Log admin activity
       await logAdminActivity(

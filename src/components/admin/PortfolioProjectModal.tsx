@@ -76,9 +76,13 @@ const PortfolioProjectModal = ({ open, onClose, editingItem }: PortfolioProjectM
       }
     },
     onSuccess: async () => {
-      // Invalidar todas as queries relacionadas
+      console.log('Portfolio project updated, invalidating queries...');
+      // Invalidar todas as queries relacionadas ao portfólio
       await queryClient.invalidateQueries({ queryKey: ['admin-portfolio-projects'] });
       await queryClient.invalidateQueries({ queryKey: ['portfolio-projects'] });
+      
+      // Invalidar também as queries do dashboard para atualizar os cards
+      await queryClient.invalidateQueries({ queryKey: ['dashboard-stats'] });
       
       // Log admin activity
       await logAdminActivity(
