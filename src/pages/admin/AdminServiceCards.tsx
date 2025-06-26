@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -112,24 +111,25 @@ const AdminServiceCards = () => {
   };
 
   const handleDeleteClick = (card: ServiceCard) => {
-    setDeleteConfirmId(card.id);
+    setCardToDelete(card);
+    setDeleteModalOpen(true);
   };
 
-  const confirmDelete = async (cardId: string) => {
+  const confirmDelete = async () => {
+    if (!cardToDelete) return;
+    
     try {
-      const cardData = serviceCards.find(c => c.id === cardId);
-
       const { error } = await supabase
         .from('service_cards')
         .delete()
-        .eq('id', cardId);
+        .eq('id', cardToDelete.id);
 
       if (error) throw error;
 
       await logAdminActivity(
         'delete',
         'service_cards',
-        cardData?.title || 'Card'
+        cardToDelete.title
       );
 
       toast({
@@ -146,7 +146,8 @@ const AdminServiceCards = () => {
         variant: "destructive",
       });
     } finally {
-      setDeleteConfirmId(null);
+      setDeleteModalOpen(false);
+      setCardToDelete(null);
     }
   };
 
@@ -445,7 +446,7 @@ const AdminServiceCards = () => {
         onClose={() => setDeleteModalOpen(false)}
         onConfirm={confirmDelete}
         title="Excluir Card"
-        description={`Tem certeza que deseja excluir este card? Esta ação não pode ser desfeita.`}
+        description={`Tem certeza que deseja excluir o card "${cardToDelete?.title}"? Esta ação não pode ser desfeita.`}
       />
     </AdminLayout>
   );

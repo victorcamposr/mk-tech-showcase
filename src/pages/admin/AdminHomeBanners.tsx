@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import AdminLayout from '@/components/admin/AdminLayout';
@@ -79,17 +78,19 @@ const AdminHomeBanners = () => {
   };
 
   const handleDeleteClick = (banner: HomeBanner) => {
-    setDeleteConfirmId(banner.id);
+    setDeleteDialog({ isOpen: true, banner });
   };
 
-  const confirmDelete = async (bannerId: string) => {
+  const confirmDelete = async () => {
+    if (!deleteDialog.banner) return;
+    
     try {
-      const bannerData = banners.find(b => b.id === bannerId);
+      const bannerData = banners.find(b => b.id === deleteDialog.banner!.id);
 
       const { error } = await supabase
         .from('home_banners')
         .delete()
-        .eq('id', bannerId);
+        .eq('id', deleteDialog.banner.id);
 
       if (error) throw error;
 
@@ -113,7 +114,7 @@ const AdminHomeBanners = () => {
         variant: 'destructive',
       });
     } finally {
-      setDeleteConfirmId(null);
+      setDeleteDialog({ isOpen: false });
     }
   };
 
@@ -344,41 +345,14 @@ const AdminHomeBanners = () => {
                         >
                           <Edit className="w-4 h-4" />
                         </Button>
-                        <div className="relative">
-                          <Button
-                            size="sm"
-                            variant="destructive"
-                            onClick={() => handleDeleteClick(banner)}
-                            className="shadow-md hover:shadow-lg transition-all duration-200"
-                          >
-                            <Trash2 className="w-4 h-4" />
-                          </Button>
-                          {deleteConfirmId === banner.id && (
-                            <div className="absolute bottom-full right-0 mb-2 bg-white border border-gray-200 rounded-lg shadow-lg p-3 z-10 min-w-48">
-                              <p className="text-sm text-gray-700 mb-3">Excluir este banner?</p>
-                              <div className="flex gap-2">
-                                <Button
-                                  size="sm"
-                                  variant="outline"
-                                  onClick={() => setDeleteConfirmId(null)}
-                                  className="flex-1"
-                                >
-                                  <X className="w-3 h-3 mr-1" />
-                                  Cancelar
-                                </Button>
-                                <Button
-                                  size="sm"
-                                  variant="destructive"
-                                  onClick={() => confirmDelete(banner.id)}
-                                  className="flex-1"
-                                >
-                                  <Check className="w-3 h-3 mr-1" />
-                                  Confirmar
-                                </Button>
-                              </div>
-                            </div>
-                          )}
-                        </div>
+                        <Button
+                          size="sm"
+                          variant="destructive"
+                          onClick={() => handleDeleteClick(banner)}
+                          className="shadow-md hover:shadow-lg transition-all duration-200"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </Button>
                       </div>
                     </div>
                   </div>
@@ -401,7 +375,7 @@ const AdminHomeBanners = () => {
         onClose={() => setDeleteDialog({ isOpen: false })}
         onConfirm={confirmDelete}
         title="Excluir Banner"
-        description="Tem certeza que deseja excluir este banner? Esta ação não pode ser desfeita."
+        description={`Tem certeza que deseja excluir o banner "${deleteDialog.banner?.title}"? Esta ação não pode ser desfeita.`}
       />
     </AdminLayout>
   );
