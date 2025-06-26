@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import AdminLayout from '@/components/admin/AdminLayout';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -378,7 +377,7 @@ const AdminDashboard = () => {
           </Button>
         </div>
 
-        {/* Stats Cards */}
+        {/* Stats Cards com hierarquia visual melhorada */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
           {statsCards.map((stat, index) => {
             const Icon = stat.icon;
@@ -386,17 +385,24 @@ const AdminDashboard = () => {
             return (
               <Card key={index} className="relative overflow-hidden border-brand-gold/20 shadow-lg hover:shadow-xl transition-all duration-300 bg-white hover:-translate-y-1">
                 <CardContent className="p-6">
-                  <div className="flex items-start justify-between mb-4">
-                    <div className="flex-1">
-                      <p className="text-sm font-medium text-gray-600 mb-1">{stat.title}</p>
-                      <p className="text-3xl font-bold text-brand-black">
-                        {statsLoading ? '...' : stat.value}
-                      </p>
+                  {/* Ícone e valor em destaque */}
+                  <div className="flex items-center justify-between mb-4">
+                    <div className={`w-14 h-14 rounded-2xl bg-gradient-to-br ${stat.gradient} flex items-center justify-center shadow-lg flex-shrink-0`}>
+                      <Icon className="w-7 h-7 text-white" />
                     </div>
-                    <div className={`w-12 h-12 rounded-lg bg-gradient-to-br ${stat.gradient} flex items-center justify-center shadow-lg flex-shrink-0`}>
-                      <Icon className="w-6 h-6 text-white" />
+                    <div className="text-right">
+                      <div className="text-3xl font-bold text-brand-black leading-none">
+                        {statsLoading ? '...' : stat.value}
+                      </div>
                     </div>
                   </div>
+                  
+                  {/* Título abaixo */}
+                  <div className="mb-3">
+                    <h3 className="text-sm font-semibold text-gray-700 leading-tight">{stat.title}</h3>
+                  </div>
+                  
+                  {/* Badge de alerta se houver */}
                   {stat.showBadge && (
                     <div className="flex items-center gap-2">
                       <Badge variant="destructive" className="text-xs flex items-center gap-1">

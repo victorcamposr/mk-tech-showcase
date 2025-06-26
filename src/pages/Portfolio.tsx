@@ -141,41 +141,55 @@ const Portfolio = () => {
             </div>
           </ScrollReveal>
 
-          {/* Projetos */}
+          {/* Projetos com novo layout de banner horizontal */}
           <ScrollReveal animation="fade-up" delay={200}>
             <div className="mb-16">
               <h2 className="text-3xl font-bold text-brand-black text-center mb-12">
                 Projetos em Destaque
               </h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                 {projects.map((project) => (
-                  <Card key={project.id} className="border-brand-gold/20 hover:shadow-2xl hover:shadow-brand-gold/10 transition-all duration-500 hover:-translate-y-3 hover:scale-105 group bg-gradient-to-br from-white to-gray-50/50 backdrop-blur-sm">
-                    <CardContent className="p-8">
-                      <div className="text-6xl mb-4 text-center group-hover:animate-pulse">
-                        {project.image_url ? (
-                          <img 
-                            src={project.image_url} 
-                            alt={project.title}
-                            className="w-16 h-16 mx-auto object-contain"
-                          />
-                        ) : (
-                          <div className="w-16 h-16 mx-auto bg-brand-gold/20 rounded-lg flex items-center justify-center">
-                            <span className="text-2xl">🏢</span>
-                          </div>
-                        )}
+                  <Card key={project.id} className="border-brand-gold/20 hover:shadow-2xl hover:shadow-brand-gold/10 transition-all duration-500 hover:-translate-y-2 group bg-gradient-to-br from-white to-gray-50/50 backdrop-blur-sm overflow-hidden">
+                    {/* Banner horizontal com imagem */}
+                    <div className="h-48 overflow-hidden relative">
+                      {project.image_url ? (
+                        <img 
+                          src={project.image_url} 
+                          alt={project.title}
+                          className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                        />
+                      ) : (
+                        <div className="w-full h-full bg-gradient-to-br from-brand-gold/20 to-brand-gold/30 flex items-center justify-center">
+                          <span className="text-6xl">🏢</span>
+                        </div>
+                      )}
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent"></div>
+                      <div className="absolute top-4 right-4 bg-brand-gold/90 backdrop-blur-sm text-brand-black text-xs font-semibold px-3 py-1 rounded-full">
+                        {project.category}
                       </div>
-                      <div className="text-sm text-brand-gold font-semibold mb-2">{project.category}</div>
-                      <h3 className="text-xl font-bold text-brand-black mb-3 group-hover:text-brand-gold transition-colors duration-300">{project.title}</h3>
-                      <p className="text-gray-600 mb-4 text-sm group-hover:text-gray-700 transition-colors duration-300">{project.description}</p>
-                      <div className="space-y-2">
-                        <h4 className="font-semibold text-brand-black text-sm">Resultados:</h4>
-                        <ul className="space-y-1">
-                          {project.results.map((result, resultIndex) => (
-                            <li key={resultIndex} className="flex items-start text-xs text-gray-600">
-                              <div className="w-1.5 h-1.5 bg-brand-gold rounded-full mt-1.5 mr-2 flex-shrink-0 group-hover:scale-125 transition-transform"></div>
-                              {result}
+                      <div className="absolute bottom-4 left-4">
+                        <h3 className="text-xl font-bold text-white mb-1 drop-shadow-lg">{project.title}</h3>
+                      </div>
+                    </div>
+                    
+                    <CardContent className="p-6">
+                      <p className="text-gray-600 mb-4 text-sm leading-relaxed">{project.description}</p>
+                      <div className="space-y-3">
+                        <h4 className="font-semibold text-brand-black text-sm">Resultados Alcançados:</h4>
+                        <ul className="space-y-2">
+                          {project.results.slice(0, 3).map((result, resultIndex) => (
+                            <li key={resultIndex} className="flex items-start text-sm text-gray-600">
+                              <div className="w-1.5 h-1.5 bg-brand-gold rounded-full mt-2 mr-3 flex-shrink-0 group-hover:scale-125 transition-transform"></div>
+                              <span className="group-hover:text-gray-700 transition-colors duration-300">
+                                {result}
+                              </span>
                             </li>
                           ))}
+                          {project.results.length > 3 && (
+                            <li className="text-xs text-brand-gold font-medium ml-5">
+                              +{project.results.length - 3} resultados adicionais
+                            </li>
+                          )}
                         </ul>
                       </div>
                     </CardContent>
