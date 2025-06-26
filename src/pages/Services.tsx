@@ -13,6 +13,7 @@ import { Phone, Mail } from 'lucide-react';
 
 interface ServiceCard {
   id: string;
+  title: string;
   logo_url: string;
   description: string;
   phone: string;
@@ -110,12 +111,17 @@ const Services = () => {
                 {serviceCards.map((card, index) => (
                   <Card key={card.id} className="hover:shadow-2xl hover:shadow-brand-gold/10 transition-all duration-500 hover:-translate-y-3 hover:scale-105 group bg-gradient-to-br from-white to-gray-50/50 backdrop-blur-sm border border-gray-200">
                     <CardContent className="p-8 text-center">
-                      <div className="mb-6">
-                        <img 
-                          src={card.logo_url} 
-                          alt="Logo do serviço" 
-                          className="w-20 h-20 object-contain mx-auto rounded-lg border border-gray-100 shadow-sm group-hover:shadow-md transition-shadow"
-                        />
+                      <div className="mb-6 flex flex-col items-center">
+                        <div className="w-24 h-24 mb-4 flex items-center justify-center bg-white rounded-xl shadow-md border border-gray-100 group-hover:shadow-lg transition-shadow">
+                          <img 
+                            src={card.logo_url} 
+                            alt={`Logo ${card.title}`}
+                            className="w-20 h-20 object-contain"
+                          />
+                        </div>
+                        <h3 className="text-xl font-bold text-brand-black mb-2 group-hover:text-brand-gold transition-colors duration-300">
+                          {card.title}
+                        </h3>
                       </div>
                       
                       <p className="text-gray-600 mb-6 group-hover:text-gray-700 transition-colors duration-300 leading-relaxed">

@@ -17,7 +17,8 @@ import {
   User,
   Sparkles,
   Briefcase,
-  Image
+  Image,
+  Layers
 } from 'lucide-react';
 
 interface AdminLayoutProps {
@@ -75,7 +76,7 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
     { 
       name: 'Cards Serviços', 
       href: '/admin/service-cards', 
-      icon: Briefcase,
+      icon: Layers,
       color: 'from-teal-500 to-teal-600'
     },
     { 
@@ -85,7 +86,7 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
       color: 'from-orange-500 to-orange-600'
     },
     { 
-      name: 'Banners Home', 
+      name: 'Banners', 
       href: '/admin/home-banners', 
       icon: Image,
       color: 'from-pink-500 to-pink-600'

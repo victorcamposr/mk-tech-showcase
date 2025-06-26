@@ -1,15 +1,18 @@
 
 import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
+import { logAdminActivity } from '@/utils/adminActivity';
 import AdminLayout from '@/components/admin/AdminLayout';
 import ServiceCardModal from '@/components/admin/ServiceCardModal';
 import DeleteConfirmDialog from '@/components/admin/DeleteConfirmDialog';
-import { Plus, Edit, Trash2, Phone, Mail, Eye, EyeOff } from 'lucide-react';
+import { Plus, Edit, Trash2, Phone, Mail, Eye, EyeOff, Search } from 'lucide-react';
 
 interface ServiceCard {
   id: string;
+  title: string;
   logo_url: string;
   description: string;
   phone: string;
@@ -22,16 +25,23 @@ interface ServiceCard {
 
 const AdminServiceCards = () => {
   const [serviceCards, setServiceCards] = useState<ServiceCard[]>([]);
+  const [filteredCards, setFilteredCards] = useState<ServiceCard[]>([]);
   const [loading, setLoading] = useState(true);
   const [modalOpen, setModalOpen] = useState(false);
   const [editingCard, setEditingCard] = useState<ServiceCard | null>(null);
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   const [cardToDelete, setCardToDelete] = useState<ServiceCard | null>(null);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [statusFilter, setStatusFilter] = useState('all');
   const { toast } = useToast();
 
   useEffect(() => {
     fetchServiceCards();
   }, []);
+
+  useEffect(() => {
+    filterCards();
+  }, [serviceCards, searchTerm, statusFilter]);
 
   const fetchServiceCards = async () => {
     try {
@@ -55,6 +65,25 @@ const AdminServiceCards = () => {
     }
   };
 
+  const filterCards = () => {
+    let filtered = serviceCards;
+
+    if (statusFilter !== 'all') {
+      filtered = filtered.filter(card => card.status === statusFilter);
+    }
+
+    if (searchTerm) {
+      filtered = filtered.filter(card =>
+        card.title?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        card.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        card.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        card.phone.includes(searchTerm)
+      );
+    }
+
+    setFilteredCards(filtered);
+  };
+
   const handleEdit = (card: ServiceCard) => {
     setEditingCard(card);
     setModalOpen(true);
@@ -75,6 +104,13 @@ const AdminServiceCards = () => {
         .eq('id', cardToDelete.id);
 
       if (error) throw error;
+
+      // Log admin activity
+      await logAdminActivity(
+        'delete',
+        'service_cards',
+        cardToDelete.title
+      );
 
       toast({
         title: "Sucesso",
@@ -105,6 +141,13 @@ const AdminServiceCards = () => {
         .eq('id', card.id);
 
       if (error) throw error;
+
+      // Log admin activity
+      await logAdminActivity(
+        'update',
+        'service_cards',
+        `${newStatus === 'active' ? 'ativou' : 'desativou'} o card "${card.title}"`
+      );
 
       toast({
         title: "Sucesso",
@@ -155,17 +198,49 @@ const AdminServiceCards = () => {
           </Button>
         </div>
 
-        {serviceCards.length === 0 ? (
+        {/* Filters */}
+        <div className="flex flex-col sm:flex-row gap-4 bg-white p-4 rounded-lg border border-gray-200">
+          <div className="flex-1">
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+              <Input
+                placeholder="Buscar por título, descrição, email ou telefone..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="pl-10"
+              />
+            </div>
+          </div>
+          <div className="sm:w-48">
+            <select
+              value={statusFilter}
+              onChange={(e) => setStatusFilter(e.target.value)}
+              className="w-full p-2 border border-gray-300 rounded-md"
+            >
+              <option value="all">Todos os Status</option>
+              <option value="active">Apenas Ativos</option>
+              <option value="inactive">Apenas Inativos</option>
+            </select>
+          </div>
+        </div>
+
+        {filteredCards.length === 0 ? (
           <div className="text-center py-12 bg-white rounded-lg border border-gray-200">
-            <div className="text-gray-400 text-lg mb-4">Nenhum card encontrado</div>
-            <Button onClick={() => setModalOpen(true)} className="flex items-center gap-2 mx-auto">
-              <Plus className="h-4 w-4" />
-              Criar primeiro card
-            </Button>
+            <div className="text-gray-400 text-lg mb-4">
+              {serviceCards.length === 0 ? 'Nenhum card encontrado' : 'Nenhum card corresponde aos filtros'}
+            </div>
+            {serviceCards.length === 0 ? (
+              <Button onClick={() => setModalOpen(true)} className="flex items-center gap-2 mx-auto">
+                <Plus className="h-4 w-4" />
+                Criar primeiro card
+              </Button>
+            ) : (
+              <p className="text-gray-500">Tente ajustar os filtros de busca</p>
+            )}
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {serviceCards.map((card) => (
+            {filteredCards.map((card) => (
               <div key={card.id} className="bg-white rounded-lg border border-gray-200 p-6 hover:shadow-lg transition-shadow">
                 <div className="flex justify-between items-start mb-4">
                   <div className="flex items-center gap-2">
@@ -219,9 +294,12 @@ const AdminServiceCards = () => {
                     />
                   </div>
                   
-                  <p className="text-sm text-gray-600 text-center line-clamp-3">
-                    {card.description}
-                  </p>
+                  <div className="text-center">
+                    <h3 className="font-semibold text-gray-900 mb-2">{card.title}</h3>
+                    <p className="text-sm text-gray-600 line-clamp-3">
+                      {card.description}
+                    </p>
+                  </div>
                   
                   <div className="space-y-2 pt-2 border-t border-gray-100">
                     <div className="flex items-center gap-2 text-sm text-gray-600">
