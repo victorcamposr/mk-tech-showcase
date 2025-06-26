@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
@@ -16,8 +17,7 @@ import {
   User,
   Sparkles,
   Briefcase,
-  Image,
-  Settings
+  Image
 } from 'lucide-react';
 
 interface AdminLayoutProps {
@@ -83,12 +83,6 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
       href: '/admin/home-banners', 
       icon: Image,
       color: 'from-pink-500 to-pink-600'
-    },
-    { 
-      name: 'Cards Serviços', 
-      href: '/admin/service-cards', 
-      icon: Settings,
-      color: 'from-purple-500 to-purple-600'
     },
     { 
       name: 'Usuários', 
