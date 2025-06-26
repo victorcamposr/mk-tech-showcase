@@ -16,7 +16,8 @@ import {
   Home,
   User,
   Sparkles,
-  Briefcase
+  Briefcase,
+  Image
 } from 'lucide-react';
 
 interface AdminLayoutProps {
@@ -76,6 +77,12 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
       href: '/admin/portfolio', 
       icon: Briefcase,
       color: 'from-orange-500 to-orange-600'
+    },
+    { 
+      name: 'Banners Home', 
+      href: '/admin/home-banners', 
+      icon: Image,
+      color: 'from-pink-500 to-pink-600'
     },
     { 
       name: 'Usuários', 

@@ -1,5 +1,7 @@
+
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import HomeBannerCarousel from "@/components/HomeBannerCarousel";
 import ColoredServiceIcon, { getServiceColors } from "@/components/ColoredServiceIcon";
 import CountUpNumber from "@/components/CountUpNumber";
 import SimpleIcon from "@/components/SimpleIcon";
@@ -102,6 +104,9 @@ const Index = () => {
           </div>
         </section>
       </ScrollReveal>
+
+      {/* Home Banners Carousel */}
+      <HomeBannerCarousel />
 
       {/* Services Section */}
       <ScrollReveal animation="fade-up" delay={100}>

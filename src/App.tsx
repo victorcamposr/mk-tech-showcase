@@ -24,6 +24,7 @@ import AdminUsers from "./pages/admin/AdminUsers";
 import AdminSolutions from "./pages/admin/AdminSolutions";
 import AdminContacts from "./pages/admin/AdminContacts";
 import AdminPortfolio from "./pages/admin/AdminPortfolio";
+import AdminHomeBanners from "./pages/admin/AdminHomeBanners";
 import ProtectedRoute from "./components/admin/ProtectedRoute";
 import CreateSolution from "./pages/admin/CreateSolution";
 import EditSolution from "./pages/admin/EditSolution";
@@ -80,6 +81,11 @@ function App() {
               <Route path="/admin/contacts" element={
                 <ProtectedRoute>
                   <AdminContacts />
+                </ProtectedRoute>
+              } />
+              <Route path="/admin/home-banners" element={
+                <ProtectedRoute>
+                  <AdminHomeBanners />
                 </ProtectedRoute>
               } />
               <Route path="/admin/solutions/create" element={
