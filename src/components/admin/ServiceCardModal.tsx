@@ -120,8 +120,8 @@ const ServiceCardModal = ({ isOpen, onClose, onSuccess, serviceCard }: ServiceCa
 
         <form onSubmit={handleSubmit} className="space-y-6">
           <div>
-            <Label htmlFor="logo_url">Logo *</Label>
             <ImageUpload
+              label="Logo *"
               value={formData.logo_url}
               onChange={(url) => setFormData({ ...formData, logo_url: url })}
               className="mt-2"
