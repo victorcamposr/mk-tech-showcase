@@ -3,6 +3,8 @@ import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from '@/components/ui/carousel';
 import { ScrollReveal } from '@/components/ScrollReveal';
+import useEmblaCarousel from 'embla-carousel-react';
+import Autoplay from 'embla-carousel-autoplay';
 
 interface HomeBanner {
   id: string;
@@ -61,10 +63,10 @@ const HomeBannerCarousel = () => {
     const banner = banners[0];
     return (
       <ScrollReveal animation="fade-in">
-        <section className="w-full py-4 bg-gradient-to-r from-gray-50 to-white">
+        <section className="w-full py-6 bg-gradient-to-r from-gray-50 to-white">
           <div className="container mx-auto px-4 sm:px-6 lg:px-8">
             <div 
-              className={`relative w-full h-24 md:h-32 lg:h-40 rounded-xl overflow-hidden shadow-lg ${
+              className={`relative w-full h-40 md:h-56 lg:h-72 rounded-xl overflow-hidden shadow-lg ${
                 banner.link_url ? 'cursor-pointer hover:shadow-xl transition-shadow duration-300' : ''
               }`}
               onClick={() => handleBannerClick(banner)}
@@ -82,17 +84,29 @@ const HomeBannerCarousel = () => {
     );
   }
 
-  // Se houver mais de um banner, exibir como carrossel
+  // Se houver mais de um banner, exibir como carrossel com autoplay
   return (
     <ScrollReveal animation="fade-in">
-      <section className="w-full py-4 bg-gradient-to-r from-gray-50 to-white">
+      <section className="w-full py-6 bg-gradient-to-r from-gray-50 to-white">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-          <Carousel className="w-full" opts={{ loop: true, align: "start" }}>
+          <Carousel 
+            className="w-full" 
+            opts={{ 
+              loop: true, 
+              align: "start" 
+            }}
+            plugins={[
+              Autoplay({
+                delay: 4000,
+                stopOnInteraction: true,
+              }),
+            ]}
+          >
             <CarouselContent>
               {banners.map((banner) => (
                 <CarouselItem key={banner.id}>
                   <div 
-                    className={`relative w-full h-24 md:h-32 lg:h-40 rounded-xl overflow-hidden shadow-lg ${
+                    className={`relative w-full h-40 md:h-56 lg:h-72 rounded-xl overflow-hidden shadow-lg ${
                       banner.link_url ? 'cursor-pointer hover:shadow-xl transition-shadow duration-300' : ''
                     }`}
                     onClick={() => handleBannerClick(banner)}
