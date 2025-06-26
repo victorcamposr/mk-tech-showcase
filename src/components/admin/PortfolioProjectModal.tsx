@@ -35,6 +35,7 @@ const PortfolioProjectModal = ({ open, onClose, editingItem }: PortfolioProjectM
 
   useEffect(() => {
     if (editingItem) {
+      console.log('PortfolioProjectModal - Editing item:', editingItem);
       setFormData({
         title: editingItem.title || '',
         category: editingItem.category || '',
@@ -62,28 +63,46 @@ const PortfolioProjectModal = ({ open, onClose, editingItem }: PortfolioProjectM
       const filteredResults = data.results.filter(result => result.trim() !== '');
       const submitData = { ...data, results: filteredResults };
       
+      console.log('Submitting portfolio project data:', submitData);
+      
       if (editingItem) {
+        console.log('Updating portfolio project with ID:', editingItem.id);
         const { error } = await supabase
           .from('portfolio_projects')
           .update(submitData)
           .eq('id', editingItem.id);
-        if (error) throw error;
+        if (error) {
+          console.error('Supabase error updating portfolio project:', error);
+          throw error;
+        }
       } else {
+        console.log('Creating new portfolio project');
         const { error } = await supabase
           .from('portfolio_projects')
           .insert([submitData]);
-        if (error) throw error;
+        if (error) {
+          console.error('Supabase error creating portfolio project:', error);
+          throw error;
+        }
       }
+      
+      console.log('Portfolio project operation completed successfully');
     },
     onSuccess: async () => {
-      console.log('Portfolio project updated, invalidating all related queries...');
+      console.log('Portfolio project saved, invalidating all related queries...');
       
-      // Invalidar todas as queries relacionadas ao portfólio e dashboard
+      // Invalidar todas as queries relacionadas ao portfólio
+      const queries = [
+        'admin-portfolio-projects',
+        'portfolio-projects',
+        'dashboard-stats'
+      ];
+      
       await Promise.all([
-        queryClient.invalidateQueries({ queryKey: ['admin-portfolio-projects'] }),
-        queryClient.invalidateQueries({ queryKey: ['portfolio-projects'] }),
-        queryClient.invalidateQueries({ queryKey: ['dashboard-stats'] }),
-        queryClient.refetchQueries({ queryKey: ['dashboard-stats'] })
+        ...queries.map(key => queryClient.invalidateQueries({ queryKey: [key] })),
+        queryClient.refetchQueries({ queryKey: ['dashboard-stats'] }),
+        // Forçar refetch dos dados do portfólio público
+        queryClient.refetchQueries({ queryKey: ['portfolio-projects'] })
       ]);
       
       console.log('All portfolio project queries invalidated and dashboard refetched');
@@ -102,17 +121,18 @@ const PortfolioProjectModal = ({ open, onClose, editingItem }: PortfolioProjectM
       onClose();
     },
     onError: (error) => {
+      console.error('Error saving portfolio project:', error);
       toast({
         variant: "destructive",
         title: "Erro ao salvar",
-        description: "Não foi possível salvar o projeto. Tente novamente.",
+        description: error.message || "Não foi possível salvar o projeto. Tente novamente.",
       });
-      console.error('Error saving project:', error);
     }
   });
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    console.log('Submitting portfolio project form with data:', formData);
     mutation.mutate(formData);
   };
 

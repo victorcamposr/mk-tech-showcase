@@ -32,6 +32,7 @@ const PortfolioTestimonialModal = ({ open, onClose, editingItem }: PortfolioTest
 
   useEffect(() => {
     if (editingItem) {
+      console.log('PortfolioTestimonialModal - Editing item:', editingItem);
       setFormData({
         content: editingItem.content || '',
         author: editingItem.author || '',
@@ -54,28 +55,46 @@ const PortfolioTestimonialModal = ({ open, onClose, editingItem }: PortfolioTest
 
   const mutation = useMutation({
     mutationFn: async (data: typeof formData) => {
+      console.log('Submitting portfolio testimonial data:', data);
+      
       if (editingItem) {
+        console.log('Updating portfolio testimonial with ID:', editingItem.id);
         const { error } = await supabase
           .from('portfolio_testimonials')
           .update(data)
           .eq('id', editingItem.id);
-        if (error) throw error;
+        if (error) {
+          console.error('Supabase error updating portfolio testimonial:', error);
+          throw error;
+        }
       } else {
+        console.log('Creating new portfolio testimonial');
         const { error } = await supabase
           .from('portfolio_testimonials')
           .insert([data]);
-        if (error) throw error;
+        if (error) {
+          console.error('Supabase error creating portfolio testimonial:', error);
+          throw error;
+        }
       }
+      
+      console.log('Portfolio testimonial operation completed successfully');
     },
     onSuccess: async () => {
-      console.log('Portfolio testimonial updated, invalidating all related queries...');
+      console.log('Portfolio testimonial saved, invalidating all related queries...');
       
-      // Invalidar todas as queries relacionadas ao portfólio e dashboard
+      // Invalidar todas as queries relacionadas ao portfólio
+      const queries = [
+        'admin-portfolio-testimonials',
+        'portfolio-testimonials',
+        'dashboard-stats'
+      ];
+      
       await Promise.all([
-        queryClient.invalidateQueries({ queryKey: ['admin-portfolio-testimonials'] }),
-        queryClient.invalidateQueries({ queryKey: ['portfolio-testimonials'] }),
-        queryClient.invalidateQueries({ queryKey: ['dashboard-stats'] }),
-        queryClient.refetchQueries({ queryKey: ['dashboard-stats'] })
+        ...queries.map(key => queryClient.invalidateQueries({ queryKey: [key] })),
+        queryClient.refetchQueries({ queryKey: ['dashboard-stats'] }),
+        // Forçar refetch dos dados do portfólio público
+        queryClient.refetchQueries({ queryKey: ['portfolio-testimonials'] })
       ]);
       
       console.log('All portfolio testimonial queries invalidated and dashboard refetched');
@@ -94,17 +113,18 @@ const PortfolioTestimonialModal = ({ open, onClose, editingItem }: PortfolioTest
       onClose();
     },
     onError: (error) => {
+      console.error('Error saving portfolio testimonial:', error);
       toast({
         variant: "destructive",
         title: "Erro ao salvar",
-        description: "Não foi possível salvar o depoimento. Tente novamente.",
+        description: error.message || "Não foi possível salvar o depoimento. Tente novamente.",
       });
-      console.error('Error saving testimonial:', error);
     }
   });
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    console.log('Submitting portfolio testimonial form with data:', formData);
     mutation.mutate(formData);
   };
 

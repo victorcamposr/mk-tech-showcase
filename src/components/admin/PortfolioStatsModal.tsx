@@ -26,6 +26,7 @@ const PortfolioStatsModal = ({ open, onClose, editingItem }: PortfolioStatsModal
 
   useEffect(() => {
     if (editingItem) {
+      console.log('PortfolioStatsModal - Editing item:', editingItem);
       setFormData({
         value: editingItem.value || 0,
         sort_order: editingItem.sort_order || 0
@@ -40,24 +41,40 @@ const PortfolioStatsModal = ({ open, onClose, editingItem }: PortfolioStatsModal
 
   const mutation = useMutation({
     mutationFn: async (data: typeof formData) => {
-      if (!editingItem) return;
+      if (!editingItem) {
+        console.error('No editing item provided for update');
+        throw new Error('Item não encontrado para edição');
+      }
+      
+      console.log('Updating portfolio stat with data:', data, 'for item:', editingItem.id);
       
       const { error } = await supabase
         .from('portfolio_stats')
         .update(data)
         .eq('id', editingItem.id);
       
-      if (error) throw error;
+      if (error) {
+        console.error('Supabase error updating portfolio stat:', error);
+        throw error;
+      }
+      
+      console.log('Portfolio stat updated successfully');
     },
     onSuccess: async () => {
       console.log('Portfolio stats updated, invalidating all related queries...');
       
-      // Invalidar todas as queries relacionadas ao portfólio
+      // Invalidar todas as queries relacionadas ao portfólio com mais especificidade
+      const queries = [
+        'admin-portfolio-stats',
+        'portfolio-stats', 
+        'dashboard-stats'
+      ];
+      
       await Promise.all([
-        queryClient.invalidateQueries({ queryKey: ['admin-portfolio-stats'] }),
-        queryClient.invalidateQueries({ queryKey: ['portfolio-stats'] }),
-        queryClient.invalidateQueries({ queryKey: ['dashboard-stats'] }),
-        queryClient.refetchQueries({ queryKey: ['dashboard-stats'] })
+        ...queries.map(key => queryClient.invalidateQueries({ queryKey: [key] })),
+        queryClient.refetchQueries({ queryKey: ['dashboard-stats'] }),
+        // Forçar refetch dos dados do portfólio público
+        queryClient.refetchQueries({ queryKey: ['portfolio-stats'] })
       ]);
       
       console.log('All portfolio stats queries invalidated and dashboard refetched');
@@ -76,18 +93,22 @@ const PortfolioStatsModal = ({ open, onClose, editingItem }: PortfolioStatsModal
       onClose();
     },
     onError: (error) => {
+      console.error('Error saving portfolio stat:', error);
       toast({
         variant: "destructive",
         title: "Erro ao salvar",
-        description: "Não foi possível salvar a estatística. Tente novamente.",
+        description: error.message || "Não foi possível salvar a estatística. Tente novamente.",
       });
-      console.error('Error saving stat:', error);
     }
   });
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!editingItem) return;
+    if (!editingItem) {
+      console.error('No editing item available for submission');
+      return;
+    }
+    console.log('Submitting portfolio stats form with data:', formData);
     mutation.mutate(formData);
   };
 
