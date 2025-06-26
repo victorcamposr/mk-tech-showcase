@@ -375,7 +375,7 @@ const AdminDashboard = () => {
       showBadge: stats.inactivePortfolioProjects > 0
     },
     {
-      title: 'Banners',
+      title: 'Banners da Home',
       value: stats.totalHomeBanners,
       icon: Image,
       gradient: 'from-pink-500 to-pink-600',

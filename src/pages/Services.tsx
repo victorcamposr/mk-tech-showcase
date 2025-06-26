@@ -13,7 +13,6 @@ import { Phone, Mail } from 'lucide-react';
 
 interface ServiceCard {
   id: string;
-  title: string;
   logo_url: string;
   description: string;
   phone: string;
@@ -111,28 +110,18 @@ const Services = () => {
                 {serviceCards.map((card, index) => (
                   <Card key={card.id} className="hover:shadow-2xl hover:shadow-brand-gold/10 transition-all duration-500 hover:-translate-y-3 hover:scale-105 group bg-gradient-to-br from-white to-gray-50/50 backdrop-blur-sm border border-gray-200">
                     <CardContent className="p-8 text-center">
-                      {/* Logo section with better positioning */}
-                      <div className="mb-6 flex justify-center">
-                        <div className="w-24 h-24 flex items-center justify-center bg-white rounded-xl shadow-md border border-gray-100 group-hover:shadow-lg transition-shadow duration-300">
-                          <img 
-                            src={card.logo_url} 
-                            alt={`Logo ${card.title}`}
-                            className="w-16 h-16 object-contain"
-                          />
-                        </div>
+                      <div className="mb-6">
+                        <img 
+                          src={card.logo_url} 
+                          alt="Logo do serviço" 
+                          className="w-20 h-20 object-contain mx-auto rounded-lg border border-gray-100 shadow-sm group-hover:shadow-md transition-shadow"
+                        />
                       </div>
                       
-                      {/* Title prominently displayed */}
-                      <h3 className="text-xl font-bold text-brand-black mb-4 group-hover:text-brand-gold transition-colors duration-300">
-                        {card.title}
-                      </h3>
-                      
-                      {/* Description */}
                       <p className="text-gray-600 mb-6 group-hover:text-gray-700 transition-colors duration-300 leading-relaxed">
                         {card.description}
                       </p>
                       
-                      {/* Contact buttons */}
                       <div className="space-y-3">
                         <Button
                           onClick={() => handlePhoneClick(card.phone)}
@@ -148,7 +137,7 @@ const Services = () => {
                           variant="outline"
                           className="w-full flex items-center justify-center gap-2 hover:bg-brand-gold hover:text-brand-black hover:border-brand-gold transition-all duration-300"
                         >
-                          <Mail className="w-4 w-4" />
+                          <Mail className="w-4 h-4" />
                           <span className="truncate">{card.email}</span>
                         </Button>
                       </div>
