@@ -100,11 +100,18 @@ const AdminPortfolio = () => {
   // Mutações para deletar
   const deleteMutation = useMutation({
     mutationFn: async ({ type, id }: { type: string; id: string }) => {
-      const tableName = `portfolio_${type}`;
-      const { error } = await supabase
-        .from(tableName)
-        .delete()
-        .eq('id', id);
+      let query;
+      if (type === 'stats') {
+        query = supabase.from('portfolio_stats').delete().eq('id', id);
+      } else if (type === 'projects') {
+        query = supabase.from('portfolio_projects').delete().eq('id', id);
+      } else if (type === 'testimonials') {
+        query = supabase.from('portfolio_testimonials').delete().eq('id', id);
+      } else {
+        throw new Error('Invalid type');
+      }
+      
+      const { error } = await query;
       if (error) throw error;
     },
     onSuccess: (_, { type }) => {
@@ -354,11 +361,12 @@ const AdminPortfolio = () => {
         />
 
         <DeleteConfirmDialog
-          open={deleteDialog.open}
+          isOpen={deleteDialog.open}
           onClose={() => setDeleteDialog({ open: false, type: '', id: '', title: '' })}
           onConfirm={confirmDelete}
-          title={deleteDialog.title}
-          isLoading={deleteMutation.isPending}
+          title="Confirmar Exclusão"
+          description={`Tem certeza que deseja excluir "${deleteDialog.title}"? Esta ação não pode ser desfeita.`}
+          loading={deleteMutation.isPending}
         />
       </div>
     </AdminLayout>
