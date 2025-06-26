@@ -187,7 +187,7 @@ const AdminSolutions = () => {
   };
 
   const handleEdit = (solution: AdminSolution) => {
-    navigate(`/admin/solutions/edit/${solution.id}`);
+    navigate(`/admin/solutions/${solution.id}/edit`);
   };
 
   const handleDeleteClick = (solution: AdminSolution) => {
