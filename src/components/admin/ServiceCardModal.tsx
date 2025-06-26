@@ -19,6 +19,13 @@ interface ServiceCard {
   email: string;
   status: string;
   sort_order: number;
+  category_id?: string;
+}
+
+interface ServiceCategory {
+  id: string;
+  name: string;
+  status: string;
 }
 
 interface ServiceCardModalProps {
@@ -37,9 +44,15 @@ const ServiceCardModal = ({ isOpen, onClose, onSuccess, serviceCard }: ServiceCa
     email: '',
     status: 'active',
     sort_order: 0,
+    category_id: '',
   });
+  const [categories, setCategories] = useState<ServiceCategory[]>([]);
   const [loading, setLoading] = useState(false);
   const { toast } = useToast();
+
+  useEffect(() => {
+    fetchCategories();
+  }, []);
 
   useEffect(() => {
     if (serviceCard) {
@@ -51,6 +64,7 @@ const ServiceCardModal = ({ isOpen, onClose, onSuccess, serviceCard }: ServiceCa
         email: serviceCard.email,
         status: serviceCard.status,
         sort_order: serviceCard.sort_order,
+        category_id: serviceCard.category_id || '',
       });
     } else {
       setFormData({
@@ -61,9 +75,26 @@ const ServiceCardModal = ({ isOpen, onClose, onSuccess, serviceCard }: ServiceCa
         email: '',
         status: 'active',
         sort_order: 0,
+        category_id: '',
       });
     }
   }, [serviceCard, isOpen]);
+
+  const fetchCategories = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('service_categories')
+        .select('id, name, status')
+        .eq('status', 'active')
+        .order('sort_order', { ascending: true })
+        .order('name', { ascending: true });
+
+      if (error) throw error;
+      setCategories(data || []);
+    } catch (error) {
+      console.error('Error fetching categories:', error);
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -83,15 +114,20 @@ const ServiceCardModal = ({ isOpen, onClose, onSuccess, serviceCard }: ServiceCa
       let result;
       const actionType = serviceCard?.id ? 'update' : 'create';
       
+      const dataToSave = {
+        ...formData,
+        category_id: formData.category_id || null,
+      };
+      
       if (serviceCard?.id) {
         result = await supabase
           .from('service_cards')
-          .update(formData)
+          .update(dataToSave)
           .eq('id', serviceCard.id);
       } else {
         result = await supabase
           .from('service_cards')
-          .insert([formData]);
+          .insert([dataToSave]);
       }
 
       if (result.error) throw result.error;
@@ -141,6 +177,23 @@ const ServiceCardModal = ({ isOpen, onClose, onSuccess, serviceCard }: ServiceCa
               placeholder="Título do serviço..."
               className="mt-2"
             />
+          </div>
+
+          <div>
+            <Label htmlFor="category">Categoria</Label>
+            <select
+              id="category"
+              value={formData.category_id}
+              onChange={(e) => setFormData({ ...formData, category_id: e.target.value })}
+              className="mt-2 w-full p-2 border border-gray-300 rounded-md"
+            >
+              <option value="">Selecione uma categoria (opcional)</option>
+              {categories.map((category) => (
+                <option key={category.id} value={category.id}>
+                  {category.name}
+                </option>
+              ))}
+            </select>
           </div>
 
           <div>

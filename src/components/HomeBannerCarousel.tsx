@@ -1,5 +1,6 @@
 
 import { useState, useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from '@/components/ui/carousel';
 import { ScrollReveal } from '@/components/ScrollReveal';
@@ -13,23 +14,52 @@ interface HomeBanner {
   link_url?: string;
   sort_order: number;
   status: string;
+  category_id?: string;
 }
 
 const HomeBannerCarousel = () => {
   const [banners, setBanners] = useState<HomeBanner[]>([]);
   const [loading, setLoading] = useState(true);
+  const location = useLocation();
 
   useEffect(() => {
     fetchBanners();
-  }, []);
+  }, [location.pathname]);
 
   const fetchBanners = async () => {
     try {
-      const { data, error } = await supabase
+      // Check if we're on a category page
+      const categoryMatch = location.pathname.match(/^\/servicos\/([^\/]+)$/);
+      let query = supabase
         .from('home_banners')
         .select('*')
-        .eq('status', 'active')
-        .order('sort_order', { ascending: true });
+        .eq('status', 'active');
+
+      if (categoryMatch) {
+        // On category page, get banners for this category
+        const categorySlug = categoryMatch[1];
+        
+        // First get the category ID
+        const { data: categoryData, error: categoryError } = await supabase
+          .from('service_categories')
+          .select('id')
+          .eq('slug', categorySlug)
+          .eq('status', 'active')
+          .single();
+
+        if (categoryError || !categoryData) {
+          setBanners([]);
+          setLoading(false);
+          return;
+        }
+
+        query = query.eq('category_id', categoryData.id);
+      } else {
+        // On home page, get banners without category (home banners)
+        query = query.is('category_id', null);
+      }
+
+      const { data, error } = await query.order('sort_order', { ascending: true });
 
       if (error) {
         console.error('Error fetching banners:', error);

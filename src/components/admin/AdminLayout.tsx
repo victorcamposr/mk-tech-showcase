@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
@@ -18,7 +17,8 @@ import {
   Sparkles,
   Briefcase,
   Image,
-  Layers
+  Layers,
+  Tags
 } from 'lucide-react';
 
 interface AdminLayoutProps {
@@ -74,6 +74,12 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
       color: 'from-brand-gold to-brand-gold-dark'
     },
     { 
+      name: 'Categorias', 
+      href: '/admin/service-categories', 
+      icon: Tags,
+      color: 'from-indigo-500 to-indigo-600'
+    },
+    { 
       name: 'Cards Serviços', 
       href: '/admin/service-cards', 
       icon: Layers,
@@ -110,9 +116,7 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
   const SidebarContent = () => (
     <>
       <div className="flex-1 h-0 pt-5 pb-4 overflow-y-auto">
-        {/* Logo section com nova logo */}
         <div className="mx-4 mb-8">
-          {/* Nova Logo MK Tecnologia */}
           <div className="flex justify-center mb-4">
             <div className="w-20 h-20 rounded-xl shadow-2xl bg-black p-2 flex items-center justify-center border-2 border-brand-gold/20">
               <img 
@@ -123,7 +127,6 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
             </div>
           </div>
           
-          {/* Texto MK Admin */}
           <div className="text-center">
             <h1 className="text-2xl font-bold text-brand-black mb-1">
               MK Admin
@@ -137,7 +140,6 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
           </div>
         </div>
 
-        {/* Navigation */}
         <nav className="flex-1 px-4 space-y-3">
           {navigation.map((item) => {
             const Icon = item.icon;
@@ -174,7 +176,6 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
         </nav>
       </div>
 
-      {/* User Profile Section */}
       <div className="flex-shrink-0 border-t border-gray-100 p-4 space-y-4">
         <div className="flex items-center space-x-4 p-4 bg-gradient-to-r from-brand-gold/5 to-brand-gold/10 rounded-xl border border-brand-gold/20">
           <div className="w-12 h-12 bg-gradient-to-br from-brand-gold to-brand-gold-dark rounded-full flex items-center justify-center shadow-lg">
@@ -193,7 +194,6 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
           </div>
         </div>
         
-        {/* Action Buttons */}
         <div className="space-y-2">
           <Button
             variant="ghost"
@@ -218,7 +218,6 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
-      {/* Mobile sidebar */}
       <div className={`fixed inset-0 flex z-40 md:hidden ${sidebarOpen ? '' : 'pointer-events-none'}`}>
         <div 
           className={`fixed inset-0 bg-black/60 backdrop-blur-sm transition-opacity duration-300 ${sidebarOpen ? 'opacity-100' : 'opacity-0'}`} 
@@ -237,14 +236,12 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
         </div>
       </div>
 
-      {/* Static sidebar for desktop */}
       <div className="hidden md:flex md:w-80 md:flex-col md:fixed md:inset-y-0 z-30">
         <div className="flex-1 flex flex-col min-h-0 bg-white border-r border-gray-200 shadow-xl">
           <SidebarContent />
         </div>
       </div>
 
-      {/* Main content */}
       <div className="md:pl-80 flex flex-col flex-1">
         <div className="sticky top-0 z-20 md:hidden pl-1 pt-1 sm:pl-3 sm:pt-3 bg-white/95 backdrop-blur-sm border-b border-gray-200">
           <button

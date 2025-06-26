@@ -17,6 +17,13 @@ interface HomeBanner {
   link_url?: string;
   sort_order: number;
   status: 'active' | 'inactive';
+  category_id?: string;
+}
+
+interface ServiceCategory {
+  id: string;
+  name: string;
+  status: string;
 }
 
 interface HomeBannerModalProps {
@@ -32,24 +39,50 @@ const HomeBannerModal = ({ isOpen, onClose, banner, onSuccess }: HomeBannerModal
     image_url: '',
     link_url: '',
     sort_order: 0,
-    status: 'active'
+    status: 'active',
+    category_id: '',
   });
+  const [categories, setCategories] = useState<ServiceCategory[]>([]);
   const [loading, setLoading] = useState(false);
   const { toast } = useToast();
 
   useEffect(() => {
+    fetchCategories();
+  }, []);
+
+  useEffect(() => {
     if (banner) {
-      setFormData(banner);
+      setFormData({
+        ...banner,
+        category_id: banner.category_id || '',
+      });
     } else {
       setFormData({
         title: '',
         image_url: '',
         link_url: '',
         sort_order: 0,
-        status: 'active'
+        status: 'active',
+        category_id: '',
       });
     }
   }, [banner, isOpen]);
+
+  const fetchCategories = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('service_categories')
+        .select('id, name, status')
+        .eq('status', 'active')
+        .order('sort_order', { ascending: true })
+        .order('name', { ascending: true });
+
+      if (error) throw error;
+      setCategories(data || []);
+    } catch (error) {
+      console.error('Error fetching categories:', error);
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -61,7 +94,8 @@ const HomeBannerModal = ({ isOpen, onClose, banner, onSuccess }: HomeBannerModal
         image_url: formData.image_url,
         link_url: formData.link_url || null,
         sort_order: formData.sort_order,
-        status: formData.status
+        status: formData.status,
+        category_id: formData.category_id || null,
       };
 
       let error;
@@ -127,6 +161,23 @@ const HomeBannerModal = ({ isOpen, onClose, banner, onSuccess }: HomeBannerModal
               onChange={(e) => setFormData({ ...formData, title: e.target.value })}
               required
             />
+          </div>
+
+          <div>
+            <Label htmlFor="category">Categoria</Label>
+            <select
+              id="category"
+              value={formData.category_id}
+              onChange={(e) => setFormData({ ...formData, category_id: e.target.value })}
+              className="mt-2 w-full p-2 border border-gray-300 rounded-md"
+            >
+              <option value="">Home - Exibir na página inicial</option>
+              {categories.map((category) => (
+                <option key={category.id} value={category.id}>
+                  {category.name}
+                </option>
+              ))}
+            </select>
           </div>
 
           <div>
