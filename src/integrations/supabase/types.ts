@@ -159,6 +159,39 @@ export type Database = {
         }
         Relationships: []
       }
+      home_banners: {
+        Row: {
+          created_at: string
+          id: string
+          image_url: string
+          link_url: string | null
+          sort_order: number | null
+          status: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          image_url: string
+          link_url?: string | null
+          sort_order?: number | null
+          status?: string
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          image_url?: string
+          link_url?: string | null
+          sort_order?: number | null
+          status?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       portfolio_projects: {
         Row: {
           category: string

@@ -8,6 +8,7 @@ import SEO from "@/components/SEO";
 import StructuredData from "@/components/StructuredData";
 import LazyImage from "@/components/LazyImage";
 import CriticalImage from "@/components/CriticalImage";
+import HomeBannerCarousel from "@/components/HomeBannerCarousel";
 import { ScrollReveal } from "@/components/ScrollReveal";
 import { Lightbulb } from "lucide-react";
 
@@ -99,6 +100,15 @@ const Index = () => {
                 </div>
               </div>
             </div>
+          </div>
+        </section>
+      </ScrollReveal>
+
+      {/* Banner Carousel Section */}
+      <ScrollReveal animation="fade-up" delay={50}>
+        <section className="py-12">
+          <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+            <HomeBannerCarousel />
           </div>
         </section>
       </ScrollReveal>
