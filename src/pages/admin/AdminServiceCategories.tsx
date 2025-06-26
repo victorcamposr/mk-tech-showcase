@@ -50,7 +50,14 @@ const AdminServiceCategories = () => {
         .order('created_at', { ascending: false });
 
       if (error) throw error;
-      setCategories(data || []);
+      
+      // Type assertion to ensure proper typing
+      const typedCategories = (data || []).map(category => ({
+        ...category,
+        status: category.status as 'active' | 'inactive'
+      }));
+      
+      setCategories(typedCategories);
     } catch (error) {
       console.error('Error fetching service categories:', error);
       toast({
