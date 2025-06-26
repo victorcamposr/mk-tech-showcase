@@ -93,9 +93,9 @@ const AdminPortfolio = () => {
       if (statsRes.error) throw statsRes.error;
       if (testimonialsRes.error) throw testimonialsRes.error;
 
-      setProjects(projectsRes.data || []);
-      setStats(statsRes.data || []);
-      setTestimonials(testimonialsRes.data || []);
+      setProjects((projectsRes.data || []) as PortfolioProject[]);
+      setStats((statsRes.data || []) as PortfolioStat[]);
+      setTestimonials((testimonialsRes.data || []) as PortfolioTestimonial[]);
     } catch (error) {
       console.error('Error fetching portfolio data:', error);
       toast({
@@ -112,8 +112,18 @@ const AdminPortfolio = () => {
     const newStatus = currentStatus === 'active' ? 'inactive' : 'active';
     
     try {
+      let tableName: 'portfolio_projects' | 'portfolio_stats' | 'portfolio_testimonials';
+      
+      if (type === 'projects') {
+        tableName = 'portfolio_projects';
+      } else if (type === 'stats') {
+        tableName = 'portfolio_stats';
+      } else {
+        tableName = 'portfolio_testimonials';
+      }
+
       const { error } = await supabase
-        .from(`portfolio_${type}`)
+        .from(tableName)
         .update({ status: newStatus })
         .eq('id', id);
 
@@ -139,8 +149,18 @@ const AdminPortfolio = () => {
     const { type, id } = deleteDialog;
     
     try {
+      let tableName: 'portfolio_projects' | 'portfolio_stats' | 'portfolio_testimonials';
+      
+      if (type === 'projects') {
+        tableName = 'portfolio_projects';
+      } else if (type === 'stats') {
+        tableName = 'portfolio_stats';
+      } else {
+        tableName = 'portfolio_testimonials';
+      }
+
       const { error } = await supabase
-        .from(`portfolio_${type}`)
+        .from(tableName)
         .delete()
         .eq('id', id);
 
@@ -176,13 +196,23 @@ const AdminPortfolio = () => {
     const swapItem = items[newIndex];
 
     try {
+      let tableName: 'portfolio_projects' | 'portfolio_stats' | 'portfolio_testimonials';
+      
+      if (type === 'projects') {
+        tableName = 'portfolio_projects';
+      } else if (type === 'stats') {
+        tableName = 'portfolio_stats';
+      } else {
+        tableName = 'portfolio_testimonials';
+      }
+
       await Promise.all([
         supabase
-          .from(`portfolio_${type}`)
+          .from(tableName)
           .update({ sort_order: swapItem.sort_order })
           .eq('id', currentItem.id),
         supabase
-          .from(`portfolio_${type}`)
+          .from(tableName)
           .update({ sort_order: currentItem.sort_order })
           .eq('id', swapItem.id)
       ]);
