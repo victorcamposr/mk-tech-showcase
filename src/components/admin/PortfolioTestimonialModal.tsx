@@ -9,6 +9,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { useToast } from '@/hooks/use-toast';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
+import { logAdminActivity } from '@/utils/adminActivity';
 
 interface PortfolioTestimonialModalProps {
   open: boolean;
@@ -66,9 +67,17 @@ const PortfolioTestimonialModal = ({ open, onClose, editingItem }: PortfolioTest
         if (error) throw error;
       }
     },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['admin-portfolio-testimonials'] });
-      queryClient.invalidateQueries({ queryKey: ['portfolio-testimonials'] });
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: ['admin-portfolio-testimonials'] });
+      await queryClient.invalidateQueries({ queryKey: ['portfolio-testimonials'] });
+      
+      // Log admin activity
+      await logAdminActivity(
+        editingItem ? 'update' : 'create',
+        'portfolio_testimonials',
+        `${formData.author} - ${formData.company}`
+      );
+      
       toast({
         title: editingItem ? "Depoimento atualizado!" : "Depoimento criado!",
         description: "As alterações foram salvas com sucesso.",

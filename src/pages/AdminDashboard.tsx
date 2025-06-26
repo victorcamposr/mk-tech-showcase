@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import AdminLayout from '@/components/admin/AdminLayout';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -25,7 +24,8 @@ import {
   Plus,
   Edit,
   Trash2,
-  UserCheck
+  UserCheck,
+  Briefcase
 } from 'lucide-react';
 
 interface DashboardStats {
@@ -33,10 +33,12 @@ interface DashboardStats {
   totalContacts: number;
   totalPosts: number;
   totalSolutions: number;
+  totalPortfolioProjects: number;
   inactiveUsers: number;
   unreadContacts: number;
   draftPosts: number;
   inactiveSolutions: number;
+  inactivePortfolioProjects: number;
 }
 
 interface RecentActivity {
@@ -54,10 +56,12 @@ const AdminDashboard = () => {
     totalContacts: 0,
     totalPosts: 0,
     totalSolutions: 0,
+    totalPortfolioProjects: 0,
     inactiveUsers: 0,
     unreadContacts: 0,
     draftPosts: 0,
-    inactiveSolutions: 0
+    inactiveSolutions: 0,
+    inactivePortfolioProjects: 0
   });
   const [activities, setActivities] = useState<RecentActivity[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
@@ -75,15 +79,28 @@ const AdminDashboard = () => {
 
   const fetchDashboardData = async () => {
     try {
-      const [usersRes, contactsRes, postsRes, solutionsRes, inactiveUsersRes, unreadContactsRes, draftPostsRes, inactiveSolutionsRes] = await Promise.all([
+      const [
+        usersRes, 
+        contactsRes, 
+        postsRes, 
+        solutionsRes, 
+        portfolioProjectsRes,
+        inactiveUsersRes, 
+        unreadContactsRes, 
+        draftPostsRes, 
+        inactiveSolutionsRes,
+        inactivePortfolioProjectsRes
+      ] = await Promise.all([
         supabase.from('admin_profiles').select('id', { count: 'exact', head: true }),
         supabase.from('contacts').select('id', { count: 'exact', head: true }),
         supabase.from('blog_posts').select('id', { count: 'exact', head: true }),
         supabase.from('solutions').select('id', { count: 'exact', head: true }),
+        supabase.from('portfolio_projects').select('id', { count: 'exact', head: true }),
         supabase.from('admin_profiles').select('id', { count: 'exact', head: true }).eq('is_active', false),
         supabase.from('contacts').select('id', { count: 'exact', head: true }).eq('read', false),
         supabase.from('blog_posts').select('id', { count: 'exact', head: true }).eq('status', 'draft'),
-        supabase.from('solutions').select('id', { count: 'exact', head: true }).eq('status', 'inactive')
+        supabase.from('solutions').select('id', { count: 'exact', head: true }).eq('status', 'inactive'),
+        supabase.from('portfolio_projects').select('id', { count: 'exact', head: true }).eq('status', 'inactive')
       ]);
 
       setStats({
@@ -91,10 +108,12 @@ const AdminDashboard = () => {
         totalContacts: contactsRes.count || 0,
         totalPosts: postsRes.count || 0,
         totalSolutions: solutionsRes.count || 0,
+        totalPortfolioProjects: portfolioProjectsRes.count || 0,
         inactiveUsers: inactiveUsersRes.count || 0,
         unreadContacts: unreadContactsRes.count || 0,
         draftPosts: draftPostsRes.count || 0,
-        inactiveSolutions: inactiveSolutionsRes.count || 0
+        inactiveSolutions: inactiveSolutionsRes.count || 0,
+        inactivePortfolioProjects: inactivePortfolioProjectsRes.count || 0
       });
     } catch (error) {
       console.error('Error fetching dashboard stats:', error);
@@ -189,6 +208,11 @@ const AdminDashboard = () => {
       case 'solução':
       case 'soluções':
         return Lightbulb;
+      case 'portfolio_projects':
+      case 'portfolio_stats':
+      case 'portfolio_testimonials':
+      case 'portfolio':
+        return Briefcase;
       default:
         return Activity;
     }
@@ -225,6 +249,12 @@ const AdminDashboard = () => {
         return 'post do blog';
       case 'solutions':
         return 'solução';
+      case 'portfolio_projects':
+        return 'projeto do portfólio';
+      case 'portfolio_stats':
+        return 'estatística do portfólio';
+      case 'portfolio_testimonials':
+        return 'depoimento do portfólio';
       default:
         return entityType;
     }
@@ -272,6 +302,16 @@ const AdminDashboard = () => {
       badgeLabel: 'Inativas',
       badgeIcon: ZapOff,
       showBadge: stats.inactiveSolutions > 0
+    },
+    {
+      title: 'Projetos Portfólio',
+      value: stats.totalPortfolioProjects,
+      icon: Briefcase,
+      gradient: 'from-purple-500 to-purple-600',
+      badgeValue: stats.inactivePortfolioProjects,
+      badgeLabel: 'Inativos',
+      badgeIcon: ZapOff,
+      showBadge: stats.inactivePortfolioProjects > 0
     }
   ];
 
@@ -294,7 +334,7 @@ const AdminDashboard = () => {
         </div>
 
         {/* Stats Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
           {statsCards.map((stat, index) => {
             const Icon = stat.icon;
             const BadgeIcon = stat.badgeIcon;

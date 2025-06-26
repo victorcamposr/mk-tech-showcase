@@ -13,6 +13,7 @@ import PortfolioStatsModal from '@/components/admin/PortfolioStatsModal';
 import PortfolioProjectModal from '@/components/admin/PortfolioProjectModal';
 import PortfolioTestimonialModal from '@/components/admin/PortfolioTestimonialModal';
 import DeleteConfirmDialog from '@/components/admin/DeleteConfirmDialog';
+import { logAdminActivity } from '@/utils/adminActivity';
 
 interface PortfolioStat {
   id: string;
@@ -100,22 +101,26 @@ const AdminPortfolio = () => {
   // Mutações para deletar
   const deleteMutation = useMutation({
     mutationFn: async ({ type, id }: { type: string; id: string }) => {
-      let query;
-      if (type === 'stats') {
-        query = supabase.from('portfolio_stats').delete().eq('id', id);
-      } else if (type === 'projects') {
-        query = supabase.from('portfolio_projects').delete().eq('id', id);
+      if (type === 'projects') {
+        const { error } = await supabase.from('portfolio_projects').delete().eq('id', id);
+        if (error) throw error;
       } else if (type === 'testimonials') {
-        query = supabase.from('portfolio_testimonials').delete().eq('id', id);
+        const { error } = await supabase.from('portfolio_testimonials').delete().eq('id', id);
+        if (error) throw error;
       } else {
         throw new Error('Invalid type');
       }
-      
-      const { error } = await query;
-      if (error) throw error;
     },
-    onSuccess: (_, { type }) => {
-      queryClient.invalidateQueries({ queryKey: [`admin-portfolio-${type}`] });
+    onSuccess: async (_, { type }) => {
+      await queryClient.invalidateQueries({ queryKey: [`admin-portfolio-${type}`] });
+      
+      // Log admin activity
+      await logAdminActivity(
+        'delete',
+        `portfolio_${type}`,
+        deleteDialog.title
+      );
+      
       toast({
         title: "Item excluído com sucesso!",
         description: "O item foi removido do portfólio.",
@@ -184,10 +189,7 @@ const AdminPortfolio = () => {
           <TabsContent value="stats" className="space-y-6">
             <div className="flex justify-between items-center">
               <h2 className="text-2xl font-semibold">Estatísticas do Portfólio</h2>
-              <Button onClick={() => setStatsModalOpen(true)} className="bg-brand-gold hover:bg-brand-gold-dark text-brand-black">
-                <Plus className="w-4 h-4 mr-2" />
-                Nova Estatística
-              </Button>
+              <p className="text-sm text-gray-500">Apenas valor e ordem podem ser editados</p>
             </div>
 
             {statsLoading ? (
@@ -215,13 +217,6 @@ const AdminPortfolio = () => {
                           onClick={() => handleEdit('stats', stat)}
                         >
                           <Edit className="w-4 h-4" />
-                        </Button>
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={() => handleDelete('stats', stat.id, stat.label)}
-                        >
-                          <Trash2 className="w-4 h-4" />
                         </Button>
                       </div>
                     </CardContent>

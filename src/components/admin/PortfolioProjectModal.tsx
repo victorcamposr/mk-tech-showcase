@@ -6,10 +6,12 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { ImageUpload } from '@/components/ui/image-upload';
 import { useToast } from '@/hooks/use-toast';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { X, Plus } from 'lucide-react';
+import { logAdminActivity } from '@/utils/adminActivity';
 
 interface PortfolioProjectModalProps {
   open: boolean;
@@ -73,8 +75,17 @@ const PortfolioProjectModal = ({ open, onClose, editingItem }: PortfolioProjectM
         if (error) throw error;
       }
     },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['admin-portfolio-projects'] });
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: ['admin-portfolio-projects'] });
+      await queryClient.invalidateQueries({ queryKey: ['portfolio-projects'] });
+      
+      // Log admin activity
+      await logAdminActivity(
+        editingItem ? 'update' : 'create',
+        'portfolio_projects',
+        formData.title
+      );
+      
       toast({
         title: editingItem ? "Projeto atualizado!" : "Projeto criado!",
         description: "As alterações foram salvas com sucesso.",
@@ -155,15 +166,12 @@ const PortfolioProjectModal = ({ open, onClose, editingItem }: PortfolioProjectM
             />
           </div>
 
-          <div className="space-y-2">
-            <Label htmlFor="image_url">URL da Imagem</Label>
-            <Input
-              id="image_url"
-              value={formData.image_url}
-              onChange={(e) => setFormData({ ...formData, image_url: e.target.value })}
-              placeholder="https://exemplo.com/imagem.jpg"
-            />
-          </div>
+          <ImageUpload
+            label="Imagem do Projeto"
+            value={formData.image_url}
+            onChange={(url) => setFormData({ ...formData, image_url: url })}
+            disabled={mutation.isPending}
+          />
 
           <div className="space-y-2">
             <div className="flex items-center justify-between">

@@ -4,10 +4,10 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/u
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useToast } from '@/hooks/use-toast';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
+import { logAdminActivity } from '@/utils/adminActivity';
 
 interface PortfolioStatsModalProps {
   open: boolean;
@@ -17,11 +17,7 @@ interface PortfolioStatsModalProps {
 
 const PortfolioStatsModal = ({ open, onClose, editingItem }: PortfolioStatsModalProps) => {
   const [formData, setFormData] = useState({
-    key: '',
-    label: '',
     value: 0,
-    suffix: '',
-    status: 'active' as 'active' | 'inactive',
     sort_order: 0
   });
 
@@ -31,20 +27,12 @@ const PortfolioStatsModal = ({ open, onClose, editingItem }: PortfolioStatsModal
   useEffect(() => {
     if (editingItem) {
       setFormData({
-        key: editingItem.key || '',
-        label: editingItem.label || '',
         value: editingItem.value || 0,
-        suffix: editingItem.suffix || '',
-        status: editingItem.status || 'active',
         sort_order: editingItem.sort_order || 0
       });
     } else {
       setFormData({
-        key: '',
-        label: '',
         value: 0,
-        suffix: '',
-        status: 'active',
         sort_order: 0
       });
     }
@@ -52,23 +40,28 @@ const PortfolioStatsModal = ({ open, onClose, editingItem }: PortfolioStatsModal
 
   const mutation = useMutation({
     mutationFn: async (data: typeof formData) => {
-      if (editingItem) {
-        const { error } = await supabase
-          .from('portfolio_stats')
-          .update(data)
-          .eq('id', editingItem.id);
-        if (error) throw error;
-      } else {
-        const { error } = await supabase
-          .from('portfolio_stats')
-          .insert([data]);
-        if (error) throw error;
-      }
+      if (!editingItem) return;
+      
+      const { error } = await supabase
+        .from('portfolio_stats')
+        .update(data)
+        .eq('id', editingItem.id);
+      
+      if (error) throw error;
     },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['admin-portfolio-stats'] });
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: ['admin-portfolio-stats'] });
+      await queryClient.invalidateQueries({ queryKey: ['portfolio-stats'] });
+      
+      // Log admin activity
+      await logAdminActivity(
+        'update',
+        'portfolio_stats',
+        `${editingItem.label} - Valor: ${formData.value}${editingItem.suffix || ''}`
+      );
+      
       toast({
-        title: editingItem ? "Estatística atualizada!" : "Estatística criada!",
+        title: "Estatística atualizada!",
         description: "As alterações foram salvas com sucesso.",
       });
       onClose();
@@ -85,41 +78,20 @@ const PortfolioStatsModal = ({ open, onClose, editingItem }: PortfolioStatsModal
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    if (!editingItem) return;
     mutation.mutate(formData);
   };
+
+  if (!editingItem) return null;
 
   return (
     <Dialog open={open} onOpenChange={onClose}>
       <DialogContent className="sm:max-w-[500px]">
         <DialogHeader>
-          <DialogTitle>
-            {editingItem ? 'Editar Estatística' : 'Nova Estatística'}
-          </DialogTitle>
+          <DialogTitle>Editar Estatística: {editingItem.label}</DialogTitle>
         </DialogHeader>
 
         <form onSubmit={handleSubmit} className="space-y-4">
-          <div className="space-y-2">
-            <Label htmlFor="key">Chave (identificador único)</Label>
-            <Input
-              id="key"
-              value={formData.key}
-              onChange={(e) => setFormData({ ...formData, key: e.target.value })}
-              placeholder="ex: companies, segments"
-              required
-            />
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="label">Nome da Estatística</Label>
-            <Input
-              id="label"
-              value={formData.label}
-              onChange={(e) => setFormData({ ...formData, label: e.target.value })}
-              placeholder="ex: Empresas Atendidas"
-              required
-            />
-          </div>
-
           <div className="space-y-2">
             <Label htmlFor="value">Valor</Label>
             <Input
@@ -130,16 +102,9 @@ const PortfolioStatsModal = ({ open, onClose, editingItem }: PortfolioStatsModal
               placeholder="ex: 100"
               required
             />
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="suffix">Sufixo</Label>
-            <Input
-              id="suffix"
-              value={formData.suffix}
-              onChange={(e) => setFormData({ ...formData, suffix: e.target.value })}
-              placeholder="ex: +, %, etc"
-            />
+            <p className="text-sm text-gray-500">
+              Será exibido como: {formData.value}{editingItem.suffix || ''}
+            </p>
           </div>
 
           <div className="space-y-2">
@@ -151,22 +116,6 @@ const PortfolioStatsModal = ({ open, onClose, editingItem }: PortfolioStatsModal
               onChange={(e) => setFormData({ ...formData, sort_order: parseInt(e.target.value) || 0 })}
               placeholder="0"
             />
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="status">Status</Label>
-            <Select
-              value={formData.status}
-              onValueChange={(value: 'active' | 'inactive') => setFormData({ ...formData, status: value })}
-            >
-              <SelectTrigger>
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="active">Ativo</SelectItem>
-                <SelectItem value="inactive">Inativo</SelectItem>
-              </SelectContent>
-            </Select>
           </div>
 
           <div className="flex gap-3 pt-4">
