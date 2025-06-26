@@ -313,6 +313,7 @@ export type Database = {
           phone: string
           sort_order: number | null
           status: string
+          title: string
           updated_at: string
         }
         Insert: {
@@ -324,6 +325,7 @@ export type Database = {
           phone: string
           sort_order?: number | null
           status?: string
+          title: string
           updated_at?: string
         }
         Update: {
@@ -335,6 +337,7 @@ export type Database = {
           phone?: string
           sort_order?: number | null
           status?: string
+          title?: string
           updated_at?: string
         }
         Relationships: []

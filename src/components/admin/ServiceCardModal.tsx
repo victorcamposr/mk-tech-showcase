@@ -8,9 +8,11 @@ import { Textarea } from '@/components/ui/textarea';
 import { ImageUpload } from '@/components/ui/image-upload';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
+import { logAdminActivity } from '@/utils/adminActivity';
 
 interface ServiceCard {
   id?: string;
+  title: string;
   logo_url: string;
   description: string;
   phone: string;
@@ -28,6 +30,7 @@ interface ServiceCardModalProps {
 
 const ServiceCardModal = ({ isOpen, onClose, onSuccess, serviceCard }: ServiceCardModalProps) => {
   const [formData, setFormData] = useState<Omit<ServiceCard, 'id'>>({
+    title: '',
     logo_url: '',
     description: '',
     phone: '',
@@ -41,6 +44,7 @@ const ServiceCardModal = ({ isOpen, onClose, onSuccess, serviceCard }: ServiceCa
   useEffect(() => {
     if (serviceCard) {
       setFormData({
+        title: serviceCard.title,
         logo_url: serviceCard.logo_url,
         description: serviceCard.description,
         phone: serviceCard.phone,
@@ -50,6 +54,7 @@ const ServiceCardModal = ({ isOpen, onClose, onSuccess, serviceCard }: ServiceCa
       });
     } else {
       setFormData({
+        title: '',
         logo_url: '',
         description: '',
         phone: '',
@@ -63,7 +68,7 @@ const ServiceCardModal = ({ isOpen, onClose, onSuccess, serviceCard }: ServiceCa
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!formData.logo_url || !formData.description || !formData.phone || !formData.email) {
+    if (!formData.title || !formData.logo_url || !formData.description || !formData.phone || !formData.email) {
       toast({
         title: "Erro",
         description: "Todos os campos são obrigatórios.",
@@ -82,10 +87,18 @@ const ServiceCardModal = ({ isOpen, onClose, onSuccess, serviceCard }: ServiceCa
           .from('service_cards')
           .update(formData)
           .eq('id', serviceCard.id);
+          
+        if (!result.error) {
+          await logAdminActivity('update', 'service_cards', formData.title);
+        }
       } else {
         result = await supabase
           .from('service_cards')
           .insert([formData]);
+          
+        if (!result.error) {
+          await logAdminActivity('create', 'service_cards', formData.title);
+        }
       }
 
       if (result.error) throw result.error;
@@ -119,6 +132,17 @@ const ServiceCardModal = ({ isOpen, onClose, onSuccess, serviceCard }: ServiceCa
         </DialogHeader>
 
         <form onSubmit={handleSubmit} className="space-y-6">
+          <div>
+            <Label htmlFor="title">Título *</Label>
+            <Input
+              id="title"
+              value={formData.title}
+              onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+              placeholder="Título do serviço..."
+              className="mt-2"
+            />
+          </div>
+
           <div>
             <ImageUpload
               label="Logo *"
