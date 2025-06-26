@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import AdminLayout from '@/components/admin/AdminLayout';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -121,7 +122,7 @@ const AdminDashboard = () => {
           draftPosts: draftPostsRes.count || 0,
           inactiveSolutions: inactiveSolutionsRes.count || 0,
           inactivePortfolioProjects: inactivePortfolioProjectsRes.count || 0,
-          inactiveHomeBannersRes: inactiveHomeBannersRes.count || 0
+          inactiveHomeBanners: inactiveHomeBannersRes.count || 0
         };
 
         console.log('Dashboard stats updated via React Query:', dashboardStats);
