@@ -32,7 +32,7 @@ const HomeBannerModal = ({ open, onClose, editingItem }: HomeBannerModalProps) =
     image_url: '',
     link_url: '',
     sort_order: 0,
-    status: 'active' as const
+    status: 'active' as 'active' | 'inactive'
   });
 
   const { toast } = useToast();
@@ -190,11 +190,11 @@ const HomeBannerModal = ({ open, onClose, editingItem }: HomeBannerModalProps) =
           </div>
 
           <div className="space-y-2">
-            <Label>Imagem do Banner *</Label>
             <ImageUpload
+              label="Imagem do Banner *"
               value={formData.image_url}
               onChange={(url) => setFormData({ ...formData, image_url: url })}
-              className="w-full h-32 border-2 border-dashed border-brand-gold/30 rounded-lg"
+              className="w-full"
             />
           </div>
 
