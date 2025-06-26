@@ -1,277 +1,331 @@
-
+import { useEffect, useState } from 'react';
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-import HomeBannerCarousel from "@/components/HomeBannerCarousel";
-import ColoredServiceIcon, { getServiceColors } from "@/components/ColoredServiceIcon";
-import CountUpNumber from "@/components/CountUpNumber";
-import SimpleIcon from "@/components/SimpleIcon";
 import TypewriterText from "@/components/TypewriterText";
+import ColoredServiceIcon from "@/components/ColoredServiceIcon";
+import CountUpNumber from "@/components/CountUpNumber";
+import TestimonialCarousel from "@/components/TestimonialCarousel";
+import InteractiveDashboard from "@/components/InteractiveDashboard";
+import ContactModal from "@/components/ContactModal";
 import SEO from "@/components/SEO";
 import StructuredData from "@/components/StructuredData";
-import LazyImage from "@/components/LazyImage";
-import CriticalImage from "@/components/CriticalImage";
 import { ScrollReveal } from "@/components/ScrollReveal";
-import { Lightbulb } from "lucide-react";
-
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { ArrowRight, CheckCircle, Target, Users, TrendingUp, Award } from "lucide-react";
+import { supabase } from '@/integrations/supabase/client';
+
+interface PortfolioStat {
+  id: string;
+  key: string;
+  label: string;
+  value: number;
+  suffix: string;
+}
 
 const Index = () => {
-  const services = [
-    {
-      iconType: "automation" as const,
-      title: "Automação Comercial",
-      description: "Sistemas completos para gestão do seu negócio"
-    },
-    {
-      iconType: "inventory" as const,
-      title: "Controle de Estoque",
-      description: "Gestão inteligente com alertas automáticos"
-    },
-    {
-      iconType: "fiscal" as const,
-      title: "Emissão Fiscal",
-      description: "NFe, NFCe e cupons fiscais automatizados"
-    },
-    {
-      iconType: "financial" as const,
-      title: "Gestão Financeira",
-      description: "Controle completo do fluxo de caixa"
+  const [contactModalOpen, setContactModalOpen] = useState(false);
+  const [portfolioStats, setPortfolioStats] = useState<PortfolioStat[]>([]);
+
+  useEffect(() => {
+    fetchPortfolioStats();
+  }, []);
+
+  const fetchPortfolioStats = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('portfolio_stats')
+        .select('*')
+        .eq('status', 'active')
+        .order('sort_order', { ascending: true });
+
+      if (error) {
+        console.error('Error fetching portfolio stats:', error);
+        return;
+      }
+
+      setPortfolioStats(data || []);
+    } catch (error) {
+      console.error('Error fetching portfolio stats:', error);
     }
-  ];
+  };
+
+  const handleContactClick = () => {
+    setContactModalOpen(true);
+  };
 
   return (
     <div className="min-h-screen bg-background">
       <SEO 
-        title="Automação Comercial em Pontes e Lacerda"
-        description="Especialistas em automação comercial, sistemas PDV, controle de estoque e emissão fiscal em Pontes e Lacerda, MT. Soluções tecnológicas completas para empresas de todos os segmentos com suporte 24/7."
-        keywords="automação comercial, sistema PDV, controle estoque, emissão fiscal, NFe, NFCe, Pontes e Lacerda, Mato Grosso, tecnologia empresarial, gestão comercial, software empresarial"
+        title="Sistemas para Automação Comercial - Soluções Completas para seu Negócio"
+        description="Transforme seu negócio com nossos sistemas de automação comercial. PDV, controle de estoque, emissão fiscal e muito mais. Atendemos Pontes e Lacerda e região."
+        keywords="automação comercial, PDV, sistema de vendas, controle de estoque, emissão fiscal, NFe, NFCe, Pontes e Lacerda, Mato Grosso"
       />
-      <StructuredData type="localBusiness" />
-      <StructuredData type="organization" />
-      <StructuredData type="website" />
-      <StructuredData type="service" />
+      <StructuredData 
+        type="organization" 
+        data={{
+          name: "Sistemas de Automação Comercial",
+          description: "Soluções completas em automação comercial para empresas de todos os tamanhos.",
+          address: "Pontes e Lacerda, MT",
+          phone: "(65) 99353-5079"
+        }}
+      />
       <Header />
       
-      {/* Hero Section */}
-      <ScrollReveal animation="fade-in">
-        <section className="bg-gradient-to-br from-brand-black to-brand-black-light text-white py-20">
-          <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-              <div>
-                <h1 className="text-4xl md:text-6xl font-bold mb-6">
-                  Transforme seu Negócio com 
-                  <span className="text-brand-gold block">
-                    <TypewriterText 
-                      texts={["Automação Comercial"]}
-                      speed={120}
-                      pauseDuration={3000}
-                    />
-                  </span>
-                </h1>
-                <p className="text-xl text-gray-300 mb-8 max-w-lg">
-                  Soluções completas em tecnologia para controle de estoque, emissão fiscal 
-                  e gestão empresarial. Especialistas em automação comercial em Pontes e Lacerda/MT.
-                </p>
-                 <div className="flex flex-col sm:flex-row gap-4">
-                  <Button asChild size="lg" className="bg-brand-gold hover:bg-brand-gold-dark text-brand-black font-semibold group">
-                    <a href="https://wa.me/5565993535079" target="_blank" rel="noopener noreferrer" className="flex items-center gap-2">
-                      <SimpleIcon type="whatsapp-black" className="w-5 h-5 group-hover:scale-110 transition-transform" />
-                      Falar no WhatsApp
-                    </a>
-                  </Button>
-                  <Button asChild size="lg" className="bg-white text-brand-black hover:bg-gray-100 transition-all duration-300 border border-brand-gold/20 group">
-                    <a href="/solucoes" className="flex items-center gap-2">
-                      <Lightbulb className="w-5 h-5 group-hover:scale-110 transition-transform" />
-                      Ver Soluções
-                    </a>
-                  </Button>
-                 </div>
-              </div>
-              <div className="text-center animate-fade-in">
-                <div className="relative">
-                  <div className="absolute inset-0 bg-gradient-to-r from-brand-gold/20 to-transparent rounded-full blur-3xl animate-pulse"></div>
-                  <CriticalImage 
-                    src="/lovable-uploads/894786af-af73-492e-ae6a-d8a39e0ac4cb.png" 
-                    alt="MK Tecnologia - Especialistas em Automação Comercial em Pontes e Lacerda, MT"
-                    className="w-80 h-auto mx-auto relative z-10 hover:scale-105 transition-transform duration-500"
-                    width={320}
-                    height={320}
+      <main>
+        {/* Hero Section */}
+        <section className="relative min-h-screen flex items-center justify-center bg-gradient-to-br from-brand-black via-brand-black-light to-brand-black overflow-hidden">
+          <div className="absolute inset-0 bg-hero-pattern opacity-10 z-0"></div>
+          <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+            <div className="text-center">
+              <ScrollReveal animation="fade-in">
+                <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-6">
+                  Acelere seu negócio com <br />
+                  <TypewriterText
+                    strings={[
+                      'Automação Comercial',
+                      'Sistemas de Gestão',
+                      'Soluções Inovadoras'
+                    ]}
                   />
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
-      </ScrollReveal>
-
-      {/* Home Banners Carousel */}
-      <HomeBannerCarousel />
-
-      {/* Services Section */}
-      <ScrollReveal animation="fade-up" delay={100}>
-        <section className="py-20">
-          <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="text-center mb-16">
-              <h2 className="text-3xl md:text-5xl font-bold text-brand-black mb-6">
-                Nossas <span className="text-brand-gold">Especialidades</span>
-              </h2>
-              <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-                Oferecemos soluções completas para automatizar e otimizar todos os processos do seu negócio
-              </p>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-              {services.map((service, index) => {
-                const colors = getServiceColors(service.iconType);
-                return (
-                  <Card key={index} className={`${colors.border} hover:shadow-2xl hover:shadow-brand-gold/10 transition-all duration-500 hover:-translate-y-3 hover:scale-105 group bg-gradient-to-br from-white to-gray-50/50 backdrop-blur-sm`}>
-                    <CardContent className="p-8 text-center">
-                      <div className="mb-6">
-                        <ColoredServiceIcon type={service.iconType} className="group-hover:animate-pulse" />
-                      </div>
-                      <h3 className={`text-xl font-semibold text-brand-black mb-4 ${colors.hoverText} transition-colors duration-300`}>{service.title}</h3>
-                      <p className="text-gray-600 group-hover:text-gray-700 transition-colors duration-300">{service.description}</p>
-                    </CardContent>
-                  </Card>
-                );
-              })}
-            </div>
-          </div>
-        </section>
-      </ScrollReveal>
-
-      {/* Tecnologia Multi-plataforma */}
-      <ScrollReveal animation="fade-up" delay={150}>
-        <section className="py-16 bg-gradient-to-br from-gray-50 to-white">
-          <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="text-center mb-12">
-              <h2 className="text-3xl md:text-4xl font-bold text-brand-black mb-4">
-                Tecnologia <span className="text-brand-gold">Multi-Plataforma</span>
-              </h2>
-              <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-                Nossos sistemas funcionam perfeitamente em tablets, smartphones, computadores e terminais dedicados, 
-                garantindo total flexibilidade para seu negócio.
-              </p>
-            </div>
-            
-            <div className="max-w-6xl mx-auto">
-              <div className="relative rounded-2xl overflow-hidden shadow-2xl">
-                <img 
-                  src="/lovable-uploads/0bfbfdc4-c22a-408a-b382-5ac107dd157f.png" 
-                  alt="Soluções MK Tecnologia - Sistemas multi-plataforma funcionando em tablets, smartphones, computadores e terminais PDV"
-                  className="w-full h-auto object-cover"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-brand-black/30 via-transparent to-transparent"></div>
-                <div className="absolute bottom-6 left-6 right-6">
-                  <div className="bg-white/95 backdrop-blur-sm rounded-xl p-4 border border-brand-gold/20">
-                    <h3 className="text-lg font-semibold text-brand-black mb-2">
-                      Sistemas Integrados para Todos os Dispositivos
-                    </h3>
-                    <p className="text-gray-600 text-sm">
-                      PDV, Gestão de Estoque, Emissão Fiscal e Controle Financeiro em uma única plataforma
-                    </p>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
-      </ScrollReveal>
-
-      {/* About Section */}
-      <ScrollReveal animation="fade-up" delay={200}>
-        <section className="py-20 bg-gray-50">
-          <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-              <div>
-                <h2 className="text-3xl md:text-5xl font-bold text-brand-black mb-6">
-                  Sobre a <span className="text-brand-gold">MK Tecnologia</span>
-                </h2>
-                <p className="text-lg text-gray-600 mb-6">
-                  Somos especialistas em automação comercial, oferecendo soluções tecnológicas 
-                  inovadoras para empresas de todos os segmentos. Nossa missão é simplificar 
-                  a gestão empresarial através da tecnologia.
+                </h1>
+              </ScrollReveal>
+              <ScrollReveal animation="fade-in" delay={200}>
+                <p className="text-lg text-gray-300 mb-8 max-w-2xl mx-auto">
+                  Simplifique processos, impulsione suas vendas e tenha o controle total do seu negócio.
                 </p>
-                <div className="space-y-4">
-                  <div className="flex items-center">
-                    <div className="w-3 h-3 bg-brand-gold rounded-full mr-4"></div>
-                    <span className="text-gray-700">Controle de estoque inteligente</span>
-                  </div>
-                  <div className="flex items-center">
-                    <div className="w-3 h-3 bg-brand-gold rounded-full mr-4"></div>
-                    <span className="text-gray-700">Emissão de cupom fiscal e notas fiscais</span>
-                  </div>
-                  <div className="flex items-center">
-                    <div className="w-3 h-3 bg-brand-gold rounded-full mr-4"></div>
-                    <span className="text-gray-700">Suporte técnico especializado</span>
-                  </div>
-                </div>
-                <Button asChild className="mt-8 bg-brand-gold hover:bg-brand-gold-dark text-brand-black font-semibold">
-                  <a href="/sobre">
-                    Saiba Mais
-                  </a>
+              </ScrollReveal>
+              <ScrollReveal animation="fade-in" delay={400}>
+                <Button onClick={handleContactClick} className="bg-brand-gold hover:bg-brand-gold-dark text-brand-black">
+                  Solicitar Orçamento
+                </Button>
+              </ScrollReveal>
+            </div>
+          </div>
+        </section>
+
+        {/* Services Overview */}
+        <section className="py-16 bg-gray-50">
+          <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+            <ScrollReveal animation="fade-up">
+              <div className="text-center mb-12">
+                <h2 className="text-3xl font-semibold text-brand-black">
+                  Nossos Serviços em Destaque
+                </h2>
+                <p className="text-gray-600">
+                  Conheça as soluções que oferecemos para otimizar seu negócio.
+                </p>
+              </div>
+            </ScrollReveal>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+              <ScrollReveal animation="fade-up" delay={100}>
+                <Card className="bg-white shadow-md hover:shadow-lg transition-shadow duration-300">
+                  <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
+                    <CardTitle className="text-sm font-medium">
+                      <div className="flex items-center gap-2">
+                        <ColoredServiceIcon type="automation" className="w-5 h-5" />
+                        Automação Comercial
+                      </div>
+                    </CardTitle>
+                    <ArrowRight className="w-4 h-4 text-gray-500" />
+                  </CardHeader>
+                  <CardContent>
+                    <CardDescription className="text-gray-500">
+                      Implementação de sistemas para otimizar processos e aumentar a eficiência.
+                    </CardDescription>
+                  </CardContent>
+                </Card>
+              </ScrollReveal>
+              <ScrollReveal animation="fade-up" delay={200}>
+                <Card className="bg-white shadow-md hover:shadow-lg transition-shadow duration-300">
+                  <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
+                    <CardTitle className="text-sm font-medium">
+                      <div className="flex items-center gap-2">
+                        <ColoredServiceIcon type="inventory" className="w-5 h-5" />
+                        Controle de Estoque
+                      </div>
+                    </CardTitle>
+                    <ArrowRight className="w-4 h-4 text-gray-500" />
+                  </CardHeader>
+                  <CardContent>
+                    <CardDescription className="text-gray-500">
+                      Gerenciamento eficiente do seu estoque, evitando perdas e otimizando compras.
+                    </CardDescription>
+                  </CardContent>
+                </Card>
+              </ScrollReveal>
+              <ScrollReveal animation="fade-up" delay={300}>
+                <Card className="bg-white shadow-md hover:shadow-lg transition-shadow duration-300">
+                  <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
+                    <CardTitle className="text-sm font-medium">
+                      <div className="flex items-center gap-2">
+                        <ColoredServiceIcon type="financial" className="w-5 h-5" />
+                        Gestão Financeira
+                      </div>
+                    </CardTitle>
+                    <ArrowRight className="w-4 h-4 text-gray-500" />
+                  </CardHeader>
+                  <CardContent>
+                    <CardDescription className="text-gray-500">
+                      Controle financeiro completo para sua empresa, com relatórios e análises.
+                    </CardDescription>
+                  </CardContent>
+                </Card>
+              </ScrollReveal>
+            </div>
+            <ScrollReveal animation="fade-in" delay={400}>
+              <div className="text-center mt-8">
+                <Button className="bg-brand-black hover:bg-brand-black-light text-white">
+                  Ver Todos os Serviços
                 </Button>
               </div>
-              <div className="grid grid-cols-2 gap-6">
-                <div className="text-center p-6 bg-white/50 backdrop-blur-sm rounded-2xl hover:bg-white/70 transition-all duration-300 hover:shadow-lg hover:scale-105">
-                  <div className="text-4xl font-bold text-brand-gold mb-2">
-                    <CountUpNumber end={100} suffix="+" className="block" />
-                  </div>
-                  <div className="text-gray-600 font-medium">Empresas Atendidas</div>
-                </div>
-                <div className="text-center p-6 bg-white/50 backdrop-blur-sm rounded-2xl hover:bg-white/70 transition-all duration-300 hover:shadow-lg hover:scale-105">
-                  <div className="text-4xl font-bold text-brand-gold mb-2">
-                    <CountUpNumber end={5} suffix="+" className="block" />
-                  </div>
-                  <div className="text-gray-600 font-medium">Anos de Experiência</div>
-                </div>
-                <div className="text-center p-6 bg-white/50 backdrop-blur-sm rounded-2xl hover:bg-white/70 transition-all duration-300 hover:shadow-lg hover:scale-105">
-                  <div className="text-4xl font-bold text-brand-gold mb-2">24/7</div>
-                  <div className="text-gray-600 font-medium">Suporte Disponível</div>
-                </div>
-                <div className="text-center p-6 bg-white/50 backdrop-blur-sm rounded-2xl hover:bg-white/70 transition-all duration-300 hover:shadow-lg hover:scale-105">
-                  <div className="text-4xl font-bold text-brand-gold mb-2">
-                    <CountUpNumber end={15} suffix="+" className="block" />
-                  </div>
-                  <div className="text-gray-600 font-medium">Segmentos Atendidos</div>
-                </div>
+            </ScrollReveal>
+          </div>
+        </section>
+
+        {/* Why Choose Us */}
+        <section className="py-16 bg-white">
+          <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+            <ScrollReveal animation="fade-up">
+              <div className="text-center mb-12">
+                <h2 className="text-3xl font-semibold text-brand-black">
+                  Por Que Escolher Nossos Sistemas?
+                </h2>
+                <p className="text-gray-600">
+                  Descubra os benefícios que nossos sistemas oferecem para o seu negócio.
+                </p>
               </div>
+            </ScrollReveal>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+              <ScrollReveal animation="fade-up" delay={100}>
+                <Card className="bg-gray-50 shadow-md hover:shadow-lg transition-shadow duration-300">
+                  <CardHeader className="space-y-2.5">
+                    <CardTitle className="text-lg font-semibold">
+                      <div className="flex items-center gap-2">
+                        <CheckCircle className="w-5 h-5 text-green-500" />
+                        Soluções Personalizadas
+                      </div>
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <CardDescription className="text-gray-500">
+                      Sistemas adaptados às necessidades específicas do seu negócio.
+                    </CardDescription>
+                  </CardContent>
+                </Card>
+              </ScrollReveal>
+              <ScrollReveal animation="fade-up" delay={200}>
+                <Card className="bg-gray-50 shadow-md hover:shadow-lg transition-shadow duration-300">
+                  <CardHeader className="space-y-2.5">
+                    <CardTitle className="text-lg font-semibold">
+                      <div className="flex items-center gap-2">
+                        <Target className="w-5 h-5 text-blue-500" />
+                        Foco em Resultados
+                      </div>
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <CardDescription className="text-gray-500">
+                      Acompanhamento constante para garantir o sucesso da sua empresa.
+                    </CardDescription>
+                  </CardContent>
+                </Card>
+              </ScrollReveal>
+              <ScrollReveal animation="fade-up" delay={300}>
+                <Card className="bg-gray-50 shadow-md hover:shadow-lg transition-shadow duration-300">
+                  <CardHeader className="space-y-2.5">
+                    <CardTitle className="text-lg font-semibold">
+                      <div className="flex items-center gap-2">
+                        <Award className="w-5 h-5 text-brand-gold" />
+                        Suporte Especializado
+                      </div>
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <CardDescription className="text-gray-500">
+                      Equipe pronta para auxiliar em todas as etapas, desde a implementação até o uso diário.
+                    </CardDescription>
+                  </CardContent>
+                </Card>
+              </ScrollReveal>
             </div>
           </div>
         </section>
-      </ScrollReveal>
 
-      {/* CTA Section */}
-      <ScrollReveal animation="fade-up" delay={300}>
-        <section className="py-20 bg-gradient-to-r from-brand-black to-brand-black-light">
-          <div className="container mx-auto px-4 sm:px-6 lg:px-8 text-center">
-            <h2 className="text-3xl md:text-5xl font-bold text-white mb-6">
-              Pronto para <span className="text-brand-gold">Automatizar</span> seu Negócio?
-            </h2>
-            <p className="text-xl text-gray-300 mb-8 max-w-3xl mx-auto">
-              Entre em contato conosco e descubra como a MK Tecnologia pode transformar 
-              sua empresa com soluções personalizadas e suporte especializado.
-            </p>
-             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-               <Button asChild size="lg" className="bg-brand-gold hover:bg-brand-gold-dark text-brand-black font-semibold group">
-                 <a href="https://wa.me/5565993535079" target="_blank" rel="noopener noreferrer" className="flex items-center gap-2">
-                   <SimpleIcon type="whatsapp-black" className="w-5 h-5 group-hover:scale-110 transition-transform" />
-                   Falar no WhatsApp
-                 </a>
-               </Button>
-                 <Button asChild size="lg" className="bg-white text-brand-black hover:bg-gray-100 transition-all duration-300 border border-brand-gold/20 group">
-                   <a href="/contato" className="flex items-center gap-2">
-                     <SimpleIcon type="email-black" className="w-4 h-4 group-hover:scale-110 transition-transform" />
-                     Solicitar Orçamento
-                   </a>
-                 </Button>
-             </div>
+        {/* Stats Section */}
+        <section className="py-16 bg-brand-black">
+          <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+            <ScrollReveal animation="fade-up">
+              <div className="text-center mb-12">
+                <h2 className="text-3xl font-semibold text-white">
+                  Nossos Números
+                </h2>
+                <p className="text-gray-300">
+                  Confira alguns resultados que comprovam a qualidade do nosso trabalho.
+                </p>
+              </div>
+            </ScrollReveal>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+              {portfolioStats.map(stat => (
+                <ScrollReveal animation="fade-up" key={stat.id}>
+                  <Card className="bg-brand-black-light text-white shadow-md hover:shadow-lg transition-shadow duration-300">
+                    <CardHeader className="space-y-2.5">
+                      <CardTitle className="text-2xl font-bold">
+                        <CountUpNumber number={stat.value} suffix={stat.suffix} />
+                      </CardTitle>
+                      <CardDescription className="text-gray-300">
+                        {stat.label}
+                      </CardDescription>
+                    </CardHeader>
+                  </Card>
+                </ScrollReveal>
+              ))}
+            </div>
           </div>
         </section>
-      </ScrollReveal>
+
+        {/* Interactive Dashboard Section */}
+        <section className="py-16 bg-gray-50">
+          <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+            <ScrollReveal animation="fade-up">
+              <div className="text-center mb-12">
+                <h2 className="text-3xl font-semibold text-brand-black">
+                  Painel Interativo
+                </h2>
+                <p className="text-gray-600">
+                  Acompanhe em tempo real os principais indicadores do seu negócio.
+                </p>
+              </div>
+            </ScrollReveal>
+            <ScrollReveal animation="fade-in">
+              <InteractiveDashboard />
+            </ScrollReveal>
+          </div>
+        </section>
+
+        {/* Testimonials Section */}
+        <section className="py-16 bg-white">
+          <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+            <ScrollReveal animation="fade-up">
+              <div className="text-center mb-12">
+                <h2 className="text-3xl font-semibold text-brand-black">
+                  O Que Nossos Clientes Dizem
+                </h2>
+                <p className="text-gray-600">
+                  Veja o que nossos clientes estão falando sobre nossos sistemas e serviços.
+                </p>
+              </div>
+            </ScrollReveal>
+            <ScrollReveal animation="fade-in">
+              <TestimonialCarousel />
+            </ScrollReveal>
+          </div>
+        </section>
+      </main>
 
       <Footer />
+      <ContactModal isOpen={contactModalOpen} onClose={() => setContactModalOpen(false)} />
     </div>
   );
 };
