@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import AdminLayout from '@/components/admin/AdminLayout';
@@ -260,23 +259,24 @@ const AdminDashboard = () => {
 
   const getActionTypeLabel = (actionType: string) => {
     const labels: Record<string, string> = {
-      'create': 'Criou',
-      'update': 'Atualizou',
-      'delete': 'Excluiu'
+      'create': 'criou',
+      'update': 'atualizou',
+      'delete': 'excluiu'
     };
     return labels[actionType] || actionType;
   };
 
   const getEntityTypeLabel = (entityType: string) => {
     const labels: Record<string, string> = {
-      'blog_posts': 'Post do Blog',
-      'solutions': 'Solução',
-      'portfolio_projects': 'Projeto do Portfólio',
-      'portfolio_testimonials': 'Depoimento',
-      'portfolio_stats': 'Estatística',
-      'home_banners': 'Banner',
-      'service_categories': 'Categoria de Serviço',
-      'service_cards': 'Card de Serviço',
+      'blog_posts': 'post do blog',
+      'solutions': 'solução',
+      'portfolio_projects': 'projeto do portfólio',
+      'portfolio_testimonials': 'depoimento',
+      'portfolio_stats': 'estatística',
+      'home_banners': 'banner',
+      'service_categories': 'categoria de serviço',
+      'service_cards': 'card de serviço',
+      'usuário': 'usuário',
     };
     return labels[entityType] || entityType;
   };
@@ -595,8 +595,7 @@ const AdminDashboard = () => {
                         </div>
                         <div>
                           <p className="text-sm font-medium text-gray-900">
-                            {activity.user_name} {getActionTypeLabel(activity.action_type).toLowerCase()}{' '}
-                            {getEntityTypeLabel(activity.entity_type).toLowerCase()}
+                            {activity.user_name} {getActionTypeLabel(activity.action_type)} {getEntityTypeLabel(activity.entity_type)}
                             {activity.entity_title && (
                               <span className="text-brand-gold font-semibold">
                                 {' '}{activity.entity_title}

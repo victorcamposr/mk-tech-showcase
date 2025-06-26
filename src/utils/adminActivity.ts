@@ -27,35 +27,10 @@ export const logAdminActivity = async (
       }
     }
 
-    // Criar descrição mais amigável para atividades de usuário
+    // Para admin_profiles, usar apenas o nome do usuário no entity_title
+    // A formatação da mensagem será feita no dashboard
     let finalEntityTitle = entityTitle;
-    if (entityType === 'admin_profiles') {
-      switch (actionType) {
-        case 'create':
-          finalEntityTitle = `criou o usuário ${entityTitle}`;
-          break;
-        case 'update':
-          finalEntityTitle = `atualizou o usuário ${entityTitle}`;
-          break;
-        case 'delete':
-          finalEntityTitle = `excluiu o usuário ${entityTitle}`;
-          break;
-      }
-    } else {
-      // Para outras entidades, manter o formato original
-      switch (actionType) {
-        case 'create':
-          finalEntityTitle = `criou ${entityTitle}`;
-          break;
-        case 'update':
-          finalEntityTitle = `atualizou ${entityTitle}`;
-          break;
-        case 'delete':
-          finalEntityTitle = `excluiu ${entityTitle}`;
-          break;
-      }
-    }
-
+    
     // Substituir "admin_profiles" por "usuário" na entidade
     const displayEntityType = entityType === 'admin_profiles' ? 'usuário' : entityType;
 
