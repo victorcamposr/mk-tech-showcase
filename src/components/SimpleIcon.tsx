@@ -1,5 +1,6 @@
+
 interface SimpleIconProps {
-  type: 'whatsapp-black' | 'email-black' | 'document-black';
+  type: 'whatsapp-black' | 'email-black' | 'document-black' | 'logo-full' | 'menu';
   className?: string;
 }
 
@@ -18,6 +19,19 @@ const SimpleIcon = ({ type, className = "w-6 h-6" }: SimpleIconProps) => {
     'document-black': (
       <svg viewBox="0 0 24 24" className={className} fill="currentColor">
         <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8l-6-6z M6 4h7v5h5v10H6V4z M8 12h8v2H8v-2z M8 16h8v2H8v-2z M8 8h4v2H8V8z"/>
+      </svg>
+    ),
+    'logo-full': (
+      <svg viewBox="0 0 120 32" className={className} fill="currentColor">
+        <rect x="0" y="8" width="8" height="16" rx="2"/>
+        <rect x="12" y="4" width="8" height="24" rx="2"/>
+        <rect x="24" y="0" width="8" height="32" rx="2"/>
+        <text x="40" y="20" fontSize="14" fontWeight="bold">Sistema</text>
+      </svg>
+    ),
+    'menu': (
+      <svg viewBox="0 0 24 24" className={className} fill="currentColor">
+        <path d="M3 12h18M3 6h18M3 18h18" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
       </svg>
     )
   };

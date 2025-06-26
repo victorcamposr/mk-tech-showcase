@@ -83,7 +83,7 @@ const Index = () => {
                 <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-6">
                   Acelere seu negócio com <br />
                   <TypewriterText
-                    strings={[
+                    texts={[
                       'Automação Comercial',
                       'Sistemas de Gestão',
                       'Soluções Inovadoras'
@@ -272,7 +272,7 @@ const Index = () => {
                   <Card className="bg-brand-black-light text-white shadow-md hover:shadow-lg transition-shadow duration-300">
                     <CardHeader className="space-y-2.5">
                       <CardTitle className="text-2xl font-bold">
-                        <CountUpNumber number={stat.value} suffix={stat.suffix} />
+                        <CountUpNumber end={stat.value} suffix={stat.suffix} />
                       </CardTitle>
                       <CardDescription className="text-gray-300">
                         {stat.label}
