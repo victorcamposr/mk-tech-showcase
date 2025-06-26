@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import AdminLayout from '@/components/admin/AdminLayout';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -63,7 +62,7 @@ const AdminDashboard = () => {
 
   const ACTIVITIES_PER_PAGE = 10;
 
-  // Use React Query for dashboard stats with automatic refetching
+  // Force fresh data on every page visit by removing caching
   const { data: stats = {
     totalUsers: 0,
     totalContacts: 0,
@@ -77,7 +76,7 @@ const AdminDashboard = () => {
     inactiveSolutions: 0,
     inactivePortfolioProjects: 0,
     inactiveHomeBanners: 0
-  }, isLoading: statsLoading, refetch: refetchStats } = useQuery({
+  }, isLoading: statsLoading } = useQuery({
     queryKey: ['dashboard-stats'],
     queryFn: async (): Promise<DashboardStats> => {
       console.log('Fetching dashboard stats with React Query...');
@@ -122,7 +121,7 @@ const AdminDashboard = () => {
           draftPosts: draftPostsRes.count || 0,
           inactiveSolutions: inactiveSolutionsRes.count || 0,
           inactivePortfolioProjects: inactivePortfolioProjectsRes.count || 0,
-          inactiveHomeBanners: inactiveHomeBannersRes.count || 0
+          inactiveHomeBannersRes: inactiveHomeBannersRes.count || 0
         };
 
         console.log('Dashboard stats updated via React Query:', dashboardStats);
@@ -132,12 +131,14 @@ const AdminDashboard = () => {
         throw error;
       }
     },
-    staleTime: 30000, // Consider data fresh for 30 seconds
+    staleTime: 0, // Always consider data stale to force fresh fetch
+    gcTime: 0, // Don't cache data
+    refetchOnMount: true, // Always refetch when component mounts
     refetchOnWindowFocus: true, // Refetch when window gains focus
-    refetchInterval: 60000 // Refetch every minute
+    refetchInterval: false // Disable automatic refetching
   });
 
-  // Activities query
+  // Activities query with fresh data fetching
   const { data: activitiesData, isLoading: activitiesLoading } = useQuery({
     queryKey: ['admin-activities', currentPage, dateFilter],
     queryFn: async () => {
@@ -168,7 +169,9 @@ const AdminDashboard = () => {
         totalActivities: count || 0
       };
     },
-    staleTime: 10000 // Consider activities fresh for 10 seconds
+    staleTime: 0, // Always consider data stale
+    gcTime: 0, // Don't cache data
+    refetchOnMount: true // Always refetch when component mounts
   });
 
   const activities = activitiesData?.activities || [];
@@ -385,7 +388,7 @@ const AdminDashboard = () => {
   return (
     <AdminLayout>
       <div className="space-y-8">
-        {/* Header */}
+        {/* Header sem botão de atualizar */}
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-3xl font-bold text-brand-black flex items-center gap-3">
@@ -398,18 +401,6 @@ const AdminDashboard = () => {
               Visão geral do sistema e atividades recentes
             </p>
           </div>
-          <Button 
-            onClick={() => {
-              console.log('Manual refresh triggered...');
-              refetchStats();
-            }}
-            variant="outline" 
-            size="sm"
-            className="border-brand-gold/30 text-brand-gold hover:bg-brand-gold/10"
-          >
-            <Activity className="w-4 h-4 mr-2" />
-            Atualizar
-          </Button>
         </div>
 
         {/* Stats Cards com hierarquia visual melhorada */}
