@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Menu, X, MessageCircle, Sparkles, Zap, Home, User, Settings, Lightbulb, Grid3X3, Phone, ChevronDown, CreditCard, Coffee, QrCode, Smartphone, Truck, Link2, BarChart3, Bot, Receipt, Monitor, TrendingUp, Banknote, Building2, Tablet, Calculator, Fuel, BookOpen } from "lucide-react";
+import { Menu, X, MessageCircle, Sparkles, Zap, Home, User, Settings, Lightbulb, Grid3X3, Phone, ChevronDown, CreditCard, Coffee, QrCode, Smartphone, Truck, Link2, BarChart3, Bot, Receipt, Monitor, TrendingUp, Banknote, Building2, Tablet, Calculator, Fuel, BookOpen, Briefcase } from "lucide-react";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import CriticalImage from "@/components/CriticalImage";
 import { supabase } from '@/integrations/supabase/client';
@@ -147,6 +147,7 @@ const Header = () => {
 
   const menuItems = [
     { label: "Home", path: "/", icon: Home },
+    { label: "Serviços", path: "/servicos", icon: Settings },
     { label: "Portfólio", path: "/portfolio", icon: Grid3X3 },
     { label: "Blog", path: "/blog", icon: BookOpen },
     { label: "Sobre", path: "/sobre", icon: User },
@@ -195,6 +196,25 @@ const Header = () => {
               </span>
               <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700 ease-out"></div>
               {isActive("/") && (
+                <div className="absolute -bottom-1 left-1/2 transform -translate-x-1/2 w-2 h-2 bg-brand-gold rounded-full animate-pulse" />
+              )}
+            </Link>
+
+            {/* Serviços */}
+            <Link
+              to="/servicos"
+              className={`relative px-6 py-3 rounded-xl text-sm font-semibold transition-all duration-300 group overflow-hidden ${
+                isActive("/servicos") 
+                  ? "text-brand-black bg-gradient-to-r from-brand-gold to-brand-gold-light shadow-lg shadow-brand-gold/30" 
+                  : "text-white hover:text-brand-gold hover:bg-gradient-to-r hover:from-white/10 hover:to-brand-gold/10 hover:backdrop-blur-sm"
+              }`}
+            >
+              <span className="relative z-10 flex items-center gap-2">
+                <Settings className="w-4 h-4" />
+                Serviços
+              </span>
+              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700 ease-out"></div>
+              {isActive("/servicos") && (
                 <div className="absolute -bottom-1 left-1/2 transform -translate-x-1/2 w-2 h-2 bg-brand-gold rounded-full animate-pulse" />
               )}
             </Link>
@@ -267,8 +287,8 @@ const Header = () => {
               )}
             </div>
 
-            {/* Outros itens do menu */}
-            {menuItems.slice(1).map((item, index) => {
+            {/* Outros itens do menu (Portfólio, Blog, Sobre, Contato) */}
+            {menuItems.slice(2).map((item, index) => {
               const IconComponent = item.icon;
               return (
                 <Link
@@ -279,7 +299,7 @@ const Header = () => {
                       ? "text-brand-black bg-gradient-to-r from-brand-gold to-brand-gold-light shadow-lg shadow-brand-gold/30" 
                       : "text-white hover:text-brand-gold hover:bg-gradient-to-r hover:from-white/10 hover:to-brand-gold/10 hover:backdrop-blur-sm"
                   }`}
-                  style={{ animationDelay: `${(index + 2) * 0.1}s` }}
+                  style={{ animationDelay: `${(index + 3) * 0.1}s` }}
                 >
                   <span className="relative z-10 flex items-center gap-2">
                     <IconComponent className="w-4 h-4" />
@@ -355,6 +375,27 @@ const Header = () => {
                 </div>
               </Link>
 
+              {/* Serviços */}
+              <Link
+                to="/servicos"
+                className={`px-4 py-3 rounded-lg text-sm font-medium transition-colors duration-200 ${
+                  isActive("/servicos") 
+                    ? "text-brand-gold bg-brand-gold/15" 
+                    : "text-white hover:text-brand-gold hover:bg-white/10"
+                }`}
+                onClick={() => setIsMenuOpen(false)}
+              >
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <Settings className="w-4 h-4" />
+                    <span>Serviços</span>
+                  </div>
+                  {isActive("/servicos") && (
+                    <div className="w-2 h-2 bg-brand-gold rounded-full" />
+                  )}
+                </div>
+              </Link>
+
               {/* Soluções com dropdown mobile */}
               <div>
                 <button
@@ -420,7 +461,7 @@ const Header = () => {
               </div>
 
               {/* Outros itens do menu */}
-              {menuItems.slice(1).map((item) => {
+              {menuItems.slice(2).map((item) => {
                 const IconComponent = item.icon;
                 return (
                   <Link

@@ -1,4 +1,3 @@
-
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -25,6 +24,7 @@ import AdminSolutions from "./pages/admin/AdminSolutions";
 import AdminContacts from "./pages/admin/AdminContacts";
 import AdminPortfolio from "./pages/admin/AdminPortfolio";
 import AdminHomeBanners from "./pages/admin/AdminHomeBanners";
+import AdminServiceCards from "./pages/admin/AdminServiceCards";
 import ProtectedRoute from "./components/admin/ProtectedRoute";
 import CreateSolution from "./pages/admin/CreateSolution";
 import EditSolution from "./pages/admin/EditSolution";
@@ -86,6 +86,11 @@ function App() {
               <Route path="/admin/home-banners" element={
                 <ProtectedRoute>
                   <AdminHomeBanners />
+                </ProtectedRoute>
+              } />
+              <Route path="/admin/service-cards" element={
+                <ProtectedRoute>
+                  <AdminServiceCards />
                 </ProtectedRoute>
               } />
               <Route path="/admin/solutions/create" element={

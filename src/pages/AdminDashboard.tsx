@@ -1,574 +1,374 @@
 
 import { useState, useEffect } from 'react';
-import AdminLayout from '@/components/admin/AdminLayout';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Input } from '@/components/ui/input';
-import { useToast } from '@/hooks/use-toast';
-import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { supabase } from '@/integrations/supabase/client';
+import { Button } from '@/components/ui/button';
 import { 
-  Users, 
-  MessageSquare, 
   FileText, 
-  Lightbulb,
-  Activity,
+  Users, 
+  Lightbulb, 
+  Eye, 
   Calendar,
-  ArrowRight,
-  ChevronLeft,
-  ChevronRight,
-  CalendarIcon,
-  UserX,
-  BookOpen,
-  Zap,
-  ZapOff,
-  Plus,
-  Edit,
-  Trash2,
-  UserCheck,
+  Mail,
   Briefcase,
-  Image
+  Image,
+  Settings
 } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import { supabase } from '@/integrations/supabase/client';
+import AdminLayout from '@/components/admin/AdminLayout';
 
 interface DashboardStats {
-  totalUsers: number;
-  totalContacts: number;
-  totalPosts: number;
+  totalBlogPosts: number;
+  publishedBlogPosts: number;
   totalSolutions: number;
-  totalPortfolioProjects: number;
-  totalHomeBanners: number;
-  inactiveUsers: number;
+  activeSolutions: number;
+  totalUsers: number;
+  activeUsers: number;
+  totalContacts: number;
   unreadContacts: number;
-  draftPosts: number;
-  inactiveSolutions: number;
-  inactivePortfolioProjects: number;
-  inactiveHomeBanners: number;
+  totalPortfolioProjects: number;
+  activePortfolioProjects: number;
+  totalHomeBanners: number;
+  activeHomeBanners: number;
+  totalServiceCards: number;
+  activeServiceCards: number;
 }
 
 interface RecentActivity {
   id: string;
   action_type: string;
   entity_type: string;
-  entity_title: string;
-  user_name: string;
+  entity_title: string | null;
+  user_name: string | null;
   created_at: string;
 }
 
 const AdminDashboard = () => {
-  const [currentPage, setCurrentPage] = useState(1);
-  const [dateFilter, setDateFilter] = useState('');
-  const { toast } = useToast();
-  const queryClient = useQueryClient();
-
-  const ACTIVITIES_PER_PAGE = 10;
-
-  // Force fresh data on every page visit by removing caching
-  const { data: stats = {
-    totalUsers: 0,
-    totalContacts: 0,
-    totalPosts: 0,
+  const [stats, setStats] = useState<DashboardStats>({
+    totalBlogPosts: 0,
+    publishedBlogPosts: 0,
     totalSolutions: 0,
-    totalPortfolioProjects: 0,
-    totalHomeBanners: 0,
-    inactiveUsers: 0,
+    activeSolutions: 0,
+    totalUsers: 0,
+    activeUsers: 0,
+    totalContacts: 0,
     unreadContacts: 0,
-    draftPosts: 0,
-    inactiveSolutions: 0,
-    inactivePortfolioProjects: 0,
-    inactiveHomeBanners: 0
-  }, isLoading: statsLoading } = useQuery({
-    queryKey: ['dashboard-stats'],
-    queryFn: async (): Promise<DashboardStats> => {
-      console.log('Fetching dashboard stats with React Query...');
-      try {
-        const [
-          usersRes, 
-          contactsRes, 
-          postsRes, 
-          solutionsRes, 
-          portfolioProjectsRes,
-          homeBannersRes,
-          inactiveUsersRes, 
-          unreadContactsRes, 
-          draftPostsRes, 
-          inactiveSolutionsRes,
-          inactivePortfolioProjectsRes,
-          inactiveHomeBannersRes
-        ] = await Promise.all([
-          supabase.from('admin_profiles').select('id', { count: 'exact', head: true }),
-          supabase.from('contacts').select('id', { count: 'exact', head: true }),
-          supabase.from('blog_posts').select('id', { count: 'exact', head: true }),
-          supabase.from('solutions').select('id', { count: 'exact', head: true }),
-          supabase.from('portfolio_projects').select('id', { count: 'exact', head: true }),
-          supabase.from('home_banners').select('id', { count: 'exact', head: true }),
-          supabase.from('admin_profiles').select('id', { count: 'exact', head: true }).eq('is_active', false),
-          supabase.from('contacts').select('id', { count: 'exact', head: true }).eq('read', false),
-          supabase.from('blog_posts').select('id', { count: 'exact', head: true }).eq('status', 'draft'),
-          supabase.from('solutions').select('id', { count: 'exact', head: true }).eq('status', 'inactive'),
-          supabase.from('portfolio_projects').select('id', { count: 'exact', head: true }).eq('status', 'inactive'),
-          supabase.from('home_banners').select('id', { count: 'exact', head: true }).eq('status', 'inactive')
-        ]);
-
-        const dashboardStats = {
-          totalUsers: usersRes.count || 0,
-          totalContacts: contactsRes.count || 0,
-          totalPosts: postsRes.count || 0,
-          totalSolutions: solutionsRes.count || 0,
-          totalPortfolioProjects: portfolioProjectsRes.count || 0,
-          totalHomeBanners: homeBannersRes.count || 0,
-          inactiveUsers: inactiveUsersRes.count || 0,
-          unreadContacts: unreadContactsRes.count || 0,
-          draftPosts: draftPostsRes.count || 0,
-          inactiveSolutions: inactiveSolutionsRes.count || 0,
-          inactivePortfolioProjects: inactivePortfolioProjectsRes.count || 0,
-          inactiveHomeBanners: inactiveHomeBannersRes.count || 0
-        };
-
-        console.log('Dashboard stats updated via React Query:', dashboardStats);
-        return dashboardStats;
-      } catch (error) {
-        console.error('Error fetching dashboard stats:', error);
-        throw error;
-      }
-    },
-    staleTime: 0, // Always consider data stale to force fresh fetch
-    gcTime: 0, // Don't cache data
-    refetchOnMount: true, // Always refetch when component mounts
-    refetchOnWindowFocus: true, // Refetch when window gains focus
-    refetchInterval: false // Disable automatic refetching
+    totalPortfolioProjects: 0,
+    activePortfolioProjects: 0,
+    totalHomeBanners: 0,
+    activeHomeBanners: 0,
+    totalServiceCards: 0,
+    activeServiceCards: 0,
   });
+  const [recentActivities, setRecentActivities] = useState<RecentActivity[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  // Activities query with fresh data fetching
-  const { data: activitiesData, isLoading: activitiesLoading } = useQuery({
-    queryKey: ['admin-activities', currentPage, dateFilter],
-    queryFn: async () => {
-      const from = (currentPage - 1) * ACTIVITIES_PER_PAGE;
-      const to = from + ACTIVITIES_PER_PAGE - 1;
-
-      let query = supabase
-        .from('admin_activities')
-        .select('*', { count: 'exact' })
-        .order('created_at', { ascending: false })
-        .range(from, to);
-
-      if (dateFilter) {
-        const startDate = new Date(dateFilter);
-        const endDate = new Date(dateFilter);
-        endDate.setDate(endDate.getDate() + 1);
-        
-        query = query
-          .gte('created_at', startDate.toISOString())
-          .lt('created_at', endDate.toISOString());
-      }
-
-      const { data, error, count } = await query;
-      if (error) throw error;
-
-      return {
-        activities: data || [],
-        totalActivities: count || 0
-      };
-    },
-    staleTime: 0, // Always consider data stale
-    gcTime: 0, // Don't cache data
-    refetchOnMount: true // Always refetch when component mounts
-  });
-
-  const activities = activitiesData?.activities || [];
-  const totalActivities = activitiesData?.totalActivities || 0;
-
-  // Listen for portfolio changes and invalidate dashboard stats
   useEffect(() => {
-    console.log('Setting up real-time subscription for portfolio changes...');
-    
-    const channel = supabase
-      .channel('portfolio-changes')
-      .on('postgres_changes', 
-        { event: '*', schema: 'public', table: 'portfolio_projects' },
-        () => {
-          console.log('Portfolio projects changed, invalidating dashboard stats...');
-          queryClient.invalidateQueries({ queryKey: ['dashboard-stats'] });
-        }
-      )
-      .on('postgres_changes', 
-        { event: '*', schema: 'public', table: 'portfolio_stats' },
-        () => {
-          console.log('Portfolio stats changed, invalidating dashboard stats...');
-          queryClient.invalidateQueries({ queryKey: ['dashboard-stats'] });
-        }
-      )
-      .on('postgres_changes', 
-        { event: '*', schema: 'public', table: 'portfolio_testimonials' },
-        () => {
-          console.log('Portfolio testimonials changed, invalidating dashboard stats...');
-          queryClient.invalidateQueries({ queryKey: ['dashboard-stats'] });
-        }
-      )
-      .on('postgres_changes', 
-        { event: '*', schema: 'public', table: 'home_banners' },
-        () => {
-          console.log('Home banners changed, invalidating dashboard stats...');
-          queryClient.invalidateQueries({ queryKey: ['dashboard-stats'] });
-        }
-      )
-      .subscribe();
+    fetchDashboardData();
+  }, []);
 
-    return () => {
-      console.log('Cleaning up portfolio changes subscription...');
-      supabase.removeChannel(channel);
+  const fetchDashboardData = async () => {
+    try {
+      // Fetch blog posts stats
+      const { data: blogPosts } = await supabase
+        .from('blog_posts')
+        .select('status');
+      
+      // Fetch solutions stats
+      const { data: solutions } = await supabase
+        .from('solutions')
+        .select('status');
+      
+      // Fetch users stats
+      const { data: users } = await supabase
+        .from('admin_profiles')
+        .select('is_active');
+      
+      // Fetch contacts stats
+      const { data: contacts } = await supabase
+        .from('contacts')
+        .select('read');
+      
+      // Fetch portfolio projects stats
+      const { data: portfolioProjects } = await supabase
+        .from('portfolio_projects')
+        .select('status');
+      
+      // Fetch home banners stats
+      const { data: homeBanners } = await supabase
+        .from('home_banners')
+        .select('status');
+
+      // Fetch service cards stats
+      const { data: serviceCards } = await supabase
+        .from('service_cards')
+        .select('status');
+      
+      // Fetch recent activities
+      const { data: activities } = await supabase
+        .from('admin_activities')
+        .select('*')
+        .order('created_at', { ascending: false })
+        .limit(10);
+
+      setStats({
+        totalBlogPosts: blogPosts?.length || 0,
+        publishedBlogPosts: blogPosts?.filter(p => p.status === 'published').length || 0,
+        totalSolutions: solutions?.length || 0,
+        activeSolutions: solutions?.filter(s => s.status === 'active').length || 0,
+        totalUsers: users?.length || 0,
+        activeUsers: users?.filter(u => u.is_active).length || 0,
+        totalContacts: contacts?.length || 0,
+        unreadContacts: contacts?.filter(c => !c.read).length || 0,
+        totalPortfolioProjects: portfolioProjects?.length || 0,
+        activePortfolioProjects: portfolioProjects?.filter(p => p.status === 'active').length || 0,
+        totalHomeBanners: homeBanners?.length || 0,
+        activeHomeBanners: homeBanners?.filter(b => b.status === 'active').length || 0,
+        totalServiceCards: serviceCards?.length || 0,
+        activeServiceCards: serviceCards?.filter(c => c.status === 'active').length || 0,
+      });
+
+      setRecentActivities(activities || []);
+    } catch (error) {
+      console.error('Error fetching dashboard data:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const formatActivityType = (type: string) => {
+    const types: Record<string, string> = {
+      'create': 'Criou',
+      'update': 'Atualizou',
+      'delete': 'Excluiu',
+      'publish': 'Publicou',
+      'unpublish': 'Despublicou'
     };
-  }, [queryClient]);
-
-  const formatDate = (dateString: string) => {
-    const date = new Date(dateString);
-    return date.toLocaleDateString('pt-BR', {
-      day: '2-digit',
-      month: '2-digit',
-      year: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit'
-    });
+    return types[type] || type;
   };
 
-  const getActionIcon = (action: string) => {
-    switch (action) {
-      case 'create': return Plus;
-      case 'update': return Edit;
-      case 'delete': return Trash2;
-      default: return Activity;
-    }
+  const formatEntityType = (type: string) => {
+    const types: Record<string, string> = {
+      'blog_post': 'Post do Blog',
+      'solution': 'Solução',
+      'user': 'Usuário',
+      'portfolio_project': 'Projeto do Portfólio',
+      'portfolio_stat': 'Estatística',
+      'portfolio_testimonial': 'Depoimento',
+      'home_banner': 'Banner da Home',
+      'service_card': 'Card de Serviço'
+    };
+    return types[type] || type;
   };
 
-  const getEntityIcon = (entityType: string) => {
-    switch (entityType.toLowerCase()) {
-      case 'users':
-      case 'user':
-      case 'usuário':
-      case 'usuários':
-      case 'admin_profiles':
-        return Users;
-      case 'contacts':
-      case 'contact':
-      case 'contato':
-      case 'contatos':
-        return MessageSquare;
-      case 'blog_posts':
-      case 'blog':
-      case 'post':
-      case 'posts':
-        return FileText;
-      case 'solutions':
-      case 'solution':
-      case 'solução':
-      case 'soluções':
-        return Lightbulb;
-      case 'portfolio_projects':
-      case 'portfolio_stats':
-      case 'portfolio_testimonials':
-      case 'portfolio':
-        return Briefcase;
-      case 'home_banners':
-      case 'banner':
-      case 'banners':
-        return Image;
-      default:
-        return Activity;
-    }
-  };
-
-  const getActionText = (action: string, entityType: string, entityTitle: string) => {
-    // If entity_title already contains the action description (like "atualizou o usuário João")
-    if (entityTitle && (entityTitle.includes('criou') || entityTitle.includes('atualizou') || entityTitle.includes('excluiu') || entityTitle.includes('ativou') || entityTitle.includes('desativou'))) {
-      return entityTitle;
-    }
-
-    // Default behavior for simple entity titles
-    const entity = getEntityTypeLabel(entityType);
-    
-    switch (action) {
-      case 'create':
-        return `criou ${entity.toLowerCase()} "${entityTitle}"`;
-      case 'update':
-        return `atualizou ${entity.toLowerCase()} "${entityTitle}"`;
-      case 'delete':
-        return `excluiu ${entity.toLowerCase()} "${entityTitle}"`;
-      default:
-        return `modificou ${entity.toLowerCase()} "${entityTitle}"`;
-    }
-  };
-
-  const getEntityTypeLabel = (entityType: string) => {
-    switch (entityType.toLowerCase()) {
-      case 'admin_profiles':
-        return 'usuário';
-      case 'contacts':
-        return 'contato';
-      case 'blog_posts':
-        return 'post do blog';
-      case 'solutions':
-        return 'solução';
-      case 'portfolio_projects':
-        return 'projeto do portfólio';
-      case 'portfolio_stats':
-        return 'estatística do portfólio';
-      case 'portfolio_testimonials':
-        return 'depoimento do portfólio';
-      case 'home_banners':
-        return 'banner da home';
-      default:
-        return entityType;
-    }
-  };
-
-  const totalPages = Math.ceil(totalActivities / ACTIVITIES_PER_PAGE);
-
-  const statsCards = [
-    {
-      title: 'Total de Usuários',
-      value: stats.totalUsers,
-      icon: Users,
-      gradient: 'from-green-500 to-green-600',
-      badgeValue: stats.inactiveUsers,
-      badgeLabel: 'Inativos',
-      badgeIcon: UserX,
-      showBadge: stats.inactiveUsers > 0
-    },
-    {
-      title: 'Contatos Recebidos',
-      value: stats.totalContacts,
-      icon: MessageSquare,
-      gradient: 'from-red-500 to-red-600',
-      badgeValue: stats.unreadContacts,
-      badgeLabel: 'Não Lidos',
-      badgeIcon: MessageSquare,
-      showBadge: stats.unreadContacts > 0
-    },
-    {
-      title: 'Posts do Blog',
-      value: stats.totalPosts,
-      icon: FileText,
-      gradient: 'from-blue-500 to-blue-600',
-      badgeValue: stats.draftPosts,
-      badgeLabel: 'Rascunhos',
-      badgeIcon: BookOpen,
-      showBadge: stats.draftPosts > 0
-    },
-    {
-      title: 'Soluções Ativas',
-      value: stats.totalSolutions,
-      icon: Lightbulb,
-      gradient: 'from-brand-gold to-brand-gold-dark',
-      badgeValue: stats.inactiveSolutions,
-      badgeLabel: 'Inativas',
-      badgeIcon: ZapOff,
-      showBadge: stats.inactiveSolutions > 0
-    },
-    {
-      title: 'Projetos Portfólio',
-      value: stats.totalPortfolioProjects,
-      icon: Briefcase,
-      gradient: 'from-orange-500 to-orange-600',
-      badgeValue: stats.inactivePortfolioProjects,
-      badgeLabel: 'Inativos',
-      badgeIcon: ZapOff,
-      showBadge: stats.inactivePortfolioProjects > 0
-    },
-    {
-      title: 'Banners da Home',
-      value: stats.totalHomeBanners,
-      icon: Image,
-      gradient: 'from-pink-500 to-pink-600',
-      badgeValue: stats.inactiveHomeBanners,
-      badgeLabel: 'Inativos',
-      badgeIcon: ZapOff,
-      showBadge: stats.inactiveHomeBanners > 0
-    }
-  ];
+  if (loading) {
+    return (
+      <AdminLayout>
+        <div className="flex items-center justify-center h-64">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-brand-gold mx-auto mb-4"></div>
+            <p className="text-gray-600">Carregando dashboard...</p>
+          </div>
+        </div>
+      </AdminLayout>
+    );
+  }
 
   return (
     <AdminLayout>
       <div className="space-y-8">
-        {/* Header sem botão de atualizar */}
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-3xl font-bold text-brand-black flex items-center gap-3">
-              <div className="w-10 h-10 bg-gradient-to-r from-brand-gold to-brand-gold-dark rounded-lg flex items-center justify-center">
-                <Activity className="w-6 h-6 text-white" />
-              </div>
-              Dashboard
-            </h1>
-            <p className="text-gray-600 mt-2">
-              Visão geral do sistema e atividades recentes
-            </p>
-          </div>
+        <div>
+          <h1 className="text-3xl font-bold text-brand-black">Dashboard</h1>
+          <p className="text-gray-600 mt-2">Visão geral do sistema administrativo</p>
         </div>
 
-        {/* Stats Cards com hierarquia visual melhorada */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-6">
-          {statsCards.map((stat, index) => {
-            const Icon = stat.icon;
-            const BadgeIcon = stat.badgeIcon;
-            return (
-              <Card key={index} className="relative overflow-hidden border-brand-gold/20 shadow-lg hover:shadow-xl transition-all duration-300 bg-white hover:-translate-y-1">
-                <CardContent className="p-6">
-                  {/* Ícone e valor em destaque */}
-                  <div className="flex items-center justify-between mb-4">
-                    <div className={`w-14 h-14 rounded-2xl bg-gradient-to-br ${stat.gradient} flex items-center justify-center shadow-lg flex-shrink-0`}>
-                      <Icon className="w-7 h-7 text-white" />
-                    </div>
-                    <div className="text-right">
-                      <div className="text-3xl font-bold text-brand-black leading-none">
-                        {statsLoading ? '...' : stat.value}
-                      </div>
-                    </div>
-                  </div>
-                  
-                  {/* Título abaixo */}
-                  <div className="mb-3">
-                    <h3 className="text-sm font-semibold text-gray-700 leading-tight">{stat.title}</h3>
-                  </div>
-                  
-                  {/* Badge de alerta se houver */}
-                  {stat.showBadge && (
-                    <div className="flex items-center gap-2">
-                      <Badge variant="destructive" className="text-xs flex items-center gap-1">
-                        <BadgeIcon className="w-3 h-3" />
-                        {stat.badgeValue} {stat.badgeLabel}
-                      </Badge>
-                    </div>
-                  )}
-                </CardContent>
-              </Card>
-            );
-          })}
+        {/* Stats Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <Card className="border-l-4 border-l-blue-500">
+            <CardHeader className="pb-2">
+              <CardTitle className="text-sm font-medium text-gray-600 flex items-center">
+                <FileText className="w-4 h-4 mr-2" />
+                Blog Posts
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold text-brand-black">{stats.totalBlogPosts}</div>
+              <p className="text-xs text-gray-600">
+                {stats.publishedBlogPosts} publicados
+              </p>
+            </CardContent>
+          </Card>
+
+          <Card className="border-l-4 border-l-brand-gold">
+            <CardHeader className="pb-2">
+              <CardTitle className="text-sm font-medium text-gray-600 flex items-center">
+                <Lightbulb className="w-4 h-4 mr-2" />
+                Soluções
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold text-brand-black">{stats.totalSolutions}</div>
+              <p className="text-xs text-gray-600">
+                {stats.activeSolutions} ativas
+              </p>
+            </CardContent>
+          </Card>
+
+          <Card className="border-l-4 border-l-green-500">
+            <CardHeader className="pb-2">
+              <CardTitle className="text-sm font-medium text-gray-600 flex items-center">
+                <Users className="w-4 h-4 mr-2" />
+                Usuários
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold text-brand-black">{stats.totalUsers}</div>
+              <p className="text-xs text-gray-600">
+                {stats.activeUsers} ativos
+              </p>
+            </CardContent>
+          </Card>
+
+          <Card className="border-l-4 border-l-red-500">
+            <CardHeader className="pb-2">
+              <CardTitle className="text-sm font-medium text-gray-600 flex items-center">
+                <Mail className="w-4 h-4 mr-2" />
+                Contatos
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold text-brand-black">{stats.totalContacts}</div>
+              <p className="text-xs text-gray-600">
+                {stats.unreadContacts} não lidos
+              </p>
+            </CardContent>
+          </Card>
+
+          <Card className="border-l-4 border-l-orange-500">
+            <CardHeader className="pb-2">
+              <CardTitle className="text-sm font-medium text-gray-600 flex items-center">
+                <Briefcase className="w-4 h-4 mr-2" />
+                Portfólio
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold text-brand-black">{stats.totalPortfolioProjects}</div>
+              <p className="text-xs text-gray-600">
+                {stats.activePortfolioProjects} ativos
+              </p>
+            </CardContent>
+          </Card>
+
+          <Card className="border-l-4 border-l-pink-500">
+            <CardHeader className="pb-2">
+              <CardTitle className="text-sm font-medium text-gray-600 flex items-center">
+                <Image className="w-4 h-4 mr-2" />
+                Banners Home
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold text-brand-black">{stats.totalHomeBanners}</div>
+              <p className="text-xs text-gray-600">
+                {stats.activeHomeBanners} ativos
+              </p>
+            </CardContent>
+          </Card>
+
+          <Card className="border-l-4 border-l-purple-500">
+            <CardHeader className="pb-2">
+              <CardTitle className="text-sm font-medium text-gray-600 flex items-center">
+                <Settings className="w-4 h-4 mr-2" />
+                Cards Serviços
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold text-brand-black">{stats.totalServiceCards}</div>
+              <p className="text-xs text-gray-600">
+                {stats.activeServiceCards} ativos
+              </p>
+            </CardContent>
+          </Card>
         </div>
 
         {/* Recent Activities */}
-        <Card className="shadow-lg border-brand-gold/20">
-          <CardHeader className="bg-gradient-to-r from-brand-gold/5 to-brand-gold/10 border-b border-brand-gold/20">
-            <div className="flex items-center justify-between">
-              <CardTitle className="flex items-center gap-3 text-brand-black">
-                <div className="w-8 h-8 bg-brand-gold/20 rounded-lg flex items-center justify-center">
-                  <Activity className="w-4 h-4 text-brand-gold" />
-                </div>
-                Atividades Recentes
-                <Badge variant="outline" className="ml-auto bg-brand-gold/10 text-brand-gold border-brand-gold/30">
-                  {totalActivities} total
-                </Badge>
-              </CardTitle>
-            </div>
-            
-            {/* Date Filter */}
-            <div className="flex items-center gap-4 mt-4">
-              <div className="flex items-center gap-2">
-                <CalendarIcon className="w-4 h-4 text-brand-gold" />
-                <label className="text-sm font-medium text-brand-black">Filtrar por data:</label>
-              </div>
-              <Input
-                type="date"
-                value={dateFilter}
-                onChange={(e) => {
-                  setDateFilter(e.target.value);
-                  setCurrentPage(1);
-                }}
-                className="w-auto border-brand-gold/30 focus:border-brand-gold focus:ring-brand-gold/20"
-              />
-              {dateFilter && (
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => {
-                    setDateFilter('');
-                    setCurrentPage(1);
-                  }}
-                  className="border-brand-gold/30 text-brand-gold hover:bg-brand-gold/10"
-                >
-                  Limpar
-                </Button>
-              )}
-            </div>
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center">
+              <Calendar className="w-5 h-5 mr-2" />
+              Atividades Recentes
+            </CardTitle>
           </CardHeader>
-          <CardContent className="p-0">
-            {activitiesLoading ? (
-              <div className="p-8 text-center">
-                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-brand-gold mx-auto"></div>
-                <p className="mt-4 text-gray-600">Carregando atividades...</p>
-              </div>
-            ) : activities.length === 0 ? (
-              <div className="p-8 text-center">
-                <Activity className="w-12 h-12 text-gray-300 mx-auto mb-4" />
-                <p className="text-gray-500">Nenhuma atividade encontrada</p>
-              </div>
+          <CardContent>
+            {recentActivities.length === 0 ? (
+              <p className="text-gray-600 text-sm">Nenhuma atividade recente encontrada.</p>
             ) : (
-              <>
-                <div className="divide-y divide-gray-100">
-                  {activities.map((activity, index) => {
-                    const EntityIcon = getEntityIcon(activity.entity_type);
-                    const ActionIcon = getActionIcon(activity.action_type);
-                    return (
-                      <div key={activity.id} className="p-4 hover:bg-brand-gold/5 transition-colors">
-                        <div className="flex items-center justify-between">
-                          <div className="flex items-center space-x-4">
-                            <div className="w-12 h-12 bg-brand-gold/20 rounded-full flex items-center justify-center relative">
-                              <EntityIcon className="w-6 h-6 text-brand-gold" />
-                              <div className="absolute -bottom-1 -right-1 w-5 h-5 bg-white rounded-full flex items-center justify-center border-2 border-brand-gold/20">
-                                <ActionIcon className="w-3 h-3 text-brand-gold" />
-                              </div>
-                            </div>
-                            <div>
-                              <p className="text-sm text-brand-black font-medium mb-1">
-                                <span className="font-semibold text-brand-gold">{activity.user_name}</span> {getActionText(activity.action_type, activity.entity_type, activity.entity_title)}
-                              </p>
-                              <div className="flex items-center gap-3 text-xs text-gray-500">
-                                <span className="flex items-center gap-1">
-                                  <Calendar className="w-3 h-3" />
-                                  {formatDate(activity.created_at)}
-                                </span>
-                              </div>
-                            </div>
-                          </div>
-                          <ArrowRight className="w-4 h-4 text-brand-gold flex-shrink-0" />
-                        </div>
-                      </div>
-                    );
-                  })}
-                </div>
-
-                {/* Pagination */}
-                {totalPages > 1 && (
-                  <div className="p-4 border-t border-brand-gold/20 bg-brand-gold/5">
-                    <div className="flex items-center justify-between">
-                      <p className="text-sm text-brand-black">
-                        Página {currentPage} de {totalPages} ({totalActivities} atividades)
-                      </p>
-                      <div className="flex gap-2">
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
-                          disabled={currentPage === 1}
-                          className="border-brand-gold/30 text-brand-gold hover:bg-brand-gold/10"
-                        >
-                          <ChevronLeft className="w-4 h-4 mr-1" />
-                          Anterior
-                        </Button>
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
-                          disabled={currentPage === totalPages}
-                          className="border-brand-gold/30 text-brand-gold hover:bg-brand-gold/10"
-                        >
-                          Próxima
-                          <ChevronRight className="w-4 h-4 ml-1" />
-                        </Button>
+              <div className="space-y-4">
+                {recentActivities.map((activity) => (
+                  <div
+                    key={activity.id}
+                    className="flex items-center justify-between p-3 bg-gray-50 rounded-lg"
+                  >
+                    <div className="flex items-center space-x-3">
+                      <div className="w-2 h-2 bg-brand-gold rounded-full"></div>
+                      <div>
+                        <p className="text-sm font-medium text-gray-900">
+                          {activity.user_name || 'Admin'} {formatActivityType(activity.action_type).toLowerCase()}{' '}
+                          {formatEntityType(activity.entity_type).toLowerCase()}
+                        </p>
+                        {activity.entity_title && (
+                          <p className="text-xs text-gray-600 mt-1">
+                            {activity.entity_title}
+                          </p>
+                        )}
                       </div>
                     </div>
+                    <div className="text-xs text-gray-500">
+                      {new Date(activity.created_at).toLocaleDateString('pt-BR')} às{' '}
+                      {new Date(activity.created_at).toLocaleTimeString('pt-BR', {
+                        hour: '2-digit',
+                        minute: '2-digit'
+                      })}
+                    </div>
                   </div>
-                )}
-              </>
+                ))}
+              </div>
             )}
+          </CardContent>
+        </Card>
+
+        {/* Quick Actions */}
+        <Card>
+          <CardHeader>
+            <CardTitle>Ações Rápidas</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              <Button asChild variant="outline" className="h-auto p-4 flex flex-col items-center space-y-2">
+                <Link to="/admin/blog">
+                  <FileText className="w-6 h-6" />
+                  <span className="text-sm">Novo Post</span>
+                </Link>
+              </Button>
+              <Button asChild variant="outline" className="h-auto p-4 flex flex-col items-center space-y-2">
+                <Link to="/admin/solutions">
+                  <Lightbulb className="w-6 h-6" />
+                  <span className="text-sm">Nova Solução</span>
+                </Link>
+              </Button>
+              <Button asChild variant="outline" className="h-auto p-4 flex flex-col items-center space-y-2">
+                <Link to="/admin/service-cards">
+                  <Settings className="w-6 h-6" />
+                  <span className="text-sm">Novo Card</span>
+                </Link>
+              </Button>
+              <Button asChild variant="outline" className="h-auto p-4 flex flex-col items-center space-y-2">
+                <Link to="/admin/contacts">
+                  <Mail className="w-6 h-6" />
+                  <span className="text-sm">Ver Contatos</span>
+                </Link>
+              </Button>
+            </div>
           </CardContent>
         </Card>
       </div>
