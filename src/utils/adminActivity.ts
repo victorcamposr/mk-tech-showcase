@@ -27,18 +27,31 @@ export const logAdminActivity = async (
       }
     }
 
-    // Ajustar o título da entidade para atividades de usuário
+    // Criar descrição mais amigável para atividades de usuário
     let finalEntityTitle = entityTitle;
     if (entityType === 'admin_profiles') {
       switch (actionType) {
         case 'create':
-          finalEntityTitle = `usuário ${entityTitle}`;
+          finalEntityTitle = `criou o usuário ${entityTitle}`;
           break;
         case 'update':
-          finalEntityTitle = `usuário ${entityTitle}`;
+          finalEntityTitle = `atualizou o usuário ${entityTitle}`;
           break;
         case 'delete':
-          finalEntityTitle = `usuário ${entityTitle}`;
+          finalEntityTitle = `excluiu o usuário ${entityTitle}`;
+          break;
+      }
+    } else {
+      // Para outras entidades, manter o formato original
+      switch (actionType) {
+        case 'create':
+          finalEntityTitle = `criou ${entityTitle}`;
+          break;
+        case 'update':
+          finalEntityTitle = `atualizou ${entityTitle}`;
+          break;
+        case 'delete':
+          finalEntityTitle = `excluiu ${entityTitle}`;
           break;
       }
     }

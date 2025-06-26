@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import {
   Dialog,
@@ -21,6 +22,7 @@ import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import { User, Plus, Save, Eye, EyeOff, Trash2 } from 'lucide-react';
 import DeleteConfirmDialog from './DeleteConfirmDialog';
+import { useAuth } from '@/hooks/useAuth';
 
 interface UserData {
   name: string;
@@ -43,6 +45,7 @@ const UserModal = ({ isOpen, onClose, onSuccess, user, mode }: UserModalProps) =
   const [showPassword, setShowPassword] = useState(false);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const { toast } = useToast();
+  const { adminProfile } = useAuth();
   
   const form = useForm<UserData>({
     defaultValues: {
@@ -56,6 +59,20 @@ const UserModal = ({ isOpen, onClose, onSuccess, user, mode }: UserModalProps) =
 
   const isViewMode = mode === 'view';
   const isCreateMode = mode === 'create';
+  const isCurrentUserSuperAdmin = adminProfile?.role === 'super_admin';
+
+  // Verificar se pode excluir o usuário (Super Admin pode excluir Admin, mas Admin não pode excluir Super Admin)
+  const canDeleteUser = () => {
+    if (!user || !adminProfile) return false;
+    
+    // Super Admin pode excluir qualquer um
+    if (adminProfile.role === 'super_admin') return true;
+    
+    // Admin só pode excluir outros Admins (não Super Admins)
+    if (adminProfile.role === 'admin' && user.role === 'admin') return true;
+    
+    return false;
+  };
 
   // Função para registrar atividades
   const logActivity = async (actionType: string, entityTitle: string, entityId?: string) => {
@@ -112,6 +129,16 @@ const UserModal = ({ isOpen, onClose, onSuccess, user, mode }: UserModalProps) =
 
   const handleDelete = async () => {
     if (!user) return;
+
+    // Verificar permissões antes de excluir
+    if (!canDeleteUser()) {
+      toast({
+        variant: "destructive",
+        title: "Sem permissão",
+        description: "Você não tem permissão para excluir este usuário.",
+      });
+      return;
+    }
     
     setLoading(true);
     try {
@@ -133,7 +160,7 @@ const UserModal = ({ isOpen, onClose, onSuccess, user, mode }: UserModalProps) =
       }
 
       // Registrar atividade
-      await logActivity('delete', `excluiu o usuário ${user.name}`, user.id);
+      await logActivity('delete', user.name, user.id);
       
       toast({
         title: "Usuário excluído com sucesso!",
@@ -217,7 +244,7 @@ const UserModal = ({ isOpen, onClose, onSuccess, user, mode }: UserModalProps) =
         console.log('Profile created:', profileData);
         
         // Registrar atividade
-        await logActivity('create', `criou o usuário ${data.name}`, profileData.id);
+        await logActivity('create', data.name, profileData.id);
         
         toast({
           title: "Usuário criado com sucesso!",
@@ -259,7 +286,7 @@ const UserModal = ({ isOpen, onClose, onSuccess, user, mode }: UserModalProps) =
         }
         
         // Registrar atividade
-        await logActivity('update', `atualizou o usuário ${data.name}`, user.id);
+        await logActivity('update', data.name, user.id);
         
         toast({
           title: "Usuário atualizado com sucesso!",
@@ -396,21 +423,26 @@ const UserModal = ({ isOpen, onClose, onSuccess, user, mode }: UserModalProps) =
                       <Select 
                         onValueChange={field.onChange} 
                         value={field.value} 
-                        disabled={isViewMode || isCreateMode}
+                        disabled={isViewMode || isCreateMode || !isCurrentUserSuperAdmin}
                       >
                         <FormControl>
-                          <SelectTrigger className={isCreateMode ? "opacity-50 cursor-not-allowed" : ""}>
+                          <SelectTrigger className={isCreateMode || !isCurrentUserSuperAdmin ? "opacity-50 cursor-not-allowed" : ""}>
                             <SelectValue placeholder="Selecione a função" />
                           </SelectTrigger>
                         </FormControl>
                         <SelectContent>
                           <SelectItem value="admin">Admin</SelectItem>
-                          {!isCreateMode && <SelectItem value="super_admin">Super Admin</SelectItem>}
+                          {isCurrentUserSuperAdmin && <SelectItem value="super_admin">Super Admin</SelectItem>}
                         </SelectContent>
                       </Select>
                       {isCreateMode && (
                         <p className="text-xs text-gray-500">
                           Novos usuários são criados apenas como Admin
+                        </p>
+                      )}
+                      {!isCurrentUserSuperAdmin && !isCreateMode && (
+                        <p className="text-xs text-gray-500">
+                          Apenas Super Admins podem alterar funções
                         </p>
                       )}
                       <FormMessage />
@@ -471,7 +503,7 @@ const UserModal = ({ isOpen, onClose, onSuccess, user, mode }: UserModalProps) =
                     )}
                   </Button>
                 )}
-                {mode === 'edit' && user && (
+                {mode === 'edit' && user && canDeleteUser() && (
                   <Button
                     type="button"
                     variant="destructive"
