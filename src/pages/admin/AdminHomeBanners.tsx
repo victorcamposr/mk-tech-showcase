@@ -10,6 +10,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { Plus, Edit, Trash2, Eye, EyeOff } from 'lucide-react';
 import HomeBannerModal from '@/components/admin/HomeBannerModal';
 import DeleteConfirmDialog from '@/components/admin/DeleteConfirmDialog';
+import { logAdminActivity } from '@/utils/adminActivity';
 
 interface HomeBanner {
   id: string;
@@ -69,6 +70,13 @@ const AdminHomeBanners = () => {
 
       if (error) throw error;
 
+      // Registrar atividade
+      await logAdminActivity(
+        'delete',
+        'home_banners',
+        deleteDialog.banner.title
+      );
+
       toast({
         title: 'Banner excluído',
         description: 'Banner excluído com sucesso.',
@@ -97,6 +105,13 @@ const AdminHomeBanners = () => {
         .eq('id', banner.id);
 
       if (error) throw error;
+
+      // Registrar atividade
+      await logAdminActivity(
+        'update',
+        'home_banners',
+        `${newStatus === 'active' ? 'ativou' : 'desativou'} o banner "${banner.title}"`
+      );
 
       toast({
         title: 'Status atualizado',

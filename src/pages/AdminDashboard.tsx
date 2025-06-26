@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import AdminLayout from '@/components/admin/AdminLayout';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -26,7 +27,8 @@ import {
   Edit,
   Trash2,
   UserCheck,
-  Briefcase
+  Briefcase,
+  Image
 } from 'lucide-react';
 
 interface DashboardStats {
@@ -35,11 +37,13 @@ interface DashboardStats {
   totalPosts: number;
   totalSolutions: number;
   totalPortfolioProjects: number;
+  totalHomeBanners: number;
   inactiveUsers: number;
   unreadContacts: number;
   draftPosts: number;
   inactiveSolutions: number;
   inactivePortfolioProjects: number;
+  inactiveHomeBanners: number;
 }
 
 interface RecentActivity {
@@ -66,11 +70,13 @@ const AdminDashboard = () => {
     totalPosts: 0,
     totalSolutions: 0,
     totalPortfolioProjects: 0,
+    totalHomeBanners: 0,
     inactiveUsers: 0,
     unreadContacts: 0,
     draftPosts: 0,
     inactiveSolutions: 0,
-    inactivePortfolioProjects: 0
+    inactivePortfolioProjects: 0,
+    inactiveHomeBanners: 0
   }, isLoading: statsLoading, refetch: refetchStats } = useQuery({
     queryKey: ['dashboard-stats'],
     queryFn: async (): Promise<DashboardStats> => {
@@ -82,22 +88,26 @@ const AdminDashboard = () => {
           postsRes, 
           solutionsRes, 
           portfolioProjectsRes,
+          homeBannersRes,
           inactiveUsersRes, 
           unreadContactsRes, 
           draftPostsRes, 
           inactiveSolutionsRes,
-          inactivePortfolioProjectsRes
+          inactivePortfolioProjectsRes,
+          inactiveHomeBannersRes
         ] = await Promise.all([
           supabase.from('admin_profiles').select('id', { count: 'exact', head: true }),
           supabase.from('contacts').select('id', { count: 'exact', head: true }),
           supabase.from('blog_posts').select('id', { count: 'exact', head: true }),
           supabase.from('solutions').select('id', { count: 'exact', head: true }),
           supabase.from('portfolio_projects').select('id', { count: 'exact', head: true }),
+          supabase.from('home_banners').select('id', { count: 'exact', head: true }),
           supabase.from('admin_profiles').select('id', { count: 'exact', head: true }).eq('is_active', false),
           supabase.from('contacts').select('id', { count: 'exact', head: true }).eq('read', false),
           supabase.from('blog_posts').select('id', { count: 'exact', head: true }).eq('status', 'draft'),
           supabase.from('solutions').select('id', { count: 'exact', head: true }).eq('status', 'inactive'),
-          supabase.from('portfolio_projects').select('id', { count: 'exact', head: true }).eq('status', 'inactive')
+          supabase.from('portfolio_projects').select('id', { count: 'exact', head: true }).eq('status', 'inactive'),
+          supabase.from('home_banners').select('id', { count: 'exact', head: true }).eq('status', 'inactive')
         ]);
 
         const dashboardStats = {
@@ -106,11 +116,13 @@ const AdminDashboard = () => {
           totalPosts: postsRes.count || 0,
           totalSolutions: solutionsRes.count || 0,
           totalPortfolioProjects: portfolioProjectsRes.count || 0,
+          totalHomeBanners: homeBannersRes.count || 0,
           inactiveUsers: inactiveUsersRes.count || 0,
           unreadContacts: unreadContactsRes.count || 0,
           draftPosts: draftPostsRes.count || 0,
           inactiveSolutions: inactiveSolutionsRes.count || 0,
-          inactivePortfolioProjects: inactivePortfolioProjectsRes.count || 0
+          inactivePortfolioProjects: inactivePortfolioProjectsRes.count || 0,
+          inactiveHomeBanners: inactiveHomeBannersRes.count || 0
         };
 
         console.log('Dashboard stats updated via React Query:', dashboardStats);
@@ -189,6 +201,13 @@ const AdminDashboard = () => {
           queryClient.invalidateQueries({ queryKey: ['dashboard-stats'] });
         }
       )
+      .on('postgres_changes', 
+        { event: '*', schema: 'public', table: 'home_banners' },
+        () => {
+          console.log('Home banners changed, invalidating dashboard stats...');
+          queryClient.invalidateQueries({ queryKey: ['dashboard-stats'] });
+        }
+      )
       .subscribe();
 
     return () => {
@@ -245,6 +264,10 @@ const AdminDashboard = () => {
       case 'portfolio_testimonials':
       case 'portfolio':
         return Briefcase;
+      case 'home_banners':
+      case 'banner':
+      case 'banners':
+        return Image;
       default:
         return Activity;
     }
@@ -287,6 +310,8 @@ const AdminDashboard = () => {
         return 'estatística do portfólio';
       case 'portfolio_testimonials':
         return 'depoimento do portfólio';
+      case 'home_banners':
+        return 'banner da home';
       default:
         return entityType;
     }
@@ -344,6 +369,16 @@ const AdminDashboard = () => {
       badgeLabel: 'Inativos',
       badgeIcon: ZapOff,
       showBadge: stats.inactivePortfolioProjects > 0
+    },
+    {
+      title: 'Banners da Home',
+      value: stats.totalHomeBanners,
+      icon: Image,
+      gradient: 'from-teal-500 to-teal-600',
+      badgeValue: stats.inactiveHomeBanners,
+      badgeLabel: 'Inativos',
+      badgeIcon: ZapOff,
+      showBadge: stats.inactiveHomeBanners > 0
     }
   ];
 
@@ -378,7 +413,7 @@ const AdminDashboard = () => {
         </div>
 
         {/* Stats Cards com hierarquia visual melhorada */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-6">
           {statsCards.map((stat, index) => {
             const Icon = stat.icon;
             const BadgeIcon = stat.badgeIcon;

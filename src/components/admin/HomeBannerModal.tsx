@@ -8,6 +8,7 @@ import { Switch } from '@/components/ui/switch';
 import { ImageUpload } from '@/components/ui/image-upload';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
+import { logAdminActivity } from '@/utils/adminActivity';
 
 interface HomeBanner {
   id?: string;
@@ -81,6 +82,13 @@ const HomeBannerModal = ({ isOpen, onClose, banner, onSuccess }: HomeBannerModal
       if (error) {
         throw error;
       }
+
+      // Registrar atividade
+      await logAdminActivity(
+        banner?.id ? 'update' : 'create',
+        'home_banners',
+        formData.title
+      );
 
       toast({
         title: banner?.id ? 'Banner atualizado' : 'Banner criado',
