@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import {
   Dialog,
@@ -60,6 +59,12 @@ const UserModal = ({ isOpen, onClose, onSuccess, user, mode }: UserModalProps) =
   const isViewMode = mode === 'view';
   const isCreateMode = mode === 'create';
   const isCurrentUserSuperAdmin = adminProfile?.role === 'super_admin';
+
+  // Verificar se pode alterar função do usuário
+  const canChangeRole = () => {
+    // Apenas Super Admin pode alterar funções
+    return isCurrentUserSuperAdmin;
+  };
 
   // Verificar se pode excluir o usuário (Super Admin pode excluir Admin, mas Admin não pode excluir Super Admin)
   const canDeleteUser = () => {
@@ -252,14 +257,20 @@ const UserModal = ({ isOpen, onClose, onSuccess, user, mode }: UserModalProps) =
         });
       } else {
         // Atualizar perfil existente
+        const updateData: any = {
+          name: data.name,
+          email: data.email,
+          is_active: data.is_active,
+        };
+
+        // Apenas Super Admin pode alterar função
+        if (canChangeRole()) {
+          updateData.role = data.role;
+        }
+
         const { data: result, error } = await supabase
           .from('admin_profiles')
-          .update({
-            name: data.name,
-            email: data.email,
-            role: data.role,
-            is_active: data.is_active,
-          })
+          .update(updateData)
           .eq('id', user.id)
           .select()
           .single();
@@ -423,10 +434,10 @@ const UserModal = ({ isOpen, onClose, onSuccess, user, mode }: UserModalProps) =
                       <Select 
                         onValueChange={field.onChange} 
                         value={field.value} 
-                        disabled={isViewMode || isCreateMode || !isCurrentUserSuperAdmin}
+                        disabled={isViewMode || isCreateMode || !canChangeRole()}
                       >
                         <FormControl>
-                          <SelectTrigger className={isCreateMode || !isCurrentUserSuperAdmin ? "opacity-50 cursor-not-allowed" : ""}>
+                          <SelectTrigger className={isCreateMode || !canChangeRole() ? "opacity-50 cursor-not-allowed" : ""}>
                             <SelectValue placeholder="Selecione a função" />
                           </SelectTrigger>
                         </FormControl>
@@ -440,7 +451,7 @@ const UserModal = ({ isOpen, onClose, onSuccess, user, mode }: UserModalProps) =
                           Novos usuários são criados apenas como Admin
                         </p>
                       )}
-                      {!isCurrentUserSuperAdmin && !isCreateMode && (
+                      {!canChangeRole() && !isCreateMode && (
                         <p className="text-xs text-gray-500">
                           Apenas Super Admins podem alterar funções
                         </p>

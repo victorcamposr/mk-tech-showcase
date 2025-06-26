@@ -56,11 +56,14 @@ export const logAdminActivity = async (
       }
     }
 
+    // Substituir "admin_profiles" por "usuário" na entidade
+    const displayEntityType = entityType === 'admin_profiles' ? 'usuário' : entityType;
+
     const { error } = await supabase
       .from('admin_activities')
       .insert([{
         action_type: actionType,
-        entity_type: entityType,
+        entity_type: displayEntityType,
         entity_title: finalEntityTitle,
         user_name: finalUserName
       }]);
