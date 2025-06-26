@@ -4,6 +4,8 @@ import { useNavigate } from 'react-router-dom';
 import AdminLayout from '@/components/admin/AdminLayout';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import {
@@ -14,12 +16,17 @@ import {
   Briefcase,
   Star,
   TrendingUp,
-  Eye,
   Calendar,
-  Activity,
   Image,
   Tags,
-  CreditCard
+  CreditCard,
+  ChevronLeft,
+  ChevronRight,
+  Plus,
+  Edit,
+  Trash2,
+  Filter,
+  LayoutDashboard
 } from 'lucide-react';
 
 interface DashboardStats {
@@ -59,12 +66,24 @@ const AdminDashboard = () => {
     serviceCards: { total: 0, active: 0, inactive: 0 },
   });
   const [recentActivities, setRecentActivities] = useState<RecentActivity[]>([]);
+  const [filteredActivities, setFilteredActivities] = useState<RecentActivity[]>([]);
   const [loading, setLoading] = useState(true);
+  
+  // Paginação e filtros para atividades
+  const [currentPage, setCurrentPage] = useState(1);
+  const [dateFilter, setDateFilter] = useState('all');
+  const [actionFilter, setActionFilter] = useState('all');
+  const activitiesPerPage = 10;
+  
   const { toast } = useToast();
 
   useEffect(() => {
     fetchDashboardData();
   }, []);
+
+  useEffect(() => {
+    filterActivities();
+  }, [recentActivities, dateFilter, actionFilter, currentPage]);
 
   const fetchDashboardData = async () => {
     setLoading(true);
@@ -90,7 +109,7 @@ const AdminDashboard = () => {
         supabase.from('portfolio_projects').select('id', { count: 'exact' }),
         supabase.from('portfolio_testimonials').select('id', { count: 'exact' }),
         supabase.from('portfolio_stats').select('id', { count: 'exact' }),
-        supabase.from('admin_activities').select('*').order('created_at', { ascending: false }).limit(10),
+        supabase.from('admin_activities').select('*').order('created_at', { ascending: false }).limit(100),
         supabase.from('home_banners').select('status', { count: 'exact' }),
         supabase.from('service_categories').select('status', { count: 'exact' }),
         supabase.from('service_cards').select('status', { count: 'exact' }),
@@ -175,6 +194,47 @@ const AdminDashboard = () => {
     }
   };
 
+  const filterActivities = () => {
+    let filtered = [...recentActivities];
+
+    // Filtro por data
+    if (dateFilter !== 'all') {
+      const now = new Date();
+      const filterDate = new Date();
+      
+      switch (dateFilter) {
+        case 'today':
+          filterDate.setHours(0, 0, 0, 0);
+          break;
+        case 'week':
+          filterDate.setDate(now.getDate() - 7);
+          break;
+        case 'month':
+          filterDate.setMonth(now.getMonth() - 1);
+          break;
+      }
+      
+      filtered = filtered.filter(activity => 
+        new Date(activity.created_at) >= filterDate
+      );
+    }
+
+    // Filtro por ação
+    if (actionFilter !== 'all') {
+      filtered = filtered.filter(activity => activity.action_type === actionFilter);
+    }
+
+    setFilteredActivities(filtered);
+  };
+
+  const getCurrentPageActivities = () => {
+    const startIndex = (currentPage - 1) * activitiesPerPage;
+    const endIndex = startIndex + activitiesPerPage;
+    return filteredActivities.slice(startIndex, endIndex);
+  };
+
+  const totalPages = Math.ceil(filteredActivities.length / activitiesPerPage);
+
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString('pt-BR', {
       day: '2-digit',
@@ -183,6 +243,19 @@ const AdminDashboard = () => {
       hour: '2-digit',
       minute: '2-digit'
     });
+  };
+
+  const getActionIcon = (actionType: string) => {
+    switch (actionType) {
+      case 'create':
+        return <Plus className="w-4 h-4 text-green-600" />;
+      case 'update':
+        return <Edit className="w-4 h-4 text-blue-600" />;
+      case 'delete':
+        return <Trash2 className="w-4 h-4 text-red-600" />;
+      default:
+        return <Calendar className="w-4 h-4 text-brand-gold" />;
+    }
   };
 
   const getActionTypeLabel = (actionType: string) => {
@@ -227,7 +300,7 @@ const AdminDashboard = () => {
         {/* Header */}
         <div>
           <h1 className="text-3xl font-bold text-gray-900 flex items-center gap-3">
-            <Activity className="w-8 h-8 text-brand-gold" />
+            <LayoutDashboard className="w-8 h-8 text-brand-gold" />
             Dashboard Administrativo
           </h1>
           <p className="text-gray-600 mt-2">
@@ -463,50 +536,119 @@ const AdminDashboard = () => {
         {/* Recent Activities */}
         <Card className="shadow-lg border-0">
           <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Activity className="w-5 h-5 text-brand-gold" />
-              Atividades Recentes
-            </CardTitle>
-            <CardDescription>
-              Últimas ações realizadas no sistema
-            </CardDescription>
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+              <div>
+                <CardTitle className="flex items-center gap-2">
+                  <LayoutDashboard className="w-5 h-5 text-brand-gold" />
+                  Atividades Recentes
+                </CardTitle>
+                <CardDescription>
+                  Últimas ações realizadas no sistema
+                </CardDescription>
+              </div>
+              
+              {/* Filtros */}
+              <div className="flex flex-col sm:flex-row gap-2">
+                <Select value={dateFilter} onValueChange={setDateFilter}>
+                  <SelectTrigger className="w-full sm:w-32 border-brand-gold/30">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">Todas</SelectItem>
+                    <SelectItem value="today">Hoje</SelectItem>
+                    <SelectItem value="week">7 dias</SelectItem>
+                    <SelectItem value="month">30 dias</SelectItem>
+                  </SelectContent>
+                </Select>
+                
+                <Select value={actionFilter} onValueChange={setActionFilter}>
+                  <SelectTrigger className="w-full sm:w-32 border-brand-gold/30">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">Todas</SelectItem>
+                    <SelectItem value="create">Criação</SelectItem>
+                    <SelectItem value="update">Edição</SelectItem>
+                    <SelectItem value="delete">Exclusão</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
           </CardHeader>
           <CardContent>
-            {recentActivities.length === 0 ? (
+            {getCurrentPageActivities().length === 0 ? (
               <div className="text-center py-8">
-                <Activity className="w-12 h-12 text-gray-300 mx-auto mb-4" />
-                <p className="text-gray-500">Nenhuma atividade recente</p>
+                <LayoutDashboard className="w-12 h-12 text-gray-300 mx-auto mb-4" />
+                <p className="text-gray-500">Nenhuma atividade encontrada</p>
               </div>
             ) : (
-              <div className="space-y-4">
-                {recentActivities.map((activity) => (
-                  <div
-                    key={activity.id}
-                    className="flex items-center justify-between p-4 bg-gray-50 rounded-lg"
-                  >
-                    <div className="flex items-center gap-3">
-                      <div className="p-2 bg-white rounded-full shadow-sm">
-                        <Activity className="w-4 h-4 text-brand-gold" />
-                      </div>
-                      <div>
-                        <p className="text-sm font-medium text-gray-900">
-                          {activity.user_name} {getActionTypeLabel(activity.action_type).toLowerCase()}{' '}
-                          {getEntityTypeLabel(activity.entity_type).toLowerCase()}
-                          {activity.entity_title && (
-                            <span className="text-brand-gold font-semibold">
-                              {' '}{activity.entity_title}
-                            </span>
-                          )}
-                        </p>
-                        <p className="text-xs text-gray-500">
-                          <Calendar className="w-3 h-3 inline mr-1" />
-                          {formatDate(activity.created_at)}
-                        </p>
+              <>
+                <div className="space-y-4">
+                  {getCurrentPageActivities().map((activity) => (
+                    <div
+                      key={activity.id}
+                      className="flex items-center justify-between p-4 bg-gray-50 rounded-lg"
+                    >
+                      <div className="flex items-center gap-3">
+                        <div className="p-2 bg-white rounded-full shadow-sm">
+                          {getActionIcon(activity.action_type)}
+                        </div>
+                        <div>
+                          <p className="text-sm font-medium text-gray-900">
+                            {activity.user_name} {getActionTypeLabel(activity.action_type).toLowerCase()}{' '}
+                            {getEntityTypeLabel(activity.entity_type).toLowerCase()}
+                            {activity.entity_title && (
+                              <span className="text-brand-gold font-semibold">
+                                {' '}{activity.entity_title}
+                              </span>
+                            )}
+                          </p>
+                          <p className="text-xs text-gray-500">
+                            <Calendar className="w-3 h-3 inline mr-1" />
+                            {formatDate(activity.created_at)}
+                          </p>
+                        </div>
                       </div>
                     </div>
+                  ))}
+                </div>
+
+                {/* Paginação */}
+                {totalPages > 1 && (
+                  <div className="flex items-center justify-between mt-6 pt-4 border-t">
+                    <div className="text-sm text-gray-600">
+                      Mostrando {((currentPage - 1) * activitiesPerPage) + 1} a{' '}
+                      {Math.min(currentPage * activitiesPerPage, filteredActivities.length)} de{' '}
+                      {filteredActivities.length} atividades
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => setCurrentPage(currentPage - 1)}
+                        disabled={currentPage === 1}
+                        className="shadow-md hover:shadow-lg transition-all duration-200"
+                      >
+                        <ChevronLeft className="w-4 h-4" />
+                        Anterior
+                      </Button>
+                      <span className="text-sm text-gray-600">
+                        Página {currentPage} de {totalPages}
+                      </span>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => setCurrentPage(currentPage + 1)}
+                        disabled={currentPage === totalPages}
+                        className="shadow-md hover:shadow-lg transition-all duration-200"
+                      >
+                        Próxima
+                        <ChevronRight className="w-4 h-4" />
+                      </Button>
+                    </div>
                   </div>
-                ))}
-              </div>
+                )}
+              </>
             )}
           </CardContent>
         </Card>

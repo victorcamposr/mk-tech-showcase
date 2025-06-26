@@ -9,7 +9,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Plus, Edit, Trash2, BarChart3, Briefcase, MessageSquare, Star, Search } from 'lucide-react';
+import { Plus, Edit, Trash2, BarChart3, Briefcase, MessageSquare, Star, Search, Filter, RefreshCw, Calendar } from 'lucide-react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import PortfolioStatsModal from '@/components/admin/PortfolioStatsModal';
 import PortfolioProjectModal from '@/components/admin/PortfolioProjectModal';
@@ -36,6 +36,8 @@ interface PortfolioProject {
   image_url: string | null;
   sort_order: number;
   status: 'active' | 'inactive';
+  created_at: string;
+  updated_at: string;
 }
 
 interface PortfolioTestimonial {
@@ -46,6 +48,8 @@ interface PortfolioTestimonial {
   rating: number;
   sort_order: number;
   status: 'active' | 'inactive';
+  created_at: string;
+  updated_at: string;
 }
 
 const AdminPortfolio = () => {
@@ -65,6 +69,7 @@ const AdminPortfolio = () => {
   const [projectFilter, setProjectFilter] = useState('all');
   const [testimonialSearch, setTestimonialSearch] = useState('');
   const [testimonialFilter, setTestimonialFilter] = useState('all');
+  const [loading, setLoading] = useState(false);
 
   const { toast } = useToast();
   const queryClient = useQueryClient();
@@ -121,17 +126,28 @@ const AdminPortfolio = () => {
     return matchesSearch && matchesFilter;
   });
 
-  // Contar estatísticas
-  const projectStats = {
-    total: projects.length,
-    active: projects.filter(p => p.status === 'active').length,
-    inactive: projects.filter(p => p.status === 'inactive').length
-  };
-
-  const testimonialStats = {
-    total: testimonials.length,
-    active: testimonials.filter(t => t.status === 'active').length,
-    inactive: testimonials.filter(t => t.status === 'inactive').length
+  const fetchData = async () => {
+    setLoading(true);
+    try {
+      await Promise.all([
+        queryClient.invalidateQueries({ queryKey: ['admin-portfolio-stats'] }),
+        queryClient.invalidateQueries({ queryKey: ['admin-portfolio-projects'] }),
+        queryClient.invalidateQueries({ queryKey: ['admin-portfolio-testimonials'] })
+      ]);
+      toast({
+        title: "Dados atualizados",
+        description: "As informações foram recarregadas com sucesso.",
+      });
+    } catch (error) {
+      console.error('Error refreshing data:', error);
+      toast({
+        title: "Erro ao atualizar",
+        description: "Não foi possível atualizar os dados.",
+        variant: "destructive",
+      });
+    } finally {
+      setLoading(false);
+    }
   };
 
   // Mutações para deletar
@@ -150,7 +166,6 @@ const AdminPortfolio = () => {
     onSuccess: async (_, { type }) => {
       console.log(`Portfolio ${type} deleted, invalidating all related queries...`);
       
-      // Invalidar queries específicas e dashboard
       await Promise.all([
         queryClient.invalidateQueries({ queryKey: [`admin-portfolio-${type}`] }),
         queryClient.invalidateQueries({ queryKey: [`portfolio-${type}`] }),
@@ -158,9 +173,6 @@ const AdminPortfolio = () => {
         queryClient.refetchQueries({ queryKey: ['dashboard-stats'] })
       ]);
       
-      console.log('All queries invalidated and dashboard refetched after deletion');
-      
-      // Log admin activity
       await logAdminActivity(
         'delete',
         `portfolio_${type}`,
@@ -168,8 +180,8 @@ const AdminPortfolio = () => {
       );
       
       toast({
-        title: "Item excluído com sucesso!",
-        description: "O item foi removido do portfólio e o sistema foi atualizado.",
+        title: "Item excluído",
+        description: "O item foi removido com sucesso.",
       });
       setDeleteDialog({ open: false, type: '', id: '', title: '' });
     },
@@ -177,7 +189,7 @@ const AdminPortfolio = () => {
       toast({
         variant: "destructive",
         title: "Erro ao excluir",
-        description: "Não foi possível excluir o item. Tente novamente.",
+        description: "Não foi possível excluir o item.",
       });
       console.error('Error deleting item:', error);
     }
@@ -205,361 +217,564 @@ const AdminPortfolio = () => {
     setEditingItem(null);
   };
 
+  const formatDate = (dateString: string) => {
+    return new Date(dateString).toLocaleDateString('pt-BR', {
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
+    });
+  };
+
   return (
     <AdminLayout>
-      <div className="min-h-screen bg-gradient-to-br from-gray-50 to-white">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          {/* Header com gradiente */}
-          <div className="text-center mb-12">
-            <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-r from-brand-gold to-brand-gold-light rounded-2xl mb-6 shadow-lg">
-              <Briefcase className="w-8 h-8 text-brand-black" />
-            </div>
-            <h1 className="text-4xl md:text-5xl font-bold text-brand-black mb-4">
-              Gerenciar <span className="text-brand-gold">Portfólio</span>
+      <div className="space-y-8">
+        {/* Header */}
+        <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+          <div>
+            <h1 className="text-3xl font-bold text-gray-900 flex items-center gap-3">
+              <Briefcase className="w-8 h-8 text-brand-gold" />
+              Gerenciar Portfólio
             </h1>
-            <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-              Gerencie as estatísticas, projetos e depoimentos que destacam o sucesso da sua empresa
+            <p className="text-gray-600 mt-2">
+              Gerencie estatísticas, projetos e depoimentos do portfólio
             </p>
           </div>
+          <div className="flex gap-3">
+            <Button
+              onClick={fetchData}
+              variant="outline"
+              size="sm"
+              disabled={loading}
+              className="shadow-md hover:shadow-lg transition-all duration-200"
+            >
+              <RefreshCw className={`w-4 h-4 mr-2 ${loading ? 'animate-spin' : ''}`} />
+              Atualizar
+            </Button>
+          </div>
+        </div>
 
-          <Tabs defaultValue="stats" className="space-y-8">
-            <div className="flex justify-center">
-              <TabsList className="grid w-full max-w-md grid-cols-3 bg-white shadow-xl border-2 border-brand-gold/30 rounded-2xl p-1 h-14">
-                <TabsTrigger 
-                  value="stats" 
-                  className="flex items-center gap-2 data-[state=active]:bg-gradient-to-r data-[state=active]:from-brand-gold data-[state=active]:to-brand-gold-light data-[state=active]:text-brand-black data-[state=active]:shadow-lg rounded-xl font-semibold transition-all duration-300 hover:bg-brand-gold/10"
-                >
-                  <BarChart3 className="w-4 h-4" />
-                  <span className="hidden sm:inline">Estatísticas</span>
-                </TabsTrigger>
-                <TabsTrigger 
-                  value="projects" 
-                  className="flex items-center gap-2 data-[state=active]:bg-gradient-to-r data-[state=active]:from-brand-gold data-[state=active]:to-brand-gold-light data-[state=active]:text-brand-black data-[state=active]:shadow-lg rounded-xl font-semibold transition-all duration-300 hover:bg-brand-gold/10"
-                >
-                  <Briefcase className="w-4 h-4" />
-                  <span className="hidden sm:inline">Projetos</span>
-                </TabsTrigger>
-                <TabsTrigger 
-                  value="testimonials" 
-                  className="flex items-center gap-2 data-[state=active]:bg-gradient-to-r data-[state=active]:from-brand-gold data-[state=active]:to-brand-gold-light data-[state=active]:text-brand-black data-[state=active]:shadow-lg rounded-xl font-semibold transition-all duration-300 hover:bg-brand-gold/10"
-                >
-                  <MessageSquare className="w-4 h-4" />
-                  <span className="hidden sm:inline">Depoimentos</span>
-                </TabsTrigger>
-              </TabsList>
-            </div>
+        <Tabs defaultValue="stats" className="space-y-8">
+          <div className="flex justify-center">
+            <TabsList className="grid w-full max-w-md grid-cols-3 bg-white shadow-lg border-0 rounded-xl p-1 h-12">
+              <TabsTrigger 
+                value="stats" 
+                className="data-[state=active]:bg-brand-gold data-[state=active]:text-brand-black rounded-lg font-semibold transition-all duration-200"
+              >
+                <BarChart3 className="w-4 h-4 mr-2" />
+                Estatísticas
+              </TabsTrigger>
+              <TabsTrigger 
+                value="projects" 
+                className="data-[state=active]:bg-brand-gold data-[state=active]:text-brand-black rounded-lg font-semibold transition-all duration-200"
+              >
+                <Briefcase className="w-4 h-4 mr-2" />
+                Projetos
+              </TabsTrigger>
+              <TabsTrigger 
+                value="testimonials" 
+                className="data-[state=active]:bg-brand-gold data-[state=active]:text-brand-black rounded-lg font-semibold transition-all duration-200"
+              >
+                <MessageSquare className="w-4 h-4 mr-2" />
+                Depoimentos
+              </TabsTrigger>
+            </TabsList>
+          </div>
 
-            {/* Estatísticas */}
-            <TabsContent value="stats" className="space-y-8">
-              <div className="text-center">
-                <h2 className="text-3xl font-bold text-brand-black mb-2">Estatísticas do Portfólio</h2>
-                <p className="text-gray-600 mb-8">Apenas valor e ordem podem ser editados</p>
-              </div>
-
-              {statsLoading ? (
-                <div className="flex justify-center py-12">
-                  <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-brand-gold"></div>
-                </div>
-              ) : (
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                  {stats.filter(stat => stat.key !== 'support').map((stat) => (
-                    <Card key={stat.id} className="border-brand-gold/20 hover:shadow-2xl hover:shadow-brand-gold/10 transition-all duration-500 hover:-translate-y-2 group bg-gradient-to-br from-white to-gray-50/50">
-                      <CardHeader className="pb-4">
-                        <div className="flex items-center justify-between mb-4">
-                          <div className="w-12 h-12 bg-gradient-to-br from-brand-gold to-brand-gold-light rounded-xl flex items-center justify-center">
-                            <BarChart3 className="w-6 h-6 text-brand-black" />
+          {/* Estatísticas */}
+          <TabsContent value="stats" className="space-y-6">
+            <Card className="shadow-lg border-0">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <BarChart3 className="w-5 h-5 text-brand-gold" />
+                  Estatísticas do Portfólio
+                </CardTitle>
+                <CardDescription>
+                  Apenas valor e ordem podem ser editados
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                {statsLoading ? (
+                  <div className="flex items-center justify-center h-64">
+                    <div className="text-center">
+                      <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-brand-gold mx-auto"></div>
+                      <p className="mt-4 text-gray-600">Carregando estatísticas...</p>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    {stats.filter(stat => stat.key !== 'support').map((stat) => (
+                      <div
+                        key={stat.id}
+                        className="p-6 bg-gray-50 rounded-xl hover:bg-gray-100 transition-colors border-l-4 border-brand-gold"
+                      >
+                        <div className="flex items-start justify-between mb-4">
+                          <div className="flex items-center gap-3">
+                            <div className="w-12 h-12 bg-white rounded-lg shadow-sm flex items-center justify-center">
+                              <BarChart3 className="w-6 h-6 text-brand-gold" />
+                            </div>
+                            <div>
+                              <h3 className="text-lg font-semibold text-gray-900">{stat.label}</h3>
+                              <Badge variant="outline" className="text-xs border-brand-gold/30 text-brand-gold mt-1">
+                                #{stat.sort_order}
+                              </Badge>
+                            </div>
                           </div>
-                          <Badge variant={stat.status === 'active' ? 'default' : 'secondary'} className="bg-brand-gold/10 text-brand-gold border-brand-gold/30">
+                          <Badge 
+                            variant={stat.status === 'active' ? 'default' : 'destructive'}
+                            className="text-xs"
+                          >
                             {stat.status === 'active' ? 'Ativo' : 'Inativo'}
                           </Badge>
                         </div>
-                        <CardTitle className="text-xl text-brand-black group-hover:text-brand-gold transition-colors">{stat.label}</CardTitle>
-                      </CardHeader>
-                      <CardContent>
-                        <div className="text-4xl font-bold text-brand-gold mb-6">
+                        
+                        <div className="text-3xl font-bold text-brand-gold mb-4">
                           {stat.value}{stat.suffix}
                         </div>
-                        <div className="flex gap-3">
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() => handleEdit('stats', stat)}
-                            className="flex-1 border-brand-gold/30 text-brand-gold hover:bg-brand-gold/10"
-                          >
-                            <Edit className="w-4 h-4 mr-2" />
-                            Editar
-                          </Button>
-                        </div>
-                      </CardContent>
-                    </Card>
-                  ))}
-                </div>
-              )}
-            </TabsContent>
 
-            {/* Projetos */}
-            <TabsContent value="projects" className="space-y-8">
-              <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4">
-                <div className="text-center lg:text-left flex-1">
-                  <h2 className="text-3xl font-bold text-brand-black mb-2">Projetos em Destaque</h2>
-                  <p className="text-gray-600 mb-4">Showcase dos seus melhores projetos e resultados</p>
-                  
-                  {/* Estatísticas dos projetos */}
-                  <div className="flex flex-wrap gap-4 text-sm text-gray-600">
-                    <span className="bg-blue-50 text-blue-700 px-3 py-1 rounded-full">
-                      Total: {projectStats.total}
-                    </span>
-                    <span className="bg-green-50 text-green-700 px-3 py-1 rounded-full">
-                      Ativos: {projectStats.active}
-                    </span>
-                    <span className="bg-gray-50 text-gray-700 px-3 py-1 rounded-full">
-                      Inativos: {projectStats.inactive}
-                    </span>
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center space-x-2">
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              onClick={() => handleEdit('stats', stat)}
+                              className="shadow-md hover:shadow-lg transition-all duration-200"
+                            >
+                              <Edit className="w-4 h-4" />
+                            </Button>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
                   </div>
+                )}
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          {/* Projetos */}
+          <TabsContent value="projects" className="space-y-6">
+            {/* Search and Stats */}
+            <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-4 gap-6">
+              <div className="lg:col-span-2">
+                <div className="relative">
+                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+                  <Input
+                    placeholder="Buscar projetos..."
+                    value={projectSearch}
+                    onChange={(e) => setProjectSearch(e.target.value)}
+                    className="pl-10 bg-white border-gray-300 focus:border-brand-gold focus:ring-brand-gold shadow-sm"
+                  />
                 </div>
-                
-                <div className="flex flex-col sm:flex-row gap-4 w-full lg:w-auto">
-                  {/* Barra de pesquisa */}
-                  <div className="relative flex-1 lg:w-64">
-                    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
-                    <Input
-                      placeholder="Buscar projetos..."
-                      value={projectSearch}
-                      onChange={(e) => setProjectSearch(e.target.value)}
-                      className="pl-10 border-brand-gold/30 focus:border-brand-gold"
-                    />
+              </div>
+              <Card className="shadow-lg border-0">
+                <CardContent className="p-4">
+                  <div className="text-center">
+                    <div className="text-2xl font-bold text-green-600">
+                      {projects.filter(p => p.status === 'active').length}
+                    </div>
+                    <div className="text-sm text-gray-600">Ativos</div>
                   </div>
-                  
-                  {/* Filtro de status */}
-                  <Select value={projectFilter} onValueChange={setProjectFilter}>
-                    <SelectTrigger className="w-full sm:w-48 border-brand-gold/30 focus:border-brand-gold">
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="all">Todos</SelectItem>
-                      <SelectItem value="active">Ativos</SelectItem>
-                      <SelectItem value="inactive">Inativos</SelectItem>
-                    </SelectContent>
-                  </Select>
-                  
-                  <Button 
-                    onClick={() => setProjectModalOpen(true)} 
-                    className="bg-gradient-to-r from-brand-gold to-brand-gold-light hover:from-brand-gold-dark hover:to-brand-gold text-brand-black font-semibold shadow-lg"
+                </CardContent>
+              </Card>
+              <Card className="shadow-lg border-0">
+                <CardContent className="p-4">
+                  <div className="text-center">
+                    <div className="text-2xl font-bold text-red-600">
+                      {projects.filter(p => p.status === 'inactive').length}
+                    </div>
+                    <div className="text-sm text-gray-600">Inativos</div>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+
+            {/* Filters */}
+            <Card className="shadow-lg border-0">
+              <CardHeader>
+                <CardTitle className="flex items-center justify-between">
+                  <span className="flex items-center gap-2">
+                    <Filter className="w-5 h-5 text-brand-gold" />
+                    Filtros
+                  </span>
+                  <Button
+                    onClick={() => setProjectModalOpen(true)}
+                    className="bg-gradient-to-r from-brand-gold to-brand-gold-light hover:from-brand-gold-dark hover:to-brand-gold text-white font-semibold shadow-lg hover:shadow-xl transition-all duration-200"
                   >
                     <Plus className="w-4 h-4 mr-2" />
                     Novo Projeto
                   </Button>
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="flex gap-2">
+                  <Button
+                    variant={projectFilter === 'all' ? 'default' : 'outline'}
+                    size="sm"
+                    onClick={() => setProjectFilter('all')}
+                    className={projectFilter === 'all' 
+                      ? 'bg-brand-gold hover:bg-brand-gold-dark text-white shadow-md' 
+                      : 'shadow-md hover:shadow-lg transition-all duration-200'
+                    }
+                  >
+                    Todos
+                  </Button>
+                  <Button
+                    variant={projectFilter === 'active' ? 'default' : 'outline'}
+                    size="sm"
+                    onClick={() => setProjectFilter('active')}
+                    className={projectFilter === 'active' 
+                      ? 'bg-green-600 hover:bg-green-700 text-white shadow-md' 
+                      : 'shadow-md hover:shadow-lg transition-all duration-200'
+                    }
+                  >
+                    Ativos
+                  </Button>
+                  <Button
+                    variant={projectFilter === 'inactive' ? 'default' : 'outline'}
+                    size="sm"
+                    onClick={() => setProjectFilter('inactive')}
+                    className={projectFilter === 'inactive' 
+                      ? 'bg-red-600 hover:bg-red-700 text-white shadow-md' 
+                      : 'shadow-md hover:shadow-lg transition-all duration-200'
+                    }
+                  >
+                    Inativos
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Projects List */}
+            <Card className="shadow-lg border-0">
+              <CardHeader>
+                <CardTitle className="flex items-center justify-between">
+                  <span className="flex items-center gap-2">
+                    <Briefcase className="w-5 h-5 text-brand-gold" />
+                    Projetos Cadastrados
+                  </span>
+                  <Badge variant="outline" className="bg-brand-gold/10 text-brand-gold border-brand-gold/30">
+                    {filteredProjects.length} projetos
+                  </Badge>
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                {projectsLoading ? (
+                  <div className="flex items-center justify-center h-64">
+                    <div className="text-center">
+                      <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-brand-gold mx-auto"></div>
+                      <p className="mt-4 text-gray-600">Carregando projetos...</p>
+                    </div>
+                  </div>
+                ) : filteredProjects.length === 0 ? (
+                  <div className="text-center py-12">
+                    <Briefcase className="w-16 h-16 text-gray-300 mx-auto mb-4" />
+                    <h3 className="text-lg font-medium text-gray-900 mb-2">
+                      {projectSearch || projectFilter !== 'all' ? 'Nenhum projeto encontrado' : 'Nenhum projeto cadastrado'}
+                    </h3>
+                    <p className="text-gray-600 mb-4">
+                      {projectSearch || projectFilter !== 'all' 
+                        ? 'Tente ajustar os filtros.'
+                        : 'Comece criando seu primeiro projeto.'
+                      }
+                    </p>
+                  </div>
+                ) : (
+                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    {filteredProjects.map((project) => (
+                      <div
+                        key={project.id}
+                        className="p-6 bg-gray-50 rounded-xl hover:bg-gray-100 transition-colors border-l-4 border-brand-gold"
+                      >
+                        <div className="flex items-start justify-between mb-4">
+                          <div className="flex items-center gap-3">
+                            <div className="w-12 h-12 bg-white rounded-lg shadow-sm flex items-center justify-center overflow-hidden">
+                              {project.image_url ? (
+                                <img 
+                                  src={project.image_url} 
+                                  alt="Logo" 
+                                  className="w-8 h-8 object-contain"
+                                />
+                              ) : (
+                                <Briefcase className="w-6 h-6 text-brand-gold" />
+                              )}
+                            </div>
+                            <div>
+                              <h3 className="text-lg font-semibold text-gray-900">{project.title}</h3>
+                              <Badge variant="outline" className="text-xs border-brand-gold/30 text-brand-gold mt-1">
+                                {project.category}
+                              </Badge>
+                            </div>
+                          </div>
+                          <Badge 
+                            variant={project.status === 'active' ? 'default' : 'destructive'}
+                            className="text-xs"
+                          >
+                            {project.status === 'active' ? 'Ativo' : 'Inativo'}
+                          </Badge>
+                        </div>
+                        
+                        <p className="text-gray-600 text-sm line-clamp-2 mb-4">
+                          {project.description}
+                        </p>
+
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center gap-1 text-sm text-gray-500">
+                            <Calendar className="w-4 h-4" />
+                            {formatDate(project.created_at)}
+                          </div>
+                          <div className="flex items-center space-x-2">
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              onClick={() => handleEdit('projects', project)}
+                              className="shadow-md hover:shadow-lg transition-all duration-200"
+                            >
+                              <Edit className="w-4 h-4" />
+                            </Button>
+                            <Button
+                              size="sm"
+                              variant="destructive"
+                              onClick={() => handleDelete('projects', project.id, project.title)}
+                              className="shadow-md hover:shadow-lg transition-all duration-200"
+                            >
+                              <Trash2 className="w-4 h-4" />
+                            </Button>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          {/* Depoimentos */}
+          <TabsContent value="testimonials" className="space-y-6">
+            {/* Search and Stats */}
+            <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-4 gap-6">
+              <div className="lg:col-span-2">
+                <div className="relative">
+                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+                  <Input
+                    placeholder="Buscar depoimentos..."
+                    value={testimonialSearch}
+                    onChange={(e) => setTestimonialSearch(e.target.value)}
+                    className="pl-10 bg-white border-gray-300 focus:border-brand-gold focus:ring-brand-gold shadow-sm"
+                  />
                 </div>
               </div>
-
-              {projectsLoading ? (
-                <div className="flex justify-center py-12">
-                  <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-brand-gold"></div>
-                </div>
-              ) : (
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                  {filteredProjects.map((project) => (
-                    <Card key={project.id} className="border-brand-gold/20 hover:shadow-2xl hover:shadow-brand-gold/10 transition-all duration-500 hover:-translate-y-2 group bg-gradient-to-br from-white to-gray-50/50 overflow-hidden">
-                      {/* Banner de imagem */}
-                      <div className="h-40 overflow-hidden relative">
-                        {project.image_url ? (
-                          <img 
-                            src={project.image_url} 
-                            alt={project.title}
-                            className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-                          />
-                        ) : (
-                          <div className="w-full h-full bg-gradient-to-br from-brand-gold/20 to-brand-gold/30 flex items-center justify-center">
-                            <Briefcase className="w-12 h-12 text-brand-gold" />
-                          </div>
-                        )}
-                        <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent"></div>
-                        <Badge 
-                          variant={project.status === 'active' ? 'default' : 'secondary'} 
-                          className="absolute top-3 right-3 bg-brand-gold/90 text-brand-black border-0"
-                        >
-                          {project.status === 'active' ? 'Ativo' : 'Inativo'}
-                        </Badge>
-                      </div>
-                      
-                      <CardHeader className="pb-3">
-                        <div className="mb-2">
-                          <div className="text-sm text-brand-gold font-semibold mb-1">{project.category}</div>
-                          <CardTitle className="text-lg font-bold text-brand-black group-hover:text-brand-gold transition-colors">
-                            {project.title}
-                          </CardTitle>
-                        </div>
-                        <CardDescription className="text-sm text-gray-600 line-clamp-2">
-                          {project.description}
-                        </CardDescription>
-                      </CardHeader>
-                      
-                      <CardContent className="pt-0">
-                        <div className="flex gap-2">
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() => handleEdit('projects', project)}
-                            className="flex-1 border-brand-gold/30 text-brand-gold hover:bg-brand-gold/10"
-                          >
-                            <Edit className="w-4 h-4 mr-1" />
-                            Editar
-                          </Button>
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() => handleDelete('projects', project.id, project.title)}
-                            className="border-red-200 text-red-600 hover:bg-red-50"
-                          >
-                            <Trash2 className="w-4 h-4" />
-                          </Button>
-                        </div>
-                      </CardContent>
-                    </Card>
-                  ))}
-                </div>
-              )}
-            </TabsContent>
-
-            {/* Depoimentos */}
-            <TabsContent value="testimonials" className="space-y-8">
-              <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4">
-                <div className="text-center lg:text-left flex-1">
-                  <h2 className="text-3xl font-bold text-brand-black mb-2">Depoimentos de Clientes</h2>
-                  <p className="text-gray-600 mb-4">Feedbacks que comprovam a qualidade do seu trabalho</p>
-                  
-                  {/* Estatísticas dos depoimentos */}
-                  <div className="flex flex-wrap gap-4 text-sm text-gray-600">
-                    <span className="bg-blue-50 text-blue-700 px-3 py-1 rounded-full">
-                      Total: {testimonialStats.total}
-                    </span>
-                    <span className="bg-green-50 text-green-700 px-3 py-1 rounded-full">
-                      Ativos: {testimonialStats.active}
-                    </span>
-                    <span className="bg-gray-50 text-gray-700 px-3 py-1 rounded-full">
-                      Inativos: {testimonialStats.inactive}
-                    </span>
+              <Card className="shadow-lg border-0">
+                <CardContent className="p-4">
+                  <div className="text-center">
+                    <div className="text-2xl font-bold text-green-600">
+                      {testimonials.filter(t => t.status === 'active').length}
+                    </div>
+                    <div className="text-sm text-gray-600">Ativos</div>
                   </div>
-                </div>
-                
-                <div className="flex flex-col sm:flex-row gap-4 w-full lg:w-auto">
-                  {/* Barra de pesquisa */}
-                  <div className="relative flex-1 lg:w-64">
-                    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
-                    <Input
-                      placeholder="Buscar depoimentos..."
-                      value={testimonialSearch}
-                      onChange={(e) => setTestimonialSearch(e.target.value)}
-                      className="pl-10 border-brand-gold/30 focus:border-brand-gold"
-                    />
+                </CardContent>
+              </Card>
+              <Card className="shadow-lg border-0">
+                <CardContent className="p-4">
+                  <div className="text-center">
+                    <div className="text-2xl font-bold text-red-600">
+                      {testimonials.filter(t => t.status === 'inactive').length}
+                    </div>
+                    <div className="text-sm text-gray-600">Inativos</div>
                   </div>
-                  
-                  {/* Filtro de status */}
-                  <Select value={testimonialFilter} onValueChange={setTestimonialFilter}>
-                    <SelectTrigger className="w-full sm:w-48 border-brand-gold/30 focus:border-brand-gold">
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="all">Todos</SelectItem>
-                      <SelectItem value="active">Ativos</SelectItem>
-                      <SelectItem value="inactive">Inativos</SelectItem>
-                    </SelectContent>
-                  </Select>
-                  
-                  <Button 
-                    onClick={() => setTestimonialModalOpen(true)} 
-                    className="bg-gradient-to-r from-brand-gold to-brand-gold-light hover:from-brand-gold-dark hover:to-brand-gold text-brand-black font-semibold shadow-lg"
+                </CardContent>
+              </Card>
+            </div>
+
+            {/* Filters */}
+            <Card className="shadow-lg border-0">
+              <CardHeader>
+                <CardTitle className="flex items-center justify-between">
+                  <span className="flex items-center gap-2">
+                    <Filter className="w-5 h-5 text-brand-gold" />
+                    Filtros
+                  </span>
+                  <Button
+                    onClick={() => setTestimonialModalOpen(true)}
+                    className="bg-gradient-to-r from-brand-gold to-brand-gold-light hover:from-brand-gold-dark hover:to-brand-gold text-white font-semibold shadow-lg hover:shadow-xl transition-all duration-200"
                   >
                     <Plus className="w-4 h-4 mr-2" />
                     Novo Depoimento
                   </Button>
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="flex gap-2">
+                  <Button
+                    variant={testimonialFilter === 'all' ? 'default' : 'outline'}
+                    size="sm"
+                    onClick={() => setTestimonialFilter('all')}
+                    className={testimonialFilter === 'all' 
+                      ? 'bg-brand-gold hover:bg-brand-gold-dark text-white shadow-md' 
+                      : 'shadow-md hover:shadow-lg transition-all duration-200'
+                    }
+                  >
+                    Todos
+                  </Button>
+                  <Button
+                    variant={testimonialFilter === 'active' ? 'default' : 'outline'}
+                    size="sm"
+                    onClick={() => setTestimonialFilter('active')}
+                    className={testimonialFilter === 'active' 
+                      ? 'bg-green-600 hover:bg-green-700 text-white shadow-md' 
+                      : 'shadow-md hover:shadow-lg transition-all duration-200'
+                    }
+                  >
+                    Ativos
+                  </Button>
+                  <Button
+                    variant={testimonialFilter === 'inactive' ? 'default' : 'outline'}
+                    size="sm"
+                    onClick={() => setTestimonialFilter('inactive')}
+                    className={testimonialFilter === 'inactive' 
+                      ? 'bg-red-600 hover:bg-red-700 text-white shadow-md' 
+                      : 'shadow-md hover:shadow-lg transition-all duration-200'
+                    }
+                  >
+                    Inativos
+                  </Button>
                 </div>
-              </div>
+              </CardContent>
+            </Card>
 
-              {testimonialsLoading ? (
-                <div className="flex justify-center py-12">
-                  <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-brand-gold"></div>
-                </div>
-              ) : (
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                  {filteredTestimonials.map((testimonial) => (
-                    <Card key={testimonial.id} className="border-brand-gold/20 hover:shadow-2xl hover:shadow-brand-gold/10 transition-all duration-500 hover:-translate-y-2 group bg-gradient-to-br from-white to-gray-50/50">
-                      <CardHeader className="pb-4">
-                        <div className="flex items-center justify-between mb-4">
-                          <div className="w-12 h-12 bg-gradient-to-br from-brand-gold to-brand-gold-light rounded-xl flex items-center justify-center">
-                            <MessageSquare className="w-6 h-6 text-brand-black" />
+            {/* Testimonials List */}
+            <Card className="shadow-lg border-0">
+              <CardHeader>
+                <CardTitle className="flex items-center justify-between">
+                  <span className="flex items-center gap-2">
+                    <MessageSquare className="w-5 h-5 text-brand-gold" />
+                    Depoimentos Cadastrados
+                  </span>
+                  <Badge variant="outline" className="bg-brand-gold/10 text-brand-gold border-brand-gold/30">
+                    {filteredTestimonials.length} depoimentos
+                  </Badge>
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                {testimonialsLoading ? (
+                  <div className="flex items-center justify-center h-64">
+                    <div className="text-center">
+                      <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-brand-gold mx-auto"></div>
+                      <p className="mt-4 text-gray-600">Carregando depoimentos...</p>
+                    </div>
+                  </div>
+                ) : filteredTestimonials.length === 0 ? (
+                  <div className="text-center py-12">
+                    <MessageSquare className="w-16 h-16 text-gray-300 mx-auto mb-4" />
+                    <h3 className="text-lg font-medium text-gray-900 mb-2">
+                      {testimonialSearch || testimonialFilter !== 'all' ? 'Nenhum depoimento encontrado' : 'Nenhum depoimento cadastrado'}
+                    </h3>
+                    <p className="text-gray-600 mb-4">
+                      {testimonialSearch || testimonialFilter !== 'all' 
+                        ? 'Tente ajustar os filtros.'
+                        : 'Comece criando seu primeiro depoimento.'
+                      }
+                    </p>
+                  </div>
+                ) : (
+                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    {filteredTestimonials.map((testimonial) => (
+                      <div
+                        key={testimonial.id}
+                        className="p-6 bg-gray-50 rounded-xl hover:bg-gray-100 transition-colors border-l-4 border-brand-gold"
+                      >
+                        <div className="flex items-start justify-between mb-4">
+                          <div className="flex items-center gap-3">
+                            <div className="w-12 h-12 bg-white rounded-lg shadow-sm flex items-center justify-center">
+                              <MessageSquare className="w-6 h-6 text-brand-gold" />
+                            </div>
+                            <div>
+                              <h3 className="text-lg font-semibold text-gray-900">{testimonial.author}</h3>
+                              <Badge variant="outline" className="text-xs border-brand-gold/30 text-brand-gold mt-1">
+                                {testimonial.company}
+                              </Badge>
+                            </div>
                           </div>
-                          <Badge variant={testimonial.status === 'active' ? 'default' : 'secondary'} className="bg-brand-gold/10 text-brand-gold border-brand-gold/30">
+                          <Badge 
+                            variant={testimonial.status === 'active' ? 'default' : 'destructive'}
+                            className="text-xs"
+                          >
                             {testimonial.status === 'active' ? 'Ativo' : 'Inativo'}
                           </Badge>
                         </div>
-                        <div>
-                          <CardTitle className="text-lg text-brand-black group-hover:text-brand-gold transition-colors">{testimonial.author}</CardTitle>
-                          <CardDescription className="text-brand-gold font-medium">{testimonial.company}</CardDescription>
-                        </div>
-                      </CardHeader>
-                      <CardContent>
+                        
                         <div className="flex mb-3">
                           {[...Array(testimonial.rating)].map((_, i) => (
                             <Star key={i} className="w-4 h-4 fill-brand-gold text-brand-gold" />
                           ))}
                         </div>
-                        <p className="text-sm text-gray-600 mb-6 line-clamp-3 italic">"{testimonial.content}"</p>
-                        <div className="flex gap-2">
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() => handleEdit('testimonials', testimonial)}
-                            className="flex-1 border-brand-gold/30 text-brand-gold hover:bg-brand-gold/10"
-                          >
-                            <Edit className="w-4 h-4 mr-1" />
-                            Editar
-                          </Button>
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() => handleDelete('testimonials', testimonial.id, testimonial.author)}
-                            className="border-red-200 text-red-600 hover:bg-red-50"
-                          >
-                            <Trash2 className="w-4 h-4" />
-                          </Button>
+                        
+                        <p className="text-gray-600 text-sm line-clamp-2 mb-4 italic">
+                          "{testimonial.content}"
+                        </p>
+
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center gap-1 text-sm text-gray-500">
+                            <Calendar className="w-4 h-4" />
+                            {formatDate(testimonial.created_at)}
+                          </div>
+                          <div className="flex items-center space-x-2">
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              onClick={() => handleEdit('testimonials', testimonial)}
+                              className="shadow-md hover:shadow-lg transition-all duration-200"
+                            >
+                              <Edit className="w-4 h-4" />
+                            </Button>
+                            <Button
+                              size="sm"
+                              variant="destructive"
+                              onClick={() => handleDelete('testimonials', testimonial.id, testimonial.author)}
+                              className="shadow-md hover:shadow-lg transition-all duration-200"
+                            >
+                              <Trash2 className="w-4 h-4" />
+                            </Button>
+                          </div>
                         </div>
-                      </CardContent>
-                    </Card>
-                  ))}
-                </div>
-              )}
-            </TabsContent>
-          </Tabs>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          </TabsContent>
+        </Tabs>
 
-          {/* Modals */}
-          <PortfolioStatsModal
-            open={statsModalOpen}
-            onClose={handleCloseModal}
-            editingItem={editingItem}
-          />
-          
-          <PortfolioProjectModal
-            open={projectModalOpen}
-            onClose={handleCloseModal}
-            editingItem={editingItem}
-          />
-          
-          <PortfolioTestimonialModal
-            open={testimonialModalOpen}
-            onClose={handleCloseModal}
-            editingItem={editingItem}
-          />
+        {/* Modals */}
+        <PortfolioStatsModal
+          open={statsModalOpen}
+          onClose={handleCloseModal}
+          editingItem={editingItem}
+        />
+        
+        <PortfolioProjectModal
+          open={projectModalOpen}
+          onClose={handleCloseModal}
+          editingItem={editingItem}
+        />
+        
+        <PortfolioTestimonialModal
+          open={testimonialModalOpen}
+          onClose={handleCloseModal}
+          editingItem={editingItem}
+        />
 
-          <DeleteConfirmDialog
-            isOpen={deleteDialog.open}
-            onClose={() => setDeleteDialog({ open: false, type: '', id: '', title: '' })}
-            onConfirm={confirmDelete}
-            title="Confirmar Exclusão"
-            description={`Tem certeza que deseja excluir "${deleteDialog.title}"? Esta ação não pode ser desfeita.`}
-            loading={deleteMutation.isPending}
-          />
-        </div>
+        <DeleteConfirmDialog
+          isOpen={deleteDialog.open}
+          onClose={() => setDeleteDialog({ open: false, type: '', id: '', title: '' })}
+          onConfirm={confirmDelete}
+          title="Confirmar Exclusão"
+          description={`Tem certeza que deseja excluir "${deleteDialog.title}"? Esta ação não pode ser desfeita.`}
+          loading={deleteMutation.isPending}
+        />
       </div>
     </AdminLayout>
   );
