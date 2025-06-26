@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -47,7 +48,6 @@ const AdminServiceCards = () => {
   const [cardToDelete, setCardToDelete] = useState<ServiceCard | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState<'all' | 'active' | 'inactive'>('all');
-  const [deleteConfirmId, setDeleteConfirmId] = useState<string | null>(null);
   const { toast } = useToast();
 
   useEffect(() => {
@@ -389,41 +389,14 @@ const AdminServiceCards = () => {
                         >
                           <Edit className="w-4 h-4" />
                         </Button>
-                        <div className="relative">
-                          <Button
-                            size="sm"
-                            variant="destructive"
-                            onClick={() => handleDeleteClick(card)}
-                            className="shadow-md hover:shadow-lg transition-all duration-200"
-                          >
-                            <Trash2 className="w-4 h-4" />
-                          </Button>
-                          {deleteConfirmId === card.id && (
-                            <div className="absolute bottom-full right-0 mb-2 bg-white border border-gray-200 rounded-lg shadow-lg p-3 z-10 min-w-48">
-                              <p className="text-sm text-gray-700 mb-3">Excluir este card?</p>
-                              <div className="flex gap-2">
-                                <Button
-                                  size="sm"
-                                  variant="outline"
-                                  onClick={() => setDeleteConfirmId(null)}
-                                  className="flex-1"
-                                >
-                                  <X className="w-3 h-3 mr-1" />
-                                  Cancelar
-                                </Button>
-                                <Button
-                                  size="sm"
-                                  variant="destructive"
-                                  onClick={() => confirmDelete(card.id)}
-                                  className="flex-1"
-                                >
-                                  <Check className="w-3 h-3 mr-1" />
-                                  Confirmar
-                                </Button>
-                              </div>
-                            </div>
-                          )}
-                        </div>
+                        <Button
+                          size="sm"
+                          variant="destructive"
+                          onClick={() => handleDeleteClick(card)}
+                          className="shadow-md hover:shadow-lg transition-all duration-200"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </Button>
                       </div>
                     </div>
                   </div>
