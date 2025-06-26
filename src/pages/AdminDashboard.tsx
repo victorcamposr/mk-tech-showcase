@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import AdminLayout from '@/components/admin/AdminLayout';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -5,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { useToast } from '@/hooks/use-toast';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { 
   Users, 
@@ -51,7 +53,15 @@ interface RecentActivity {
 }
 
 const AdminDashboard = () => {
-  const [stats, setStats] = useState<DashboardStats>({
+  const [currentPage, setCurrentPage] = useState(1);
+  const [dateFilter, setDateFilter] = useState('');
+  const { toast } = useToast();
+  const queryClient = useQueryClient();
+
+  const ACTIVITIES_PER_PAGE = 10;
+
+  // Use React Query for dashboard stats with automatic refetching
+  const { data: stats = {
     totalUsers: 0,
     totalContacts: 0,
     totalPosts: 0,
@@ -62,76 +72,64 @@ const AdminDashboard = () => {
     draftPosts: 0,
     inactiveSolutions: 0,
     inactivePortfolioProjects: 0
+  }, isLoading: statsLoading, refetch: refetchStats } = useQuery({
+    queryKey: ['dashboard-stats'],
+    queryFn: async (): Promise<DashboardStats> => {
+      console.log('Fetching dashboard stats with React Query...');
+      try {
+        const [
+          usersRes, 
+          contactsRes, 
+          postsRes, 
+          solutionsRes, 
+          portfolioProjectsRes,
+          inactiveUsersRes, 
+          unreadContactsRes, 
+          draftPostsRes, 
+          inactiveSolutionsRes,
+          inactivePortfolioProjectsRes
+        ] = await Promise.all([
+          supabase.from('admin_profiles').select('id', { count: 'exact', head: true }),
+          supabase.from('contacts').select('id', { count: 'exact', head: true }),
+          supabase.from('blog_posts').select('id', { count: 'exact', head: true }),
+          supabase.from('solutions').select('id', { count: 'exact', head: true }),
+          supabase.from('portfolio_projects').select('id', { count: 'exact', head: true }),
+          supabase.from('admin_profiles').select('id', { count: 'exact', head: true }).eq('is_active', false),
+          supabase.from('contacts').select('id', { count: 'exact', head: true }).eq('read', false),
+          supabase.from('blog_posts').select('id', { count: 'exact', head: true }).eq('status', 'draft'),
+          supabase.from('solutions').select('id', { count: 'exact', head: true }).eq('status', 'inactive'),
+          supabase.from('portfolio_projects').select('id', { count: 'exact', head: true }).eq('status', 'inactive')
+        ]);
+
+        const dashboardStats = {
+          totalUsers: usersRes.count || 0,
+          totalContacts: contactsRes.count || 0,
+          totalPosts: postsRes.count || 0,
+          totalSolutions: solutionsRes.count || 0,
+          totalPortfolioProjects: portfolioProjectsRes.count || 0,
+          inactiveUsers: inactiveUsersRes.count || 0,
+          unreadContacts: unreadContactsRes.count || 0,
+          draftPosts: draftPostsRes.count || 0,
+          inactiveSolutions: inactiveSolutionsRes.count || 0,
+          inactivePortfolioProjects: inactivePortfolioProjectsRes.count || 0
+        };
+
+        console.log('Dashboard stats updated via React Query:', dashboardStats);
+        return dashboardStats;
+      } catch (error) {
+        console.error('Error fetching dashboard stats:', error);
+        throw error;
+      }
+    },
+    staleTime: 30000, // Consider data fresh for 30 seconds
+    refetchOnWindowFocus: true, // Refetch when window gains focus
+    refetchInterval: 60000 // Refetch every minute
   });
-  const [activities, setActivities] = useState<RecentActivity[]>([]);
-  const [currentPage, setCurrentPage] = useState(1);
-  const [totalActivities, setTotalActivities] = useState(0);
-  const [loading, setLoading] = useState(true);
-  const [dateFilter, setDateFilter] = useState('');
-  const { toast } = useToast();
 
-  const ACTIVITIES_PER_PAGE = 10;
-
-  useEffect(() => {
-    fetchDashboardData();
-    fetchActivities();
-  }, [currentPage, dateFilter]);
-
-  const fetchDashboardData = async () => {
-    try {
-      console.log('Fetching dashboard data...');
-      const [
-        usersRes, 
-        contactsRes, 
-        postsRes, 
-        solutionsRes, 
-        portfolioProjectsRes,
-        inactiveUsersRes, 
-        unreadContactsRes, 
-        draftPostsRes, 
-        inactiveSolutionsRes,
-        inactivePortfolioProjectsRes
-      ] = await Promise.all([
-        supabase.from('admin_profiles').select('id', { count: 'exact', head: true }),
-        supabase.from('contacts').select('id', { count: 'exact', head: true }),
-        supabase.from('blog_posts').select('id', { count: 'exact', head: true }),
-        supabase.from('solutions').select('id', { count: 'exact', head: true }),
-        supabase.from('portfolio_projects').select('id', { count: 'exact', head: true }),
-        supabase.from('admin_profiles').select('id', { count: 'exact', head: true }).eq('is_active', false),
-        supabase.from('contacts').select('id', { count: 'exact', head: true }).eq('read', false),
-        supabase.from('blog_posts').select('id', { count: 'exact', head: true }).eq('status', 'draft'),
-        supabase.from('solutions').select('id', { count: 'exact', head: true }).eq('status', 'inactive'),
-        supabase.from('portfolio_projects').select('id', { count: 'exact', head: true }).eq('status', 'inactive')
-      ]);
-
-      const newStats = {
-        totalUsers: usersRes.count || 0,
-        totalContacts: contactsRes.count || 0,
-        totalPosts: postsRes.count || 0,
-        totalSolutions: solutionsRes.count || 0,
-        totalPortfolioProjects: portfolioProjectsRes.count || 0,
-        inactiveUsers: inactiveUsersRes.count || 0,
-        unreadContacts: unreadContactsRes.count || 0,
-        draftPosts: draftPostsRes.count || 0,
-        inactiveSolutions: inactiveSolutionsRes.count || 0,
-        inactivePortfolioProjects: inactivePortfolioProjectsRes.count || 0
-      };
-
-      console.log('Dashboard stats updated:', newStats);
-      setStats(newStats);
-    } catch (error) {
-      console.error('Error fetching dashboard stats:', error);
-      toast({
-        title: "Erro ao carregar estatísticas",
-        description: "Não foi possível carregar os dados do dashboard.",
-        variant: "destructive",
-      });
-    }
-  };
-
-  const fetchActivities = async () => {
-    setLoading(true);
-    try {
+  // Activities query
+  const { data: activitiesData, isLoading: activitiesLoading } = useQuery({
+    queryKey: ['admin-activities', currentPage, dateFilter],
+    queryFn: async () => {
       const from = (currentPage - 1) * ACTIVITIES_PER_PAGE;
       const to = from + ACTIVITIES_PER_PAGE - 1;
 
@@ -152,22 +150,53 @@ const AdminDashboard = () => {
       }
 
       const { data, error, count } = await query;
-
       if (error) throw error;
 
-      setActivities(data || []);
-      setTotalActivities(count || 0);
-    } catch (error) {
-      console.error('Error fetching activities:', error);
-      toast({
-        title: "Erro ao carregar atividades",
-        description: "Não foi possível carregar as atividades recentes.",
-        variant: "destructive",
-      });
-    } finally {
-      setLoading(false);
-    }
-  };
+      return {
+        activities: data || [],
+        totalActivities: count || 0
+      };
+    },
+    staleTime: 10000 // Consider activities fresh for 10 seconds
+  });
+
+  const activities = activitiesData?.activities || [];
+  const totalActivities = activitiesData?.totalActivities || 0;
+
+  // Listen for portfolio changes and invalidate dashboard stats
+  useEffect(() => {
+    console.log('Setting up real-time subscription for portfolio changes...');
+    
+    const channel = supabase
+      .channel('portfolio-changes')
+      .on('postgres_changes', 
+        { event: '*', schema: 'public', table: 'portfolio_projects' },
+        () => {
+          console.log('Portfolio projects changed, invalidating dashboard stats...');
+          queryClient.invalidateQueries({ queryKey: ['dashboard-stats'] });
+        }
+      )
+      .on('postgres_changes', 
+        { event: '*', schema: 'public', table: 'portfolio_stats' },
+        () => {
+          console.log('Portfolio stats changed, invalidating dashboard stats...');
+          queryClient.invalidateQueries({ queryKey: ['dashboard-stats'] });
+        }
+      )
+      .on('postgres_changes', 
+        { event: '*', schema: 'public', table: 'portfolio_testimonials' },
+        () => {
+          console.log('Portfolio testimonials changed, invalidating dashboard stats...');
+          queryClient.invalidateQueries({ queryKey: ['dashboard-stats'] });
+        }
+      )
+      .subscribe();
+
+    return () => {
+      console.log('Cleaning up portfolio changes subscription...');
+      supabase.removeChannel(channel);
+    };
+  }, [queryClient]);
 
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
@@ -335,6 +364,18 @@ const AdminDashboard = () => {
               Visão geral do sistema e atividades recentes
             </p>
           </div>
+          <Button 
+            onClick={() => {
+              console.log('Manual refresh triggered...');
+              refetchStats();
+            }}
+            variant="outline" 
+            size="sm"
+            className="border-brand-gold/30 text-brand-gold hover:bg-brand-gold/10"
+          >
+            <Activity className="w-4 h-4 mr-2" />
+            Atualizar
+          </Button>
         </div>
 
         {/* Stats Cards */}
@@ -348,7 +389,9 @@ const AdminDashboard = () => {
                   <div className="flex items-start justify-between mb-4">
                     <div className="flex-1">
                       <p className="text-sm font-medium text-gray-600 mb-1">{stat.title}</p>
-                      <p className="text-3xl font-bold text-brand-black">{stat.value}</p>
+                      <p className="text-3xl font-bold text-brand-black">
+                        {statsLoading ? '...' : stat.value}
+                      </p>
                     </div>
                     <div className={`w-12 h-12 rounded-lg bg-gradient-to-br ${stat.gradient} flex items-center justify-center shadow-lg flex-shrink-0`}>
                       <Icon className="w-6 h-6 text-white" />
@@ -414,7 +457,7 @@ const AdminDashboard = () => {
             </div>
           </CardHeader>
           <CardContent className="p-0">
-            {loading ? (
+            {activitiesLoading ? (
               <div className="p-8 text-center">
                 <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-brand-gold mx-auto"></div>
                 <p className="mt-4 text-gray-600">Carregando atividades...</p>

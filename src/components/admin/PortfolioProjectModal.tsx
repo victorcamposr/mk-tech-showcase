@@ -76,13 +76,17 @@ const PortfolioProjectModal = ({ open, onClose, editingItem }: PortfolioProjectM
       }
     },
     onSuccess: async () => {
-      console.log('Portfolio project updated, invalidating queries...');
-      // Invalidar todas as queries relacionadas ao portfólio
-      await queryClient.invalidateQueries({ queryKey: ['admin-portfolio-projects'] });
-      await queryClient.invalidateQueries({ queryKey: ['portfolio-projects'] });
+      console.log('Portfolio project updated, invalidating all related queries...');
       
-      // Invalidar também as queries do dashboard para atualizar os cards
-      await queryClient.invalidateQueries({ queryKey: ['dashboard-stats'] });
+      // Invalidar todas as queries relacionadas ao portfólio e dashboard
+      await Promise.all([
+        queryClient.invalidateQueries({ queryKey: ['admin-portfolio-projects'] }),
+        queryClient.invalidateQueries({ queryKey: ['portfolio-projects'] }),
+        queryClient.invalidateQueries({ queryKey: ['dashboard-stats'] }),
+        queryClient.refetchQueries({ queryKey: ['dashboard-stats'] })
+      ]);
+      
+      console.log('All portfolio project queries invalidated and dashboard refetched');
       
       // Log admin activity
       await logAdminActivity(
@@ -93,7 +97,7 @@ const PortfolioProjectModal = ({ open, onClose, editingItem }: PortfolioProjectM
       
       toast({
         title: editingItem ? "Projeto atualizado!" : "Projeto criado!",
-        description: "As alterações foram salvas com sucesso.",
+        description: "As alterações foram salvas e atualizadas em todo o sistema.",
       });
       onClose();
     },

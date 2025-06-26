@@ -68,13 +68,17 @@ const PortfolioTestimonialModal = ({ open, onClose, editingItem }: PortfolioTest
       }
     },
     onSuccess: async () => {
-      console.log('Portfolio testimonial updated, invalidating queries...');
-      // Invalidar todas as queries relacionadas ao portfólio
-      await queryClient.invalidateQueries({ queryKey: ['admin-portfolio-testimonials'] });
-      await queryClient.invalidateQueries({ queryKey: ['portfolio-testimonials'] });
+      console.log('Portfolio testimonial updated, invalidating all related queries...');
       
-      // Invalidar também as queries do dashboard para atualizar os cards
-      await queryClient.invalidateQueries({ queryKey: ['dashboard-stats'] });
+      // Invalidar todas as queries relacionadas ao portfólio e dashboard
+      await Promise.all([
+        queryClient.invalidateQueries({ queryKey: ['admin-portfolio-testimonials'] }),
+        queryClient.invalidateQueries({ queryKey: ['portfolio-testimonials'] }),
+        queryClient.invalidateQueries({ queryKey: ['dashboard-stats'] }),
+        queryClient.refetchQueries({ queryKey: ['dashboard-stats'] })
+      ]);
+      
+      console.log('All portfolio testimonial queries invalidated and dashboard refetched');
       
       // Log admin activity
       await logAdminActivity(
@@ -85,7 +89,7 @@ const PortfolioTestimonialModal = ({ open, onClose, editingItem }: PortfolioTest
       
       toast({
         title: editingItem ? "Depoimento atualizado!" : "Depoimento criado!",
-        description: "As alterações foram salvas com sucesso.",
+        description: "As alterações foram salvas e atualizadas em todo o sistema.",
       });
       onClose();
     },

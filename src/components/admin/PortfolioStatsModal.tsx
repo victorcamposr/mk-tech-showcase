@@ -50,13 +50,17 @@ const PortfolioStatsModal = ({ open, onClose, editingItem }: PortfolioStatsModal
       if (error) throw error;
     },
     onSuccess: async () => {
-      console.log('Portfolio stats updated, invalidating queries...');
-      // Invalidar todas as queries relacionadas ao portfólio
-      await queryClient.invalidateQueries({ queryKey: ['admin-portfolio-stats'] });
-      await queryClient.invalidateQueries({ queryKey: ['portfolio-stats'] });
+      console.log('Portfolio stats updated, invalidating all related queries...');
       
-      // Invalidar também as queries do dashboard para atualizar os cards
-      await queryClient.invalidateQueries({ queryKey: ['dashboard-stats'] });
+      // Invalidar todas as queries relacionadas ao portfólio
+      await Promise.all([
+        queryClient.invalidateQueries({ queryKey: ['admin-portfolio-stats'] }),
+        queryClient.invalidateQueries({ queryKey: ['portfolio-stats'] }),
+        queryClient.invalidateQueries({ queryKey: ['dashboard-stats'] }),
+        queryClient.refetchQueries({ queryKey: ['dashboard-stats'] })
+      ]);
+      
+      console.log('All portfolio stats queries invalidated and dashboard refetched');
       
       // Log admin activity
       await logAdminActivity(
@@ -67,7 +71,7 @@ const PortfolioStatsModal = ({ open, onClose, editingItem }: PortfolioStatsModal
       
       toast({
         title: "Estatística atualizada!",
-        description: "As alterações foram salvas com sucesso.",
+        description: "As alterações foram salvas e atualizadas em todo o sistema.",
       });
       onClose();
     },

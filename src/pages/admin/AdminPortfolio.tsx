@@ -112,13 +112,17 @@ const AdminPortfolio = () => {
       }
     },
     onSuccess: async (_, { type }) => {
-      console.log(`Portfolio ${type} deleted, invalidating queries...`);
-      // Invalidar queries específicas
-      await queryClient.invalidateQueries({ queryKey: [`admin-portfolio-${type}`] });
-      await queryClient.invalidateQueries({ queryKey: [`portfolio-${type}`] });
+      console.log(`Portfolio ${type} deleted, invalidating all related queries...`);
       
-      // Invalidar também as queries do dashboard para atualizar os cards
-      await queryClient.invalidateQueries({ queryKey: ['dashboard-stats'] });
+      // Invalidar queries específicas e dashboard
+      await Promise.all([
+        queryClient.invalidateQueries({ queryKey: [`admin-portfolio-${type}`] }),
+        queryClient.invalidateQueries({ queryKey: [`portfolio-${type}`] }),
+        queryClient.invalidateQueries({ queryKey: ['dashboard-stats'] }),
+        queryClient.refetchQueries({ queryKey: ['dashboard-stats'] })
+      ]);
+      
+      console.log('All queries invalidated and dashboard refetched after deletion');
       
       // Log admin activity
       await logAdminActivity(
@@ -129,7 +133,7 @@ const AdminPortfolio = () => {
       
       toast({
         title: "Item excluído com sucesso!",
-        description: "O item foi removido do portfólio.",
+        description: "O item foi removido do portfólio e o sistema foi atualizado.",
       });
       setDeleteDialog({ open: false, type: '', id: '', title: '' });
     },
