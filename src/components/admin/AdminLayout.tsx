@@ -15,7 +15,8 @@ import {
   Mail,
   Home,
   User,
-  Sparkles
+  Sparkles,
+  Briefcase
 } from 'lucide-react';
 
 interface AdminLayoutProps {
@@ -69,6 +70,12 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
       href: '/admin/solutions', 
       icon: Lightbulb,
       color: 'from-brand-gold to-brand-gold-dark'
+    },
+    { 
+      name: 'Portfólio', 
+      href: '/admin/portfolio', 
+      icon: Briefcase,
+      color: 'from-orange-500 to-orange-600'
     },
     { 
       name: 'Usuários', 

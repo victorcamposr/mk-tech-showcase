@@ -159,6 +159,117 @@ export type Database = {
         }
         Relationships: []
       }
+      portfolio_projects: {
+        Row: {
+          category: string
+          created_at: string
+          description: string
+          id: string
+          image_url: string | null
+          results: string[]
+          sort_order: number | null
+          status: string | null
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          category: string
+          created_at?: string
+          description: string
+          id?: string
+          image_url?: string | null
+          results?: string[]
+          sort_order?: number | null
+          status?: string | null
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          category?: string
+          created_at?: string
+          description?: string
+          id?: string
+          image_url?: string | null
+          results?: string[]
+          sort_order?: number | null
+          status?: string | null
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      portfolio_stats: {
+        Row: {
+          created_at: string
+          id: string
+          key: string
+          label: string
+          sort_order: number | null
+          status: string | null
+          suffix: string | null
+          updated_at: string
+          value: number
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          key: string
+          label: string
+          sort_order?: number | null
+          status?: string | null
+          suffix?: string | null
+          updated_at?: string
+          value: number
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          key?: string
+          label?: string
+          sort_order?: number | null
+          status?: string | null
+          suffix?: string | null
+          updated_at?: string
+          value?: number
+        }
+        Relationships: []
+      }
+      portfolio_testimonials: {
+        Row: {
+          author: string
+          company: string
+          content: string
+          created_at: string
+          id: string
+          rating: number | null
+          sort_order: number | null
+          status: string | null
+          updated_at: string
+        }
+        Insert: {
+          author: string
+          company: string
+          content: string
+          created_at?: string
+          id?: string
+          rating?: number | null
+          sort_order?: number | null
+          status?: string | null
+          updated_at?: string
+        }
+        Update: {
+          author?: string
+          company?: string
+          content?: string
+          created_at?: string
+          id?: string
+          rating?: number | null
+          sort_order?: number | null
+          status?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       solutions: {
         Row: {
           benefits: string[]
