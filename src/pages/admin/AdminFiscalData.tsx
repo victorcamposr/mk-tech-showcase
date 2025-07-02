@@ -155,185 +155,211 @@ const AdminFiscalData = () => {
   };
 
 
-  const ViewDialog = ({ data }: { data: FiscalData }) => (
-    <Dialog>
-      <DialogTrigger asChild>
-        <Button variant="ghost" size="sm" className="text-blue-600 hover:text-blue-800">
-          <Eye className="h-4 w-4" />
-        </Button>
-      </DialogTrigger>
-      <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto">
-        <DialogHeader>
-          <DialogTitle className="flex items-center gap-2">
-            <Receipt className="h-5 w-5 text-brand-gold" />
-            Detalhes do Cadastro Fiscal
-          </DialogTitle>
-          <DialogDescription>
-            Cadastrado em {formatDate(data.created_at)}
-          </DialogDescription>
-        </DialogHeader>
-        
-        <div className="space-y-6">
-          {/* Dados da Empresa */}
-          <div className="space-y-3">
-            <div className="flex items-center gap-2">
-              <Building2 className="h-5 w-5 text-brand-gold" />
-              <h3 className="text-lg font-semibold">Dados da Empresa</h3>
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pl-7">
-              <div>
-                <p className="text-sm font-medium text-gray-600">Razão Social</p>
-                <p className="text-sm">{data.razao_social}</p>
+  const ViewDialog = ({ data }: { data: FiscalData }) => {
+    const [showPassword, setShowPassword] = useState(false);
+
+    return (
+      <Dialog>
+        <DialogTrigger asChild>
+          <Button variant="ghost" size="sm" className="text-blue-600 hover:text-blue-800">
+            <Eye className="h-4 w-4" />
+          </Button>
+        </DialogTrigger>
+        <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <Receipt className="h-5 w-5 text-brand-gold" />
+              Detalhes do Cadastro Fiscal
+            </DialogTitle>
+            <DialogDescription>
+              Cadastrado em {formatDate(data.created_at)}
+            </DialogDescription>
+          </DialogHeader>
+          
+          <div className="space-y-6">
+            {/* Dados da Empresa */}
+            <div className="space-y-3">
+              <div className="flex items-center gap-2">
+                <Building2 className="h-5 w-5 text-brand-gold" />
+                <h3 className="text-lg font-semibold">Dados da Empresa</h3>
               </div>
-              {data.nome_fantasia && (
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pl-7">
                 <div>
-                  <p className="text-sm font-medium text-gray-600">Nome Fantasia</p>
-                  <p className="text-sm">{data.nome_fantasia}</p>
+                  <p className="text-sm font-medium text-gray-600">Razão Social</p>
+                  <p className="text-sm">{data.razao_social}</p>
                 </div>
-              )}
-            </div>
-          </div>
-
-          {/* Endereço */}
-          <div className="space-y-3">
-            <div className="flex items-center gap-2">
-              <MapPin className="h-5 w-5 text-brand-gold" />
-              <h3 className="text-lg font-semibold">Endereço</h3>
-            </div>
-            <div className="pl-7">
-              <p className="text-sm">
-                {data.endereco_rua}, {data.endereco_numero}
-                {data.endereco_complemento && `, ${data.endereco_complemento}`}
-              </p>
-              <p className="text-sm">{data.endereco_cidade} - {data.endereco_estado}</p>
-            </div>
-          </div>
-
-          {/* E-mails */}
-          <div className="space-y-3">
-            <div className="flex items-center gap-2">
-              <Mail className="h-5 w-5 text-brand-gold" />
-              <h3 className="text-lg font-semibold">E-mails</h3>
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pl-7">
-              <div>
-                <p className="text-sm font-medium text-gray-600">E-mail Empresarial</p>
-                <p className="text-sm">{data.email_empresarial}</p>
+                {data.nome_fantasia && (
+                  <div>
+                    <p className="text-sm font-medium text-gray-600">Nome Fantasia</p>
+                    <p className="text-sm">{data.nome_fantasia}</p>
+                  </div>
+                )}
               </div>
-              {data.email_contador && (
+            </div>
+
+            {/* Endereço */}
+            <div className="space-y-3">
+              <div className="flex items-center gap-2">
+                <MapPin className="h-5 w-5 text-brand-gold" />
+                <h3 className="text-lg font-semibold">Endereço</h3>
+              </div>
+              <div className="pl-7">
+                <p className="text-sm">
+                  {data.endereco_rua}, {data.endereco_numero}
+                  {data.endereco_complemento && `, ${data.endereco_complemento}`}
+                </p>
+                <p className="text-sm">{data.endereco_cidade} - {data.endereco_estado}</p>
+              </div>
+            </div>
+
+            {/* E-mails */}
+            <div className="space-y-3">
+              <div className="flex items-center gap-2">
+                <Mail className="h-5 w-5 text-brand-gold" />
+                <h3 className="text-lg font-semibold">E-mails</h3>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pl-7">
                 <div>
-                  <p className="text-sm font-medium text-gray-600">E-mail do Contador</p>
-                  <p className="text-sm">{data.email_contador}</p>
+                  <p className="text-sm font-medium text-gray-600">E-mail Empresarial</p>
+                  <p className="text-sm">{data.email_empresarial}</p>
                 </div>
-              )}
+                {data.email_contador && (
+                  <div>
+                    <p className="text-sm font-medium text-gray-600">E-mail do Contador</p>
+                    <p className="text-sm">{data.email_contador}</p>
+                  </div>
+                )}
+              </div>
             </div>
+
+            {/* Dados do Contador */}
+            {(data.contador_nome || data.contador_crc || data.contador_telefone) && (
+              <div className="space-y-3">
+                <div className="flex items-center gap-2">
+                  <User className="h-5 w-5 text-brand-gold" />
+                  <h3 className="text-lg font-semibold">Dados do Contador</h3>
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 pl-7">
+                  {data.contador_nome && (
+                    <div>
+                      <p className="text-sm font-medium text-gray-600">Nome</p>
+                      <p className="text-sm">{data.contador_nome}</p>
+                    </div>
+                  )}
+                  {data.contador_crc && (
+                    <div>
+                      <p className="text-sm font-medium text-gray-600">CRC</p>
+                      <p className="text-sm">{data.contador_crc}</p>
+                    </div>
+                  )}
+                  {data.contador_telefone && (
+                    <div>
+                      <p className="text-sm font-medium text-gray-600">Telefone</p>
+                      <p className="text-sm">{data.contador_telefone}</p>
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
+
+            {/* Dados Fiscais */}
+            {(data.serie || data.ultimo_cupom_emitido || data.ultima_nfe || data.senha_certificado) && (
+              <div className="space-y-3">
+                <div className="flex items-center gap-2">
+                  <FileText className="h-5 w-5 text-brand-gold" />
+                  <h3 className="text-lg font-semibold">Dados Fiscais</h3>
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pl-7">
+                  {data.serie && (
+                    <div>
+                      <p className="text-sm font-medium text-gray-600">Série</p>
+                      <p className="text-sm">{data.serie}</p>
+                    </div>
+                  )}
+                  {data.ultimo_cupom_emitido && (
+                    <div>
+                      <p className="text-sm font-medium text-gray-600">Último Cupom</p>
+                      <p className="text-sm">{data.ultimo_cupom_emitido}</p>
+                    </div>
+                  )}
+                  {data.ultima_nfe && (
+                    <div>
+                      <p className="text-sm font-medium text-gray-600">Última NFe</p>
+                      <p className="text-sm">{data.ultima_nfe}</p>
+                    </div>
+                  )}
+                  {data.senha_certificado && (
+                    <div>
+                      <p className="text-sm font-medium text-gray-600">Senha do Certificado</p>
+                      <div className="flex items-center gap-2">
+                        <p className="text-sm font-mono">
+                          {showPassword ? data.senha_certificado : '••••••••'}
+                        </p>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => setShowPassword(!showPassword)}
+                          className="h-6 w-6 p-0"
+                        >
+                          {showPassword ? (
+                            <Eye className="h-3 w-3" />
+                          ) : (
+                            <Eye className="h-3 w-3" />
+                          )}
+                        </Button>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
+
+            {/* Arquivos */}
+            {(data.arquivo_token_url || data.certificado_digital_url) && (
+              <div className="space-y-3">
+                <div className="flex items-center gap-2">
+                  <LinkIcon className="h-5 w-5 text-brand-gold" />
+                  <h3 className="text-lg font-semibold">Arquivos</h3>
+                </div>
+                <div className="space-y-2 pl-7">
+                  {data.arquivo_token_url && (
+                    <div>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        asChild
+                        className="text-blue-600 hover:text-blue-800"
+                      >
+                        <a href={data.arquivo_token_url} target="_blank" rel="noopener noreferrer">
+                          <Download className="h-4 w-4 mr-2" />
+                          Download Arquivo Token
+                        </a>
+                      </Button>
+                    </div>
+                  )}
+                  {data.certificado_digital_url && (
+                    <div>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        asChild
+                        className="text-blue-600 hover:text-blue-800"
+                      >
+                        <a href={data.certificado_digital_url} target="_blank" rel="noopener noreferrer">
+                          <Download className="h-4 w-4 mr-2" />
+                          Download Certificado Digital
+                        </a>
+                      </Button>
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
           </div>
-
-          {/* Dados do Contador */}
-          {(data.contador_nome || data.contador_crc || data.contador_telefone) && (
-            <div className="space-y-3">
-              <div className="flex items-center gap-2">
-                <User className="h-5 w-5 text-brand-gold" />
-                <h3 className="text-lg font-semibold">Dados do Contador</h3>
-              </div>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 pl-7">
-                {data.contador_nome && (
-                  <div>
-                    <p className="text-sm font-medium text-gray-600">Nome</p>
-                    <p className="text-sm">{data.contador_nome}</p>
-                  </div>
-                )}
-                {data.contador_crc && (
-                  <div>
-                    <p className="text-sm font-medium text-gray-600">CRC</p>
-                    <p className="text-sm">{data.contador_crc}</p>
-                  </div>
-                )}
-                {data.contador_telefone && (
-                  <div>
-                    <p className="text-sm font-medium text-gray-600">Telefone</p>
-                    <p className="text-sm">{data.contador_telefone}</p>
-                  </div>
-                )}
-              </div>
-            </div>
-          )}
-
-          {/* Dados Fiscais */}
-          {(data.serie || data.ultimo_cupom_emitido || data.ultima_nfe) && (
-            <div className="space-y-3">
-              <div className="flex items-center gap-2">
-                <FileText className="h-5 w-5 text-brand-gold" />
-                <h3 className="text-lg font-semibold">Dados Fiscais</h3>
-              </div>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 pl-7">
-                {data.serie && (
-                  <div>
-                    <p className="text-sm font-medium text-gray-600">Série</p>
-                    <p className="text-sm">{data.serie}</p>
-                  </div>
-                )}
-                {data.ultimo_cupom_emitido && (
-                  <div>
-                    <p className="text-sm font-medium text-gray-600">Último Cupom</p>
-                    <p className="text-sm">{data.ultimo_cupom_emitido}</p>
-                  </div>
-                )}
-                {data.ultima_nfe && (
-                  <div>
-                    <p className="text-sm font-medium text-gray-600">Última NFe</p>
-                    <p className="text-sm">{data.ultima_nfe}</p>
-                  </div>
-                )}
-              </div>
-            </div>
-          )}
-
-          {/* Arquivos */}
-          {(data.arquivo_token_url || data.certificado_digital_url) && (
-            <div className="space-y-3">
-              <div className="flex items-center gap-2">
-                <LinkIcon className="h-5 w-5 text-brand-gold" />
-                <h3 className="text-lg font-semibold">Arquivos</h3>
-              </div>
-              <div className="space-y-2 pl-7">
-                {data.arquivo_token_url && (
-                  <div>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      asChild
-                      className="text-blue-600 hover:text-blue-800"
-                    >
-                      <a href={data.arquivo_token_url} target="_blank" rel="noopener noreferrer">
-                        <Download className="h-4 w-4 mr-2" />
-                        Download Arquivo Token
-                      </a>
-                    </Button>
-                  </div>
-                )}
-                {data.certificado_digital_url && (
-                  <div>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      asChild
-                      className="text-blue-600 hover:text-blue-800"
-                    >
-                      <a href={data.certificado_digital_url} target="_blank" rel="noopener noreferrer">
-                        <Download className="h-4 w-4 mr-2" />
-                        Download Certificado Digital
-                      </a>
-                    </Button>
-                  </div>
-                )}
-              </div>
-            </div>
-          )}
-        </div>
-      </DialogContent>
-    </Dialog>
-  );
+        </DialogContent>
+      </Dialog>
+    );
+  };
 
   return (
     <AdminLayout>
