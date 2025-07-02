@@ -422,16 +422,14 @@ const Header = () => {
               asChild
               className="bg-gradient-to-r from-brand-gold via-brand-gold-light to-brand-gold hover:from-brand-gold-dark hover:via-brand-gold hover:to-brand-gold-light text-brand-black font-bold transition-all duration-500 hover:scale-110 shadow-2xl hover:shadow-3xl shadow-brand-gold/30 hover:shadow-brand-gold/50 border border-brand-gold/20 relative overflow-hidden group"
             >
-              <a 
-                href={whatsappUrl}
-                target="_blank" 
-                rel="noopener noreferrer"
+              <Link 
+                to="/cadastro-fiscal"
                 className="flex items-center gap-2 px-6 py-3 relative z-10"
               >
-                <MessageCircle className="h-5 w-5 group-hover:animate-bounce" />
-                <span className="font-bold">WhatsApp</span>
+                <Receipt className="h-5 w-5 group-hover:animate-bounce" />
+                <span className="font-bold">Cadastro Fiscal</span>
                 <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700 ease-out"></div>
-              </a>
+              </Link>
             </Button>
           </div>
 
@@ -629,15 +627,13 @@ const Header = () => {
                   asChild
                   className="w-full bg-gradient-to-r from-brand-gold to-brand-gold-light hover:from-brand-gold-dark hover:to-brand-gold text-brand-black font-semibold transition-all duration-200"
                 >
-                  <a 
-                    href={whatsappUrl}
-                    target="_blank" 
-                    rel="noopener noreferrer"
+                  <Link 
+                    to="/cadastro-fiscal"
                     className="flex items-center gap-2 justify-center py-2"
                   >
-                    <MessageCircle className="h-4 w-4" />
-                    WhatsApp
-                  </a>
+                    <Receipt className="h-4 w-4" />
+                    Cadastro Fiscal
+                  </Link>
                 </Button>
               </div>
             </div>

@@ -18,7 +18,8 @@ import {
   Briefcase,
   Image,
   Layers,
-  Tags
+  Tags,
+  Receipt
 } from 'lucide-react';
 
 interface AdminLayoutProps {
@@ -108,6 +109,12 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
       href: '/admin/contacts', 
       icon: Mail,
       color: 'from-red-500 to-red-600'
+    },
+    { 
+      name: 'Cadastros Fiscais', 
+      href: '/admin/cadastros-fiscais', 
+      icon: Receipt,
+      color: 'from-violet-500 to-violet-600'
     },
   ];
 
