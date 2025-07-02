@@ -66,14 +66,32 @@ const FiscalDataForm = () => {
         return;
       }
 
+      // Preparar os dados para inserção, garantindo que todos os campos obrigatórios estão presentes
+      const insertData = {
+        user_id: user.id,
+        razao_social: data.razao_social,
+        nome_fantasia: data.nome_fantasia || null,
+        email_empresarial: data.email_empresarial,
+        email_contador: data.email_contador || null,
+        endereco_rua: data.endereco_rua,
+        endereco_numero: data.endereco_numero,
+        endereco_complemento: data.endereco_complemento || null,
+        endereco_cidade: data.endereco_cidade,
+        endereco_estado: data.endereco_estado,
+        contador_nome: data.contador_nome || null,
+        contador_crc: data.contador_crc || null,
+        contador_telefone: data.contador_telefone || null,
+        serie: data.serie || null,
+        ultimo_cupom_emitido: data.ultimo_cupom_emitido || null,
+        ultima_nfe: data.ultima_nfe || null,
+        senha_certificado: data.senha_certificado || null,
+        arquivo_token_url: tokenFileUrl || null,
+        certificado_digital_url: certificadoUrl || null,
+      };
+
       const { error } = await supabase
         .from("fiscal_data")
-        .insert({
-          ...data,
-          user_id: user.id,
-          arquivo_token_url: tokenFileUrl,
-          certificado_digital_url: certificadoUrl,
-        });
+        .insert(insertData);
 
       if (error) throw error;
 
