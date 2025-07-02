@@ -28,7 +28,6 @@ export const logAdminActivity = async (
     }
 
     // Para admin_profiles, usar apenas o nome do usuário no entity_title
-    // A formatação da mensagem será feita no dashboard
     let finalEntityTitle = entityTitle;
     
     // Substituir "admin_profiles" por "usuário" na entidade
