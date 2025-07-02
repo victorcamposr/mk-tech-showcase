@@ -5,7 +5,9 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { Badge } from '@/components/ui/badge';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
-import { Trash2, Eye, FileText, Download, Receipt, Building2, MapPin, User, Mail, Phone, Link as LinkIcon } from 'lucide-react';
+import { Input } from '@/components/ui/input';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Trash2, Eye, FileText, Download, Receipt, Building2, MapPin, User, Mail, Phone, Link as LinkIcon, Search, Filter, ChevronLeft, ChevronRight } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import AdminLayout from '@/components/admin/AdminLayout';
@@ -37,13 +39,22 @@ interface FiscalData {
 
 const AdminFiscalData = () => {
   const [fiscalData, setFiscalData] = useState<FiscalData[]>([]);
+  const [filteredData, setFilteredData] = useState<FiscalData[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [selectedData, setSelectedData] = useState<FiscalData | null>(null);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [stateFilter, setStateFilter] = useState('all');
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10;
   const { toast } = useToast();
 
   useEffect(() => {
     fetchFiscalData();
   }, []);
+
+  useEffect(() => {
+    filterData();
+  }, [fiscalData, searchTerm, stateFilter]);
 
   const fetchFiscalData = async () => {
     try {
@@ -67,6 +78,28 @@ const AdminFiscalData = () => {
     } finally {
       setIsLoading(false);
     }
+  };
+
+  const filterData = () => {
+    let filtered = [...fiscalData];
+
+    // Filtro por busca
+    if (searchTerm) {
+      filtered = filtered.filter(data => 
+        data.razao_social.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        data.nome_fantasia?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        data.email_empresarial.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        data.endereco_cidade.toLowerCase().includes(searchTerm.toLowerCase())
+      );
+    }
+
+    // Filtro por estado
+    if (stateFilter !== 'all') {
+      filtered = filtered.filter(data => data.endereco_estado === stateFilter);
+    }
+
+    setFilteredData(filtered);
+    setCurrentPage(1); // Reset para primeira página ao filtrar
   };
 
   const handleDelete = async (id: string, razaoSocial: string) => {
@@ -107,6 +140,29 @@ const AdminFiscalData = () => {
       minute: '2-digit',
     });
   };
+
+  // Paginação
+  const totalPages = Math.ceil(filteredData.length / itemsPerPage);
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+  const currentData = filteredData.slice(startIndex, endIndex);
+
+  const goToNextPage = () => {
+    if (currentPage < totalPages) {
+      setCurrentPage(currentPage + 1);
+    }
+  };
+
+  const goToPreviousPage = () => {
+    if (currentPage > 1) {
+      setCurrentPage(currentPage - 1);
+    }
+  };
+
+  // Estados brasileiros para o filtro
+  const estados = [
+    'AC', 'AL', 'AP', 'AM', 'BA', 'CE', 'DF', 'ES', 'GO', 'MA', 'MT', 'MS', 'MG', 'PA', 'PB', 'PR', 'PE', 'PI', 'RJ', 'RN', 'RS', 'RO', 'RR', 'SC', 'SP', 'SE', 'TO'
+  ];
 
   const ViewDialog = ({ data }: { data: FiscalData }) => (
     <Dialog>
@@ -303,11 +359,62 @@ const AdminFiscalData = () => {
           </div>
         </div>
 
+        {/* Filtros e Busca */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Filter className="h-5 w-5" />
+              Filtros e Busca
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              {/* Busca */}
+              <div className="relative">
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+                <Input
+                  placeholder="Buscar por razão social, nome fantasia, email ou cidade..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="pl-10"
+                />
+              </div>
+              
+              {/* Filtro por Estado */}
+              <Select value={stateFilter} onValueChange={setStateFilter}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Filtrar por estado" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">Todos os estados</SelectItem>
+                  {estados.map((estado) => (
+                    <SelectItem key={estado} value={estado}>
+                      {estado}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+
+              {/* Botão de limpar filtros */}
+              <Button 
+                variant="outline" 
+                onClick={() => {
+                  setSearchTerm('');
+                  setStateFilter('all');
+                }}
+              >
+                Limpar Filtros
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+
         <Card>
           <CardHeader>
             <CardTitle>Lista de Cadastros</CardTitle>
             <CardDescription>
-              {fiscalData.length} cadastro{fiscalData.length !== 1 ? 's' : ''} encontrado{fiscalData.length !== 1 ? 's' : ''}
+              {filteredData.length} cadastro{filteredData.length !== 1 ? 's' : ''} encontrado{filteredData.length !== 1 ? 's' : ''} 
+              {searchTerm || stateFilter !== 'all' ? ` (de ${fiscalData.length} total)` : ''}
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -315,74 +422,113 @@ const AdminFiscalData = () => {
               <div className="flex items-center justify-center py-8">
                 <div className="text-gray-500">Carregando cadastros...</div>
               </div>
-            ) : fiscalData.length === 0 ? (
+            ) : currentData.length === 0 ? (
               <div className="flex items-center justify-center py-8">
-                <div className="text-gray-500">Nenhum cadastro fiscal encontrado</div>
+                <div className="text-gray-500">
+                  {filteredData.length === 0 && fiscalData.length > 0 
+                    ? 'Nenhum cadastro encontrado com os filtros aplicados' 
+                    : 'Nenhum cadastro fiscal encontrado'
+                  }
+                </div>
               </div>
             ) : (
-              <div className="overflow-x-auto">
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>Razão Social</TableHead>
-                      <TableHead>Cidade/Estado</TableHead>
-                      <TableHead>E-mail de Contato</TableHead>
-                      <TableHead>Data do Cadastro</TableHead>
-                      <TableHead className="text-right">Ações</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {fiscalData.map((data) => (
-                      <TableRow key={data.id}>
-                        <TableCell className="font-medium">
-                          <div>
-                            <p className="font-semibold">{data.razao_social}</p>
-                            {data.nome_fantasia && (
-                              <p className="text-sm text-gray-500">{data.nome_fantasia}</p>
-                            )}
-                          </div>
-                        </TableCell>
-                        <TableCell>
-                          {data.endereco_cidade} - {data.endereco_estado}
-                        </TableCell>
-                        <TableCell>{data.email_empresarial}</TableCell>
-                        <TableCell>{formatDate(data.created_at)}</TableCell>
-                        <TableCell className="text-right">
-                          <div className="flex items-center justify-end gap-2">
-                            <ViewDialog data={data} />
-                            
-                            <AlertDialog>
-                              <AlertDialogTrigger asChild>
-                                <Button variant="ghost" size="sm" className="text-red-600 hover:text-red-800">
-                                  <Trash2 className="h-4 w-4" />
-                                </Button>
-                              </AlertDialogTrigger>
-                              <AlertDialogContent>
-                                <AlertDialogHeader>
-                                  <AlertDialogTitle>Confirmar exclusão</AlertDialogTitle>
-                                  <AlertDialogDescription>
-                                    Tem certeza que deseja excluir o cadastro fiscal de "{data.razao_social}"? 
-                                    Esta ação não pode ser desfeita.
-                                  </AlertDialogDescription>
-                                </AlertDialogHeader>
-                                <AlertDialogFooter>
-                                  <AlertDialogCancel>Cancelar</AlertDialogCancel>
-                                  <AlertDialogAction
-                                    onClick={() => handleDelete(data.id, data.razao_social)}
-                                    className="bg-red-600 hover:bg-red-700"
-                                  >
-                                    Excluir
-                                  </AlertDialogAction>
-                                </AlertDialogFooter>
-                              </AlertDialogContent>
-                            </AlertDialog>
-                          </div>
-                        </TableCell>
+              <>
+                <div className="overflow-x-auto">
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>Razão Social</TableHead>
+                        <TableHead>Cidade/Estado</TableHead>
+                        <TableHead>E-mail de Contato</TableHead>
+                        <TableHead>Data do Cadastro</TableHead>
+                        <TableHead className="text-right">Ações</TableHead>
                       </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </div>
+                    </TableHeader>
+                    <TableBody>
+                      {currentData.map((data) => (
+                        <TableRow key={data.id}>
+                          <TableCell className="font-medium">
+                            <div>
+                              <p className="font-semibold">{data.razao_social}</p>
+                              {data.nome_fantasia && (
+                                <p className="text-sm text-gray-500">{data.nome_fantasia}</p>
+                              )}
+                            </div>
+                          </TableCell>
+                          <TableCell>
+                            {data.endereco_cidade} - {data.endereco_estado}
+                          </TableCell>
+                          <TableCell>{data.email_empresarial}</TableCell>
+                          <TableCell>{formatDate(data.created_at)}</TableCell>
+                          <TableCell className="text-right">
+                            <div className="flex items-center justify-end gap-2">
+                              <ViewDialog data={data} />
+                              
+                              <AlertDialog>
+                                <AlertDialogTrigger asChild>
+                                  <Button variant="ghost" size="sm" className="text-red-600 hover:text-red-800">
+                                    <Trash2 className="h-4 w-4" />
+                                  </Button>
+                                </AlertDialogTrigger>
+                                <AlertDialogContent>
+                                  <AlertDialogHeader>
+                                    <AlertDialogTitle>Confirmar exclusão</AlertDialogTitle>
+                                    <AlertDialogDescription>
+                                      Tem certeza que deseja excluir o cadastro fiscal de "{data.razao_social}"? 
+                                      Esta ação não pode ser desfeita.
+                                    </AlertDialogDescription>
+                                  </AlertDialogHeader>
+                                  <AlertDialogFooter>
+                                    <AlertDialogCancel>Cancelar</AlertDialogCancel>
+                                    <AlertDialogAction
+                                      onClick={() => handleDelete(data.id, data.razao_social)}
+                                      className="bg-red-600 hover:bg-red-700"
+                                    >
+                                      Excluir
+                                    </AlertDialogAction>
+                                  </AlertDialogFooter>
+                                </AlertDialogContent>
+                              </AlertDialog>
+                            </div>
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </div>
+
+                {/* Paginação */}
+                {totalPages > 1 && (
+                  <div className="flex items-center justify-between mt-6">
+                    <div className="text-sm text-gray-600">
+                      Mostrando {startIndex + 1} a {Math.min(endIndex, filteredData.length)} de {filteredData.length} registros
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={goToPreviousPage}
+                        disabled={currentPage === 1}
+                      >
+                        <ChevronLeft className="h-4 w-4 mr-1" />
+                        Anterior
+                      </Button>
+                      <span className="text-sm text-gray-600">
+                        Página {currentPage} de {totalPages}
+                      </span>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={goToNextPage}
+                        disabled={currentPage === totalPages}
+                      >
+                        Próxima
+                        <ChevronRight className="h-4 w-4 ml-1" />
+                      </Button>
+                    </div>
+                  </div>
+                )}
+              </>
             )}
           </CardContent>
         </Card>

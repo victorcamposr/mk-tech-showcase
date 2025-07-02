@@ -16,21 +16,21 @@ import Footer from '@/components/Footer';
 
 const fiscalDataSchema = z.object({
   razao_social: z.string().min(1, 'Razão social é obrigatória'),
-  nome_fantasia: z.string().optional(),
+  nome_fantasia: z.string().min(1, 'Nome fantasia é obrigatório'),
   endereco_rua: z.string().min(1, 'Rua é obrigatória'),
   endereco_numero: z.string().min(1, 'Número é obrigatório'),
-  endereco_complemento: z.string().optional(),
+  endereco_complemento: z.string().min(1, 'Complemento é obrigatório'),
   endereco_cidade: z.string().min(1, 'Cidade é obrigatória'),
   endereco_estado: z.string().min(1, 'Estado é obrigatório'),
   email_empresarial: z.string().email('Email empresarial inválido'),
-  contador_nome: z.string().optional(),
-  contador_crc: z.string().optional(),
-  contador_telefone: z.string().optional(),
-  email_contador: z.string().email('Email do contador inválido').optional().or(z.literal('')),
-  serie: z.string().optional(),
-  ultimo_cupom_emitido: z.string().optional(),
-  ultima_nfe: z.string().optional(),
-  senha_certificado: z.string().optional(),
+  contador_nome: z.string().min(1, 'Nome do contador é obrigatório'),
+  contador_crc: z.string().min(1, 'CRC do contador é obrigatório'),
+  contador_telefone: z.string().min(1, 'Telefone do contador é obrigatório'),
+  email_contador: z.string().email('Email do contador inválido'),
+  serie: z.string().min(1, 'Série é obrigatória'),
+  ultimo_cupom_emitido: z.string().min(1, 'Último cupom emitido é obrigatório'),
+  ultima_nfe: z.string().min(1, 'Última NFe é obrigatória'),
+  senha_certificado: z.string().min(1, 'Senha do certificado é obrigatória'),
 });
 
 type FiscalDataForm = z.infer<typeof fiscalDataSchema>;
@@ -150,7 +150,7 @@ const FiscalDataForm = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-brand-black via-brand-black-light to-brand-black">
+    <div className="min-h-screen bg-white">{/* Mudança: fundo branco */}
       <Header />
       
       <section className="py-20">
@@ -160,19 +160,19 @@ const FiscalDataForm = () => {
               <div className="p-3 bg-gradient-to-br from-brand-gold to-brand-gold-light rounded-xl shadow-lg">
                 <Receipt className="w-8 h-8 text-brand-black" />
               </div>
-              <h1 className="text-4xl font-bold text-white">
+              <h1 className="text-4xl font-bold text-brand-black">
                 Cadastro <span className="text-brand-gold">Fiscal</span>
               </h1>
             </div>
-            <p className="text-gray-300 text-lg max-w-2xl mx-auto">
+            <p className="text-gray-600 text-lg max-w-2xl mx-auto">{/* Mudança: texto escuro para fundo branco */}
               Complete o formulário abaixo com os dados fiscais da sua empresa. Nossa equipe entrará em contato para configurar sua solução.
             </p>
           </div>
 
-          <Card className="bg-white/10 backdrop-blur-sm border border-brand-gold/20 shadow-2xl">
+          <Card className="bg-white border border-gray-200 shadow-lg">{/* Mudança: card branco com borda cinza */}
             <CardHeader>
-              <CardTitle className="text-white text-2xl">Dados Fiscais da Empresa</CardTitle>
-              <CardDescription className="text-gray-300">
+              <CardTitle className="text-brand-black text-2xl">Dados Fiscais da Empresa</CardTitle>{/* Mudança: texto escuro */}
+              <CardDescription className="text-gray-600">{/* Mudança: texto escuro */}
                 Preencha todos os campos obrigatórios para iniciar o processo de configuração fiscal.
               </CardDescription>
             </CardHeader>
@@ -180,11 +180,11 @@ const FiscalDataForm = () => {
               <Form {...form}>
                 <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
                   {/* Token de Cupom Fiscal */}
-                  <div className="space-y-4">
-                    <div className="flex items-center gap-2 mb-4">
-                      <FileText className="w-5 h-5 text-brand-gold" />
-                      <h3 className="text-lg font-semibold text-white">Token de Emitir Cupom Fiscal</h3>
-                    </div>
+                    <div className="space-y-4">
+                      <div className="flex items-center gap-2 mb-4">
+                        <FileText className="w-5 h-5 text-brand-gold" />
+                        <h3 className="text-lg font-semibold text-brand-black">Token de Emitir Cupom Fiscal</h3>{/* Mudança: texto escuro */}
+                      </div>
                     
                     <div>
                       <label className="block text-sm font-medium text-gray-300 mb-2">

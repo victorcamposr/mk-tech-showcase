@@ -25,7 +25,8 @@ import {
   Edit,
   Trash2,
   Filter,
-  LayoutDashboard
+  LayoutDashboard,
+  Receipt
 } from 'lucide-react';
 
 interface DashboardStats {
@@ -39,6 +40,7 @@ interface DashboardStats {
   homeBanners: { total: number; active: number; inactive: number };
   serviceCategories: { total: number; active: number; inactive: number };
   serviceCards: { total: number; active: number; inactive: number };
+  fiscalData: number;
 }
 
 interface RecentActivity {
@@ -63,6 +65,7 @@ const AdminDashboard = () => {
     homeBanners: { total: 0, active: 0, inactive: 0 },
     serviceCategories: { total: 0, active: 0, inactive: 0 },
     serviceCards: { total: 0, active: 0, inactive: 0 },
+    fiscalData: 0,
   });
   const [recentActivities, setRecentActivities] = useState<RecentActivity[]>([]);
   const [filteredActivities, setFilteredActivities] = useState<RecentActivity[]>([]);
@@ -100,6 +103,7 @@ const AdminDashboard = () => {
         homeBannersResponse,
         serviceCategoriesResponse,
         serviceCardsResponse,
+        fiscalDataResponse,
       ] = await Promise.all([
         supabase.from('admin_profiles').select('id', { count: 'exact' }),
         supabase.from('blog_posts').select('status', { count: 'exact' }),
@@ -112,6 +116,7 @@ const AdminDashboard = () => {
         supabase.from('home_banners').select('status', { count: 'exact' }),
         supabase.from('service_categories').select('status', { count: 'exact' }),
         supabase.from('service_cards').select('status', { count: 'exact' }),
+        supabase.from('fiscal_data').select('id', { count: 'exact' }),
       ]);
 
       // Process blog posts stats
@@ -177,6 +182,7 @@ const AdminDashboard = () => {
           active: activeServiceCards,
           inactive: inactiveServiceCards
         },
+        fiscalData: fiscalDataResponse.count || 0,
       });
 
       setRecentActivities(activitiesResponse.data || []);
@@ -397,6 +403,25 @@ const AdminDashboard = () => {
                   <span className="font-medium">{stats.contacts.unread}</span> não lidos
                 </p>
               )}
+            </CardContent>
+          </Card>
+
+          {/* Fiscal Data Card */}
+          <Card 
+            className="shadow-lg border-0 cursor-pointer hover:shadow-xl transition-all duration-200"
+            onClick={() => navigate('/admin/cadastros-fiscais')}
+          >
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium text-gray-600">
+                Cadastros Fiscais
+              </CardTitle>
+              <Receipt className="h-4 w-4 text-violet-600" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold text-violet-600">{stats.fiscalData}</div>
+              <p className="text-xs text-gray-500 mt-1">
+                Total de cadastros
+              </p>
             </CardContent>
           </Card>
         </div>
