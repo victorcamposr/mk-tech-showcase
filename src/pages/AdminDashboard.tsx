@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Card, CardContent } from '@/components/ui/card';
@@ -22,7 +23,7 @@ const AdminDashboard = () => {
   const [fiscalDataCount, setFiscalDataCount] = useState(0);
   const [recentActivities, setRecentActivities] = useState<any[]>([]);
   const [currentPage, setCurrentPage] = useState(0);
-  const [dateFilter, setDateFilter] = useState('7');
+  const [dateFilter, setDateFilter] = useState('1');
   const [actionFilter, setActionFilter] = useState('all');
   const [totalActivities, setTotalActivities] = useState(0);
   const navigate = useNavigate();
@@ -226,14 +227,17 @@ const AdminDashboard = () => {
 
   const fetchRecentActivities = async () => {
     try {
-      const now = new Date();
-      const daysAgo = new Date(now.getTime() - (parseInt(dateFilter) * 24 * 60 * 60 * 1000));
-      
       let query = supabase
         .from('admin_activities')
         .select('*', { count: 'exact' })
-        .gte('created_at', daysAgo.toISOString())
         .order('created_at', { ascending: false });
+
+      // Apply date filter if not "all"
+      if (dateFilter !== 'all') {
+        const now = new Date();
+        const daysAgo = new Date(now.getTime() - (parseInt(dateFilter) * 24 * 60 * 60 * 1000));
+        query = query.gte('created_at', daysAgo.toISOString());
+      }
 
       if (actionFilter !== 'all') {
         query = query.eq('action_type', actionFilter);
@@ -552,6 +556,7 @@ const AdminDashboard = () => {
                     <SelectItem value="7">7 dias</SelectItem>
                     <SelectItem value="14">14 dias</SelectItem>
                     <SelectItem value="30">30 dias</SelectItem>
+                    <SelectItem value="all">Todo período</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
