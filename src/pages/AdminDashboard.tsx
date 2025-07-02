@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Card, CardContent } from '@/components/ui/card';
@@ -33,15 +34,15 @@ const AdminDashboard = () => {
 
   const fetchUsersCount = async () => {
     try {
-      const { data, error } = await supabase
-        .from('profiles')
-        .select('count(*)');
+      const { count, error } = await supabase
+        .from('admin_profiles')
+        .select('*', { count: 'exact' });
 
       if (error) {
         throw error;
       }
 
-      setUsersCount(data?.[0]?.count || 0);
+      setUsersCount(count || 0);
     } catch (error) {
       console.error('Error fetching users count:', error);
     }
@@ -49,15 +50,15 @@ const AdminDashboard = () => {
 
   const fetchBlogPostsCount = async () => {
     try {
-      const { data, error } = await supabase
+      const { count, error } = await supabase
         .from('blog_posts')
-        .select('count(*)');
+        .select('*', { count: 'exact' });
 
       if (error) {
         throw error;
       }
 
-      setBlogPostsCount(data?.[0]?.count || 0);
+      setBlogPostsCount(count || 0);
     } catch (error) {
       console.error('Error fetching blog posts count:', error);
     }
@@ -65,28 +66,28 @@ const AdminDashboard = () => {
 
   const fetchPortfolioProjectsCount = async () => {
     try {
-      const { data, error } = await supabase
+      const { count, error } = await supabase
         .from('portfolio_projects')
-        .select('count(*)')
-        .eq('is_active', true);
+        .select('*', { count: 'exact' })
+        .eq('status', 'active');
 
       if (error) {
         throw error;
       }
 
-      setPortfolioProjectsCount(data?.[0]?.count || 0);
+      setPortfolioProjectsCount(count || 0);
 
       // Contar projetos inativos
-      const { data: inactiveData, error: inactiveError } = await supabase
+      const { count: inactiveCount, error: inactiveError } = await supabase
         .from('portfolio_projects')
-        .select('count(*)')
-        .eq('is_active', false);
+        .select('*', { count: 'exact' })
+        .eq('status', 'inactive');
 
       if (inactiveError) {
         throw inactiveError;
       }
 
-      setInactivePortfolioProjects(inactiveData?.[0]?.count || 0);
+      setInactivePortfolioProjects(inactiveCount || 0);
 
     } catch (error) {
       console.error('Error fetching portfolio projects count:', error);
@@ -95,28 +96,28 @@ const AdminDashboard = () => {
 
   const fetchHomeBannersCount = async () => {
     try {
-      const { data, error } = await supabase
+      const { count, error } = await supabase
         .from('home_banners')
-        .select('count(*)')
-        .eq('is_active', true);
+        .select('*', { count: 'exact' })
+        .eq('status', 'active');
 
       if (error) {
         throw error;
       }
 
-      setHomeBannersCount(data?.[0]?.count || 0);
+      setHomeBannersCount(count || 0);
 
       // Contar banners inativos
-      const { data: inactiveData, error: inactiveError } = await supabase
+      const { count: inactiveCount, error: inactiveError } = await supabase
         .from('home_banners')
-        .select('count(*)')
-        .eq('is_active', false);
+        .select('*', { count: 'exact' })
+        .eq('status', 'inactive');
 
       if (inactiveError) {
         throw inactiveError;
       }
 
-      setInactiveHomeBanners(inactiveData?.[0]?.count || 0);
+      setInactiveHomeBanners(inactiveCount || 0);
 
     } catch (error) {
       console.error('Error fetching home banners count:', error);
@@ -125,28 +126,28 @@ const AdminDashboard = () => {
 
   const fetchServiceCardsCount = async () => {
     try {
-      const { data, error } = await supabase
+      const { count, error } = await supabase
         .from('service_cards')
-        .select('count(*)')
-        .eq('is_active', true);
+        .select('*', { count: 'exact' })
+        .eq('status', 'active');
 
       if (error) {
         throw error;
       }
 
-      setServiceCardsCount(data?.[0]?.count || 0);
+      setServiceCardsCount(count || 0);
 
       // Contar cards inativos
-      const { data: inactiveData, error: inactiveError } = await supabase
+      const { count: inactiveCount, error: inactiveError } = await supabase
         .from('service_cards')
-        .select('count(*)')
-        .eq('is_active', false);
+        .select('*', { count: 'exact' })
+        .eq('status', 'inactive');
 
       if (inactiveError) {
         throw inactiveError;
       }
 
-      setInactiveServiceCards(inactiveData?.[0]?.count || 0);
+      setInactiveServiceCards(inactiveCount || 0);
 
     } catch (error) {
       console.error('Error fetching service cards count:', error);
@@ -155,28 +156,28 @@ const AdminDashboard = () => {
 
   const fetchServiceCategoriesCount = async () => {
     try {
-      const { data, error } = await supabase
+      const { count, error } = await supabase
         .from('service_categories')
-        .select('count(*)')
-        .eq('is_active', true);
+        .select('*', { count: 'exact' })
+        .eq('status', 'active');
 
       if (error) {
         throw error;
       }
 
-      setServiceCategoriesCount(data?.[0]?.count || 0);
+      setServiceCategoriesCount(count || 0);
 
        // Contar categorias inativas
-       const { data: inactiveData, error: inactiveError } = await supabase
+       const { count: inactiveCount, error: inactiveError } = await supabase
        .from('service_categories')
-       .select('count(*)')
-       .eq('is_active', false);
+       .select('*', { count: 'exact' })
+       .eq('status', 'inactive');
 
      if (inactiveError) {
        throw inactiveError;
      }
 
-     setInactiveServiceCategories(inactiveData?.[0]?.count || 0);
+     setInactiveServiceCategories(inactiveCount || 0);
 
     } catch (error) {
       console.error('Error fetching service categories count:', error);
@@ -185,15 +186,15 @@ const AdminDashboard = () => {
 
   const fetchContactsCount = async () => {
     try {
-      const { data, error } = await supabase
+      const { count, error } = await supabase
         .from('contacts')
-        .select('count(*)');
+        .select('*', { count: 'exact' });
 
       if (error) {
         throw error;
       }
 
-      setContactsCount(data?.[0]?.count || 0);
+      setContactsCount(count || 0);
     } catch (error) {
       console.error('Error fetching contacts count:', error);
     }
@@ -201,15 +202,15 @@ const AdminDashboard = () => {
 
   const fetchFiscalDataCount = async () => {
     try {
-      const { data, error } = await supabase
+      const { count, error } = await supabase
         .from('fiscal_data')
-        .select('count(*)');
+        .select('*', { count: 'exact' });
 
       if (error) {
         throw error;
       }
 
-      setFiscalDataCount(data?.[0]?.count || 0);
+      setFiscalDataCount(count || 0);
     } catch (error) {
       console.error('Error fetching fiscal data count:', error);
     }
@@ -300,7 +301,7 @@ const AdminDashboard = () => {
         </Card>
 
         {/* Cadastros Fiscais */}
-        <Card className="bg-gray-50/50 border-gray-200 hover:shadow-lg transition-all duration-300 cursor-pointer" onClick={() => navigate('/admin/fiscal-data')}>
+        <Card className="bg-gray-50/50 border-gray-200 hover:shadow-lg transition-all duration-300 cursor-pointer" onClick={() => navigate('/admin/cadastros-fiscais')}>
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
