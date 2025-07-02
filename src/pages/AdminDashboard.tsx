@@ -315,10 +315,10 @@ const AdminDashboard = () => {
         </div>
 
         {/* Main Stats Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4">
           {/* Users Card */}
           <Card 
-            className="relative overflow-hidden cursor-pointer transition-all duration-300 hover:scale-[1.02] hover:shadow-lg group bg-gradient-to-br from-blue-50 to-blue-100 border-blue-200"
+            className="relative overflow-hidden cursor-pointer transition-all duration-300 hover:scale-[1.02] hover:shadow-lg group bg-gradient-to-br from-gray-50 to-gray-100 border-gray-200"
             onClick={() => navigate('/admin/users')}
           >
             <CardHeader className="pb-3">
@@ -327,8 +327,8 @@ const AdminDashboard = () => {
                   <Users className="h-4 w-4 text-white" />
                 </div>
                 <div className="text-right">
-                  <div className="text-2xl font-bold text-blue-700">{stats.users}</div>
-                  <p className="text-xs text-blue-600 font-medium">Usuários</p>
+                  <div className="text-2xl font-bold text-gray-700">{stats.users}</div>
+                  <p className="text-xs text-gray-600 font-medium">Usuários</p>
                 </div>
               </div>
             </CardHeader>
@@ -336,7 +336,7 @@ const AdminDashboard = () => {
 
           {/* Blog Posts Card */}
           <Card 
-            className="relative overflow-hidden cursor-pointer transition-all duration-300 hover:scale-[1.02] hover:shadow-lg group bg-gradient-to-br from-green-50 to-green-100 border-green-200"
+            className="relative overflow-hidden cursor-pointer transition-all duration-300 hover:scale-[1.02] hover:shadow-lg group bg-gradient-to-br from-gray-50 to-gray-100 border-gray-200"
             onClick={() => navigate('/admin/blog')}
           >
             <CardHeader className="pb-3">
@@ -345,8 +345,13 @@ const AdminDashboard = () => {
                   <FileText className="h-4 w-4 text-white" />
                 </div>
                 <div className="text-right">
-                  <div className="text-2xl font-bold text-green-700">{stats.blogPosts.total}</div>
-                  <p className="text-xs text-green-600 font-medium">Posts</p>
+                  <div className="text-2xl font-bold text-gray-700">{stats.blogPosts.total}</div>
+                  <p className="text-xs text-gray-600 font-medium">Posts</p>
+                  {stats.blogPosts.draft > 0 && (
+                    <div className="text-xs text-amber-600 font-medium mt-1">
+                      {stats.blogPosts.draft} rascunhos
+                    </div>
+                  )}
                 </div>
               </div>
             </CardHeader>
@@ -354,7 +359,7 @@ const AdminDashboard = () => {
 
           {/* Solutions Card */}
           <Card 
-            className="relative overflow-hidden cursor-pointer transition-all duration-300 hover:scale-[1.02] hover:shadow-lg group bg-gradient-to-br from-amber-50 to-amber-100 border-amber-200"
+            className="relative overflow-hidden cursor-pointer transition-all duration-300 hover:scale-[1.02] hover:shadow-lg group bg-gradient-to-br from-gray-50 to-gray-100 border-gray-200"
             onClick={() => navigate('/admin/solutions')}
           >
             <CardHeader className="pb-3">
@@ -363,8 +368,13 @@ const AdminDashboard = () => {
                   <Lightbulb className="h-4 w-4 text-white" />
                 </div>
                 <div className="text-right">
-                  <div className="text-2xl font-bold text-amber-700">{stats.solutions.total}</div>
-                  <p className="text-xs text-amber-600 font-medium">Soluções</p>
+                  <div className="text-2xl font-bold text-gray-700">{stats.solutions.total}</div>
+                  <p className="text-xs text-gray-600 font-medium">Soluções</p>
+                  {stats.solutions.inactive > 0 && (
+                    <div className="text-xs text-red-600 font-medium mt-1">
+                      {stats.solutions.inactive} inativas
+                    </div>
+                  )}
                 </div>
               </div>
             </CardHeader>
@@ -372,7 +382,7 @@ const AdminDashboard = () => {
 
           {/* Contacts Card */}
           <Card 
-            className="relative overflow-hidden cursor-pointer transition-all duration-300 hover:scale-[1.02] hover:shadow-lg group bg-gradient-to-br from-purple-50 to-purple-100 border-purple-200"
+            className="relative overflow-hidden cursor-pointer transition-all duration-300 hover:scale-[1.02] hover:shadow-lg group bg-gradient-to-br from-gray-50 to-gray-100 border-gray-200"
             onClick={() => navigate('/admin/contacts')}
           >
             <CardHeader className="pb-3">
@@ -381,8 +391,8 @@ const AdminDashboard = () => {
                   <MessageSquare className="h-4 w-4 text-white" />
                 </div>
                 <div className="text-right">
-                  <div className="text-2xl font-bold text-purple-700">{stats.contacts.total}</div>
-                  <p className="text-xs text-purple-600 font-medium">Contatos</p>
+                  <div className="text-2xl font-bold text-gray-700">{stats.contacts.total}</div>
+                  <p className="text-xs text-gray-600 font-medium">Contatos</p>
                   {stats.contacts.unread > 0 && (
                     <div className="text-xs text-red-600 font-medium mt-1">
                       {stats.contacts.unread} não lidos
@@ -395,7 +405,7 @@ const AdminDashboard = () => {
 
           {/* Fiscal Data Card */}
           <Card 
-            className="relative overflow-hidden cursor-pointer transition-all duration-300 hover:scale-[1.02] hover:shadow-lg group bg-gradient-to-br from-violet-50 to-violet-100 border-violet-200"
+            className="relative overflow-hidden cursor-pointer transition-all duration-300 hover:scale-[1.02] hover:shadow-lg group bg-gradient-to-br from-gray-50 to-gray-100 border-gray-200"
             onClick={() => navigate('/admin/cadastros-fiscais')}
           >
             <CardHeader className="pb-3">
@@ -404,8 +414,8 @@ const AdminDashboard = () => {
                   <Receipt className="h-4 w-4 text-white" />
                 </div>
                 <div className="text-right">
-                  <div className="text-2xl font-bold text-violet-700">{stats.fiscalData}</div>
-                  <p className="text-xs text-violet-600 font-medium">Cadastros</p>
+                  <div className="text-2xl font-bold text-gray-700">{stats.fiscalData}</div>
+                  <p className="text-xs text-gray-600 font-medium">Cadastros</p>
                 </div>
               </div>
             </CardHeader>
@@ -416,7 +426,7 @@ const AdminDashboard = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
           {/* Portfolio Projects Card */}
           <Card 
-            className="relative overflow-hidden cursor-pointer transition-all duration-300 hover:scale-[1.02] hover:shadow-lg group bg-gradient-to-br from-indigo-50 to-indigo-100 border-indigo-200"
+            className="relative overflow-hidden cursor-pointer transition-all duration-300 hover:scale-[1.02] hover:shadow-lg group bg-gradient-to-br from-gray-50 to-gray-100 border-gray-200"
             onClick={() => navigate('/admin/portfolio')}
           >
             <CardHeader className="pb-3">
@@ -425,8 +435,8 @@ const AdminDashboard = () => {
                   <Briefcase className="h-4 w-4 text-white" />
                 </div>
                 <div className="text-right">
-                  <div className="text-2xl font-bold text-indigo-700">{stats.portfolioProjects}</div>
-                  <p className="text-xs text-indigo-600 font-medium">Projetos</p>
+                  <div className="text-2xl font-bold text-gray-700">{stats.portfolioProjects}</div>
+                  <p className="text-xs text-gray-600 font-medium">Projetos</p>
                 </div>
               </div>
             </CardHeader>
@@ -434,7 +444,7 @@ const AdminDashboard = () => {
 
           {/* Home Banners Card */}
           <Card 
-            className="relative overflow-hidden cursor-pointer transition-all duration-300 hover:scale-[1.02] hover:shadow-lg group bg-gradient-to-br from-pink-50 to-pink-100 border-pink-200"
+            className="relative overflow-hidden cursor-pointer transition-all duration-300 hover:scale-[1.02] hover:shadow-lg group bg-gradient-to-br from-gray-50 to-gray-100 border-gray-200"
             onClick={() => navigate('/admin/home-banners')}
           >
             <CardHeader className="pb-3">
@@ -443,8 +453,8 @@ const AdminDashboard = () => {
                   <Image className="h-4 w-4 text-white" />
                 </div>
                 <div className="text-right">
-                  <div className="text-2xl font-bold text-pink-700">{stats.homeBanners.total}</div>
-                  <p className="text-xs text-pink-600 font-medium">Banners</p>
+                  <div className="text-2xl font-bold text-gray-700">{stats.homeBanners.total}</div>
+                  <p className="text-xs text-gray-600 font-medium">Banners</p>
                   {stats.homeBanners.inactive > 0 && (
                     <div className="text-xs text-red-600 font-medium mt-1">
                       {stats.homeBanners.inactive} inativos
@@ -457,7 +467,7 @@ const AdminDashboard = () => {
 
           {/* Service Categories Card */}
           <Card 
-            className="relative overflow-hidden cursor-pointer transition-all duration-300 hover:scale-[1.02] hover:shadow-lg group bg-gradient-to-br from-teal-50 to-teal-100 border-teal-200"
+            className="relative overflow-hidden cursor-pointer transition-all duration-300 hover:scale-[1.02] hover:shadow-lg group bg-gradient-to-br from-gray-50 to-gray-100 border-gray-200"
             onClick={() => navigate('/admin/service-categories')}
           >
             <CardHeader className="pb-3">
@@ -466,8 +476,8 @@ const AdminDashboard = () => {
                   <Tags className="h-4 w-4 text-white" />
                 </div>
                 <div className="text-right">
-                  <div className="text-2xl font-bold text-teal-700">{stats.serviceCategories.total}</div>
-                  <p className="text-xs text-teal-600 font-medium">Categorias</p>
+                  <div className="text-2xl font-bold text-gray-700">{stats.serviceCategories.total}</div>
+                  <p className="text-xs text-gray-600 font-medium">Categorias</p>
                   {stats.serviceCategories.inactive > 0 && (
                     <div className="text-xs text-red-600 font-medium mt-1">
                       {stats.serviceCategories.inactive} inativas
@@ -480,7 +490,7 @@ const AdminDashboard = () => {
 
           {/* Service Cards Card */}
           <Card 
-            className="relative overflow-hidden cursor-pointer transition-all duration-300 hover:scale-[1.02] hover:shadow-lg group bg-gradient-to-br from-orange-50 to-orange-100 border-orange-200"
+            className="relative overflow-hidden cursor-pointer transition-all duration-300 hover:scale-[1.02] hover:shadow-lg group bg-gradient-to-br from-gray-50 to-gray-100 border-gray-200"
             onClick={() => navigate('/admin/service-cards')}
           >
             <CardHeader className="pb-3">
@@ -489,8 +499,8 @@ const AdminDashboard = () => {
                   <CreditCard className="h-4 w-4 text-white" />
                 </div>
                 <div className="text-right">
-                  <div className="text-2xl font-bold text-orange-700">{stats.serviceCards.total}</div>
-                  <p className="text-xs text-orange-600 font-medium">Cards</p>
+                  <div className="text-2xl font-bold text-gray-700">{stats.serviceCards.total}</div>
+                  <p className="text-xs text-gray-600 font-medium">Cards</p>
                   {stats.serviceCards.inactive > 0 && (
                     <div className="text-xs text-red-600 font-medium mt-1">
                       {stats.serviceCards.inactive} inativos
@@ -503,7 +513,7 @@ const AdminDashboard = () => {
 
           {/* Portfolio Testimonials Card */}
           <Card 
-            className="relative overflow-hidden cursor-pointer transition-all duration-300 hover:scale-[1.02] hover:shadow-lg group bg-gradient-to-br from-yellow-50 to-yellow-100 border-yellow-200"
+            className="relative overflow-hidden cursor-pointer transition-all duration-300 hover:scale-[1.02] hover:shadow-lg group bg-gradient-to-br from-gray-50 to-gray-100 border-gray-200"
             onClick={() => navigate('/admin/portfolio')}
           >
             <CardHeader className="pb-3">
@@ -512,8 +522,8 @@ const AdminDashboard = () => {
                   <Star className="h-4 w-4 text-white" />
                 </div>
                 <div className="text-right">
-                  <div className="text-2xl font-bold text-yellow-700">{stats.portfolioTestimonials}</div>
-                  <p className="text-xs text-yellow-600 font-medium">Depoimentos</p>
+                  <div className="text-2xl font-bold text-gray-700">{stats.portfolioTestimonials}</div>
+                  <p className="text-xs text-gray-600 font-medium">Depoimentos</p>
                 </div>
               </div>
             </CardHeader>
@@ -521,7 +531,7 @@ const AdminDashboard = () => {
 
           {/* Portfolio Stats Card */}
           <Card 
-            className="relative overflow-hidden cursor-pointer transition-all duration-300 hover:scale-[1.02] hover:shadow-lg group bg-gradient-to-br from-emerald-50 to-emerald-100 border-emerald-200"
+            className="relative overflow-hidden cursor-pointer transition-all duration-300 hover:scale-[1.02] hover:shadow-lg group bg-gradient-to-br from-gray-50 to-gray-100 border-gray-200"
             onClick={() => navigate('/admin/portfolio')}
           >
             <CardHeader className="pb-3">
@@ -530,8 +540,8 @@ const AdminDashboard = () => {
                   <TrendingUp className="h-4 w-4 text-white" />
                 </div>
                 <div className="text-right">
-                  <div className="text-2xl font-bold text-emerald-700">{stats.portfolioStats}</div>
-                  <p className="text-xs text-emerald-600 font-medium">Estatísticas</p>
+                  <div className="text-2xl font-bold text-gray-700">{stats.portfolioStats}</div>
+                  <p className="text-xs text-gray-600 font-medium">Estatísticas</p>
                 </div>
               </div>
             </CardHeader>
