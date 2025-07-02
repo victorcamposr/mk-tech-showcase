@@ -26,10 +26,13 @@ import AdminPortfolio from "./pages/admin/AdminPortfolio";
 import AdminContacts from "./pages/admin/AdminContacts";
 import CreateSolution from "./pages/admin/CreateSolution";
 import EditSolution from "./pages/admin/EditSolution";
-import ProtectedRoute from "./components/admin/ProtectedRoute";
-import ScrollToTop from "./components/ScrollToTop";
-import AccessibilityHelper from "./components/AccessibilityHelper";
-import PerformanceOptimizer from "./components/PerformanceOptimizer";
+import ProtectedRoute from "@/components/admin/ProtectedRoute";
+import ScrollToTop from "@/components/ScrollToTop";
+import AccessibilityHelper from "@/components/AccessibilityHelper";
+import PerformanceOptimizer from "@/components/PerformanceOptimizer";
+import FloatingFiscalButton from "@/components/FloatingFiscalButton";
+import FiscalDataForm from "@/pages/FiscalDataForm";
+import AdminFiscalData from "@/pages/admin/AdminFiscalData";
 
 const queryClient = new QueryClient();
 
@@ -44,6 +47,7 @@ function App() {
             <ScrollToTop />
             <AccessibilityHelper />
             <PerformanceOptimizer />
+            <FloatingFiscalButton />
             <Routes>
               <Route path="/" element={<Index />} />
               <Route path="/sobre" element={<About />} />
@@ -55,6 +59,7 @@ function App() {
               <Route path="/blog/:slug" element={<BlogPost />} />
               <Route path="/solucoes" element={<Solutions />} />
               <Route path="/solucoes/:solutionKey" element={<Solutions />} />
+              <Route path="/cadastro-fiscal" element={<FiscalDataForm />} />
               <Route path="/admin" element={<AdminLogin />} />
               <Route path="/admin/dashboard" element={
                 <ProtectedRoute>
@@ -99,6 +104,11 @@ function App() {
               <Route path="/admin/contacts" element={
                 <ProtectedRoute>
                   <AdminContacts />
+                </ProtectedRoute>
+              } />
+              <Route path="/admin/fiscal-data" element={
+                <ProtectedRoute>
+                  <AdminFiscalData />
                 </ProtectedRoute>
               } />
               <Route path="/admin/solutions/create" element={
