@@ -101,11 +101,28 @@ const FiscalDataForm = () => {
         certificateFileUrl = await uploadFile(certificateFile, certPath);
       }
 
+      // Ensure all required fields are present and properly typed
       const fiscalData = {
         user_id: user.id,
-        arquivo_token_url: tokenFileUrl,
-        certificado_digital_url: certificateFileUrl,
-        ...data,
+        token_cupom_fiscal: data.token_cupom_fiscal || null,
+        arquivo_token_url: tokenFileUrl || null,
+        serie: data.serie || null,
+        ultimo_cupom_emitido: data.ultimo_cupom_emitido || null,
+        ultima_nfe: data.ultima_nfe || null,
+        certificado_digital_url: certificateFileUrl || null,
+        senha_certificado: data.senha_certificado || null,
+        razao_social: data.razao_social,
+        nome_fantasia: data.nome_fantasia || null,
+        endereco_rua: data.endereco_rua,
+        endereco_numero: data.endereco_numero,
+        endereco_complemento: data.endereco_complemento || null,
+        endereco_cidade: data.endereco_cidade,
+        endereco_estado: data.endereco_estado,
+        contador_nome: data.contador_nome || null,
+        contador_crc: data.contador_crc || null,
+        contador_telefone: data.contador_telefone || null,
+        email_empresarial: data.email_empresarial,
+        email_contador: data.email_contador || null,
       };
 
       const { error } = await supabase
