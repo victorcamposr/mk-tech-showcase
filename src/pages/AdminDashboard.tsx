@@ -10,7 +10,7 @@ import { Activity, FileText, Users, ListChecks, PackageCheck, MessageSquare } fr
 import { logAdminActivity } from "@/utils/adminActivity";
 
 const AdminDashboard = () => {
-  const { user, profile } = useAuth();
+  const { user, adminProfile } = useAuth();
   const { toast } = useToast();
 
   const { data: activities } = useQuery({
@@ -104,7 +104,7 @@ const AdminDashboard = () => {
           <div>
             <h1 className="text-3xl font-bold text-gray-900">Dashboard</h1>
             <p className="text-gray-600 mt-2">
-              Bem-vindo(a), {profile?.name || user?.email || "Administrador"}!
+              Bem-vindo(a), {adminProfile?.name || user?.email || "Administrador"}!
             </p>
           </div>
         </div>

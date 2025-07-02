@@ -15,7 +15,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { DeleteConfirmDialog } from "@/components/admin/DeleteConfirmDialog";
+import DeleteConfirmDialog from "@/components/admin/DeleteConfirmDialog";
 import { Trash2, Eye, Search, FileText } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";

@@ -68,12 +68,12 @@ const FiscalDataForm = () => {
 
       const { error } = await supabase
         .from("fiscal_data")
-        .insert([{
+        .insert({
           ...data,
           user_id: user.id,
           arquivo_token_url: tokenFileUrl,
           certificado_digital_url: certificadoUrl,
-        }]);
+        });
 
       if (error) throw error;
 
