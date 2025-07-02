@@ -1,4 +1,3 @@
-
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -14,7 +13,6 @@ import Portfolio from "./pages/Portfolio";
 import Blog from "./pages/Blog";
 import BlogPost from "./pages/BlogPost";
 import Solutions from "./pages/Solutions";
-import FiscalData from "./pages/FiscalData";
 import NotFound from "./pages/NotFound";
 import AdminLogin from "./pages/AdminLogin";
 import AdminDashboard from "./pages/AdminDashboard";
@@ -26,7 +24,6 @@ import AdminServiceCards from "./pages/admin/AdminServiceCards";
 import AdminHomeBanners from "./pages/admin/AdminHomeBanners";
 import AdminPortfolio from "./pages/admin/AdminPortfolio";
 import AdminContacts from "./pages/admin/AdminContacts";
-import AdminFiscalData from "./pages/admin/AdminFiscalData";
 import CreateSolution from "./pages/admin/CreateSolution";
 import EditSolution from "./pages/admin/EditSolution";
 import ProtectedRoute from "./components/admin/ProtectedRoute";
@@ -58,7 +55,6 @@ function App() {
               <Route path="/blog/:slug" element={<BlogPost />} />
               <Route path="/solucoes" element={<Solutions />} />
               <Route path="/solucoes/:solutionKey" element={<Solutions />} />
-              <Route path="/cadastro-fiscal" element={<FiscalData />} />
               <Route path="/admin" element={<AdminLogin />} />
               <Route path="/admin/dashboard" element={
                 <ProtectedRoute>
@@ -103,11 +99,6 @@ function App() {
               <Route path="/admin/contacts" element={
                 <ProtectedRoute>
                   <AdminContacts />
-                </ProtectedRoute>
-              } />
-              <Route path="/admin/fiscal-data" element={
-                <ProtectedRoute>
-                  <AdminFiscalData />
                 </ProtectedRoute>
               } />
               <Route path="/admin/solutions/create" element={
