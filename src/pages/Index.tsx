@@ -216,7 +216,7 @@ const Index = () => {
                 <TestimonialCarousel testimonials={testimonials} />
               </ScrollReveal>
             </div>
-          </div>
+          </section>
         )}
 
         {/* CTA Section */}
