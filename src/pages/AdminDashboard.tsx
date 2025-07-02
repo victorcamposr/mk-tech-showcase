@@ -383,6 +383,11 @@ const AdminDashboard = () => {
                 <div className="text-right">
                   <div className="text-2xl font-bold text-purple-700">{stats.contacts.total}</div>
                   <p className="text-xs text-purple-600 font-medium">Contatos</p>
+                  {stats.contacts.unread > 0 && (
+                    <div className="text-xs text-red-600 font-medium mt-1">
+                      {stats.contacts.unread} não lidos
+                    </div>
+                  )}
                 </div>
               </div>
             </CardHeader>
@@ -408,134 +413,128 @@ const AdminDashboard = () => {
         </div>
 
         {/* Secondary Stats Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
           {/* Portfolio Projects Card */}
           <Card 
-            className="shadow-lg border-0 cursor-pointer hover:shadow-xl transition-all duration-200"
+            className="relative overflow-hidden cursor-pointer transition-all duration-300 hover:scale-[1.02] hover:shadow-lg group bg-gradient-to-br from-indigo-50 to-indigo-100 border-indigo-200"
             onClick={() => navigate('/admin/portfolio')}
           >
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium text-gray-600">
-                Projetos Portfólio
-              </CardTitle>
-              <Briefcase className="h-4 w-4 text-indigo-600" />
+            <CardHeader className="pb-3">
+              <div className="flex items-center justify-between">
+                <div className="p-2 bg-indigo-600 rounded-lg">
+                  <Briefcase className="h-4 w-4 text-white" />
+                </div>
+                <div className="text-right">
+                  <div className="text-2xl font-bold text-indigo-700">{stats.portfolioProjects}</div>
+                  <p className="text-xs text-indigo-600 font-medium">Projetos</p>
+                </div>
+              </div>
             </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold text-indigo-600">{stats.portfolioProjects}</div>
-              <p className="text-xs text-gray-500 mt-1">
-                Total de projetos
-              </p>
-            </CardContent>
           </Card>
 
           {/* Home Banners Card */}
           <Card 
-            className="shadow-lg border-0 cursor-pointer hover:shadow-xl transition-all duration-200"
+            className="relative overflow-hidden cursor-pointer transition-all duration-300 hover:scale-[1.02] hover:shadow-lg group bg-gradient-to-br from-pink-50 to-pink-100 border-pink-200"
             onClick={() => navigate('/admin/home-banners')}
           >
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium text-gray-600">
-                Banners Home
-              </CardTitle>
-              <Image className="h-4 w-4 text-pink-600" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold text-pink-600">{stats.homeBanners.total}</div>
-              <div className="flex gap-4 mt-2">
-                <div className="text-xs text-gray-500">
-                  <span className="text-green-700 font-medium">{stats.homeBanners.active}</span> ativos
+            <CardHeader className="pb-3">
+              <div className="flex items-center justify-between">
+                <div className="p-2 bg-pink-600 rounded-lg">
+                  <Image className="h-4 w-4 text-white" />
                 </div>
-                {stats.homeBanners.inactive > 0 && (
-                  <div className="text-xs text-gray-500">
-                    <span className="text-red-600 font-medium">{stats.homeBanners.inactive}</span> inativos
-                  </div>
-                )}
+                <div className="text-right">
+                  <div className="text-2xl font-bold text-pink-700">{stats.homeBanners.total}</div>
+                  <p className="text-xs text-pink-600 font-medium">Banners</p>
+                  {stats.homeBanners.inactive > 0 && (
+                    <div className="text-xs text-red-600 font-medium mt-1">
+                      {stats.homeBanners.inactive} inativos
+                    </div>
+                  )}
+                </div>
               </div>
-            </CardContent>
+            </CardHeader>
           </Card>
 
           {/* Service Categories Card */}
           <Card 
-            className="shadow-lg border-0 cursor-pointer hover:shadow-xl transition-all duration-200"
+            className="relative overflow-hidden cursor-pointer transition-all duration-300 hover:scale-[1.02] hover:shadow-lg group bg-gradient-to-br from-teal-50 to-teal-100 border-teal-200"
             onClick={() => navigate('/admin/service-categories')}
           >
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium text-gray-600">
-                Categorias Serviços
-              </CardTitle>
-              <Tags className="h-4 w-4 text-teal-600" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold text-teal-600">{stats.serviceCategories.total}</div>
-              <div className="flex gap-4 mt-2">
-                <div className="text-xs text-gray-500">
-                  <span className="text-green-700 font-medium">{stats.serviceCategories.active}</span> ativas
+            <CardHeader className="pb-3">
+              <div className="flex items-center justify-between">
+                <div className="p-2 bg-teal-600 rounded-lg">
+                  <Tags className="h-4 w-4 text-white" />
                 </div>
-                {stats.serviceCategories.inactive > 0 && (
-                  <div className="text-xs text-gray-500">
-                    <span className="text-red-600 font-medium">{stats.serviceCategories.inactive}</span> inativas
-                  </div>
-                )}
+                <div className="text-right">
+                  <div className="text-2xl font-bold text-teal-700">{stats.serviceCategories.total}</div>
+                  <p className="text-xs text-teal-600 font-medium">Categorias</p>
+                  {stats.serviceCategories.inactive > 0 && (
+                    <div className="text-xs text-red-600 font-medium mt-1">
+                      {stats.serviceCategories.inactive} inativas
+                    </div>
+                  )}
+                </div>
               </div>
-            </CardContent>
+            </CardHeader>
           </Card>
 
           {/* Service Cards Card */}
           <Card 
-            className="shadow-lg border-0 cursor-pointer hover:shadow-xl transition-all duration-200"
+            className="relative overflow-hidden cursor-pointer transition-all duration-300 hover:scale-[1.02] hover:shadow-lg group bg-gradient-to-br from-orange-50 to-orange-100 border-orange-200"
             onClick={() => navigate('/admin/service-cards')}
           >
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium text-gray-600">
-                Cards Serviços
-              </CardTitle>
-              <CreditCard className="h-4 w-4 text-orange-600" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold text-orange-600">{stats.serviceCards.total}</div>
-              <div className="flex gap-4 mt-2">
-                <div className="text-xs text-gray-500">
-                  <span className="text-green-700 font-medium">{stats.serviceCards.active}</span> ativos
+            <CardHeader className="pb-3">
+              <div className="flex items-center justify-between">
+                <div className="p-2 bg-orange-600 rounded-lg">
+                  <CreditCard className="h-4 w-4 text-white" />
                 </div>
-                {stats.serviceCards.inactive > 0 && (
-                  <div className="text-xs text-gray-500">
-                    <span className="text-red-600 font-medium">{stats.serviceCards.inactive}</span> inativos
-                  </div>
-                )}
+                <div className="text-right">
+                  <div className="text-2xl font-bold text-orange-700">{stats.serviceCards.total}</div>
+                  <p className="text-xs text-orange-600 font-medium">Cards</p>
+                  {stats.serviceCards.inactive > 0 && (
+                    <div className="text-xs text-red-600 font-medium mt-1">
+                      {stats.serviceCards.inactive} inativos
+                    </div>
+                  )}
+                </div>
               </div>
-            </CardContent>
+            </CardHeader>
           </Card>
 
           {/* Portfolio Testimonials Card */}
-          <Card className="shadow-lg border-0">
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium text-gray-600">
-                Depoimentos
-              </CardTitle>
-              <Star className="h-4 w-4 text-yellow-600" />
+          <Card 
+            className="relative overflow-hidden cursor-pointer transition-all duration-300 hover:scale-[1.02] hover:shadow-lg group bg-gradient-to-br from-yellow-50 to-yellow-100 border-yellow-200"
+            onClick={() => navigate('/admin/portfolio')}
+          >
+            <CardHeader className="pb-3">
+              <div className="flex items-center justify-between">
+                <div className="p-2 bg-yellow-600 rounded-lg">
+                  <Star className="h-4 w-4 text-white" />
+                </div>
+                <div className="text-right">
+                  <div className="text-2xl font-bold text-yellow-700">{stats.portfolioTestimonials}</div>
+                  <p className="text-xs text-yellow-600 font-medium">Depoimentos</p>
+                </div>
+              </div>
             </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold text-yellow-600">{stats.portfolioTestimonials}</div>
-              <p className="text-xs text-gray-500 mt-1">
-                Total de depoimentos
-              </p>
-            </CardContent>
           </Card>
 
           {/* Portfolio Stats Card */}
-          <Card className="shadow-lg border-0">
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium text-gray-600">
-                Estatísticas
-              </CardTitle>
-              <TrendingUp className="h-4 w-4 text-emerald-600" />
+          <Card 
+            className="relative overflow-hidden cursor-pointer transition-all duration-300 hover:scale-[1.02] hover:shadow-lg group bg-gradient-to-br from-emerald-50 to-emerald-100 border-emerald-200"
+            onClick={() => navigate('/admin/portfolio')}
+          >
+            <CardHeader className="pb-3">
+              <div className="flex items-center justify-between">
+                <div className="p-2 bg-emerald-600 rounded-lg">
+                  <TrendingUp className="h-4 w-4 text-white" />
+                </div>
+                <div className="text-right">
+                  <div className="text-2xl font-bold text-emerald-700">{stats.portfolioStats}</div>
+                  <p className="text-xs text-emerald-600 font-medium">Estatísticas</p>
+                </div>
+              </div>
             </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold text-emerald-600">{stats.portfolioStats}</div>
-              <p className="text-xs text-gray-500 mt-1">
-                Métricas cadastradas
-              </p>
-            </CardContent>
           </Card>
         </div>
 
