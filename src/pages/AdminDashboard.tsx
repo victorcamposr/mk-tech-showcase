@@ -1,7 +1,9 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Card, CardContent } from '@/components/ui/card';
-import { ChevronRight, Users, FileText, Briefcase, Image, CreditCard, Tags, Receipt, Clock } from 'lucide-react';
+import { ChevronRight, Users, FileText, Briefcase, Image, CreditCard, Tags, Receipt, Clock, ChevronLeft, Filter } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import AdminLayout from '@/components/admin/AdminLayout';
 import { supabase } from '@/integrations/supabase/client';
 
@@ -19,7 +21,12 @@ const AdminDashboard = () => {
   const [contactsCount, setContactsCount] = useState(0);
   const [fiscalDataCount, setFiscalDataCount] = useState(0);
   const [recentActivities, setRecentActivities] = useState<any[]>([]);
+  const [currentPage, setCurrentPage] = useState(0);
+  const [dateFilter, setDateFilter] = useState('7');
+  const [actionFilter, setActionFilter] = useState('all');
+  const [totalActivities, setTotalActivities] = useState(0);
   const navigate = useNavigate();
+  const activitiesPerPage = 5;
 
   useEffect(() => {
     fetchUsersCount();
@@ -32,6 +39,10 @@ const AdminDashboard = () => {
     fetchFiscalDataCount();
     fetchRecentActivities();
   }, []);
+
+  useEffect(() => {
+    fetchRecentActivities();
+  }, [currentPage, dateFilter, actionFilter]);
 
   const fetchUsersCount = async () => {
     try {
@@ -78,7 +89,6 @@ const AdminDashboard = () => {
 
       setPortfolioProjectsCount(count || 0);
 
-      // Contar projetos inativos
       const { count: inactiveCount, error: inactiveError } = await supabase
         .from('portfolio_projects')
         .select('*', { count: 'exact' })
@@ -108,7 +118,6 @@ const AdminDashboard = () => {
 
       setHomeBannersCount(count || 0);
 
-      // Contar banners inativos
       const { count: inactiveCount, error: inactiveError } = await supabase
         .from('home_banners')
         .select('*', { count: 'exact' })
@@ -138,7 +147,6 @@ const AdminDashboard = () => {
 
       setServiceCardsCount(count || 0);
 
-      // Contar cards inativos
       const { count: inactiveCount, error: inactiveError } = await supabase
         .from('service_cards')
         .select('*', { count: 'exact' })
@@ -168,7 +176,6 @@ const AdminDashboard = () => {
 
       setServiceCategoriesCount(count || 0);
 
-       // Contar categorias inativas
        const { count: inactiveCount, error: inactiveError } = await supabase
        .from('service_categories')
        .select('*', { count: 'exact' })
@@ -219,11 +226,26 @@ const AdminDashboard = () => {
 
   const fetchRecentActivities = async () => {
     try {
-      const { data, error } = await supabase
+      const now = new Date();
+      const daysAgo = new Date(now.getTime() - (parseInt(dateFilter) * 24 * 60 * 60 * 1000));
+      
+      let query = supabase
         .from('admin_activities')
-        .select('*')
-        .order('created_at', { ascending: false })
-        .limit(5);
+        .select('*', { count: 'exact' })
+        .gte('created_at', daysAgo.toISOString())
+        .order('created_at', { ascending: false });
+
+      if (actionFilter !== 'all') {
+        query = query.eq('action_type', actionFilter);
+      }
+
+      // Get total count first
+      const { count } = await query;
+      setTotalActivities(count || 0);
+
+      // Then get paginated results
+      const { data, error } = await query
+        .range(currentPage * activitiesPerPage, (currentPage + 1) * activitiesPerPage - 1);
 
       if (error) {
         throw error;
@@ -261,6 +283,23 @@ const AdminDashboard = () => {
     }
   };
 
+  const getEntityDisplayName = (entityType: string) => {
+    const entityMap: { [key: string]: string } = {
+      'admin_profiles': 'Usuário',
+      'usuário': 'Usuário',
+      'blog_posts': 'Post do Blog',
+      'portfolio_projects': 'Projeto do Portfólio',
+      'home_banners': 'Banner da Home',
+      'service_cards': 'Card de Serviço',
+      'service_categories': 'Categoria de Serviço',
+      'contacts': 'Contato',
+      'fiscal_data': 'Cadastro Fiscal',
+      'solutions': 'Solução'
+    };
+    
+    return entityMap[entityType] || entityType;
+  };
+
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
     const now = new Date();
@@ -277,6 +316,30 @@ const AdminDashboard = () => {
       const days = Math.floor(diffInMinutes / 1440);
       return `${days} dia${days > 1 ? 's' : ''} atrás`;
     }
+  };
+
+  const totalPages = Math.ceil(totalActivities / activitiesPerPage);
+
+  const handlePreviousPage = () => {
+    if (currentPage > 0) {
+      setCurrentPage(currentPage - 1);
+    }
+  };
+
+  const handleNextPage = () => {
+    if (currentPage < totalPages - 1) {
+      setCurrentPage(currentPage + 1);
+    }
+  };
+
+  const handleDateFilterChange = (value: string) => {
+    setDateFilter(value);
+    setCurrentPage(0);
+  };
+
+  const handleActionFilterChange = (value: string) => {
+    setActionFilter(value);
+    setCurrentPage(0);
   };
 
   return (
@@ -467,88 +530,111 @@ const AdminDashboard = () => {
       </div>
 
       {/* Atividades Recentes */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <div className="lg:col-span-2">
-          <Card className="bg-white border-gray-200 shadow-sm">
-            <CardContent className="p-6">
-              <div className="flex items-center gap-3 mb-6">
-                <div className="p-2 bg-brand-gold/10 rounded-lg">
-                  <Clock className="h-5 w-5 text-brand-gold" />
-                </div>
-                <h2 className="text-xl font-bold text-gray-900">Atividades Recentes</h2>
+      <Card className="bg-white border-gray-200 shadow-sm">
+        <CardContent className="p-6">
+          <div className="flex items-center justify-between mb-6">
+            <div className="flex items-center gap-3">
+              <div className="p-2 bg-brand-gold/10 rounded-lg">
+                <Clock className="h-5 w-5 text-brand-gold" />
+              </div>
+              <h2 className="text-xl font-bold text-gray-900">Atividades Recentes</h2>
+            </div>
+            
+            <div className="flex items-center gap-4">
+              <div className="flex items-center gap-2">
+                <Filter className="h-4 w-4 text-gray-500" />
+                <Select value={dateFilter} onValueChange={handleDateFilterChange}>
+                  <SelectTrigger className="w-32">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="1">Hoje</SelectItem>
+                    <SelectItem value="7">7 dias</SelectItem>
+                    <SelectItem value="14">14 dias</SelectItem>
+                    <SelectItem value="30">30 dias</SelectItem>
+                  </SelectContent>
+                </Select>
               </div>
               
-              <div className="space-y-4">
-                {recentActivities.length > 0 ? (
-                  recentActivities.map((activity, index) => (
-                    <div key={activity.id} className="flex items-start gap-4 p-4 bg-gray-50/50 rounded-lg border border-gray-100">
-                      <div className={`px-3 py-1 rounded-full text-xs font-semibold ${getActionColor(activity.action_type)}`}>
-                        {getActionText(activity.action_type)}
-                      </div>
-                      
-                      <div className="flex-1 min-w-0">
-                        <p className="text-sm text-gray-900 font-medium">
-                          <span className="capitalize">{activity.entity_type}</span>
-                          {activity.entity_title && (
-                            <span className="text-brand-gold font-semibold"> "{activity.entity_title}"</span>
-                          )}
-                        </p>
-                        <div className="flex items-center gap-2 mt-1">
-                          <p className="text-xs text-gray-500">
-                            por {activity.user_name || 'Sistema'}
-                          </p>
-                          <span className="text-xs text-gray-400">•</span>
-                          <p className="text-xs text-gray-500">
-                            {formatDate(activity.created_at)}
-                          </p>
-                        </div>
-                      </div>
-                    </div>
-                  ))
-                ) : (
-                  <div className="text-center py-8 text-gray-500">
-                    <Clock className="h-12 w-12 mx-auto mb-3 text-gray-300" />
-                    <p className="text-sm">Nenhuma atividade recente encontrada</p>
+              <Select value={actionFilter} onValueChange={handleActionFilterChange}>
+                <SelectTrigger className="w-32">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">Todas</SelectItem>
+                  <SelectItem value="create">Criação</SelectItem>
+                  <SelectItem value="update">Atualização</SelectItem>
+                  <SelectItem value="delete">Exclusão</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+          
+          <div className="space-y-4">
+            {recentActivities.length > 0 ? (
+              recentActivities.map((activity, index) => (
+                <div key={activity.id} className="flex items-start gap-4 p-4 bg-gray-50/50 rounded-lg border border-gray-100">
+                  <div className={`px-3 py-1 rounded-full text-xs font-semibold ${getActionColor(activity.action_type)}`}>
+                    {getActionText(activity.action_type)}
                   </div>
-                )}
+                  
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm text-gray-900 font-medium">
+                      <span>{getEntityDisplayName(activity.entity_type)}</span>
+                      {activity.entity_title && (
+                        <span className="text-brand-gold font-semibold"> "{activity.entity_title}"</span>
+                      )}
+                    </p>
+                    <div className="flex items-center gap-2 mt-1">
+                      <p className="text-xs text-gray-500">
+                        por {activity.user_name || 'Sistema'}
+                      </p>
+                      <span className="text-xs text-gray-400">•</span>
+                      <p className="text-xs text-gray-500">
+                        {formatDate(activity.created_at)}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              ))
+            ) : (
+              <div className="text-center py-8 text-gray-500">
+                <Clock className="h-12 w-12 mx-auto mb-3 text-gray-300" />
+                <p className="text-sm">Nenhuma atividade recente encontrada</p>
               </div>
-            </CardContent>
-          </Card>
-        </div>
-
-        {/* Estatísticas Rápidas */}
-        <div className="space-y-6">
-          <Card className="bg-gradient-to-br from-brand-gold/5 to-brand-gold/10 border-brand-gold/20">
-            <CardContent className="p-6">
-              <div className="flex items-center gap-3 mb-4">
-                <div className="p-2 bg-brand-gold/20 rounded-lg">
-                  <Users className="h-5 w-5 text-brand-gold" />
-                </div>
-                <h3 className="font-bold text-gray-900">Status da Plataforma</h3>
+            )}
+          </div>
+          
+          {/* Pagination */}
+          {totalActivities > activitiesPerPage && (
+            <div className="flex items-center justify-between mt-6 pt-4 border-t border-gray-200">
+              <p className="text-sm text-gray-500">
+                Mostrando {currentPage * activitiesPerPage + 1} a {Math.min((currentPage + 1) * activitiesPerPage, totalActivities)} de {totalActivities} atividades
+              </p>
+              <div className="flex items-center gap-2">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={handlePreviousPage}
+                  disabled={currentPage === 0}
+                >
+                  <ChevronLeft className="h-4 w-4 mr-1" />
+                  Anterior
+                </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={handleNextPage}
+                  disabled={currentPage >= totalPages - 1}
+                >
+                  Próxima
+                  <ChevronRight className="h-4 w-4 ml-1" />
+                </Button>
               </div>
-              
-              <div className="space-y-3">
-                <div className="flex justify-between items-center">
-                  <span className="text-sm text-gray-600">Total de Usuários</span>
-                  <span className="font-bold text-brand-gold">{usersCount}</span>
-                </div>
-                <div className="flex justify-between items-center">
-                  <span className="text-sm text-gray-600">Posts Publicados</span>
-                  <span className="font-bold text-brand-gold">{blogPostsCount}</span>
-                </div>
-                <div className="flex justify-between items-center">
-                  <span className="text-sm text-gray-600">Projetos Ativos</span>
-                  <span className="font-bold text-brand-gold">{portfolioProjectsCount}</span>
-                </div>
-                <div className="flex justify-between items-center">
-                  <span className="text-sm text-gray-600">Contatos Recebidos</span>
-                  <span className="font-bold text-brand-gold">{contactsCount}</span>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-      </div>
+            </div>
+          )}
+        </CardContent>
+      </Card>
 
       </div>
     </AdminLayout>
