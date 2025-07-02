@@ -6,7 +6,7 @@ import HomeBannerCarousel from '@/components/HomeBannerCarousel';
 import InteractiveDashboard from '@/components/InteractiveDashboard';
 import TestimonialCarousel from '@/components/TestimonialCarousel';
 import CountUpNumber from '@/components/CountUpNumber';
-import ScrollReveal from '@/components/ScrollReveal';
+import { ScrollReveal } from '@/components/ScrollReveal';
 import FiscalDataButton from '@/components/FiscalDataButton';
 import { Button } from '@/components/ui/button';
 import { useNavigate } from 'react-router-dom';

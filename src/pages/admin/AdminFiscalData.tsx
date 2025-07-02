@@ -9,7 +9,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import { FileText, Search, Eye, Edit, Trash2, Plus } from 'lucide-react';
-import { DeleteConfirmDialog } from '@/components/admin/DeleteConfirmDialog';
+import DeleteConfirmDialog from '@/components/admin/DeleteConfirmDialog';
 import { logAdminActivity } from '@/utils/adminActivity';
 
 interface FiscalDataRecord {
