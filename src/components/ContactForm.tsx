@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { useToast } from "@/hooks/use-toast";
@@ -8,6 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import SimpleIcon from "@/components/SimpleIcon";
 import { supabase } from "@/integrations/supabase/client";
+import { useRecaptcha } from '@/hooks/useRecaptcha';
 
 interface FormData {
   name: string;
@@ -26,6 +26,7 @@ interface ContactFormProps {
 const ContactForm = ({ onSuccess }: ContactFormProps) => {
   const { toast } = useToast();
   const { register, handleSubmit, formState: { errors }, reset, setValue } = useForm<FormData>();
+  const { executeRecaptchaAction } = useRecaptcha();
 
   const onSubmit = async (data: FormData) => {
     console.log('=== INÍCIO DO ENVIO DO FORMULÁRIO ===');
@@ -53,6 +54,18 @@ const ContactForm = ({ onSuccess }: ContactFormProps) => {
     }
 
     console.log('Todos os campos obrigatórios estão preenchidos');
+
+    // Execute reCAPTCHA
+    const recaptchaToken = await executeRecaptchaAction('contact_form');
+    if (!recaptchaToken) {
+      toast({
+        title: "Erro de segurança",
+        description: "Falha na verificação de segurança. Tente novamente.",
+        variant: "destructive",
+        duration: 5000,
+      });
+      return;
+    }
 
     try {
       // Primeiro, salvar no banco de dados

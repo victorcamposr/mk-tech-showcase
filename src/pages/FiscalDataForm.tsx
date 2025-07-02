@@ -13,6 +13,7 @@ import { useToast } from '@/hooks/use-toast';
 import { Receipt, Upload, FileText, Building2, MapPin, User, Mail } from 'lucide-react';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
+import { useRecaptcha } from '@/hooks/useRecaptcha';
 
 const fiscalDataSchema = z.object({
   razao_social: z.string().min(1, 'Razão social é obrigatória'),
@@ -41,6 +42,7 @@ const FiscalDataForm = () => {
   const [certFile, setCertFile] = useState<File | null>(null);
   const navigate = useNavigate();
   const { toast } = useToast();
+  const { executeRecaptchaAction } = useRecaptcha();
 
   const form = useForm<FiscalDataForm>({
     resolver: zodResolver(fiscalDataSchema),
@@ -86,6 +88,19 @@ const FiscalDataForm = () => {
 
   const onSubmit = async (data: FiscalDataForm) => {
     setIsSubmitting(true);
+    
+    // Execute reCAPTCHA
+    const recaptchaToken = await executeRecaptchaAction('fiscal_data_form');
+    if (!recaptchaToken) {
+      toast({
+        title: 'Erro de segurança',
+        description: 'Falha na verificação de segurança. Tente novamente.',
+        variant: 'destructive',
+      });
+      setIsSubmitting(false);
+      return;
+    }
+
     try {
       let arquivo_token_url = '';
       let certificado_digital_url = '';

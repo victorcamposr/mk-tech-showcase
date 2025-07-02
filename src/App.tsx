@@ -2,7 +2,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "@/hooks/useAuth";
 import Index from "./pages/Index";
 import About from "./pages/About";
@@ -32,6 +32,7 @@ import ProtectedRoute from "./components/admin/ProtectedRoute";
 import ScrollToTop from "./components/ScrollToTop";
 import AccessibilityHelper from "./components/AccessibilityHelper";
 import PerformanceOptimizer from "./components/PerformanceOptimizer";
+import RecaptchaProvider from "@/components/RecaptchaProvider";
 
 const queryClient = new QueryClient();
 
@@ -39,13 +40,11 @@ function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
-        <TooltipProvider>
-          <Toaster />
-          <Sonner />
-          <BrowserRouter>
+        <RecaptchaProvider>
+          <Router>
             <ScrollToTop />
-            <AccessibilityHelper />
             <PerformanceOptimizer />
+            <AccessibilityHelper />
             <Routes>
               <Route path="/" element={<Index />} />
               <Route path="/sobre" element={<About />} />
@@ -121,8 +120,9 @@ function App() {
               } />
               <Route path="*" element={<NotFound />} />
             </Routes>
-          </BrowserRouter>
-        </TooltipProvider>
+            <Toaster />
+          </Router>
+        </RecaptchaProvider>
       </AuthProvider>
     </QueryClientProvider>
   );

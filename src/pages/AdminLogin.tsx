@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -12,6 +11,7 @@ import { Lock, Mail, Eye, EyeOff, AlertCircle } from 'lucide-react';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import CriticalImage from '@/components/CriticalImage';
+import { useRecaptcha } from '@/hooks/useRecaptcha';
 
 const AdminLogin = () => {
   const [email, setEmail] = useState('');
@@ -23,6 +23,7 @@ const AdminLogin = () => {
   const { signIn, user, isAdmin } = useAuth();
   const { toast } = useToast();
   const navigate = useNavigate();
+  const { executeRecaptchaAction } = useRecaptcha();
 
   useEffect(() => {
     if (user && isAdmin) {
@@ -47,6 +48,14 @@ const AdminLogin = () => {
         title: "Campos obrigatórios",
         description: "Por favor, preencha email e senha.",
       });
+      return;
+    }
+
+    // Execute reCAPTCHA
+    const recaptchaToken = await executeRecaptchaAction('admin_login');
+    if (!recaptchaToken) {
+      setError('Erro na verificação de segurança. Tente novamente.');
+      setLoading(false);
       return;
     }
 
