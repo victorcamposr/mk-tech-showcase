@@ -43,7 +43,7 @@ const AdminFiscalData = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [selectedData, setSelectedData] = useState<FiscalData | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
-  const [stateFilter, setStateFilter] = useState('all');
+  
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
   const { toast } = useToast();
@@ -54,7 +54,7 @@ const AdminFiscalData = () => {
 
   useEffect(() => {
     filterData();
-  }, [fiscalData, searchTerm, stateFilter]);
+  }, [fiscalData, searchTerm]);
 
   const fetchFiscalData = async () => {
     try {
@@ -91,11 +91,6 @@ const AdminFiscalData = () => {
         data.email_empresarial.toLowerCase().includes(searchTerm.toLowerCase()) ||
         data.endereco_cidade.toLowerCase().includes(searchTerm.toLowerCase())
       );
-    }
-
-    // Filtro por estado
-    if (stateFilter !== 'all') {
-      filtered = filtered.filter(data => data.endereco_estado === stateFilter);
     }
 
     setFilteredData(filtered);
@@ -159,10 +154,6 @@ const AdminFiscalData = () => {
     }
   };
 
-  // Estados brasileiros para o filtro
-  const estados = [
-    'AC', 'AL', 'AP', 'AM', 'BA', 'CE', 'DF', 'ES', 'GO', 'MA', 'MT', 'MS', 'MG', 'PA', 'PB', 'PR', 'PE', 'PI', 'RJ', 'RN', 'RS', 'RO', 'RR', 'SC', 'SP', 'SE', 'TO'
-  ];
 
   const ViewDialog = ({ data }: { data: FiscalData }) => (
     <Dialog>
@@ -368,7 +359,7 @@ const AdminFiscalData = () => {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {/* Busca */}
               <div className="relative">
                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
@@ -379,31 +370,13 @@ const AdminFiscalData = () => {
                   className="pl-10"
                 />
               </div>
-              
-              {/* Filtro por Estado */}
-              <Select value={stateFilter} onValueChange={setStateFilter}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Filtrar por estado" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">Todos os estados</SelectItem>
-                  {estados.map((estado) => (
-                    <SelectItem key={estado} value={estado}>
-                      {estado}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
 
               {/* Botão de limpar filtros */}
               <Button 
                 variant="outline" 
-                onClick={() => {
-                  setSearchTerm('');
-                  setStateFilter('all');
-                }}
+                onClick={() => setSearchTerm('')}
               >
-                Limpar Filtros
+                Limpar Busca
               </Button>
             </div>
           </CardContent>
@@ -414,7 +387,7 @@ const AdminFiscalData = () => {
             <CardTitle>Lista de Cadastros</CardTitle>
             <CardDescription>
               {filteredData.length} cadastro{filteredData.length !== 1 ? 's' : ''} encontrado{filteredData.length !== 1 ? 's' : ''} 
-              {searchTerm || stateFilter !== 'all' ? ` (de ${fiscalData.length} total)` : ''}
+              {searchTerm ? ` (de ${fiscalData.length} total)` : ''}
             </CardDescription>
           </CardHeader>
           <CardContent>

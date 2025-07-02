@@ -315,114 +315,95 @@ const AdminDashboard = () => {
         </div>
 
         {/* Main Stats Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
           {/* Users Card */}
           <Card 
-            className="shadow-lg border-0 cursor-pointer hover:shadow-xl transition-all duration-200"
+            className="relative overflow-hidden cursor-pointer transition-all duration-300 hover:scale-[1.02] hover:shadow-lg group bg-gradient-to-br from-blue-50 to-blue-100 border-blue-200"
             onClick={() => navigate('/admin/users')}
           >
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium text-gray-600">
-                Usuários Admins
-              </CardTitle>
-              <Users className="h-4 w-4 text-blue-600" />
+            <CardHeader className="pb-3">
+              <div className="flex items-center justify-between">
+                <div className="p-2 bg-blue-600 rounded-lg">
+                  <Users className="h-4 w-4 text-white" />
+                </div>
+                <div className="text-right">
+                  <div className="text-2xl font-bold text-blue-700">{stats.users}</div>
+                  <p className="text-xs text-blue-600 font-medium">Usuários</p>
+                </div>
+              </div>
             </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold text-blue-600">{stats.users}</div>
-              <p className="text-xs text-gray-500 mt-1">
-                Total de administradores
-              </p>
-            </CardContent>
           </Card>
 
           {/* Blog Posts Card */}
           <Card 
-            className="shadow-lg border-0 cursor-pointer hover:shadow-xl transition-all duration-200"
+            className="relative overflow-hidden cursor-pointer transition-all duration-300 hover:scale-[1.02] hover:shadow-lg group bg-gradient-to-br from-green-50 to-green-100 border-green-200"
             onClick={() => navigate('/admin/blog')}
           >
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium text-gray-600">
-                Posts do Blog
-              </CardTitle>
-              <FileText className="h-4 w-4 text-green-600" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold text-green-600">{stats.blogPosts.total}</div>
-              <div className="flex gap-4 mt-2">
-                <div className="text-xs text-gray-500">
-                  <span className="text-green-700 font-medium">{stats.blogPosts.published}</span> publicados
+            <CardHeader className="pb-3">
+              <div className="flex items-center justify-between">
+                <div className="p-2 bg-green-600 rounded-lg">
+                  <FileText className="h-4 w-4 text-white" />
                 </div>
-                <div className="text-xs text-gray-500">
-                  <span className="text-orange-600 font-medium">{stats.blogPosts.draft}</span> rascunhos
+                <div className="text-right">
+                  <div className="text-2xl font-bold text-green-700">{stats.blogPosts.total}</div>
+                  <p className="text-xs text-green-600 font-medium">Posts</p>
                 </div>
               </div>
-            </CardContent>
+            </CardHeader>
           </Card>
 
           {/* Solutions Card */}
           <Card 
-            className="shadow-lg border-0 cursor-pointer hover:shadow-xl transition-all duration-200"
+            className="relative overflow-hidden cursor-pointer transition-all duration-300 hover:scale-[1.02] hover:shadow-lg group bg-gradient-to-br from-amber-50 to-amber-100 border-amber-200"
             onClick={() => navigate('/admin/solutions')}
           >
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium text-gray-600">
-                Soluções
-              </CardTitle>
-              <Lightbulb className="h-4 w-4 text-brand-gold" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold text-brand-gold">{stats.solutions.total}</div>
-              <div className="flex gap-4 mt-2">
-                <div className="text-xs text-gray-500">
-                  <span className="text-green-700 font-medium">{stats.solutions.active}</span> ativas
+            <CardHeader className="pb-3">
+              <div className="flex items-center justify-between">
+                <div className="p-2 bg-amber-600 rounded-lg">
+                  <Lightbulb className="h-4 w-4 text-white" />
                 </div>
-                {stats.solutions.inactive > 0 && (
-                  <div className="text-xs text-gray-500">
-                    <span className="text-red-600 font-medium">{stats.solutions.inactive}</span> inativas
-                  </div>
-                )}
+                <div className="text-right">
+                  <div className="text-2xl font-bold text-amber-700">{stats.solutions.total}</div>
+                  <p className="text-xs text-amber-600 font-medium">Soluções</p>
+                </div>
               </div>
-            </CardContent>
+            </CardHeader>
           </Card>
 
           {/* Contacts Card */}
           <Card 
-            className="shadow-lg border-0 cursor-pointer hover:shadow-xl transition-all duration-200"
+            className="relative overflow-hidden cursor-pointer transition-all duration-300 hover:scale-[1.02] hover:shadow-lg group bg-gradient-to-br from-purple-50 to-purple-100 border-purple-200"
             onClick={() => navigate('/admin/contacts')}
           >
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium text-gray-600">
-                Contatos
-              </CardTitle>
-              <MessageSquare className="h-4 w-4 text-purple-600" />
+            <CardHeader className="pb-3">
+              <div className="flex items-center justify-between">
+                <div className="p-2 bg-purple-600 rounded-lg">
+                  <MessageSquare className="h-4 w-4 text-white" />
+                </div>
+                <div className="text-right">
+                  <div className="text-2xl font-bold text-purple-700">{stats.contacts.total}</div>
+                  <p className="text-xs text-purple-600 font-medium">Contatos</p>
+                </div>
+              </div>
             </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold text-purple-600">{stats.contacts.total}</div>
-              {stats.contacts.unread > 0 && (
-                <p className="text-xs text-red-600 mt-1">
-                  <span className="font-medium">{stats.contacts.unread}</span> não lidos
-                </p>
-              )}
-            </CardContent>
           </Card>
 
           {/* Fiscal Data Card */}
           <Card 
-            className="shadow-lg border-0 cursor-pointer hover:shadow-xl transition-all duration-200"
+            className="relative overflow-hidden cursor-pointer transition-all duration-300 hover:scale-[1.02] hover:shadow-lg group bg-gradient-to-br from-violet-50 to-violet-100 border-violet-200"
             onClick={() => navigate('/admin/cadastros-fiscais')}
           >
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium text-gray-600">
-                Cadastros Fiscais
-              </CardTitle>
-              <Receipt className="h-4 w-4 text-violet-600" />
+            <CardHeader className="pb-3">
+              <div className="flex items-center justify-between">
+                <div className="p-2 bg-violet-600 rounded-lg">
+                  <Receipt className="h-4 w-4 text-white" />
+                </div>
+                <div className="text-right">
+                  <div className="text-2xl font-bold text-violet-700">{stats.fiscalData}</div>
+                  <p className="text-xs text-violet-600 font-medium">Cadastros</p>
+                </div>
+              </div>
             </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold text-violet-600">{stats.fiscalData}</div>
-              <p className="text-xs text-gray-500 mt-1">
-                Total de cadastros
-              </p>
-            </CardContent>
           </Card>
         </div>
 

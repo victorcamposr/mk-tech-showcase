@@ -187,17 +187,17 @@ const FiscalDataForm = () => {
                       </div>
                     
                     <div>
-                      <label className="block text-sm font-medium text-gray-300 mb-2">
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
                         Arquivo Token (XML, TXT ou PDF)
                       </label>
                       <div className="flex items-center justify-center w-full">
                         <label className="flex flex-col items-center justify-center w-full h-32 border-2 border-brand-gold/30 border-dashed rounded-lg cursor-pointer bg-brand-gold/5 hover:bg-brand-gold/10 transition-colors duration-300">
                           <div className="flex flex-col items-center justify-center pt-5 pb-6">
                             <Upload className="w-8 h-8 mb-2 text-brand-gold" />
-                            <p className="mb-2 text-sm text-gray-300">
+                            <p className="mb-2 text-sm text-gray-700">
                               <span className="font-semibold">Clique para fazer upload</span> do arquivo token
                             </p>
-                            <p className="text-xs text-gray-400">XML, TXT ou PDF (MAX. 10MB)</p>
+                            <p className="text-xs text-gray-600">XML, TXT ou PDF (MAX. 10MB)</p>
                           </div>
                           <input
                             type="file"
@@ -218,9 +218,9 @@ const FiscalDataForm = () => {
                         name="serie"
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel className="text-gray-300">Série</FormLabel>
+                            <FormLabel className="text-gray-700">Série *</FormLabel>
                             <FormControl>
-                              <Input {...field} className="bg-white/10 border-brand-gold/30 text-white placeholder-gray-400" />
+                              <Input {...field} className="bg-white border border-gray-300 text-gray-900 placeholder-gray-500" />
                             </FormControl>
                             <FormMessage />
                           </FormItem>
@@ -231,9 +231,9 @@ const FiscalDataForm = () => {
                         name="ultimo_cupom_emitido"
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel className="text-gray-300">Último Cupom Emitido</FormLabel>
+                            <FormLabel className="text-gray-700">Último Cupom Emitido *</FormLabel>
                             <FormControl>
-                              <Input {...field} className="bg-white/10 border-brand-gold/30 text-white placeholder-gray-400" />
+                              <Input {...field} className="bg-white border border-gray-300 text-gray-900 placeholder-gray-500" />
                             </FormControl>
                             <FormMessage />
                           </FormItem>
@@ -244,9 +244,9 @@ const FiscalDataForm = () => {
                         name="ultima_nfe"
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel className="text-gray-300">Última NFe</FormLabel>
+                            <FormLabel className="text-gray-700">Última NFe *</FormLabel>
                             <FormControl>
-                              <Input {...field} className="bg-white/10 border-brand-gold/30 text-white placeholder-gray-400" />
+                              <Input {...field} className="bg-white border border-gray-300 text-gray-900 placeholder-gray-500" />
                             </FormControl>
                             <FormMessage />
                           </FormItem>
@@ -259,21 +259,21 @@ const FiscalDataForm = () => {
                   <div className="space-y-4">
                     <div className="flex items-center gap-2 mb-4">
                       <Upload className="w-5 h-5 text-brand-gold" />
-                      <h3 className="text-lg font-semibold text-white">Certificado Digital</h3>
+                      <h3 className="text-lg font-semibold text-brand-black">Certificado Digital</h3>
                     </div>
                     
                     <div>
-                      <label className="block text-sm font-medium text-gray-300 mb-2">
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
                         Arquivo do Certificado
                       </label>
                       <div className="flex items-center justify-center w-full">
                         <label className="flex flex-col items-center justify-center w-full h-32 border-2 border-brand-gold/30 border-dashed rounded-lg cursor-pointer bg-brand-gold/5 hover:bg-brand-gold/10 transition-colors duration-300">
                           <div className="flex flex-col items-center justify-center pt-5 pb-6">
                             <Upload className="w-8 h-8 mb-2 text-brand-gold" />
-                            <p className="mb-2 text-sm text-gray-300">
+                            <p className="mb-2 text-sm text-gray-700">
                               <span className="font-semibold">Clique para fazer upload</span> do certificado
                             </p>
-                            <p className="text-xs text-gray-400">Arquivo do certificado digital</p>
+                            <p className="text-xs text-gray-600">Arquivo do certificado digital</p>
                           </div>
                           <input
                             type="file"
@@ -292,12 +292,12 @@ const FiscalDataForm = () => {
                       name="senha_certificado"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel className="text-gray-300">Senha do Certificado</FormLabel>
+                          <FormLabel className="text-gray-700">Senha do Certificado *</FormLabel>
                           <FormControl>
                             <Input 
                               type="password" 
                               {...field} 
-                              className="bg-white/10 border-brand-gold/30 text-white placeholder-gray-400" 
+                              className="bg-white border border-gray-300 text-gray-900 placeholder-gray-500"
                             />
                           </FormControl>
                           <FormMessage />
@@ -310,7 +310,7 @@ const FiscalDataForm = () => {
                   <div className="space-y-4">
                     <div className="flex items-center gap-2 mb-4">
                       <Building2 className="w-5 h-5 text-brand-gold" />
-                      <h3 className="text-lg font-semibold text-white">Dados da Empresa</h3>
+                      <h3 className="text-lg font-semibold text-brand-black">Dados da Empresa</h3>
                     </div>
                     
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -319,9 +319,9 @@ const FiscalDataForm = () => {
                         name="razao_social"
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel className="text-gray-300">Razão Social *</FormLabel>
+                            <FormLabel className="text-gray-700">Razão Social *</FormLabel>
                             <FormControl>
-                              <Input {...field} className="bg-white/10 border-brand-gold/30 text-white placeholder-gray-400" />
+                              <Input {...field} className="bg-white border border-gray-300 text-gray-900 placeholder-gray-500" />
                             </FormControl>
                             <FormMessage />
                           </FormItem>
@@ -332,9 +332,9 @@ const FiscalDataForm = () => {
                         name="nome_fantasia"
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel className="text-gray-300">Nome Fantasia</FormLabel>
+                            <FormLabel className="text-gray-700">Nome Fantasia *</FormLabel>
                             <FormControl>
-                              <Input {...field} className="bg-white/10 border-brand-gold/30 text-white placeholder-gray-400" />
+                              <Input {...field} className="bg-white border border-gray-300 text-gray-900 placeholder-gray-500" />
                             </FormControl>
                             <FormMessage />
                           </FormItem>
@@ -347,7 +347,7 @@ const FiscalDataForm = () => {
                   <div className="space-y-4">
                     <div className="flex items-center gap-2 mb-4">
                       <MapPin className="w-5 h-5 text-brand-gold" />
-                      <h3 className="text-lg font-semibold text-white">Endereço</h3>
+                      <h3 className="text-lg font-semibold text-brand-black">Endereço</h3>
                     </div>
                     
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -357,9 +357,9 @@ const FiscalDataForm = () => {
                           name="endereco_rua"
                           render={({ field }) => (
                             <FormItem>
-                              <FormLabel className="text-gray-300">Rua *</FormLabel>
+                              <FormLabel className="text-gray-700">Rua *</FormLabel>
                               <FormControl>
-                                <Input {...field} className="bg-white/10 border-brand-gold/30 text-white placeholder-gray-400" />
+                                <Input {...field} className="bg-white border border-gray-300 text-gray-900 placeholder-gray-500" />
                               </FormControl>
                               <FormMessage />
                             </FormItem>
@@ -371,9 +371,9 @@ const FiscalDataForm = () => {
                         name="endereco_numero"
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel className="text-gray-300">Número *</FormLabel>
+                            <FormLabel className="text-gray-700">Número *</FormLabel>
                             <FormControl>
-                              <Input {...field} className="bg-white/10 border-brand-gold/30 text-white placeholder-gray-400" />
+                              <Input {...field} className="bg-white border border-gray-300 text-gray-900 placeholder-gray-500" />
                             </FormControl>
                             <FormMessage />
                           </FormItem>
@@ -381,15 +381,15 @@ const FiscalDataForm = () => {
                       />
                     </div>
 
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <FormField
                         control={form.control}
                         name="endereco_complemento"
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel className="text-gray-300">Complemento</FormLabel>
+                            <FormLabel className="text-gray-700">Complemento *</FormLabel>
                             <FormControl>
-                              <Input {...field} className="bg-white/10 border-brand-gold/30 text-white placeholder-gray-400" />
+                              <Input {...field} className="bg-white border border-gray-300 text-gray-900 placeholder-gray-500" />
                             </FormControl>
                             <FormMessage />
                           </FormItem>
@@ -400,46 +400,36 @@ const FiscalDataForm = () => {
                         name="endereco_cidade"
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel className="text-gray-300">Cidade *</FormLabel>
+                            <FormLabel className="text-gray-700">Cidade *</FormLabel>
                             <FormControl>
-                              <Input {...field} className="bg-white/10 border-brand-gold/30 text-white placeholder-gray-400" />
+                              <Input {...field} className="bg-white border border-gray-300 text-gray-900 placeholder-gray-500" />
                             </FormControl>
                             <FormMessage />
                           </FormItem>
                         )}
                       />
-                      <FormField
-                        control={form.control}
-                        name="endereco_estado"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel className="text-gray-300">Estado *</FormLabel>
-                            <Select onValueChange={field.onChange} defaultValue={field.value}>
-                              <FormControl>
-                                <SelectTrigger className="bg-white/10 border-brand-gold/30 text-white">
-                                  <SelectValue placeholder="Selecione o estado" />
-                                </SelectTrigger>
-                              </FormControl>
-                              <SelectContent>
-                                {estados.map((estado) => (
-                                  <SelectItem key={estado} value={estado}>
-                                    {estado}
-                                  </SelectItem>
-                                ))}
-                              </SelectContent>
-                            </Select>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
                     </div>
+
+                    <FormField
+                      control={form.control}
+                      name="endereco_estado"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel className="text-gray-700">Estado *</FormLabel>
+                          <FormControl>
+                            <Input {...field} placeholder="Digite o estado" className="bg-white border border-gray-300 text-gray-900 placeholder-gray-500" />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
                   </div>
 
                   {/* Dados do Contador */}
                   <div className="space-y-4">
                     <div className="flex items-center gap-2 mb-4">
                       <User className="w-5 h-5 text-brand-gold" />
-                      <h3 className="text-lg font-semibold text-white">Dados do Contador</h3>
+                      <h3 className="text-lg font-semibold text-brand-black">Dados do Contador</h3>
                     </div>
                     
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -448,9 +438,9 @@ const FiscalDataForm = () => {
                         name="contador_nome"
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel className="text-gray-300">Nome</FormLabel>
+                            <FormLabel className="text-gray-700">Nome *</FormLabel>
                             <FormControl>
-                              <Input {...field} className="bg-white/10 border-brand-gold/30 text-white placeholder-gray-400" />
+                              <Input {...field} className="bg-white border border-gray-300 text-gray-900 placeholder-gray-500" />
                             </FormControl>
                             <FormMessage />
                           </FormItem>
@@ -461,9 +451,9 @@ const FiscalDataForm = () => {
                         name="contador_crc"
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel className="text-gray-300">CRC</FormLabel>
+                            <FormLabel className="text-gray-700">CRC *</FormLabel>
                             <FormControl>
-                              <Input {...field} className="bg-white/10 border-brand-gold/30 text-white placeholder-gray-400" />
+                              <Input {...field} className="bg-white border border-gray-300 text-gray-900 placeholder-gray-500" />
                             </FormControl>
                             <FormMessage />
                           </FormItem>
@@ -474,9 +464,9 @@ const FiscalDataForm = () => {
                         name="contador_telefone"
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel className="text-gray-300">Telefone</FormLabel>
+                            <FormLabel className="text-gray-700">Telefone *</FormLabel>
                             <FormControl>
-                              <Input {...field} className="bg-white/10 border-brand-gold/30 text-white placeholder-gray-400" />
+                              <Input {...field} className="bg-white border border-gray-300 text-gray-900 placeholder-gray-500" />
                             </FormControl>
                             <FormMessage />
                           </FormItem>
@@ -489,7 +479,7 @@ const FiscalDataForm = () => {
                   <div className="space-y-4">
                     <div className="flex items-center gap-2 mb-4">
                       <Mail className="w-5 h-5 text-brand-gold" />
-                      <h3 className="text-lg font-semibold text-white">E-mails de Contato</h3>
+                      <h3 className="text-lg font-semibold text-brand-black">E-mails de Contato</h3>
                     </div>
                     
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -498,12 +488,12 @@ const FiscalDataForm = () => {
                         name="email_empresarial"
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel className="text-gray-300">E-mail Empresarial *</FormLabel>
+                            <FormLabel className="text-gray-700">E-mail Empresarial *</FormLabel>
                             <FormControl>
                               <Input 
                                 type="email" 
                                 {...field} 
-                                className="bg-white/10 border-brand-gold/30 text-white placeholder-gray-400" 
+                                className="bg-white border border-gray-300 text-gray-900 placeholder-gray-500" 
                               />
                             </FormControl>
                             <FormMessage />
@@ -515,12 +505,12 @@ const FiscalDataForm = () => {
                         name="email_contador"
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel className="text-gray-300">E-mail do Contador</FormLabel>
+                            <FormLabel className="text-gray-700">E-mail do Contador *</FormLabel>
                             <FormControl>
                               <Input 
                                 type="email" 
                                 {...field} 
-                                className="bg-white/10 border-brand-gold/30 text-white placeholder-gray-400" 
+                                className="bg-white border border-gray-300 text-gray-900 placeholder-gray-500" 
                               />
                             </FormControl>
                             <FormMessage />
