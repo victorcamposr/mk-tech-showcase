@@ -1,8 +1,7 @@
-
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Card, CardContent } from '@/components/ui/card';
-import { ChevronRight, Users, FileText, Briefcase, Image, CreditCard, Tags, Receipt } from 'lucide-react';
+import { ChevronRight, Users, FileText, Briefcase, Image, CreditCard, Tags, Receipt, Clock } from 'lucide-react';
 import AdminLayout from '@/components/admin/AdminLayout';
 import { supabase } from '@/integrations/supabase/client';
 
@@ -19,6 +18,7 @@ const AdminDashboard = () => {
   const [inactiveServiceCategories, setInactiveServiceCategories] = useState(0);
   const [contactsCount, setContactsCount] = useState(0);
   const [fiscalDataCount, setFiscalDataCount] = useState(0);
+  const [recentActivities, setRecentActivities] = useState<any[]>([]);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -30,6 +30,7 @@ const AdminDashboard = () => {
     fetchServiceCategoriesCount();
     fetchContactsCount();
     fetchFiscalDataCount();
+    fetchRecentActivities();
   }, []);
 
   const fetchUsersCount = async () => {
@@ -213,6 +214,68 @@ const AdminDashboard = () => {
       setFiscalDataCount(count || 0);
     } catch (error) {
       console.error('Error fetching fiscal data count:', error);
+    }
+  };
+
+  const fetchRecentActivities = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('admin_activities')
+        .select('*')
+        .order('created_at', { ascending: false })
+        .limit(5);
+
+      if (error) {
+        throw error;
+      }
+
+      setRecentActivities(data || []);
+    } catch (error) {
+      console.error('Error fetching recent activities:', error);
+    }
+  };
+
+  const getActionColor = (actionType: string) => {
+    switch (actionType) {
+      case 'create':
+        return 'text-green-600 bg-green-100';
+      case 'update':
+        return 'text-blue-600 bg-blue-100';
+      case 'delete':
+        return 'text-red-600 bg-red-100';
+      default:
+        return 'text-gray-600 bg-gray-100';
+    }
+  };
+
+  const getActionText = (actionType: string) => {
+    switch (actionType) {
+      case 'create':
+        return 'Criado';
+      case 'update':
+        return 'Atualizado';
+      case 'delete':
+        return 'Excluído';
+      default:
+        return actionType;
+    }
+  };
+
+  const formatDate = (dateString: string) => {
+    const date = new Date(dateString);
+    const now = new Date();
+    const diffInMinutes = Math.floor((now.getTime() - date.getTime()) / (1000 * 60));
+    
+    if (diffInMinutes < 1) {
+      return 'Agora mesmo';
+    } else if (diffInMinutes < 60) {
+      return `${diffInMinutes} minuto${diffInMinutes > 1 ? 's' : ''} atrás`;
+    } else if (diffInMinutes < 1440) {
+      const hours = Math.floor(diffInMinutes / 60);
+      return `${hours} hora${hours > 1 ? 's' : ''} atrás`;
+    } else {
+      const days = Math.floor(diffInMinutes / 1440);
+      return `${days} dia${days > 1 ? 's' : ''} atrás`;
     }
   };
 
@@ -401,6 +464,90 @@ const AdminDashboard = () => {
             </div>
           </CardContent>
         </Card>
+      </div>
+
+      {/* Atividades Recentes */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div className="lg:col-span-2">
+          <Card className="bg-white border-gray-200 shadow-sm">
+            <CardContent className="p-6">
+              <div className="flex items-center gap-3 mb-6">
+                <div className="p-2 bg-brand-gold/10 rounded-lg">
+                  <Clock className="h-5 w-5 text-brand-gold" />
+                </div>
+                <h2 className="text-xl font-bold text-gray-900">Atividades Recentes</h2>
+              </div>
+              
+              <div className="space-y-4">
+                {recentActivities.length > 0 ? (
+                  recentActivities.map((activity, index) => (
+                    <div key={activity.id} className="flex items-start gap-4 p-4 bg-gray-50/50 rounded-lg border border-gray-100">
+                      <div className={`px-3 py-1 rounded-full text-xs font-semibold ${getActionColor(activity.action_type)}`}>
+                        {getActionText(activity.action_type)}
+                      </div>
+                      
+                      <div className="flex-1 min-w-0">
+                        <p className="text-sm text-gray-900 font-medium">
+                          <span className="capitalize">{activity.entity_type}</span>
+                          {activity.entity_title && (
+                            <span className="text-brand-gold font-semibold"> "{activity.entity_title}"</span>
+                          )}
+                        </p>
+                        <div className="flex items-center gap-2 mt-1">
+                          <p className="text-xs text-gray-500">
+                            por {activity.user_name || 'Sistema'}
+                          </p>
+                          <span className="text-xs text-gray-400">•</span>
+                          <p className="text-xs text-gray-500">
+                            {formatDate(activity.created_at)}
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  ))
+                ) : (
+                  <div className="text-center py-8 text-gray-500">
+                    <Clock className="h-12 w-12 mx-auto mb-3 text-gray-300" />
+                    <p className="text-sm">Nenhuma atividade recente encontrada</p>
+                  </div>
+                )}
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* Estatísticas Rápidas */}
+        <div className="space-y-6">
+          <Card className="bg-gradient-to-br from-brand-gold/5 to-brand-gold/10 border-brand-gold/20">
+            <CardContent className="p-6">
+              <div className="flex items-center gap-3 mb-4">
+                <div className="p-2 bg-brand-gold/20 rounded-lg">
+                  <Users className="h-5 w-5 text-brand-gold" />
+                </div>
+                <h3 className="font-bold text-gray-900">Status da Plataforma</h3>
+              </div>
+              
+              <div className="space-y-3">
+                <div className="flex justify-between items-center">
+                  <span className="text-sm text-gray-600">Total de Usuários</span>
+                  <span className="font-bold text-brand-gold">{usersCount}</span>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span className="text-sm text-gray-600">Posts Publicados</span>
+                  <span className="font-bold text-brand-gold">{blogPostsCount}</span>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span className="text-sm text-gray-600">Projetos Ativos</span>
+                  <span className="font-bold text-brand-gold">{portfolioProjectsCount}</span>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span className="text-sm text-gray-600">Contatos Recebidos</span>
+                  <span className="font-bold text-brand-gold">{contactsCount}</span>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
       </div>
 
       </div>
