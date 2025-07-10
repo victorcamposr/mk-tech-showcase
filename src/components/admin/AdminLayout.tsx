@@ -116,6 +116,12 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
       icon: Receipt,
       color: 'from-violet-500 to-violet-600'
     },
+    { 
+      name: 'Clientes', 
+      href: '/admin/customers', 
+      icon: Building2,
+      color: 'from-emerald-500 to-emerald-600'
+    },
   ];
 
   const isActive = (href: string) => location.pathname === href;

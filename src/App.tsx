@@ -26,6 +26,7 @@ import AdminHomeBanners from "./pages/admin/AdminHomeBanners";
 import AdminPortfolio from "./pages/admin/AdminPortfolio";
 import AdminContacts from "./pages/admin/AdminContacts";
 import AdminFiscalData from "./pages/admin/AdminFiscalData";
+import AdminCustomers from "./pages/admin/AdminCustomers";
 import CreateSolution from "./pages/admin/CreateSolution";
 import EditSolution from "./pages/admin/EditSolution";
 import ProtectedRoute from "./components/admin/ProtectedRoute";
@@ -106,6 +107,11 @@ function App() {
               <Route path="/admin/cadastros-fiscais" element={
                 <ProtectedRoute>
                   <AdminFiscalData />
+                </ProtectedRoute>
+              } />
+              <Route path="/admin/customers" element={
+                <ProtectedRoute>
+                  <AdminCustomers />
                 </ProtectedRoute>
               } />
               <Route path="/admin/solutions/create" element={

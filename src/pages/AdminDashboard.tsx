@@ -2,7 +2,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Card, CardContent } from '@/components/ui/card';
-import { ChevronRight, Users, FileText, Briefcase, Image, CreditCard, Tags, Receipt, Clock, ChevronLeft, Filter } from 'lucide-react';
+import { ChevronRight, Users, FileText, Briefcase, Image, CreditCard, Tags, Receipt, Clock, ChevronLeft, Filter, Building2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import AdminLayout from '@/components/admin/AdminLayout';
@@ -21,6 +21,7 @@ const AdminDashboard = () => {
   const [inactiveServiceCategories, setInactiveServiceCategories] = useState(0);
   const [contactsCount, setContactsCount] = useState(0);
   const [fiscalDataCount, setFiscalDataCount] = useState(0);
+  const [customersCount, setCustomersCount] = useState(0);
   const [recentActivities, setRecentActivities] = useState<any[]>([]);
   const [currentPage, setCurrentPage] = useState(0);
   const [dateFilter, setDateFilter] = useState('1');
@@ -38,6 +39,7 @@ const AdminDashboard = () => {
     fetchServiceCategoriesCount();
     fetchContactsCount();
     fetchFiscalDataCount();
+    fetchCustomersCount();
     fetchRecentActivities();
   }, []);
 
@@ -225,6 +227,22 @@ const AdminDashboard = () => {
     }
   };
 
+  const fetchCustomersCount = async () => {
+    try {
+      const { count, error } = await supabase
+        .from('customers')
+        .select('*', { count: 'exact' });
+
+      if (error) {
+        throw error;
+      }
+
+      setCustomersCount(count || 0);
+    } catch (error) {
+      console.error('Error fetching customers count:', error);
+    }
+  };
+
   const fetchRecentActivities = async () => {
     try {
       let query = supabase
@@ -298,7 +316,8 @@ const AdminDashboard = () => {
       'service_categories': 'Categoria de Serviço',
       'contacts': 'Contato',
       'fiscal_data': 'Cadastro Fiscal',
-      'solutions': 'Solução'
+      'solutions': 'Solução',
+      'customers': 'Cliente'
     };
     
     return entityMap[entityType] || entityType;
@@ -441,6 +460,24 @@ const AdminDashboard = () => {
                 <div>
                   <p className="text-sm font-medium text-gray-600">Cadastros Fiscais</p>
                   <p className="text-2xl font-bold text-gray-900">{fiscalDataCount}</p>
+                </div>
+              </div>
+              <ChevronRight className="h-4 w-4 text-gray-400" />
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Clientes */}
+        <Card className="bg-gray-50/50 border-gray-200 hover:shadow-lg transition-all duration-300 cursor-pointer" onClick={() => navigate('/admin/customers')}>
+          <CardContent className="p-6">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <div className="p-2 bg-white rounded-lg">
+                  <Building2 className="h-6 w-6 text-emerald-600" />
+                </div>
+                <div>
+                  <p className="text-sm font-medium text-gray-600">Clientes</p>
+                  <p className="text-2xl font-bold text-gray-900">{customersCount}</p>
                 </div>
               </div>
               <ChevronRight className="h-4 w-4 text-gray-400" />
