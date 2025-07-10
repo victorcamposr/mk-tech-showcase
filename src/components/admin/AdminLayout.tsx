@@ -19,8 +19,7 @@ import {
   Image,
   Layers,
   Tags,
-  Receipt,
-  Building2
+  Receipt
 } from 'lucide-react';
 
 interface AdminLayoutProps {
