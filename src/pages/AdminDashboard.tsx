@@ -367,218 +367,231 @@ const AdminDashboard = () => {
 
   return (
     <AdminLayout>
-      <div className="space-y-6">
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-3xl font-bold text-gray-900">Dashboard</h1>
-            <p className="text-gray-600">Visão geral da sua plataforma</p>
+      <div className="space-y-8">
+        {/* Header com design futurista */}
+        <div className="relative">
+          <div className="glass-card p-8 rounded-3xl border border-brand-gold/30 neon-glow">
+            <div className="flex items-center justify-between">
+              <div>
+                <h1 className="text-5xl font-bold text-transparent bg-gradient-to-r from-white via-brand-gold to-brand-gold-light bg-clip-text mb-2">
+                  Dashboard
+                </h1>
+                <p className="text-gray-300 text-lg font-medium">Visão geral da sua plataforma administrativa</p>
+                <div className="flex items-center gap-2 mt-3">
+                  <div className="w-2 h-2 bg-brand-gold rounded-full animate-pulse"></div>
+                  <span className="text-brand-gold text-sm font-semibold uppercase tracking-wider">Sistema Ativo</span>
+                </div>
+              </div>
+              <div className="hidden lg:flex items-center gap-4">
+                <div className="w-20 h-20 rounded-full bg-gradient-to-br from-brand-gold/20 to-brand-gold/40 flex items-center justify-center backdrop-blur-sm">
+                  <div className="w-12 h-12 rounded-full bg-gradient-to-br from-brand-gold to-brand-gold-dark animate-pulse"></div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
 
-      {/* Cards de Resumo */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-6 mb-8">
+      {/* Cards de Estatísticas com Design Futurista */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mb-8">
         {/* Usuários */}
-        <Card className="bg-gray-50/50 border-gray-200 hover:shadow-lg transition-all duration-300 cursor-pointer" onClick={() => navigate('/admin/users')}>
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <div className="p-2 bg-white rounded-lg">
-                  <Users className="h-6 w-6 text-blue-600" />
+        <Card className="glass-card modern-card interactive-hover border border-blue-500/30 cursor-pointer group overflow-hidden" onClick={() => navigate('/admin/users')}>
+          <CardContent className="p-6 relative">
+            {/* Background gradient overlay */}
+            <div className="absolute inset-0 bg-gradient-to-br from-blue-500/10 via-transparent to-blue-600/20 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+            
+            <div className="relative z-10">
+              <div className="flex items-center justify-between mb-4">
+                <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center neon-glow shadow-2xl transform group-hover:scale-110 transition-all duration-300">
+                  <Users className="h-7 w-7 text-white filter drop-shadow-lg" />
                 </div>
-                <div>
-                  <p className="text-sm font-medium text-gray-600">Usuários</p>
-                  <p className="text-2xl font-bold text-gray-900">{usersCount}</p>
+                <ChevronRight className="h-5 w-5 text-white/60 group-hover:text-white transition-colors duration-300" />
+              </div>
+              
+              <div className="space-y-2">
+                <p className="text-sm font-semibold text-white/80 uppercase tracking-wider">Usuários</p>
+                <div className="flex items-center gap-3">
+                  <p className="text-3xl font-bold text-white">{usersCount}</p>
+                  <div className="w-8 h-8 rounded-full bg-blue-500/20 flex items-center justify-center">
+                    <div className="w-4 h-4 rounded-full bg-blue-400 animate-pulse"></div>
+                  </div>
                 </div>
               </div>
-              <ChevronRight className="h-4 w-4 text-gray-400" />
             </div>
           </CardContent>
         </Card>
 
         {/* Blog Posts */}
-        <Card className="bg-gray-50/50 border-gray-200 hover:shadow-lg transition-all duration-300 cursor-pointer" onClick={() => navigate('/admin/blog')}>
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <div className="p-2 bg-white rounded-lg">
-                  <FileText className="h-6 w-6 text-orange-600" />
+        <Card className="glass-card modern-card interactive-hover border border-orange-500/30 cursor-pointer group overflow-hidden" onClick={() => navigate('/admin/blog')}>
+          <CardContent className="p-6 relative">
+            <div className="absolute inset-0 bg-gradient-to-br from-orange-500/10 via-transparent to-orange-600/20 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+            
+            <div className="relative z-10">
+              <div className="flex items-center justify-between mb-4">
+                <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-orange-500 to-orange-600 flex items-center justify-center neon-glow shadow-2xl transform group-hover:scale-110 transition-all duration-300">
+                  <FileText className="h-7 w-7 text-white filter drop-shadow-lg" />
                 </div>
-                <div>
-                  <p className="text-sm font-medium text-gray-600">Blog Posts</p>
-                  <p className="text-2xl font-bold text-gray-900">{blogPostsCount}</p>
+                <ChevronRight className="h-5 w-5 text-white/60 group-hover:text-white transition-colors duration-300" />
+              </div>
+              
+              <div className="space-y-2">
+                <p className="text-sm font-semibold text-white/80 uppercase tracking-wider">Blog Posts</p>
+                <div className="flex items-center gap-3">
+                  <p className="text-3xl font-bold text-white">{blogPostsCount}</p>
+                  <div className="w-8 h-8 rounded-full bg-orange-500/20 flex items-center justify-center">
+                    <div className="w-4 h-4 rounded-full bg-orange-400 animate-pulse"></div>
+                  </div>
                 </div>
               </div>
-              <ChevronRight className="h-4 w-4 text-gray-400" />
             </div>
           </CardContent>
         </Card>
 
         {/* Soluções */}
-        <Card className="bg-gray-50/50 border-gray-200 hover:shadow-lg transition-all duration-300 cursor-pointer" onClick={() => navigate('/admin/solutions')}>
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <div className="p-2 bg-white rounded-lg">
-                  <Briefcase className="h-6 w-6 text-indigo-600" />
+        <Card className="glass-card modern-card interactive-hover border border-indigo-500/30 cursor-pointer group overflow-hidden" onClick={() => navigate('/admin/solutions')}>
+          <CardContent className="p-6 relative">
+            <div className="absolute inset-0 bg-gradient-to-br from-indigo-500/10 via-transparent to-indigo-600/20 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+            
+            <div className="relative z-10">
+              <div className="flex items-center justify-between mb-4">
+                <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-indigo-500 to-indigo-600 flex items-center justify-center neon-glow shadow-2xl transform group-hover:scale-110 transition-all duration-300">
+                  <Briefcase className="h-7 w-7 text-white filter drop-shadow-lg" />
                 </div>
-                <div>
-                  <p className="text-sm font-medium text-gray-600">Soluções</p>
-                  <p className="text-2xl font-bold text-gray-900">{portfolioProjectsCount}</p>
+                <ChevronRight className="h-5 w-5 text-white/60 group-hover:text-white transition-colors duration-300" />
+              </div>
+              
+              <div className="space-y-2">
+                <p className="text-sm font-semibold text-white/80 uppercase tracking-wider">Soluções</p>
+                <div className="flex items-center gap-3">
+                  <p className="text-3xl font-bold text-white">{portfolioProjectsCount}</p>
+                  <div className="w-8 h-8 rounded-full bg-indigo-500/20 flex items-center justify-center">
+                    <div className="w-4 h-4 rounded-full bg-indigo-400 animate-pulse"></div>
+                  </div>
                 </div>
               </div>
-              <ChevronRight className="h-4 w-4 text-gray-400" />
             </div>
           </CardContent>
         </Card>
 
         {/* Contatos */}
-        <Card className="bg-gray-50/50 border-gray-200 hover:shadow-lg transition-all duration-300 cursor-pointer" onClick={() => navigate('/admin/contacts')}>
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <div className="p-2 bg-white rounded-lg">
-                  <Users className="h-6 w-6 text-blue-600" />
+        <Card className="glass-card modern-card interactive-hover border border-teal-500/30 cursor-pointer group overflow-hidden" onClick={() => navigate('/admin/contacts')}>
+          <CardContent className="p-6 relative">
+            <div className="absolute inset-0 bg-gradient-to-br from-teal-500/10 via-transparent to-teal-600/20 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+            
+            <div className="relative z-10">
+              <div className="flex items-center justify-between mb-4">
+                <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-teal-500 to-teal-600 flex items-center justify-center neon-glow shadow-2xl transform group-hover:scale-110 transition-all duration-300">
+                  <Users className="h-7 w-7 text-white filter drop-shadow-lg" />
                 </div>
-                <div>
-                  <p className="text-sm font-medium text-gray-600">Contatos</p>
-                  <p className="text-2xl font-bold text-gray-900">{contactsCount}</p>
+                <ChevronRight className="h-5 w-5 text-white/60 group-hover:text-white transition-colors duration-300" />
+              </div>
+              
+              <div className="space-y-2">
+                <p className="text-sm font-semibold text-white/80 uppercase tracking-wider">Contatos</p>
+                <div className="flex items-center gap-3">
+                  <p className="text-3xl font-bold text-white">{contactsCount}</p>
+                  <div className="w-8 h-8 rounded-full bg-teal-500/20 flex items-center justify-center">
+                    <div className="w-4 h-4 rounded-full bg-teal-400 animate-pulse"></div>
+                  </div>
                 </div>
               </div>
-              <ChevronRight className="h-4 w-4 text-gray-400" />
             </div>
           </CardContent>
         </Card>
 
         {/* Cadastros Fiscais */}
-        <Card className="bg-gray-50/50 border-gray-200 hover:shadow-lg transition-all duration-300 cursor-pointer" onClick={() => navigate('/admin/cadastros-fiscais')}>
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <div className="p-2 bg-white rounded-lg">
-                  <Receipt className="h-6 w-6 text-purple-600" />
+        <Card className="glass-card modern-card interactive-hover border border-purple-500/30 cursor-pointer group overflow-hidden" onClick={() => navigate('/admin/cadastros-fiscais')}>
+          <CardContent className="p-6 relative">
+            <div className="absolute inset-0 bg-gradient-to-br from-purple-500/10 via-transparent to-purple-600/20 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+            
+            <div className="relative z-10">
+              <div className="flex items-center justify-between mb-4">
+                <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-purple-500 to-purple-600 flex items-center justify-center neon-glow shadow-2xl transform group-hover:scale-110 transition-all duration-300">
+                  <Receipt className="h-7 w-7 text-white filter drop-shadow-lg" />
                 </div>
-                <div>
-                  <p className="text-sm font-medium text-gray-600">Cadastros Fiscais</p>
-                  <p className="text-2xl font-bold text-gray-900">{fiscalDataCount}</p>
+                <ChevronRight className="h-5 w-5 text-white/60 group-hover:text-white transition-colors duration-300" />
+              </div>
+              
+              <div className="space-y-2">
+                <p className="text-sm font-semibold text-white/80 uppercase tracking-wider">Cadastros Fiscais</p>
+                <div className="flex items-center gap-3">
+                  <p className="text-3xl font-bold text-white">{fiscalDataCount}</p>
+                  <div className="w-8 h-8 rounded-full bg-purple-500/20 flex items-center justify-center">
+                    <div className="w-4 h-4 rounded-full bg-purple-400 animate-pulse"></div>
+                  </div>
                 </div>
               </div>
-              <ChevronRight className="h-4 w-4 text-gray-400" />
             </div>
           </CardContent>
         </Card>
 
         {/* Clientes */}
-        <Card className="bg-gray-50/50 border-gray-200 hover:shadow-lg transition-all duration-300 cursor-pointer" onClick={() => navigate('/admin/customers')}>
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <div className="p-2 bg-white rounded-lg">
-                  <Building2 className="h-6 w-6 text-emerald-600" />
+        <Card className="glass-card modern-card interactive-hover border border-emerald-500/30 cursor-pointer group overflow-hidden" onClick={() => navigate('/admin/customers')}>
+          <CardContent className="p-6 relative">
+            <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/10 via-transparent to-emerald-600/20 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+            
+            <div className="relative z-10">
+              <div className="flex items-center justify-between mb-4">
+                <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-emerald-500 to-emerald-600 flex items-center justify-center neon-glow shadow-2xl transform group-hover:scale-110 transition-all duration-300">
+                  <Building2 className="h-7 w-7 text-white filter drop-shadow-lg" />
                 </div>
-                <div>
-                  <p className="text-sm font-medium text-gray-600">Clientes</p>
-                  <p className="text-2xl font-bold text-gray-900">{customersCount}</p>
+                <ChevronRight className="h-5 w-5 text-white/60 group-hover:text-white transition-colors duration-300" />
+              </div>
+              
+              <div className="space-y-2">
+                <p className="text-sm font-semibold text-white/80 uppercase tracking-wider">Clientes</p>
+                <div className="flex items-center gap-3">
+                  <p className="text-3xl font-bold text-white">{customersCount}</p>
+                  <div className="w-8 h-8 rounded-full bg-emerald-500/20 flex items-center justify-center">
+                    <div className="w-4 h-4 rounded-full bg-emerald-400 animate-pulse"></div>
+                  </div>
                 </div>
               </div>
-              <ChevronRight className="h-4 w-4 text-gray-400" />
             </div>
           </CardContent>
         </Card>
 
         {/* Projetos Portfolio */}
-        <Card className="bg-gray-50/50 border-gray-200 hover:shadow-lg transition-all duration-300 cursor-pointer" onClick={() => navigate('/admin/portfolio')}>
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <div className="p-2 bg-white rounded-lg">
-                  <Briefcase className="h-6 w-6 text-indigo-600" />
+        <Card className="glass-card modern-card interactive-hover border border-rose-500/30 cursor-pointer group overflow-hidden" onClick={() => navigate('/admin/portfolio')}>
+          <CardContent className="p-6 relative">
+            <div className="absolute inset-0 bg-gradient-to-br from-rose-500/10 via-transparent to-rose-600/20 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+            
+            <div className="relative z-10">
+              <div className="flex items-center justify-between mb-4">
+                <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-rose-500 to-rose-600 flex items-center justify-center neon-glow shadow-2xl transform group-hover:scale-110 transition-all duration-300">
+                  <Briefcase className="h-7 w-7 text-white filter drop-shadow-lg" />
                 </div>
-                <div>
-                  <p className="text-sm font-medium text-gray-600">Projetos</p>
-                  <p className="text-2xl font-bold text-gray-900">{portfolioProjectsCount}</p>
-                  {inactivePortfolioProjects > 0 && (
-                    <p className="text-xs text-orange-600">{inactivePortfolioProjects} inativo{inactivePortfolioProjects > 1 ? 's' : ''}</p>
-                  )}
-                </div>
+                <ChevronRight className="h-5 w-5 text-white/60 group-hover:text-white transition-colors duration-300" />
               </div>
-              <ChevronRight className="h-4 w-4 text-gray-400" />
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Banners Home */}
-        <Card className="bg-gray-50/50 border-gray-200 hover:shadow-lg transition-all duration-300 cursor-pointer" onClick={() => navigate('/admin/home-banners')}>
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <div className="p-2 bg-white rounded-lg">
-                  <Image className="h-6 w-6 text-pink-600" />
+              
+              <div className="space-y-2">
+                <p className="text-sm font-semibold text-white/80 uppercase tracking-wider">Projetos</p>
+                <div className="flex items-center gap-3">
+                  <p className="text-3xl font-bold text-white">{portfolioProjectsCount}</p>
+                  <div className="w-8 h-8 rounded-full bg-rose-500/20 flex items-center justify-center">
+                    <div className="w-4 h-4 rounded-full bg-rose-400 animate-pulse"></div>
+                  </div>
                 </div>
-                <div>
-                  <p className="text-sm font-medium text-gray-600">Banners Home</p>
-                  <p className="text-2xl font-bold text-gray-900">{homeBannersCount}</p>
-                  {inactiveHomeBanners > 0 && (
-                    <p className="text-xs text-orange-600">{inactiveHomeBanners} inativo{inactiveHomeBanners > 1 ? 's' : ''}</p>
-                  )}
-                </div>
+                {inactivePortfolioProjects > 0 && (
+                  <p className="text-xs text-orange-300">{inactivePortfolioProjects} inativo{inactivePortfolioProjects > 1 ? 's' : ''}</p>
+                )}
               </div>
-              <ChevronRight className="h-4 w-4 text-gray-400" />
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Cards Serviços */}
-        <Card className="bg-gray-50/50 border-gray-200 hover:shadow-lg transition-all duration-300 cursor-pointer" onClick={() => navigate('/admin/service-cards')}>
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <div className="p-2 bg-white rounded-lg">
-                  <CreditCard className="h-6 w-6 text-teal-600" />
-                </div>
-                <div>
-                  <p className="text-sm font-medium text-gray-600">Cards Serviços</p>
-                  <p className="text-2xl font-bold text-gray-900">{serviceCardsCount}</p>
-                  {inactiveServiceCards > 0 && (
-                    <p className="text-xs text-orange-600">{inactiveServiceCards} inativo{inactiveServiceCards > 1 ? 's' : ''}</p>
-                  )}
-                </div>
-              </div>
-              <ChevronRight className="h-4 w-4 text-gray-400" />
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Categorias Serviços */}
-        <Card className="bg-gray-50/50 border-gray-200 hover:shadow-lg transition-all duration-300 cursor-pointer" onClick={() => navigate('/admin/service-categories')}>
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <div className="p-2 bg-white rounded-lg">
-                  <Tags className="h-6 w-6 text-cyan-600" />
-                </div>
-                <div>
-                  <p className="text-sm font-medium text-gray-600">Categorias</p>
-                  <p className="text-2xl font-bold text-gray-900">{serviceCategoriesCount}</p>
-                  {inactiveServiceCategories > 0 && (
-                    <p className="text-xs text-orange-600">{inactiveServiceCategories} inativo{inactiveServiceCategories > 1 ? 's' : ''}</p>
-                  )}
-                </div>
-              </div>
-              <ChevronRight className="h-4 w-4 text-gray-400" />
             </div>
           </CardContent>
         </Card>
       </div>
 
       {/* Atividades Recentes */}
-      <Card className="bg-white border-gray-200 shadow-sm">
-        <CardContent className="p-6">
-          <div className="flex items-center justify-between mb-6">
-            <div className="flex items-center gap-3">
-              <div className="p-2 bg-brand-gold/10 rounded-lg">
-                <Clock className="h-5 w-5 text-brand-gold" />
+      <Card className="glass-card border border-brand-gold/20 neon-glow">
+        <CardContent className="p-8">
+          <div className="flex items-center justify-between mb-8">
+            <div className="flex items-center gap-4">
+              <div className="w-16 h-16 bg-gradient-to-br from-brand-gold to-brand-gold-dark rounded-2xl flex items-center justify-center neon-glow">
+                <Clock className="h-8 w-8 text-white filter drop-shadow-lg" />
               </div>
-              <h2 className="text-xl font-bold text-gray-900">Atividades Recentes</h2>
+              <div>
+                <h2 className="text-2xl font-bold text-white mb-1">Atividades Recentes</h2>
+                <p className="text-gray-300 text-sm">Últimas ações realizadas no sistema</p>
+              </div>
             </div>
             
             <div className="flex items-center gap-4">

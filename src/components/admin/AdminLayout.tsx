@@ -129,32 +129,34 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
 
   const SidebarContent = () => (
     <>
-      <div className="flex-1 h-0 pt-5 pb-4 overflow-y-auto">
-        <div className="mx-4 mb-8">
-          <div className="flex justify-center mb-4">
-            <div className="w-20 h-20 rounded-xl shadow-2xl bg-black p-2 flex items-center justify-center border-2 border-brand-gold/20">
+      <div className="flex-1 h-0 pt-8 pb-4 overflow-y-auto">
+        <div className="mx-4 mb-10">
+          <div className="flex justify-center mb-6">
+            <div className="w-24 h-24 rounded-2xl bg-gradient-to-br from-brand-gold to-brand-gold-dark p-3 flex items-center justify-center neon-glow shadow-2xl transform hover:scale-105 transition-all duration-300">
               <img 
                 src="/lovable-uploads/37dd0949-c4e9-4ce4-82ef-a91cc9c4a887.png" 
                 alt="MK Tecnologia Logo" 
-                className="w-full h-full object-contain"
+                className="w-full h-full object-contain filter drop-shadow-lg"
               />
             </div>
           </div>
           
           <div className="text-center">
-            <h1 className="text-2xl font-bold text-brand-black mb-1">
+            <h1 className="text-3xl font-bold text-transparent bg-gradient-to-r from-brand-gold to-brand-gold-light bg-clip-text mb-2">
               MK Admin
             </h1>
-            <div className="flex items-center justify-center gap-2">
-              <Sparkles className="w-3 h-3 text-brand-gold" />
-              <p className="text-xs text-brand-gold font-semibold uppercase tracking-wider">
+            <div className="flex items-center justify-center gap-2 mb-4">
+              <Sparkles className="w-4 h-4 text-brand-gold animate-pulse" />
+              <p className="text-xs text-brand-gold font-bold uppercase tracking-wider">
                 Painel Administrativo
               </p>
+              <Sparkles className="w-4 h-4 text-brand-gold animate-pulse" />
             </div>
+            <div className="h-px bg-gradient-to-r from-transparent via-brand-gold/50 to-transparent"></div>
           </div>
         </div>
 
-        <nav className="flex-1 px-4 space-y-3">
+        <nav className="flex-1 px-4 space-y-2">
           {navigation.map((item) => {
             const Icon = item.icon;
             const active = isActive(item.href);
@@ -162,57 +164,74 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
               <Link
                 key={item.name}
                 to={item.href}
-                className={`group flex items-center px-4 py-4 text-sm font-medium rounded-xl transition-all duration-300 ${
+                className={`group relative flex items-center px-4 py-4 text-sm font-medium rounded-2xl transition-all duration-500 transform hover:scale-105 interactive-hover ${
                   active
-                    ? 'bg-gradient-to-r from-brand-gold/20 to-brand-gold/30 text-brand-black border border-brand-gold/30 shadow-lg'
-                    : 'text-gray-600 hover:bg-gradient-to-r hover:from-brand-gold/5 hover:to-brand-gold/10 hover:text-brand-black hover:shadow-md'
+                    ? 'glass-card neon-glow text-white border border-brand-gold/40 shadow-2xl'
+                    : 'text-gray-700 hover:glass-card hover:text-white hover:shadow-xl backdrop-blur-sm'
                 }`}
                 onClick={() => setSidebarOpen(false)}
               >
-                <div className={`mr-4 w-10 h-10 rounded-lg flex items-center justify-center transition-all duration-300 ${
+                {/* Active indicator line */}
+                {active && (
+                  <div className="absolute left-0 top-1/2 transform -translate-y-1/2 w-1 h-8 bg-gradient-to-b from-brand-gold to-brand-gold-dark rounded-r-full shadow-lg"></div>
+                )}
+                
+                <div className={`mr-4 w-12 h-12 rounded-xl flex items-center justify-center transition-all duration-500 transform group-hover:rotate-3 ${
                   active 
-                    ? `bg-gradient-to-br ${item.color} shadow-lg` 
-                    : 'bg-gray-100 group-hover:bg-gradient-to-br group-hover:from-brand-gold group-hover:to-brand-gold-dark group-hover:shadow-md'
+                    ? `bg-gradient-to-br ${item.color} shadow-2xl neon-glow` 
+                    : 'bg-white/10 backdrop-blur-sm border border-white/20 group-hover:bg-gradient-to-br group-hover:from-brand-gold group-hover:to-brand-gold-dark group-hover:shadow-xl group-hover:border-brand-gold/30'
                 }`}>
-                  <Icon className={`h-5 w-5 ${
+                  <Icon className={`h-6 w-6 transition-all duration-300 ${
                     active 
-                      ? 'text-white' 
-                      : 'text-gray-600 group-hover:text-white'
+                      ? 'text-white filter drop-shadow-lg' 
+                      : 'text-gray-600 group-hover:text-white group-hover:filter group-hover:drop-shadow-lg'
                   }`} />
                 </div>
-                <span className="flex-1">{item.name}</span>
+                
+                <span className={`flex-1 font-semibold transition-all duration-300 ${
+                  active ? 'text-white' : 'group-hover:text-white'
+                }`}>{item.name}</span>
+                
                 {active && (
-                  <div className="w-3 h-3 bg-gradient-to-br from-brand-gold to-brand-gold-dark rounded-full animate-pulse shadow-sm"></div>
+                  <div className="flex items-center gap-2">
+                    <div className="w-2 h-2 bg-brand-gold rounded-full animate-pulse"></div>
+                    <div className="w-3 h-3 bg-gradient-to-br from-brand-gold to-brand-gold-dark rounded-full shadow-lg"></div>
+                  </div>
                 )}
+                
+                {/* Hover effect overlay */}
+                <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-brand-gold/0 via-brand-gold/5 to-brand-gold/0 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
               </Link>
             );
           })}
         </nav>
       </div>
 
-      <div className="flex-shrink-0 border-t border-gray-100 p-4 space-y-4">
-        <div className="flex items-center space-x-4 p-4 bg-gradient-to-r from-brand-gold/5 to-brand-gold/10 rounded-xl border border-brand-gold/20">
-          <div className="w-12 h-12 bg-gradient-to-br from-brand-gold to-brand-gold-dark rounded-full flex items-center justify-center shadow-lg">
-            <User className="h-6 w-6 text-white" />
-          </div>
-          <div className="flex-1 min-w-0">
-            <p className="text-sm font-bold text-brand-black truncate">
-              {adminProfile?.name || 'Administrador'}
-            </p>
-            <div className="flex items-center gap-2 mt-1">
-              <div className="w-2 h-2 bg-brand-gold rounded-full animate-pulse"></div>
-              <p className="text-xs text-brand-gold uppercase tracking-wide font-bold">
-                {adminProfile?.role === 'super_admin' ? 'Super Admin' : 'Administrador'}
+      <div className="flex-shrink-0 border-t border-white/10 p-6 space-y-4">
+        <div className="glass-card p-4 rounded-2xl border border-brand-gold/30 neon-glow">
+          <div className="flex items-center space-x-4">
+            <div className="w-14 h-14 bg-gradient-to-br from-brand-gold to-brand-gold-dark rounded-full flex items-center justify-center shadow-2xl transform hover:scale-110 transition-all duration-300">
+              <User className="h-7 w-7 text-white filter drop-shadow-lg" />
+            </div>
+            <div className="flex-1 min-w-0">
+              <p className="text-sm font-bold text-white truncate">
+                {adminProfile?.name || 'Administrador'}
               </p>
+              <div className="flex items-center gap-2 mt-1">
+                <div className="w-2 h-2 bg-brand-gold rounded-full animate-pulse shadow-sm"></div>
+                <p className="text-xs text-brand-gold uppercase tracking-wider font-bold">
+                  {adminProfile?.role === 'super_admin' ? 'Super Admin' : 'Administrador'}
+                </p>
+              </div>
             </div>
           </div>
         </div>
         
-        <div className="space-y-2">
+        <div className="space-y-3">
           <Button
             variant="ghost"
             onClick={handleGoToSite}
-            className="w-full justify-start text-gray-600 hover:text-brand-gold hover:bg-brand-gold/10 transition-all duration-300 rounded-xl font-medium"
+            className="w-full justify-start text-gray-300 hover:text-white hover:glass-card hover:border hover:border-brand-gold/30 transition-all duration-300 rounded-xl font-medium py-3 interactive-hover"
           >
             <Home className="mr-3 h-5 w-5" />
             Ir para o Site
@@ -220,7 +239,7 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
           <Button
             variant="ghost"
             onClick={handleLogout}
-            className="w-full justify-start text-gray-600 hover:text-red-600 hover:bg-red-50 transition-all duration-300 rounded-xl font-medium"
+            className="w-full justify-start text-gray-300 hover:text-red-400 hover:glass-card hover:border hover:border-red-400/30 transition-all duration-300 rounded-xl font-medium py-3 interactive-hover"
           >
             <LogOut className="mr-3 h-5 w-5" />
             Sair
@@ -231,16 +250,21 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
   );
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 relative overflow-hidden">
+      {/* Background Pattern */}
+      <div className="absolute inset-0 opacity-20" style={{
+        backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%239C92AC' fill-opacity='0.1'%3E%3Ccircle cx='30' cy='30' r='1'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`
+      }}></div>
+      
       <div className={`fixed inset-0 flex z-40 md:hidden ${sidebarOpen ? '' : 'pointer-events-none'}`}>
         <div 
-          className={`fixed inset-0 bg-black/60 backdrop-blur-sm transition-opacity duration-300 ${sidebarOpen ? 'opacity-100' : 'opacity-0'}`} 
+          className={`fixed inset-0 bg-black/70 backdrop-blur-sm transition-opacity duration-300 ${sidebarOpen ? 'opacity-100' : 'opacity-0'}`} 
           onClick={() => setSidebarOpen(false)} 
         />
-        <div className={`relative flex-1 flex flex-col max-w-xs w-full bg-white shadow-2xl transform transition-transform duration-300 ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'}`}>
+        <div className={`relative flex-1 flex flex-col max-w-xs w-full glass-sidebar transform transition-transform duration-500 ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'}`}>
           <div className="absolute top-0 right-0 -mr-12 pt-2">
             <button
-              className="ml-1 flex items-center justify-center h-12 w-12 rounded-full bg-white/10 backdrop-blur-sm text-white hover:bg-white/20 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-brand-gold/50 shadow-lg"
+              className="ml-1 flex items-center justify-center h-12 w-12 rounded-full bg-white/10 backdrop-blur-sm text-white hover:bg-white/20 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-brand-gold/50 shadow-lg neon-glow"
               onClick={() => setSidebarOpen(false)}
             >
               <X className="h-6 w-6" />
@@ -251,7 +275,7 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
       </div>
 
       <div className="hidden md:flex md:w-80 md:flex-col md:fixed md:inset-y-0 z-30">
-        <div className="flex-1 flex flex-col min-h-0 bg-white border-r border-gray-200 shadow-xl">
+        <div className="flex-1 flex flex-col min-h-0 glass-sidebar">
           <SidebarContent />
         </div>
       </div>

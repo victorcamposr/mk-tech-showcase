@@ -51,6 +51,15 @@
     --brand-gold-dark: 45 95% 48%;
     --brand-black: 0 0% 8%;
     --brand-black-light: 0 0% 15%;
+    
+    /* Glassmorphism & Modern Design Variables */
+    --glass-bg: 255 255 255 / 0.1;
+    --glass-border: 255 255 255 / 0.2;
+    --glass-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+    --neon-glow: 0 0 30px hsl(var(--brand-gold) / 0.5);
+    --gradient-primary: linear-gradient(135deg, hsl(var(--brand-gold)) 0%, hsl(var(--brand-gold-dark)) 100%);
+    --gradient-card: linear-gradient(135deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.05) 100%);
+    --backdrop-blur: blur(20px);
   }
 
   .dark {
@@ -113,6 +122,57 @@
   
   .page-transition {
     @apply animate-fade-in;
+  }
+  
+  /* Glassmorphism Effects */
+  .glass-card {
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+  }
+  
+  .glass-sidebar {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(20px);
+    border-right: 1px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 4px 0 24px 0 rgba(31, 38, 135, 0.1);
+  }
+  
+  /* Modern Card Hover Effects */
+  .modern-card {
+    @apply transition-all duration-500 ease-out;
+    transform-style: preserve-3d;
+  }
+  
+  .modern-card:hover {
+    transform: translateY(-8px) rotateX(5deg);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1), 0 0 0 1px rgba(255, 255, 255, 0.2);
+  }
+  
+  /* Neon Glow Effect */
+  .neon-glow {
+    box-shadow: 0 0 20px hsl(var(--brand-gold) / 0.3);
+  }
+  
+  .neon-glow:hover {
+    box-shadow: 0 0 30px hsl(var(--brand-gold) / 0.5);
+  }
+  
+  /* Futuristic Progress Ring */
+  .progress-ring {
+    transform: rotate(-90deg);
+    transition: all 0.3s ease;
+  }
+  
+  /* Interactive Elements */
+  .interactive-hover {
+    @apply transition-all duration-300 ease-out;
+  }
+  
+  .interactive-hover:hover {
+    transform: scale(1.02);
+    filter: brightness(1.1);
   }
 }
 
