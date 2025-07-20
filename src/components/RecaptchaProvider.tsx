@@ -9,7 +9,7 @@ interface RecaptchaProviderProps {
 const RecaptchaProvider = ({ children }: RecaptchaProviderProps) => {
   return (
     <GoogleReCaptchaProvider
-      reCaptchaKey="6Le6QHUrAAAAAG_oWdKSLRNPr87YGv851pc3jfxB"
+      reCaptchaKey="6Ld5cokrAAAAAJVBkW9MDFYuA0sL7yRBhFgCzRi_"
       scriptProps={{
         async: false,
         defer: false,
