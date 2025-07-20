@@ -373,10 +373,10 @@ const AdminDashboard = () => {
           <div className="glass-card p-8 rounded-3xl border border-brand-gold/30 neon-glow">
             <div className="flex items-center justify-between">
               <div>
-                <h1 className="text-5xl font-bold text-transparent bg-gradient-to-r from-white via-brand-gold to-brand-gold-light bg-clip-text mb-2">
+                <h1 className="text-5xl font-bold text-transparent bg-gradient-to-r from-foreground via-brand-gold to-brand-gold-light bg-clip-text mb-2">
                   Dashboard
                 </h1>
-                <p className="text-gray-300 text-lg font-medium">Visão geral da sua plataforma administrativa</p>
+                <p className="text-muted-foreground text-lg font-medium">Visão geral da sua plataforma administrativa</p>
                 <div className="flex items-center gap-2 mt-3">
                   <div className="w-2 h-2 bg-brand-gold rounded-full animate-pulse"></div>
                   <span className="text-brand-gold text-sm font-semibold uppercase tracking-wider">Sistema Ativo</span>
@@ -404,13 +404,13 @@ const AdminDashboard = () => {
                 <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center neon-glow shadow-2xl transform group-hover:scale-110 transition-all duration-300">
                   <Users className="h-7 w-7 text-white filter drop-shadow-lg" />
                 </div>
-                <ChevronRight className="h-5 w-5 text-white/60 group-hover:text-white transition-colors duration-300" />
+                <ChevronRight className="h-5 w-5 text-muted-foreground group-hover:text-foreground transition-colors duration-300" />
               </div>
               
               <div className="space-y-2">
-                <p className="text-sm font-semibold text-white/80 uppercase tracking-wider">Usuários</p>
+                <p className="text-sm font-semibold text-muted-foreground uppercase tracking-wider">Usuários</p>
                 <div className="flex items-center gap-3">
-                  <p className="text-3xl font-bold text-white">{usersCount}</p>
+                  <p className="text-3xl font-bold text-foreground">{usersCount}</p>
                   <div className="w-8 h-8 rounded-full bg-blue-500/20 flex items-center justify-center">
                     <div className="w-4 h-4 rounded-full bg-blue-400 animate-pulse"></div>
                   </div>
@@ -430,13 +430,13 @@ const AdminDashboard = () => {
                 <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-orange-500 to-orange-600 flex items-center justify-center neon-glow shadow-2xl transform group-hover:scale-110 transition-all duration-300">
                   <FileText className="h-7 w-7 text-white filter drop-shadow-lg" />
                 </div>
-                <ChevronRight className="h-5 w-5 text-white/60 group-hover:text-white transition-colors duration-300" />
+                <ChevronRight className="h-5 w-5 text-muted-foreground group-hover:text-foreground transition-colors duration-300" />
               </div>
               
               <div className="space-y-2">
-                <p className="text-sm font-semibold text-white/80 uppercase tracking-wider">Blog Posts</p>
+                <p className="text-sm font-semibold text-muted-foreground uppercase tracking-wider">Blog Posts</p>
                 <div className="flex items-center gap-3">
-                  <p className="text-3xl font-bold text-white">{blogPostsCount}</p>
+                  <p className="text-3xl font-bold text-foreground">{blogPostsCount}</p>
                   <div className="w-8 h-8 rounded-full bg-orange-500/20 flex items-center justify-center">
                     <div className="w-4 h-4 rounded-full bg-orange-400 animate-pulse"></div>
                   </div>
@@ -456,13 +456,13 @@ const AdminDashboard = () => {
                 <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-indigo-500 to-indigo-600 flex items-center justify-center neon-glow shadow-2xl transform group-hover:scale-110 transition-all duration-300">
                   <Briefcase className="h-7 w-7 text-white filter drop-shadow-lg" />
                 </div>
-                <ChevronRight className="h-5 w-5 text-white/60 group-hover:text-white transition-colors duration-300" />
+                <ChevronRight className="h-5 w-5 text-muted-foreground group-hover:text-foreground transition-colors duration-300" />
               </div>
               
               <div className="space-y-2">
-                <p className="text-sm font-semibold text-white/80 uppercase tracking-wider">Soluções</p>
+                <p className="text-sm font-semibold text-muted-foreground uppercase tracking-wider">Soluções</p>
                 <div className="flex items-center gap-3">
-                  <p className="text-3xl font-bold text-white">{portfolioProjectsCount}</p>
+                  <p className="text-3xl font-bold text-foreground">{portfolioProjectsCount}</p>
                   <div className="w-8 h-8 rounded-full bg-indigo-500/20 flex items-center justify-center">
                     <div className="w-4 h-4 rounded-full bg-indigo-400 animate-pulse"></div>
                   </div>
@@ -482,13 +482,13 @@ const AdminDashboard = () => {
                 <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-teal-500 to-teal-600 flex items-center justify-center neon-glow shadow-2xl transform group-hover:scale-110 transition-all duration-300">
                   <Users className="h-7 w-7 text-white filter drop-shadow-lg" />
                 </div>
-                <ChevronRight className="h-5 w-5 text-white/60 group-hover:text-white transition-colors duration-300" />
+                <ChevronRight className="h-5 w-5 text-muted-foreground group-hover:text-foreground transition-colors duration-300" />
               </div>
               
               <div className="space-y-2">
-                <p className="text-sm font-semibold text-white/80 uppercase tracking-wider">Contatos</p>
+                <p className="text-sm font-semibold text-muted-foreground uppercase tracking-wider">Contatos</p>
                 <div className="flex items-center gap-3">
-                  <p className="text-3xl font-bold text-white">{contactsCount}</p>
+                  <p className="text-3xl font-bold text-foreground">{contactsCount}</p>
                   <div className="w-8 h-8 rounded-full bg-teal-500/20 flex items-center justify-center">
                     <div className="w-4 h-4 rounded-full bg-teal-400 animate-pulse"></div>
                   </div>
@@ -508,13 +508,13 @@ const AdminDashboard = () => {
                 <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-purple-500 to-purple-600 flex items-center justify-center neon-glow shadow-2xl transform group-hover:scale-110 transition-all duration-300">
                   <Receipt className="h-7 w-7 text-white filter drop-shadow-lg" />
                 </div>
-                <ChevronRight className="h-5 w-5 text-white/60 group-hover:text-white transition-colors duration-300" />
+                <ChevronRight className="h-5 w-5 text-muted-foreground group-hover:text-foreground transition-colors duration-300" />
               </div>
               
               <div className="space-y-2">
-                <p className="text-sm font-semibold text-white/80 uppercase tracking-wider">Cadastros Fiscais</p>
+                <p className="text-sm font-semibold text-muted-foreground uppercase tracking-wider">Cadastros Fiscais</p>
                 <div className="flex items-center gap-3">
-                  <p className="text-3xl font-bold text-white">{fiscalDataCount}</p>
+                  <p className="text-3xl font-bold text-foreground">{fiscalDataCount}</p>
                   <div className="w-8 h-8 rounded-full bg-purple-500/20 flex items-center justify-center">
                     <div className="w-4 h-4 rounded-full bg-purple-400 animate-pulse"></div>
                   </div>
@@ -534,13 +534,13 @@ const AdminDashboard = () => {
                 <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-emerald-500 to-emerald-600 flex items-center justify-center neon-glow shadow-2xl transform group-hover:scale-110 transition-all duration-300">
                   <Building2 className="h-7 w-7 text-white filter drop-shadow-lg" />
                 </div>
-                <ChevronRight className="h-5 w-5 text-white/60 group-hover:text-white transition-colors duration-300" />
+                <ChevronRight className="h-5 w-5 text-muted-foreground group-hover:text-foreground transition-colors duration-300" />
               </div>
               
               <div className="space-y-2">
-                <p className="text-sm font-semibold text-white/80 uppercase tracking-wider">Clientes</p>
+                <p className="text-sm font-semibold text-muted-foreground uppercase tracking-wider">Clientes</p>
                 <div className="flex items-center gap-3">
-                  <p className="text-3xl font-bold text-white">{customersCount}</p>
+                  <p className="text-3xl font-bold text-foreground">{customersCount}</p>
                   <div className="w-8 h-8 rounded-full bg-emerald-500/20 flex items-center justify-center">
                     <div className="w-4 h-4 rounded-full bg-emerald-400 animate-pulse"></div>
                   </div>
@@ -560,13 +560,13 @@ const AdminDashboard = () => {
                 <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-rose-500 to-rose-600 flex items-center justify-center neon-glow shadow-2xl transform group-hover:scale-110 transition-all duration-300">
                   <Briefcase className="h-7 w-7 text-white filter drop-shadow-lg" />
                 </div>
-                <ChevronRight className="h-5 w-5 text-white/60 group-hover:text-white transition-colors duration-300" />
+                <ChevronRight className="h-5 w-5 text-muted-foreground group-hover:text-foreground transition-colors duration-300" />
               </div>
               
               <div className="space-y-2">
-                <p className="text-sm font-semibold text-white/80 uppercase tracking-wider">Projetos</p>
+                <p className="text-sm font-semibold text-muted-foreground uppercase tracking-wider">Projetos</p>
                 <div className="flex items-center gap-3">
-                  <p className="text-3xl font-bold text-white">{portfolioProjectsCount}</p>
+                  <p className="text-3xl font-bold text-foreground">{portfolioProjectsCount}</p>
                   <div className="w-8 h-8 rounded-full bg-rose-500/20 flex items-center justify-center">
                     <div className="w-4 h-4 rounded-full bg-rose-400 animate-pulse"></div>
                   </div>
@@ -589,8 +589,8 @@ const AdminDashboard = () => {
                 <Clock className="h-8 w-8 text-white filter drop-shadow-lg" />
               </div>
               <div>
-                <h2 className="text-2xl font-bold text-white mb-1">Atividades Recentes</h2>
-                <p className="text-gray-300 text-sm">Últimas ações realizadas no sistema</p>
+                <h2 className="text-2xl font-bold text-foreground mb-1">Atividades Recentes</h2>
+                <p className="text-muted-foreground text-sm">Últimas ações realizadas no sistema</p>
               </div>
             </div>
             

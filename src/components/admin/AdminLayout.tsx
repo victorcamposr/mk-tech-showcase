@@ -166,8 +166,8 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
                 to={item.href}
                 className={`group relative flex items-center px-4 py-4 text-sm font-medium rounded-2xl transition-all duration-500 transform hover:scale-105 interactive-hover ${
                   active
-                    ? 'glass-card neon-glow text-white border border-brand-gold/40 shadow-2xl'
-                    : 'text-gray-700 hover:glass-card hover:text-white hover:shadow-xl backdrop-blur-sm'
+                    ? 'glass-card neon-glow text-foreground border border-brand-gold/40 shadow-2xl'
+                    : 'text-foreground hover:glass-card hover:text-brand-gold hover:shadow-xl backdrop-blur-sm'
                 }`}
                 onClick={() => setSidebarOpen(false)}
               >
@@ -184,12 +184,12 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
                   <Icon className={`h-6 w-6 transition-all duration-300 ${
                     active 
                       ? 'text-white filter drop-shadow-lg' 
-                      : 'text-gray-600 group-hover:text-white group-hover:filter group-hover:drop-shadow-lg'
+                      : 'text-muted-foreground group-hover:text-white group-hover:filter group-hover:drop-shadow-lg'
                   }`} />
                 </div>
                 
                 <span className={`flex-1 font-semibold transition-all duration-300 ${
-                  active ? 'text-white' : 'group-hover:text-white'
+                  active ? 'text-foreground' : 'group-hover:text-brand-gold'
                 }`}>{item.name}</span>
                 
                 {active && (
@@ -209,29 +209,29 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
 
       <div className="flex-shrink-0 border-t border-white/10 p-6 space-y-4">
         <div className="glass-card p-4 rounded-2xl border border-brand-gold/30 neon-glow">
-          <div className="flex items-center space-x-4">
-            <div className="w-14 h-14 bg-gradient-to-br from-brand-gold to-brand-gold-dark rounded-full flex items-center justify-center shadow-2xl transform hover:scale-110 transition-all duration-300">
-              <User className="h-7 w-7 text-white filter drop-shadow-lg" />
-            </div>
-            <div className="flex-1 min-w-0">
-              <p className="text-sm font-bold text-white truncate">
-                {adminProfile?.name || 'Administrador'}
-              </p>
-              <div className="flex items-center gap-2 mt-1">
-                <div className="w-2 h-2 bg-brand-gold rounded-full animate-pulse shadow-sm"></div>
-                <p className="text-xs text-brand-gold uppercase tracking-wider font-bold">
-                  {adminProfile?.role === 'super_admin' ? 'Super Admin' : 'Administrador'}
+            <div className="flex items-center space-x-4">
+              <div className="w-14 h-14 bg-gradient-to-br from-brand-gold to-brand-gold-dark rounded-full flex items-center justify-center shadow-2xl transform hover:scale-110 transition-all duration-300">
+                <User className="h-7 w-7 text-white filter drop-shadow-lg" />
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="text-sm font-bold text-foreground truncate">
+                  {adminProfile?.name || 'Administrador'}
                 </p>
+                <div className="flex items-center gap-2 mt-1">
+                  <div className="w-2 h-2 bg-brand-gold rounded-full animate-pulse shadow-sm"></div>
+                  <p className="text-xs text-brand-gold uppercase tracking-wider font-bold">
+                    {adminProfile?.role === 'super_admin' ? 'Super Admin' : 'Administrador'}
+                  </p>
+                </div>
               </div>
             </div>
-          </div>
         </div>
         
         <div className="space-y-3">
           <Button
             variant="ghost"
             onClick={handleGoToSite}
-            className="w-full justify-start text-gray-300 hover:text-white hover:glass-card hover:border hover:border-brand-gold/30 transition-all duration-300 rounded-xl font-medium py-3 interactive-hover"
+            className="w-full justify-start text-foreground hover:text-brand-gold hover:glass-card hover:border hover:border-brand-gold/30 transition-all duration-300 rounded-xl font-medium py-3 interactive-hover"
           >
             <Home className="mr-3 h-5 w-5" />
             Ir para o Site
@@ -239,7 +239,7 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
           <Button
             variant="ghost"
             onClick={handleLogout}
-            className="w-full justify-start text-gray-300 hover:text-red-400 hover:glass-card hover:border hover:border-red-400/30 transition-all duration-300 rounded-xl font-medium py-3 interactive-hover"
+            className="w-full justify-start text-foreground hover:text-red-400 hover:glass-card hover:border hover:border-red-400/30 transition-all duration-300 rounded-xl font-medium py-3 interactive-hover"
           >
             <LogOut className="mr-3 h-5 w-5" />
             Sair
@@ -250,7 +250,7 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
   );
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 relative overflow-hidden">
+    <div className="min-h-screen bg-background relative overflow-hidden">
       {/* Background Pattern */}
       <div className="absolute inset-0 opacity-20" style={{
         backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%239C92AC' fill-opacity='0.1'%3E%3Ccircle cx='30' cy='30' r='1'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`
