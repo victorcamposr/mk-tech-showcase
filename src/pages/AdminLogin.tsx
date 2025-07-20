@@ -59,6 +59,36 @@ const AdminLogin = () => {
       return;
     }
 
+    // Verificar o token reCAPTCHA no backend
+    try {
+      const recaptchaResponse = await fetch('/functions/v1/verify-recaptcha', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          token: recaptchaToken,
+          action: 'admin_login'
+        })
+      });
+
+      if (!recaptchaResponse.ok) {
+        const errorData = await recaptchaResponse.json();
+        console.error('Falha na verificação reCAPTCHA:', errorData);
+        setError('Verificação de segurança falhou. Tente novamente.');
+        setLoading(false);
+        return;
+      }
+
+      const recaptchaResult = await recaptchaResponse.json();
+      console.log('reCAPTCHA verificado com sucesso:', recaptchaResult);
+    } catch (recaptchaError) {
+      console.error('Erro na verificação reCAPTCHA:', recaptchaError);
+      setError('Não foi possível verificar a segurança. Tente novamente.');
+      setLoading(false);
+      return;
+    }
+
     const { error } = await signIn(email, password);
 
     if (error) {

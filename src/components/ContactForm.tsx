@@ -67,6 +67,45 @@ const ContactForm = ({ onSuccess }: ContactFormProps) => {
       return;
     }
 
+    // Verificar o token reCAPTCHA no backend
+    try {
+      const recaptchaResponse = await fetch('/functions/v1/verify-recaptcha', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${(await supabase.auth.getSession()).data.session?.access_token || ''}`
+        },
+        body: JSON.stringify({
+          token: recaptchaToken,
+          action: 'contact_form'
+        })
+      });
+
+      if (!recaptchaResponse.ok) {
+        const errorData = await recaptchaResponse.json();
+        console.error('Falha na verificação reCAPTCHA:', errorData);
+        toast({
+          title: "Erro de segurança",
+          description: "Verificação de segurança falhou. Tente novamente.",
+          variant: "destructive",
+          duration: 5000,
+        });
+        return;
+      }
+
+      const recaptchaResult = await recaptchaResponse.json();
+      console.log('reCAPTCHA verificado com sucesso:', recaptchaResult);
+    } catch (recaptchaError) {
+      console.error('Erro na verificação reCAPTCHA:', recaptchaError);
+      toast({
+        title: "Erro de segurança",
+        description: "Não foi possível verificar a segurança. Tente novamente.",
+        variant: "destructive",
+        duration: 5000,
+      });
+      return;
+    }
+
     try {
       // Primeiro, salvar no banco de dados
       console.log('Salvando contato no banco de dados...');
