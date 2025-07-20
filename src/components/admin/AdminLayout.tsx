@@ -132,11 +132,11 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
       <div className="flex-1 h-0 pt-8 pb-4 overflow-y-auto">
         <div className="mx-4 mb-10">
           <div className="flex justify-center mb-6">
-            <div className="w-20 h-20 flex items-center justify-center transform hover:scale-105 transition-all duration-300">
+            <div className="w-24 h-24 rounded-2xl flex items-center justify-center transform hover:scale-105 transition-all duration-300 shadow-lg">
               <img 
                 src="/lovable-uploads/37dd0949-c4e9-4ce4-82ef-a91cc9c4a887.png" 
                 alt="MK Tecnologia Logo" 
-                className="w-full h-full object-contain filter drop-shadow-lg"
+                className="w-full h-full object-contain filter drop-shadow-lg rounded-xl"
               />
             </div>
           </div>
@@ -194,7 +194,7 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
                 
                 {active && (
                   <div className="flex items-center gap-2">
-                    <div className="w-2 h-2 bg-brand-gold rounded-full animate-pulse"></div>
+                    <div className={`w-2 h-2 rounded-full animate-pulse bg-gradient-to-br ${item.color}`}></div>
                   </div>
                 )}
                 
