@@ -132,7 +132,7 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
       <div className="flex-1 h-0 pt-8 pb-4 overflow-y-auto">
         <div className="mx-4 mb-10">
           <div className="flex justify-center mb-6">
-            <div className="w-24 h-24 rounded-2xl bg-gradient-to-br from-brand-gold to-brand-gold-dark p-3 flex items-center justify-center neon-glow shadow-2xl transform hover:scale-105 transition-all duration-300">
+            <div className="w-20 h-20 flex items-center justify-center transform hover:scale-105 transition-all duration-300">
               <img 
                 src="/lovable-uploads/37dd0949-c4e9-4ce4-82ef-a91cc9c4a887.png" 
                 alt="MK Tecnologia Logo" 
@@ -142,12 +142,12 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
           </div>
           
           <div className="text-center">
-            <h1 className="text-3xl font-bold text-transparent bg-gradient-to-r from-brand-gold to-brand-gold-light bg-clip-text mb-2">
+            <h1 className="text-3xl font-bold text-transparent bg-gradient-to-r from-foreground via-brand-gold to-brand-gold-light bg-clip-text mb-2">
               MK Admin
             </h1>
             <div className="flex items-center justify-center gap-2 mb-4">
               <Sparkles className="w-4 h-4 text-brand-gold animate-pulse" />
-              <p className="text-xs text-brand-gold font-bold uppercase tracking-wider">
+              <p className="text-xs font-bold text-transparent bg-gradient-to-r from-muted-foreground via-brand-gold to-brand-gold-light bg-clip-text uppercase tracking-wider">
                 Painel Administrativo
               </p>
               <Sparkles className="w-4 h-4 text-brand-gold animate-pulse" />
@@ -195,7 +195,6 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
                 {active && (
                   <div className="flex items-center gap-2">
                     <div className="w-2 h-2 bg-brand-gold rounded-full animate-pulse"></div>
-                    <div className="w-3 h-3 bg-gradient-to-br from-brand-gold to-brand-gold-dark rounded-full shadow-lg"></div>
                   </div>
                 )}
                 
